@@ -42,6 +42,13 @@
 - **iOS 20-geofence limit** handled by rotating the nearest at-risk crossings.
 - **Video → ~2:15**, so the working app gets 3× more screen time.
 
+### v4.1 updates (Oct 14)
+- **Full build spec:** `docs/master-prompt/` — the master prompt for the AI coding agent (every feature, screen, data source and test), built from six verified research reports in `docs/master-prompt/research/`.
+- **Wording:** the calm state is now **"No rise detected"**. "No current signal" read like a lost connection, and "Sin señal" is what Spanish phones show for no service.
+- **Avoid red → `#FF5470`:** two independent color-blindness simulations showed better amber/red separation for deuteranopia.
+- **Map → MapLibre + OpenFreeMap (free, full style control). Build path → Android-first development build.** Push alerts, background alerts and custom maps don't run in Expo Go, and iPhone Expo Go stops at SDK 54.
+- **USGS API → v1** (released Sept 2026). The legacy service slows from **Nov 16, 2026** and is decommissioned **Feb 22, 2027**.
+
 ---
 
 ## 1. App Concept — IDEOLOGY + IMPACT
@@ -77,7 +84,7 @@
 **What's new:** **per-crossing lead time.** Each crossing is a node in the river network with its own upstream gauges and its own learned travel time — turning *"closed now"* into *"likely flooded within 15–30 min — detour ready."*
 
 ### Safety principle — FordCast only ever *adds* caution
-- **Never shows "safe."** States: **No current signal → Watch → Avoid → Flooded/Closed**. Water on the road = *Turn Around, Don't Drown*, always.
+- **Never shows "safe."** States: **No rise detected → Watch → Avoid → Flooded – Closed**, plus **Unknown – data offline** (ES: Sin crecida detectada · Precaución · Evite · Inundado – Cerrado · Desconocido – sin datos). Water on the road = *Turn Around, Don't Drown*, always.
 - **Ranges, not countdowns** ("likely within 15–30 min") — nothing to race.
 - **Stale or missing data shows "Unknown — data offline,"** never a calm color.
 - **Official closures (ATXfloods/barricades) always override the model.**
@@ -123,11 +130,11 @@
 
 | Layer | Choice | Why this tool for *this* problem | Tier |
 |---|---|---|---|
-| App | **Expo (React Native)** + `react-native-maps` (custom dark style) | Uses your React skills; iOS + Android; runs in Expo Go; native geofencing via `expo-location` + `expo-task-manager` | **MVP** |
+| App | **Expo SDK 57 (React Native)** + **MapLibre** (`@maplibre/maplibre-react-native`) on free **OpenFreeMap** tiles with a custom night style; **React Native Reusables** UI components | Uses your React skills; iOS + Android; Android-first **development build** (Expo Go can't run push, background alerts or MapLibre); native geofencing via `expo-location` + `expo-task-manager` | **MVP** |
 | Backend | **Python + FastAPI** | Your strongest language; async I/O for concurrent API calls; same language as the model | **MVP** |
 | DB + realtime | **Supabase** (Postgres + PostGIS + Realtime) | Crossings and basins are geospatial; status changes reach phones without polling | **MVP** |
 | River network | **USGS NLDI** (NHDPlus) via `pynhd` | Snaps a crossing to its stream reach, navigates *upstream tributaries* to find real contributing gauges, returns the basin polygon | **MVP** (precomputed) |
-| Gauges | **USGS Water Data API** (`api.waterdata.usgs.gov`) | Legacy service degrades Nov 2026 → building on the new API means the app **won't break mid-judging** | **MVP** |
+| Gauges | **USGS Water Data API v1** (`api.waterdata.usgs.gov/ogcapi/v1`) | Legacy service degrades Nov 2026 → building on the new API means the app **won't break mid-judging** | **MVP** |
 | Crossings + ground truth | **City of Austin open data / FEWS crossing layer, ATXfloods** | Crossing locations + official status (overrides the model) | **MVP** |
 | Prediction | **Baseline:** travel-time + rate-of-rise rule → **ML:** gradient-boosted classifier (XGBoost/scikit-learn) with calibrated probabilities | Small, explainable, works on limited data; baseline gives you something to beat | **MVP → Stretch** |
 | Routing | **OpenRouteService Directions** with `avoid_polygons` around Avoid-level crossings | Don't build a router — dynamic avoid areas give the same result | **Stretch** |
@@ -188,9 +195,9 @@
 | Role | Color | Use | Contrast on base |
 |---|---|---|---|
 | Base | **Charcoal-navy `#0E1726`** | Background; low glare for night driving | — |
-| No current signal | **Slate `#8A97AB`** | Neutral — deliberately *not* green ("safe") | 6.1:1 ✓ |
+| No rise detected | **Slate `#8A97AB`** | Neutral — deliberately *not* green ("safe") | 6.1:1 ✓ |
 | Watch | **Safety amber `#F5A623`** | Upstream water rising | 8.9:1 ✓ |
-| Avoid / Closed (text, icons) | **Alert red `#FF5A4F`** | Likely or confirmed flooded | 5.8:1 ✓ |
+| Avoid / Closed (text, icons) | **Alert red `#FF5470`** (color-blind-verified; replaces `#FF5A4F`) | Likely or confirmed flooded | 5.8:1 ✓ |
 | Avoid / Closed (chips) | **White on `#C62828`** | Status badges | 5.6:1 ✓ |
 | Water | **Cyan `#2BD9D9`** | Rising-level sparklines | 10.3:1 ✓ |
 
@@ -211,7 +218,7 @@
        Storm Replay: one tap from Map Home (time-scrubber overlay)
 ```
 
-**Signature moment — the Crossing Card.** As upstream water rises, a card slides up and a ring fills **slate → amber → red**. It shows the upstream gauge's live sparkline (*"Bull Creek upstream: +3.1 ft in 30 min"*), then **"AVOID · likely flooded within 15–30 min · detour +4 min"** with one haptic pulse. **The judge watches water travel down the river toward a road — and the warning arrive first.**
+**Signature moment — the Crossing Card.** As upstream water rises, a card slides up and a ring fills **slate → amber → red**. It shows the upstream gauge's live sparkline (*"Bull Ck at Loop 360 (upstream): +3.1 ft in 30 min"*), then **"AVOID · likely flooded within 15–30 min · detour +4 min"** with one haptic pulse. **The judge watches water travel down the river toward a road — and the warning arrive first.**
 
 **Driver-distraction design:** Drive Mode follows **NHTSA's visual-manual distraction guidelines** (glances ≤ 2 s, tasks ≤ 12 s total): voice-first, huge targets, no typing while moving.
 
@@ -272,7 +279,7 @@ async def assess(crossing, source, now):
         return Risk.UNKNOWN                     # never show a calm state without data
     etas = [g.travel_time_min - s.minutes_above(g.trigger_stage)
             for g, s in usable if s.latest >= g.trigger_stage and s.rise_rate(30) > 0]
-    return Risk.avoid(window=to_range(max(min(etas), 0))) if etas else Risk.NO_SIGNAL
+    return Risk.avoid(window=to_range(max(min(etas), 0))) if etas else Risk.NO_RISE
 ```
 
 **CS terms you can defend:** directed-graph traversal (upstream navigation), point-in-polygon spatial join, cross-correlation, concurrent async I/O, dependency injection, data leakage / lookahead bias, event-based train–test split, probability calibration, POD / FAR / CSI.

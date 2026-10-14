@@ -7,11 +7,27 @@
 
 ## How to use this prompt *(for the human — read first)*
 
-1. **Save this file in the repo** as `docs/MASTER_PROMPT.md`. Then open Claude Code at the repo root and say:
-   > *"Read docs/MASTER_PROMPT.md completely. Then do §1 Step 0: ask me the Step 0 questions, and don't write code until I answer."*
-2. **Don't paste it in pieces.** The sections cross-reference each other (§ numbers), and the safety rules in §3 apply everywhere.
-3. **Work through it in order.** The agent builds **[MVP] → [Stretch] → [Roadmap]** in the §6 day-by-day plan. Each feature is listed only once, in §4, and is never claimed until its test passes (see the §44 Claims Ledger).
-4. **Review checkpoints.** Expect the agent to pause at the end of each day in §6 and at the four "student-owned" core files (§39).
+1. **Where it lives.** The prompt is split into files under `docs/master-prompt/`. Each file stays small enough for GitHub to render and for an agent to read in one pass:
+
+   | File | Contents |
+   |---|---|
+   | `00-START-HERE.md` | This page: how to use it, your tasks, the decision sheet, contents |
+   | `01-A-rules-product-plan.md` | §1–§7: agent rules, product, safety & copy, feature catalog (F1–F128), repo layout, day-by-day plan, Definition of Done |
+   | `02-B1-design-system.md` | §8–§11: platform look, tokens, type, icons, motion, haptics |
+   | `03-B2-templates-screens.md` | §12–§15: template import plan, component library, every screen (wireframes), signature moments, notification/icon visuals |
+   | `04-C-data-science-backend.md` | §16–§24: data sources, crossings & gauge linking, forecast science, Storm Replay engine, backend, schema, API, push, CI |
+   | `05-D1-mobile-stack-architecture-map.md` | §25–§29: exact versions, build path, config files, app architecture, map |
+   | `06-D2-mobile-features-quality.md` | §30–§37: location, Drive Mode, notifications, routing, replay player, accessibility, Spanish, testing, gotchas |
+   | `07-E-submission-integrity-ops.md` | §38–§45: CAC compliance, AI-use integrity, README, demo video, outreach, judging-window ops, Claims Ledger, final checklist, sources |
+   | `research/` | The six verified research reports the prompt was built from, plus `decision-log.md`, which explains how conflicts between them were resolved |
+
+2. **Start the agent.** Open Claude Code at the repo root and say:
+   > *"Read every file in docs/master-prompt/ in numeric order (00 → 07). Then do §1 Step 0: ask me the Step 0 questions, and don't write code until I answer."*
+
+   For later sessions: *"Re-read 00-START-HERE.md, 01-A, and the parts for today's §6 tasks, then continue from §6 Day N."*
+3. **Don't cherry-pick sections.** The sections cross-reference each other (§ numbers), and the safety rules in §3 apply everywhere.
+4. **Work in order.** The agent builds **[MVP] → [Stretch] → [Roadmap]** following the §6 day-by-day plan. Every feature is listed once in §4 (F1–F128), and nothing is claimed until its test passes (§44 Claims Ledger).
+5. **Expect review checkpoints:** an end-of-day gate for every day in §6, and pauses at the four "student-owned" core files (§39).
 
 ### What *you* (the student) must do — the agent can't do these
 Calendar: Day 0 = Wed Oct 14 · Day 10 = Sat Oct 24 · **submit Day 11 = Sun Oct 25** · deadline Mon Oct 26, 12:00 PM ET (buffer only). §6 owns the schedule; this table mirrors it.
@@ -34,7 +50,7 @@ Calendar: Day 0 = Wed Oct 14 · Day 10 = Sat Oct 24 · **submit Day 11 = Sun Oct
 | Day 11 (Sun Oct 25) | Tag `cac-2026-submission` and **submit** | §45 |
 | Mondays, Nov–Dec | 10-minute dashboard check. Commit on Nov 10, Nov 30 and Dec 15 (+ Jan 4 only if judging runs into January) so scheduled jobs don't auto-disable | §43 |
 
-**Money:** ~$17–21 total for Render Starter (Oct 20 → Dec 31). Everything else is a free tier. An Apple Developer account ($99/yr) is **optional**; it's needed only to test on a real iPhone.
+**Money:** ~$17–21 total for Render Starter (Oct 20 → Dec 31). Everything else (Expo/EAS, Supabase, GitHub Actions, USGS, OpenRouteService, Firebase, healthchecks.io, UptimeRobot, Sentry) uses a free tier. An Apple Developer account ($99/yr) is **optional**; it's needed only to test on a real iPhone.
 
 ### Honest scope note
 This prompt contains **every** feature, as you asked. Twelve days is enough for the **MVP plus several Stretch items**, not everything. The prompt handles this two ways:
@@ -51,16 +67,16 @@ This prompt contains **every** feature, as you asked. Twelve days is enough for 
 | Phone framework | **Expo SDK 57** (RN 0.86.3, React 19.2.3), frozen through judging; TypeScript strict | Latest stable; SDK 58 is in beta | §25 |
 | Build path | **Android-first development build** (EAS free APK). iOS only with a paid account or Mac; Expo Go is optional | Push, background alerts, MapLibre and geofencing all need a dev build; iPhone Expo Go stops at SDK 54 | §26 |
 | UI templates | **Expo default template (SDK 57)** + **React Native Reusables** components (shadcn-style, copied into the repo) on **NativeWind 4.2.7** + **gorhom bottom-sheet map example** + Expo `with-skia` / `with-maestro` examples | Premium look, fully restylable (we own the files), the stack AI agents know best | §12 |
-| Look | Night-first dark UI (`#0E1726`). iOS 26 Liquid Glass only on floating controls; Material 3 cues on Android; **Inter** with tabular numbers | Most vehicle flood deaths happen at night; glass on content hurts legibility | §8–§10 |
+| Look | Night-first dark UI (`#0E1726`), portrait. MVP uses solid surfaces on both platforms; iOS 26 Liquid Glass on floating controls is Stretch polish. Material 3 cues on Android; **Inter** with tabular numbers | Most vehicle flood deaths happen at night; glass on content hurts legibility | §8–§10 |
 | Status encoding | **Shape + glyph + word + color** (circle / triangle / octagon / striped octagon / dashed ring). Avoid red **`#FF5470`** (color-blind-verified fix) | Readable for color-blind users and in grayscale | §9 |
 | Map | **MapLibre RN 11.5** + **OpenFreeMap** tiles + custom **"FordCast Night"** style; glowing creeks, pulsing at-risk markers, animated water wave | Free, no API key, full style control | §29 |
 | Navigation | 4 native tabs (**Map · Drive · Replay · Alerts**) + Settings gear; persistent map sheet; crossing detail as a native form sheet | Two taps max to anything | §13, §28 |
 | Gauges | **USGS Water Data OGC API v1** (never the legacy service — it degrades from Nov 16, 2026, during judging) | Keeps the app from breaking mid-judging | §16 |
 | River network | **USGS NLDI** upstream tracing, precomputed | Finds the gauge truly upstream of each crossing | §17 |
 | Forecast | Learned travel time (cross-correlation) + trigger-stage **baseline rule** (MVP) → calibrated gradient-boosted classifier (Stretch, only if it beats the rule) | Explainable, honest, testable | §18 |
-| Proof | **Storm Replay** of real historic storms with a data-arrival latency model and no-lookahead tests; timelines bundled in the app (work in airplane mode) | Real numbers for the video; demo can't break | §19, §33 |
+| Proof | **Storm Replay** of real historic storms (Halloween 2013, Memorial Day 2015, Halloween 2015, Oct 2018, July 2025) with a data-arrival latency model, modeled gauge outages, and no-lookahead tests. Timelines are bundled in the app (they work in airplane mode). The headline number comes from a pre-registered rule (median, never best case) | Real numbers for the video; demo can't break; no cherry-picking | §19, §33 |
 | Backend | **Python 3.13 + FastAPI on Render**; **Supabase** (Postgres + PostGIS + Realtime + Storage + pg_cron clock); static snapshot file as the primary read path | Free/cheap, stays alive through Dec 31 | §20–§22 |
-| Alerts | Expo push keyed by **crossing ID** (no location stored on servers); geofences on the phone (iOS 20-region rotation) | Privacy + iOS limits | §23, §30–§31 |
+| Alerts | Expo push keyed only by **crossing IDs the user saved** (computed on the phone; no location or radius ever reaches the server). "Near me" alerts use on-phone geofences (iOS 20-region rotation) + local notifications | Privacy + iOS limits | §23, §30–§31 |
 | Routing | **OpenRouteService** avoid-polygons via the backend; hand-off to Google Maps / Apple Maps / Waze | Don't build a router; drivers keep their nav app | §32 |
 | Accessibility | WCAG 2.2 AA + Apple's 7 accessibility-label criteria; VoiceOver/TalkBack; Spanish (es-US, usted); Drive Mode follows NHTSA distraction limits | Required for a public-safety app; strong judging signal | §34–§35 |
 | Integrity | `AI_USE.md` disclosure; you write or co-write the 4 core files; explain-back docs; Claims Ledger | CAC judges score *your* coding; finalists get Q&A | §39, §44 |

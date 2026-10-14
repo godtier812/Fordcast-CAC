@@ -1,0 +1,1318 @@
+# PART B (continued) — §12–§15
+
+## §12. UI templates & component library
+
+> The user explicitly wants templates imported, not hand-rolled from zero. You MUST import the sources below in this order on **Day 1–2 of the app track**, keep their license headers, and then restyle them to the FordCast tokens (§9). Stack versions are owned by §25; config file contents by §27. Never mix HeroUI Native with NativeWind v4 (HeroUI requires Uniwind/Tailwind 4). Never run `rnr init` (its template is on SDK 56).
+
+### 12.1 What we import (and licenses to keep) [MVP]
+
+| # | Source | License | What we take | Lands in | Tier |
+|---|---|---|---|---|---|
+| T1 | Expo **default** template SDK 57 (`expo-template-default@57.0.30`) | 0BSD | Expo Router 57 `src/app`, NativeTabs example (`app-tabs.tsx`), typed routes, `expo-glass-effect`, `expo-symbols`, `@expo/ui`, `.icon` app-icon wiring, AGENTS.md | `mobile/` | MVP |
+| T2 | React Native Reusables **`minimal` (NativeWind)** template — theming layer files only | MIT | `babel.config.js`, `metro.config.js`, `tailwind.config.js`, `nativewind-env.d.ts`, `components.json`, `global.css`, `lib/utils.ts` (`cn`), `lib/theme.ts` (replaced by §9.11), `components/ui/{button,icon,text}.tsx` | `mobile/` + `mobile/src/` | MVP |
+| T3 | RNR registry via CLI `add` | MIT | 20 components (Step 3) copied into our repo | `mobile/src/components/ui/` | MVP |
+| T4 | gorhom/react-native-bottom-sheet `example/src/screens/integrations/map/*` | MIT | Map-first sheet pattern: MapExample, LocationListBottomSheet, LocationDetailsBottomSheet, LocationItem, Weather (floating widget tracking the sheet), BlurredBackground, BlurredHandle | `mobile/src/features/map/sheet/` | MVP |
+| T5 | Expo examples `with-skia`, `with-maestro`, `with-sqlite`; `with-maps` only for the optional Expo Go fallback | MIT | Canvas setup; Maestro flow layout; `SQLiteProvider` usage; react-native-maps setup for `MapSurface.expogo.tsx` | snippets only | MVP (maps: optional — if you build `MapSurface.expogo.tsx`, BOTH `@maplibre/maplibre-react-native` and the SDK-bundled `react-native-maps` MUST be installed with `npx expo install`, because Metro bundles every `require()` statically; if you skip the fallback, delete `MapSurface.expogo.tsx` and its branch entirely, §29.13) |
+| T6 | OpenFreeMap **Positron** style | per the openfreemap-styles repo LICENSE (VERIFY and record); tiles/data: OpenMapTiles + © OpenStreetMap (ODbL) | Style JSON recolored to "FordCast Night" by `tools/make_style.py` | `mobile/assets/map/fordcast-night.json` (+ hosted copy, §29) | MVP |
+| T7 | Inter via `@expo-google-fonts/inter@0.4.2` | MIT package, font OFL-1.1 | 4 TTF weights | embedded (§10.1) | MVP |
+| T8 | LottieFiles assets (§10.10) | Lottie Simple License (verify per asset page) | 1 onboarding animation | `mobile/assets/lottie/` | Stretch (optional) |
+| T9 | Figma: Apple **iOS 26 UI Kit** (Apple Design Resources), Google **Material 3 Design Kit** (M3 Expressive), Apple **Icon Composer**, **SF Symbols 7** app | Apple/Google terms (design reference only) | Reference only — **never** shipped in the app | — | reference |
+| T10 | Material Symbols (via `expo-symbols` on Android) / SF Symbols (system on iOS) | Apache-2.0 / Apple SF Symbols license | rendered by the OS | — | MVP |
+
+**Licenses file (`THIRD_PARTY_NOTICES.md`, repo root) [MVP].** Generate it; never hand-type the dependency tables. It has four parts, in this order:
+1. **Templates & assets** — a hand-written table of T1–T8 above (source, license, what we took, where it lives), plus Inter (OFL-1.1), the sounds' source/license (§11.7) and the Lottie creator + URL if T8 is used.
+2. **npm (production dependencies of `mobile/`)** — generated:
+   ```bash
+   npm view license-checker-rseidelsohn version                     # VERIFY BEFORE USE: the package resolves; log the version in docs/decisions/verifications.md
+   (cd mobile && npx --yes license-checker-rseidelsohn --production --markdown) > docs/licenses/npm.md
+   ```
+   VERIFY BEFORE USE the flag names with `npx --yes license-checker-rseidelsohn --help`; if `--markdown` is missing, use its documented Markdown/CSV output option and log the change.
+3. **PyPI (backend + tools)** — generated:
+   ```bash
+   uvx pip-licenses --format=markdown --with-urls > docs/licenses/pypi.md   # VERIFY BEFORE USE (see below)
+   ```
+   VERIFY BEFORE USE that the output lists the **project's** packages (FastAPI, pandas, …) and not only `pip-licenses` itself; `uvx` runs in an isolated environment, so if it lists only itself, run it inside each project instead: `uv run --project backend --with pip-licenses pip-licenses --format=markdown --with-urls` and the same with `--project tools`, and record the working command in `docs/decisions/verifications.md`.
+4. **Data & map attribution (manual section)** — the exact §3.9 "Data attribution" line plus the §16.16 licensing table: one row each for © OpenStreetMap contributors (ODbL), OpenFreeMap, OpenMapTiles, openrouteservice (ORS), USGS (provisional data, subject to revision) and NOAA/NWS, with their license/terms links.
+
+Concatenate the four parts into `THIRD_PARTY_NOTICES.md` (`cat` in a fixed order) and commit; re-run parts 2–3 whenever `mobile/package-lock.json`, `backend/uv.lock` or `tools/uv.lock` changes, and before every tagged build. SF Symbols are used only through the system on iOS; never export SF Symbol artwork into the Android build, the app icon, the README, or the video graphics. Settings → About → **Credits & licenses** (§13.17.5) lists part 1 in the app and links to the full file. Done when: the file has all four parts, the npm and PyPI tables are non-empty and regenerate from the commands above without hand edits.
+
+### 12.2 Template import plan — exact steps [MVP]
+
+**Step 1 — Scaffold** (from the repo root; Node ≥ 22.13):
+```bash
+npx create-expo-app@latest mobile --template default@sdk-57
+cd mobile
+npm run reset-project        # moves the starter into example/ — keep it as reference; delete before tagging cac-2026-submission
+```
+Keep the generated `AGENTS.md` and append the FordCast rules (safety principle, tokens, banned words, no lookahead, "never `npm i <native>@latest`").
+
+**Step 2 — Import the RNR `minimal` theming layer** (files only; stays on SDK 57):
+```bash
+git clone --depth 1 https://github.com/founded-labs/react-native-reusables-templates.git /tmp/_rnr
+cp /tmp/_rnr/minimal/{babel.config.js,metro.config.js,tailwind.config.js,nativewind-env.d.ts,components.json} .
+cp /tmp/_rnr/minimal/global.css src/global.css
+mkdir -p src/lib src/components/ui
+cp /tmp/_rnr/minimal/lib/utils.ts src/lib/utils.ts
+cp /tmp/_rnr/minimal/components/ui/{button,icon,text}.tsx src/components/ui/
+npx expo install nativewind tailwindcss-animate class-variance-authority clsx tailwind-merge @rn-primitives/portal@~1.4.0 @rn-primitives/slot lucide-react-native react-native-svg
+npm install --save-dev tailwindcss@^3.4.19 prettier prettier-plugin-tailwindcss@^0.8.1
+```
+Then edit: `metro.config.js` → `withNativeWind(config, { input: './src/global.css', inlineRem: 16 })`; `tailwind.config.js` → `content: ['./src/**/*.{ts,tsx}']` + the color/radius block from §9.12 + per-weight `fontFamily` (`sans: ['Inter_400Regular'], medium: ['Inter_500Medium'], semibold: ['Inter_600SemiBold'], bold: ['Inter_700Bold']`); `components.json` → `"css": "src/global.css"` and aliases `@/components`, `@/lib`, `@/components/ui`; replace `src/global.css` with §9.12; write `src/lib/theme.ts` from §9.11 (do **not** keep RNR's theme values); add `import '@/global.css'` and `<PortalHost />` to the root layout; confirm `package.json` shows `nativewind ^4.2.7` (not 5.x). Run `npx @react-native-reusables/cli@latest doctor` and `npx expo-doctor@latest`. **Done when:** `<Button><Text>Test</Text></Button>` renders as an ice pill with navy text on the `#0E1726` background.
+
+**Step 3 — Add RNR components** (skip desktop-only `hover-card`, `menubar`, `context-menu`, `tooltip`, and `avatar` — no accounts). The CLI may prompt for the styling library or the destination folder, which a non-interactive agent can't answer, so read its flags first:
+```bash
+npx @react-native-reusables/cli@latest add --help      # 1) VERIFY BEFORE USE: confirm the names of the styling-library, path and yes flags; log them in docs/decisions/verifications.md
+npx @react-native-reusables/cli@latest add card badge alert separator skeleton switch toggle-group toggle tabs progress dialog alert-dialog select input label textarea radio-group checkbox collapsible accordion \
+  --styling-library nativewind --path src/components/ui -y   # 2) flags exactly as --help printed them
+git status --short src/components/ui                    # 3) all 20 files must be here, and nowhere else
+```
+- If `--help` shows a flag under a different name, use that name; if a flag doesn't exist, drop it from the command.
+- **Fallback (the CLI prompts, hangs for more than 2 min, or writes files outside `src/components/ui/`):** stop it, delete any misplaced files, `git clone --depth 1 https://github.com/founded-labs/react-native-reusables.git /tmp/_rnr_registry`, find each component's **NativeWind** source in the repo's registry folder (`git -C /tmp/_rnr_registry ls-files | grep -i <name>`; VERIFY BEFORE USE that the file you pick is the NativeWind variant, not Uniwind), and copy it to `src/components/ui/<name>.tsx`. Then `npx expo install` any `@rn-primitives/*` package each file imports. Record "RNR components copied manually from registry @ <commit sha>" in `docs/decisions/verifications.md`.
+- Then restyle each file per §12.4 in the same commit. **Done when:** `src/components/ui/` holds exactly the 3 Step-2 files + these 20, `npx tsc --noEmit` passes, and the dev gallery (§12.7) renders each one.
+
+**Step 4 — Import the gorhom map example** (MIT; keep the license header in each copied file):
+```bash
+git clone --depth 1 https://github.com/gorhom/react-native-bottom-sheet.git /tmp/_gorhom
+ls /tmp/_gorhom/example/src/screens/integrations/map/
+npx expo install @gorhom/bottom-sheet @shopify/flash-list react-native-gesture-handler react-native-reanimated
+```
+
+| Upstream file | FordCast file | Adaptation |
+|---|---|---|
+| `MapExample.tsx` | pattern for `src/app/(tabs)/index.tsx` (Map Home) | Replace its map with `MapSurface` (MapLibre, §29); keep the `animatedPosition`/`animatedIndex` wiring that moves floating chrome with the sheet; wrap in `GestureHandlerRootView` (root layout). |
+| `LocationListBottomSheet.tsx` | `features/map/sheet/CrossingListSheet.tsx` | **Persistent, non-modal** `BottomSheet` (not `BottomSheetModal`): `index={0}`, `snapPoints={[148, '45%', '88%']}`, `enableDynamicSizing={false}`, `bottomInset={TAB_BAR_H}` (`Platform.select({ ios: 50, android: 80 })` — tab bar height can't be measured; tune on device), `backgroundComponent={SheetBackground}`, `handleComponent={SheetHandle}`. List = FlashList v2 with `renderScrollComponent={useBottomSheetScrollableCreator()}` (`BottomSheetFlashList` is deprecated). |
+| `LocationDetailsBottomSheet.tsx` | content layout → `components/fordcast/CrossingCard.tsx` | **Not used as a gorhom sheet.** Crossing detail is the `crossing/[id]` native formSheet route (decision sheet); reuse only its header/body/actions layout ideas. |
+| `LocationItem.tsx` | `components/fordcast/CrossingRow.tsx` | Rebuild with `StatusChip`, distance (num.md), window, freshness; a11y per §12.5. |
+| `Weather.tsx` | `features/map/MapChrome.tsx` (FreshnessPill + MapControls) | Translate with `animatedPosition` so controls ride 16 pt above the sheet; fade them out above the 45% detent. |
+| `BlurredBackground.tsx` | `features/map/sheet/SheetBackground.tsx` | **Opaque** `surface.1` (sheet = content, §8.3), top radius 24 (iOS) / 28 (Android), 1 pt top highlight. No blur. |
+| `BlurredHandle.tsx` | `features/map/sheet/SheetHandle.tsx` | 36 × 5 pt grabber (`border.strong`) inside a 48 pt-tall pressable with `accessibilityRole="button"`, label "Crossings list" / "Lista de cruces", `accessibilityState={{ expanded }}`, actions `expand`/`collapse` that snap to the next/previous detent (WCAG 2.5.7). |
+
+Rewrite any `@react-navigation/*` import to `expo-router/react-navigation`. **Day-1 device gate:** gorhom 5.2.14 was dev-tested on Reanimated 3.19 (peer `>=4.0.0-` allowed). Install the dev build on the Android test phone on day 1 and drag the sheet over a live MapLibre map for 60 s. **Fallback if it janks, crashes, or steals map gestures:** replace the persistent sheet with a fixed opaque `AreaStatusCard` (148 pt, same content as the collapsed detent) plus a `nearby` formSheet route (detents `[0.45, 0.88]`) opened by "See nearby"; record the switch in `docs/design-deviations.md`.
+
+**Step 5 — Expo examples (snippets, not wholesale copies):**
+```bash
+cd /tmp
+npx create-expo-app@latest _ex_skia    --example with-skia    --no-install
+npx create-expo-app@latest _ex_maestro --example with-maestro --no-install
+npx create-expo-app@latest _ex_sqlite  --example with-sqlite  --no-install
+npx create-expo-app@latest _ex_maps    --example with-maps    --no-install   # only if MapSurface.expogo.tsx is built (§29)
+```
+Take: Skia `Canvas` setup (RiskRing, Sparkline, WaterPulse are written from scratch); `.maestro/` folder layout and `appId` usage (dev build uses our package id; Expo Go uses `host.exp.Exponent`); `SQLiteProvider` + `useSQLiteContext`. **Do not copy** `with-victory-native` (legacy victory-native 35) or `with-tailwindcss` (NativeWind 5 preview).
+
+**Step 6 — Fork the OpenFreeMap Positron style** (Python tools run from the `fordcast-tools` uv project, `tools/pyproject.toml`, §5; never with bare `python3`):
+```bash
+mkdir -p tools/vendor mobile/assets/map
+curl -fsSL https://tiles.openfreemap.org/styles/positron -o tools/vendor/positron.json
+make style      # = uv run --project tools python tools/make_style.py tools/vendor/positron.json > mobile/assets/map/fordcast-night.json
+                #   + uv run --project tools python tools/make_style.py --minimal tools/vendor/positron.json > mobile/assets/map/fordcast-night-minimal.json
+```
+`make_style.py` (generator from research/maps.md §4.3, palette from §9.8) MUST: replace `__TILEJSON_DOMAIN__` with `tiles.openfreemap.org` if present; drop the `ne2_shaded` raster source; recolor by layer `type` + `source-layer`; set every symbol layer's `text-font` to Noto Sans; hide highway shields; with `--minimal`, keep only background, water, waterway, roads and place labels (the fallback style, §13.20). Output is byte-identical on re-run (sorted keys, fixed float formatting). The same `fordcast-night.json` is bundled at `mobile/assets/map/fordcast-night.json` and served at `GET /v1/styles/fordcast-night.json` [Stretch, §22.2]. VERIFY BEFORE USE that the downloaded JSON contains the `openmaptiles` vector source and a `glyphs` URL on `tiles.openfreemap.org`; fallback: download `styles/positron/style.json` from the `hyperknot/openfreemap-styles` GitHub repo.
+
+**Step 7 — Fonts & sounds & sprites:** `npx expo install expo-font @expo-google-fonts/inter`; add the font plugin (§10.1); create `assets/sounds/*.wav` (§11.7); run `make markers` (= `uv run --project tools python tools/make_markers.py`, Pillow) to write the ten canonical sprites — `ic-norise`, `ic-watch`, `ic-avoid`, `ic-closed`, `ic-closed-official`, `ic-unknown`, `ic-unknown-lastwatch`, `ic-unknown-lastavoid`, `ic-unknown-lastclosed`, `ic-flow-arrow`, each `@2x`/`@3x` — into `mobile/assets/map/markers/` (canonical list and registration in §10.9). Commit the PNGs.
+
+**Step 8 — Lottie [Stretch, optional; the `lottie-react-native` module itself is in the Day-1 build, §25.4]:** the human downloads one candidate from §10.10, checks the license line on its page, saves it as `mobile/assets/lottie/onboard-water.json`, and records creator + URL in `THIRD_PARTY_NOTICES.md` part 1. You recolor it to tokens.
+
+**Step 9 — Figma kits (reference only):** you cannot open Figma; the **human** MAY open Apple's iOS 26 UI Kit (developer.apple.com/design/resources) and the Figma Community "Material 3 Design Kit" (verified Google badge) to compare built screenshots for tab-bar spacing, sheet grabber, list-row heights and button proportions, and uses **Icon Composer** to assemble the iOS `.icon` (§15.5). Nothing from these kits is copied into the repo.
+
+**Step 10 — Day-1 smoke gate (Done when all pass on the Android dev build):** RNR Button renders with tokens · NativeTabs shows 4 tabs with correct icons · gorhom sheet drags over MapLibre · a `crossing/[id]` formSheet opens at 0.32/0.62/1.0 · Font probe passes · `StatusChip` renders all 5 states · `expo-doctor` clean.
+
+### 12.3 Import do / don't [MVP]
+- DO keep upstream license headers; DO restyle immediately (no unthemed RNR component may ship).
+- DON'T import HeroUI Native, Tamagui, gluestack, Paper, Moti, or NativeWind 5; DON'T run `rnr init`; DON'T copy any example's `package.json` versions (always `npx expo install`); DON'T use RNR `Button variant="destructive"` (red is reserved for risk; enforced by an ESLint `no-restricted-syntax` rule on `variant="destructive"`).
+
+### 12.4 RNR component restyle rules [MVP]
+
+| RNR component | FordCast usage | Restyle rules (edit the copied file's `cva` variants) | A11y |
+|---|---|---|---|
+| `button` | all non-Drive buttons | `default` = inverse pill (`bg-primary text-primary-foreground`, h-[52px], `rounded-pill`, `font-semibold`, 15 pt); `secondary` = `bg-secondary` h-12 (48); `outline` = 1 pt `border-input` on card; `ghost` = text only, `text-link`; **remove `destructive`**; add size `drive` (h-[76px], 20 pt label). Press: scale 0.97 (A1) + `haptic.select()` on primary. Disabled 40% opacity + reason text nearby. Loading: spinner replaces the leading icon, label stays. | `accessibilityRole="button"`, label = visible text; `accessibilityState={{ disabled, busy }}` |
+| `text` | RNR internals | defaults `font-sans text-foreground`; delegates to `AppText` variants | inherits |
+| `icon` | RNR internals (lucide) | size 20, color `text-secondary` | decorative → hidden |
+| `card` | CrossingCard sections, StormCard, Settings groups, RouteSummaryCard | `bg-card` (surface.1), 1 pt `border` (border.subtle), `rounded-lg` (20), padding 16, no shadow (dark) | group: `accessible` only when the whole card is one action |
+| `badge` | **never for status**; only neutral tags ("Estimated", "Planned", "Prototype", "Built", "REPLAY") | outline: 1 pt `border-input`, `text-tertiary`, `label.chip`; `replay`: violet fill + ink. Status always uses `StatusChip`. | role text |
+| `alert` | basis for `CapabilityBanner`, `StaleBanner`, `OfflineBanner`, disclaimer boxes | `bg-surface-2`, 4 pt left bar: info `#6CB4FF` (capability), dashed `#7A879C` (stale/offline); icon left; never amber/red (reserved) and never green | `accessibilityRole="alert"` only for newly-appearing banners; Android `accessibilityLiveRegion="polite"` |
+| `separator` | lists | `bg-border` hairline; HC → `border-strong` 2 pt | hidden |
+| `skeleton` | `LoadingState` only | `bg-surface-2` with shimmer (A16) — **must be wrapped by `LoadingState`**, which adds the visible "Loading…" label (loading must never look like NO_RISE) | container `accessibilityLabel="Loading crossings"`, `accessibilityState={{ busy: true }}` |
+| `switch` | Settings, per-crossing "Notify me" | track off `surface-3` + 1 pt `border-input`; **on = `#6CB4FF` track + ice thumb** (never cyan, never green); 51 × 31 visual inside a 48 pt row | role `switch`, `accessibilityState={{ checked }}`, label = row text |
+| `toggle` | single toggles in Replay (e.g., "Reveal truth") | off `surface-2` / on inverse pill | role `togglebutton` |
+| `toggle-group` | `SpeedToggle` (1× · 10× · 60×), Alerts filter, Map/List, Nearby/Saved/Ranked, Animations System/Full/Reduced | track `surface-2` radius pill; selected segment = inverse pill (`#F2F5FA` bg, `#0E1726` text); 48 pt height | each item `accessibilityRole="radio"`/`tab` + `selected` |
+| `tabs` | Crossing detail **Now / Upstream / History** | underline indicator 3 pt `foreground`; labels `label.lg`; 48 pt tall | `tablist` / `tab` + `selected` |
+| `progress` | onboarding page progress, offline-map download, replay load | track `surface-3`, fill `#6CB4FF` (never a state color; never "complete = safe" semantics) | `progressbar` + value |
+| `dialog` / `alert-dialog` | Exit Drive Mode confirm, turn-off-alerts confirm, passenger confirm, "Delete my alert data" and "Delete cached data" confirms (§13.16.6), remove-saved-crossing confirm | `bg-popover` (surface.2), radius 24, scrim `rgba(5,9,16,0.60)`; primary action = inverse pill; the cancel is secondary — **except** in destructive or caution-reducing confirms (Delete my alert data, Delete cached data, turn off Avoid & Closed, remove a saved crossing), where the keep/cancel choice is the inverse pill with default focus and the destructive choice is secondary (never red). Inside formSheet/fullScreenModal routes render into a local `<PortalHost name="sheet" />` | focus trapped; `accessibilityViewIsModal` (iOS) |
+| `select` / `radio-group` | language, voice, units, appearance | rows 56 pt; selected radio = `#6CB4FF` ring + ice dot | `radiogroup` / `radio` |
+| `checkbox` | onboarding pledge | 24 pt box, 1.5 pt `border-input`, checked = inverse fill with navy check | `checkbox` + `checked` |
+| `input` / `textarea` / `label` | search, place names | h-12, `bg-surface-2`, `rounded-sm` (10), 1 pt `border-input`, focus 2 pt `ring` (#6CB4FF); placeholder `text-tertiary` | `textContentType`/`autoComplete` set for addresses (WCAG 1.3.5) |
+| `accordion` / `collapsible` | About, How it works, Data sources, methodology | header rows 56 pt, chevron rotates 90° (A10 timing) | `expanded` state |
+
+### 12.5 FordCast custom component inventory [MVP unless tagged]
+
+All live in `mobile/src/components/fordcast/` (one file each), read tokens via `useTheme()`, take strings from i18n keys (§35), respect `useMotionOK()`, support font scaling, and expose ≥ 48 pt hit areas. Every component appears in the dev gallery in every listed state (§12.7).
+
+| Component | Key props | Variants / states | A11y | Screens |
+|---|---|---|---|---|
+| `AppText` | `variant`, `tone`, `colorOverride?` | §10.2 tokens; Bold-Text bump | `accessibilityLanguage` per app language | all |
+| `StatusGlyph` | `state`, `size 16–32`, `rim?: 'none'\|'surface'\|'map'`, `official?`, `lastKnown?` | 5 states + official + last-known badge | decorative (hidden) | chips, rows, legend, sprites |
+| `StatusChip` | `state`, `size 'sm'(24)\|'md'(28)\|'lg'(36)`, `official?`, `long?` | fill/outline per §9.6; CLOSED stripe texture (SVG pattern behind text); UNKNOWN dashed outline drawn with an SVG `Rect strokeDasharray="3 3"` (not RN `borderStyle: 'dashed'`, unreliable with radii on Android) | `accessibilityRole="text"`, label `state.<S>.spoken` (+ ", official"); never pressable | everywhere |
+| `CrossingMarker` (map layer + pulse Markers) | `features`, `selectedId?`, `onPress`, `mode: 'live'\|'replay'` | `<Layer type="symbol">` sprites (MapLibre v11 API — never `SymbolLayer`) using the canonical sprite list in `mobile/assets/map/markers/` (§10.9), cluster layers (§9.8, §29.4), selected ring, `PulseRing` Markers for AVOID in viewport (≤ 20) | map container label summarizing counts; List alternative mandatory | Map Home, Replay player, Drive result map |
+| `CreekLayer` (map) | `creeks`, `activeReachIds`, `pulses: {reachId, p}[]` | calm / active / dash-flow / travel pulse / reduced-motion arrows | decorative | Map Home, Replay |
+| `GaugeLayer` + `GaugeMiniCard` [mini-card Stretch F39] | `gauges`, `onPress` | live / stale / selected | card: "Gauge {name}: {v} ft, {trend}, updated {age}" | Map Home |
+| `RiskRing` | `state`, `size 64\|96`, `animate?` | 5 states (UNKNOWN dashed; CLOSED striped) | hidden (duplicates header) | Crossing sheet half/full |
+| `Sparkline` | `points`, `trigger?`, `height 32\|48`, `replayCutoff?` | rising / falling / flat / gap | `image` + "Upstream trend: rising {x} feet in 30 minutes" | CrossingRow (≥ 72 pt rows), Crossing peek, Replay |
+| `Hydrograph` | `series`, `triggerFt`, `watchFt?`, `nowT`, `playheadT?`, `gaps?`, `height 120\|200`, `axes` | live / replay (playhead) / gap hatch / large-text summary mode | `image` + full sentence; **"Show readings"** button opens `ReadingsList` (text alternative) | Crossing Upstream tab, Replay |
+| `LagPair` | `upstream`, `road`, `tauRange: [lo, hi]` (τ bucketed to a 15-min range from its P25/P75: `lo = floor(P25/15)·15`, `hi = max(lo + 15, ceil(P75/15)·15)`; never the median alone) | live [Stretch F45] / replay | `image` + the spoken travel range (`travel.range_spoken`, §3.7): "Water usually takes 30 to 45 minutes to get from the gauge to the road" — never a single number; the connector label is the visual range "30–45 min" (`travel.range`). Exact τ appears only on the debug screen (§13.22) and in docs | Crossing full, Replay |
+| `RiskWindow` | `state`, `window [lo,hi] \| null`, `asOf` | likely bracket (AVOID) / possible band (WATCH with window) / hidden (NO_RISE, UNKNOWN, CLOSED) | "Likely flooded within 15 to 30 minutes, as of 10:42 PM" | Crossing half |
+| `EtaRangePill` | `state`, `window`, `closedKind?: 'official'\|'sensor'` | AVOID with `lo > 0`: "likely flooded within {{lo}}–{{hi}} min" (e.g. 15–30); AVOID with `lo = 0` (windows [0,15] or [0,30]): "Water may already be on the road" (the `headline_now` wording, §3.5 rule 2 — never "0 min" and never a "now–…" range); WATCH with a window: "possible within {{lo}}–{{hi}} min" (`lo = 0` → "water rising upstream"); WATCH without a window: "water rising upstream"; CLOSED: "water over road" (sensor) / "closed · {{source}}" (official); NO_RISE and UNKNOWN: pill hidden (§3.5 rule 5). **Never a single number, never the word "now" with a number, never a countdown.** | spoken variant from `*_spoken` keys ("15 to 30 minutes") | Crossing sheet, rows, Drive HUD, notifications preview |
+| `ReasonList` ("Why this alert?") | `reasons`, `model` | rule reasons / ML top-3 (Prototype tag) / none ("No upstream rise detected at linked gauges") | list of sentences | Crossing half/full |
+| `OfficialSourceBadge` | `source`, `at` | official closed / official "no closure reported" (quoted verbatim, never "open") | "Official: City of Austin, 10:31 PM" | Crossing sheet, rows, alerts |
+| `TierBadge` | `tier 'A'\|'B'\|'C'` | A hidden; B "Estimated"/"Estimado"; C "Not monitored by FordCast"/"Sin monitoreo de FordCast" | text | Crossing sheet, rows |
+| `UpdateLog` | `entries {t, from, to, reason}` | list, max 20, newest first | rows read "10:42 PM. Watch to Avoid. Upstream above trigger." | Crossing History tab |
+| `CrossingCard` | `crossing`, `detent 0\|1\|2`, `mode` | live / replay / official override / unknown / tier C | header `accessibilityRole="header"`; order header → window → why → actions → footer | `crossing/[id]` |
+| `CrossingRow` | `crossing`, `variant 'nearby'\|'route'\|'crew'\|'alert'\|'saved'`, `distanceM?` | 56 pt (dense) / 72 pt (chip + window) / stacked (fontScale ≥ 1.35); `saved` adds the per-crossing "Watch alerts" switch and a ⋯ menu with Remove | label `row.spoken` (starts with visible name, WCAG 2.5.3); actions `activate`, `detour` [Stretch F50], `save`/`remove` | sheet list, Crew [Stretch], Alerts, Saved, Drive tab shell |
+| `AreaStatusCard` | `worst`, `counts`, `gauges`, `crossings`, `asOf`, `location 'ok'\|'denied'\|'unknown'` | calm / watch-nearby / avoid-nearby / offline / no-location / loading | one `accessible` group + buttons separately focusable | Map Home sheet (collapsed) |
+| `FreshnessPill` (§5: `FreshnessBadge`) | `status 'live'\|'aging'\|'degraded'\|'offline'\|'replay'` (internal names only — the UI never prints the word "Live"), `asOf` | check age ≤ 10 min: cyan dot + breathe (A15), text `fresh.checked` "Checked 2 min ago" / "Revisado hace 2 min" · aging 10–20 min: slate dot, same text + "as of {{time}}" chip (`fresh.as_of`) · degraded: dashed dot, `fresh.partial` "Some gauges delayed" · offline (> `stale_after_s`, default 1,200 s): dashed ring, `fresh.offline` "Data offline · 47 min" · replay: violet "REPLAY" + sim clock. The pill shows **check age** only; the newest **reading** age lives on the Crossing Card (`fresh.newest_reading`, §3.4, §13.8) | button → Settings → Data sources (§13.16.5) | Map Home, Replay |
+| `StaleBanner` | `ageMin`, `affected` | some gauges delayed / all stale | `alert` on appear | Map Home, Crossing |
+| `OfflineBanner` | `asOf`, `reconnecting?` | offline / reconnecting / server error | `alert` on appear | all tabs (top, under chrome) |
+| `CapabilityBanner` | `kind`, `onAction?` | `expoGo` · `notificationsOff` · `backgroundOff` · `pushUnavailable` · `preciseOff` · `killSwitch` · `appBanner` (from `app_config`) | `alert` once | Alerts, Drive, Settings |
+| `AlertBanner` | `state`, `crossing`, `window`, `onPress` | WATCH (auto-dismiss ≥ 10 s or Android `getRecommendedTimeoutMillis`) · AVOID/CLOSED (persist until tapped/dismissed) · UNKNOWN (once) | Android `accessibilityLiveRegion` assertive (AVOID/CLOSED) / polite; iOS `announce()` | Map Home, Drive tab |
+| `ReplayBanner` | `stormName`, `state`, `assumptions` | playing / paused / ended | "Replay, real historical data from {storm}, not live" | Replay player, results, Replay drive (F128), mini-bar [Stretch] |
+| `ReplayScrubber` (§5: `TimeScrubber`) | `startT`, `endT`, `simT`, `events`, `gaps`, `onScrub`, `onStep(±5)` | idle / dragging / playing / ended | `accessibilityRole="adjustable"`, value = spoken sim time + the last event already passed (never the minutes left until a future flood); increment/decrement ±5 min | Replay player |
+| `SpeedToggle` | `value 1\|10\|30\|60\|120` | 3 visible segments **1× · 10× · 60×** + a "More" overflow with 30× and 120× (§4 F78) | radios "1 times / 10 times / 60 times speed"; overflow is a menu button | Replay player |
+| `ReplayMiniBar` / `BottomAccessory` content [Stretch F41 — both the JS bar and the iOS accessory; §4 is the tier authority] | `storm`, `simT`, `playing` | iOS 26 `NativeTabs.BottomAccessory` (`regular`/`inline` placement) · JS mini-bar above the tab bar elsewhere (A18b). **MVP (no mini-bar):** leaving the Replay player pauses playback and keeps `simT`; returning resumes from the same moment | buttons Play/Pause and "Back to replay" / "Volver a la reproducción" (`replay.back`) | all tabs while a replay runs (once shipped) |
+| `StormCard` | `storm`, `metrics` (from catalog JSON only) | ready / downloading / unavailable | "Memorial Day 2015 storm. {n} crossings scored. Median warning {m} minutes earlier. Play." | Replay picker |
+| `MetricTile` | `kind 'POD'\|'FAR'\|'CSI'\|'LEAD'`, `value`, `ci?` | value / pending ("—", "Pending backtest") ; FAR shows "lower is better ↓" | "Probability of detection, 83 percent, confidence interval…" | Replay results, How accurate |
+| `RouteSummaryCard` [Stretch F49] | `verdict`, `hits`, `detour?`, `asOf` | no rise on route / watch / avoid + detour / unknown segments / no route available / routing offline | header + actions | Drive result |
+| `RouteRibbon` | `next: {name, distanceM, state}[]` (max 3) | with a checked route [Stretch]: next 3 crossings on the route · without a route [MVP]: the 3 nearest at-risk crossings within 10 km ahead of the heading | each node one stop | Drive Mode |
+| `DriveHUD` | `state`, `window`, `name`, `distanceM`, `voice` | calm / watch / avoid / closed / unknown / offline | live region assertive | Drive Mode |
+| `BigActionButton` | `label`, `icon`, `onPress`, `emphasized?` | 76 pt / 96 pt emphasized; primary/secondary | label = visible text | Drive Mode, Drive start |
+| `PassengerHoldButton` (§5: `PassengerHold`) | `onConfirm`, `holdMs=1500` | idle / holding (progress ring) / cancelled | action `activate` "Confirm I am a passenger" | lockout dialog |
+| `MapControls` | `onList`, `onLayers`, `onLocate`, `zoom?`, `side?: 'right'\|'left'` | solid tonal (glass = Stretch F41); `[≡]` Layers hidden until F38's Layers sheet ships; zoom ± auto-shown when a screen reader or Switch Control is on, or Settings "Show zoom buttons"; `side='left'` when Settings → Accessibility → "Controls on left" is on [Stretch F38b, §8.6] | each labeled ("List of crossings", "Map layers", "Center on my location", "Zoom in/out") | Map Home, Replay |
+| `GlassSurface` / `GlassIconButton` | `pressable?`, `badge?` | fallback (solid tonal — the only look in MVP, `features.glassChrome = false`) / glass [Stretch F41, iOS 26] / pressed / disabled | label required on button | chrome |
+| `ScreenHeader` | `title`, `trailing?` | large title (display.md) + gear (GlassIconButton) | title `header` | tab roots |
+| `SectionHeader` | `title`, `action?` | — | `header` | lists |
+| `SearchField` | `value`, `onChange`, `locked?` | idle / focused / results / locked-while-moving ("Typing is locked while moving") | `search` role; locked → `disabled` + hint | search sheet, Drive input |
+| `ListRow` | `title`, `subtitle?`, `leading?`, `trailing?` | crossing / gauge / setting / place / source | label = title + subtitle | Settings, Saved |
+| `EmptyState` | `kind`, `action?` | alerts-empty / no-saved / no-results / no-location / no-route | heading + body | Alerts, Saved, Search |
+| `LoadingState` | `kind 'map'\|'list'\|'card'\|'chart'` | skeleton + **visible "Loading…" text**; map: crossings are **not drawn** until data arrives (no grey circles that look like NO_RISE) and the sheet shows "Loading crossings…" | `busy` | Map Home, sheets |
+| `DisclaimerFooter` | `variant 'tadd'\|'compact'\|'full'` | tadd: `state.no_rise.footer` "Water can cover a road without warning. Turn around, don't drown." · compact: the §3.9 persistent footer "FordCast is a supplementary tool. Obey barricades and official warnings. Never drive into water." · full: the §3.9 "About → Legal" text (`legal.about`) | text | Map sheet, Crossing, Drive, About, Legal |
+| `LegendContent` | — | all 5 states + REPLAY + gauge + creek + route | each row one stop | `legend` sheet, onboarding P3 |
+| `PermissionPrimer` | `kind 'location'\|'notifications'\|'background'` | — | heading + bullets + 2 buttons | `permission/[kind]` |
+| `PledgeCard` | `onAccept` | 3 unchecked → all checked enables "I understand" | checkboxes | onboarding P4 |
+| `LanguagePicker` | `value 'system'\|'en'\|'es'` | — | radios; ES option labeled "Español" with `accessibilityLanguage="es-US"` | onboarding P1, Settings |
+| `DataSourceRow` | `name`, `lastOkAt`, `status 'ok'\|'degraded'\|'down'\|'unused'`, `detail?`, `url?` | working / delayed / not responding / not used (words carry the meaning; dot is neutral slate/dashed — never green, amber or red, which are reserved) | label includes status word + age | Settings → Data sources (§13.16.5) |
+| `HandoffOptions` [Stretch F53] | `apps`, `vias`, `twoLeg` | Apple / Google / Waze; two-leg explainer | buttons | `handoff` sheet |
+| `ReadingsList` | `points`, `unit` | last 12 readings | table rows "10:30 PM, 6.4 feet" | chart text alternative |
+| `Toast` (sonner-native wrapper) | `message`, `icon?` | neutral only ("Saved", "Link copied", "Language changed", "Deleted") — **no success/green variant; never used for safety** | announced politely | various |
+| `DemoTouchOverlay` [MVP, part of DEMO_MODE §4 F83; demo builds only] | `enabled` (demo flag only) | draws a 44 pt translucent ring at each touch for iOS screen recordings (Android uses `scrcpy --show-touches`, §41) | hidden from screen readers | all (demo builds) |
+| `ReportWaterStub` [Roadmap F115] | — | "Planned: report water over a road (passengers only)" — no form | text | Crossing full |
+
+**Components that must never exist:** a green anything; a "safe"/"open"/"all clear" badge; a countdown timer; a red destructive button; a toast carrying a safety state.
+
+### 12.6 Folder placement [MVP]
+```
+mobile/src/components/ui/           RNR (owned, restyled)
+mobile/src/components/fordcast/     custom components above (+ illustrations/)
+mobile/src/features/map/            MapSurface*, layers, sheet/, MapChrome
+mobile/src/features/replay/         player store, clock, timeline loader, results
+mobile/src/features/drive/          Drive Mode, lockout, speech queue (route check lives in features/routing/, §28.1)
+mobile/src/features/alerts/         channels, notify, push registration, subscriptions, delete-my-alert-data (§13.16.6)
+mobile/src/features/about/          claims.generated.json (generated by `make claims`; never hand-edited, §13.17.1)
+mobile/src/lib/                     theme.ts, useTheme.ts, motion.ts, haptics.ts, fonts.ts, a11y (§34), i18n (§35)
+```
+
+### 12.7 Dev gallery `src/app/dev/gallery.tsx` [MVP, `__DEV__` only, §4 F31b]
+The gallery renders **components** in isolation with fixture props; the debug screen (§13.22) drives **whole screens** into each state. Both are `__DEV__` only (`<Redirect href="/" />` otherwise) and both are reachable from each other.
+
+Sections: Font probe · Type scale · Colors (dark/HC/light) with live contrast numbers · Icons (§10.9, both blocks) · StatusGlyph × 5 × sizes · StatusChip × 5 × sizes × official · markers (every sprite in `mobile/assets/map/markers/`, §10.9, at z11 and z16 sizes) · every banner (`CapabilityBanner` kinds, `StaleBanner`, `OfflineBanner`, `AlertBanner` per state) · RiskRing/RiskWindow/EtaRangePill for every state and window bucket ([0,15], [0,30], [15,30], [30,60], [60,90], none) · LagPair with a bucketed travel range · Hydrograph live/replay/gap · CrossingCard in every §13.8 variant · CrossingRow in every variant incl. `saved` · buttons incl. Drive sizes · LoadingState vs NO_RISE side by side · screen mocks: **Drive tab MVP shell** (§13.10), **Saved crossings** filled + empty (§13.15), **Map Home full-detent List view** (§13.5), each Settings sub-screen (§13.16–§13.17) · a **target-size overlay** toggle that outlines every pressable smaller than 48 pt in red-dashed. `make cvd` (= `uv run --project tools python tools/cvd_screens.py docs/a11y/screenshots docs/a11y/cvd`, §34) turns screenshots of this gallery into the README's CVD 4-up [Stretch F95]. Done when: the gallery renders every listed item without warnings on the dev build.
+
+### 12.8 Acceptance for §12
+- [ ] Done when: Steps 1–10 are complete, `THIRD_PARTY_NOTICES.md` exists with all four parts (§12.1), and the Day-1 smoke gate passes on Android.
+- [ ] Done when: the RNR flag names (or the manual-copy fallback) are recorded in `docs/decisions/verifications.md` (§12.2 Step 3).
+- [ ] Done when: `make style` and `make markers` regenerate their outputs byte-/pixel-identically from a clean checkout using only `uv run --project tools …` (no bare `python3`).
+- [ ] Done when: no RNR component renders with its stock (un-restyled) colors (visual check in the gallery).
+- [ ] Done when: ESLint fails on `variant="destructive"`, on `@react-navigation/*` imports, and on raw `Text` from `react-native` outside `AppText`.
+
+---
+## §13. Screen-by-screen specs
+
+> Conventions: every string comes from i18n keys (§35); key names are shown as `key.name`. **§3.7 owns all user-facing copy:** status, safety, notification and voice strings are quoted here verbatim from §3.7 (if they ever differ, §3.7 wins and this section is corrected); chrome strings first defined here (`settings.*`, `common.*`, `search.*`, `permissions.*`, `saved.*`, `drive.*` UI labels) MUST be added to the §3.7 bank, both locale files and `es-pending-review.json` in the same commit. **All Spanish strings require native-speaker review** (research/cac.md §6.3). Visual ranges use an en dash; spoken variants (`*_spoken`) spell out "15 to 30 minutes" / "de 15 a 30 minutos". Every screen lists its a11y reading order; every state listed MUST exist in the dev gallery (§12.7) or be reachable from the debug screen (§13.22, `settings/debug`, `__DEV__`). Crossing and gauge names in wireframes are layout examples built from real Austin creeks, roads and USGS gauges (§16.18); at runtime every name, number and time comes from data, and fixtures use the test crossing `test-0001` (§23.9) — never invent a gauge or road name.
+
+### 13.1 Splash [MVP]
+```
+┌─────────────────────────────────┐  Native splash (expo-splash-screen): bg #0E1726,
+│                                 │  splash-icon = "The Dip" glyph, imageWidth 76.
+│                                 │  JS overlay (template's AnimatedSplashOverlay pattern):
+│              ╲   ╱              │   0–600 ms  cyan creek path trims in toward the dip (A17)
+│          ~~~~ ╲_╱ ~~~~          │   600–900 ms fade to Onboarding or Map Home
+│            FordCast             │  Reduce Motion: static, 300 ms fade.
+│     Know before it crosses.     │  Never waits on the network; waits ≤ 2,000 ms for fonts.
+│                                 │
+└─────────────────────────────────┘
+```
+Copy: `app.tagline` "Know before it crosses." / "Sepa antes de que el agua cruce." Done when: cold start to first interactive frame ≤ 2.5 s on the Android test phone with the network off.
+
+### 13.2 Onboarding — 4 pages [MVP] (routes `(onboarding)/index · how · legend · pledge`, one page per route with a horizontal slide transition; `Stack.Protected` gate until the pledge is accepted)
+```
+P1 WELCOME + LANGUAGE               P2 HOW IT WORKS
+┌─────────────────────────────┐     ┌─────────────────────────────┐
+│ (• Device)(English)(Español)│     │ How it works                │
+│                             │     │ ① ·── Upstream gauges see   │
+│  [OnboardCreek SVG (MVP);   │     │       water rising          │
+│   Lottie ≤ 3 loops Stretch] │     │ ② ~~» FordCast learned how  │
+│                             │     │       long water takes to   │
+│ Know before it crosses.     │     │       reach each crossing   │
+│ FordCast watches stream     │     │ ③ ○→▲→◆ Your crossing turns │
+│ gauges upstream of low-     │     │       Watch, then Avoid,    │
+│ water crossings and warns   │     │       before water arrives  │
+│ you before water reaches    │     │ Real USGS data, checked     │
+│ the road.                   │     │ every 5 min. Alerts can     │
+│                     ● ○ ○ ○ │     │ arrive minutes late. ● ● ○ ○│
+│ [          Next           ] │     │ [          Next           ] │
+└─────────────────────────────┘     └─────────────────────────────┘
+P3 WHAT THE MAP SHOWS               P4 SAFETY PLEDGE (required)
+┌─────────────────────────────┐     ┌─────────────────────────────┐
+│ What the map shows          │     │ Before you start            │
+│ ○  No rise detected         │     │ ☐ I will never drive into   │
+│ ▲  Watch – water rising     │     │   water.                    │
+│    upstream                 │     │ ☐ I will obey barricades and│
+│ ◆  Avoid – likely flooded   │     │   official warnings.        │
+│    soon                     │     │ ☐ FordCast is a student-    │
+│ ▧  Flooded – Closed         │     │   built forecast. It can be │
+│ ◌  Unknown – data offline   │     │   wrong or late, and it     │
+│ FordCast never says a road  │     │   never tells me a road is  │
+│ is safe.                    │     │   safe.                     │
+│                     ● ● ● ○ │     │ [      I understand       ] │ disabled until 3 checks
+│ [          Next           ] │     │ Turn around, don't drown.   │
+└─────────────────────────────┘     └─────────────────────────────┘
+```
+- **Copy (key → EN / ES).** Onboarding keys MUST live in the namespaces allow-listed or scanned by §3.12/§35.2 (`onboarding.*`; the allow-listed negations are `onboarding.legend.*` and `onboarding.pledge.*`). Never use `onb.*` or bare `pledge.*` keys.
+  - `onboarding.welcome.title` "Know before it crosses." / "Sepa antes de que el agua cruce."
+  - `onboarding.welcome.body` "FordCast watches stream gauges upstream of low-water crossings and warns you before water reaches the road." / "FordCast vigila los medidores río arriba de los cruces bajos y le avisa antes de que el agua llegue al camino."
+  - `onboarding.how.title` "How it works" / "Cómo funciona"; steps `onboarding.how.step1` "Upstream gauges see water rising" / "Los medidores río arriba ven subir el agua", `onboarding.how.step2` "FordCast learned how long water takes to reach each crossing" / "FordCast aprendió cuánto tarda el agua en llegar a cada cruce", `onboarding.how.step3` "Your crossing turns Watch, then Avoid, before water arrives" / "Su cruce cambia a Precaución y luego a Evite antes de que llegue el agua", `onboarding.how.data` "Real USGS data, checked every 5 min." / "Datos reales del USGS, revisados cada 5 min."
+  - `onboarding.how.late` = `alerts.why_late` (§3.7) "Alerts can arrive minutes late, and FordCast doesn't cover every road." / "Las alertas pueden llegar con minutos de retraso, y FordCast no cubre todos los caminos." No travel-time number appears anywhere in onboarding (no hand-typed metric, no single-number travel time; §3.5 rule 8, §1.5).
+  - P3: title `onboarding.legend.title` "What the map shows" / "Lo que muestra el mapa"; rows reuse the state labels (`state.*.label`) plus `onboarding.legend.watch` "water rising upstream" / "el agua sube río arriba", `onboarding.legend.avoid` "likely flooded soon" / "probablemente inundado pronto"; closing line `onboarding.legend.never_safe` "FordCast never says a road is safe." / "FordCast nunca dice que un camino es seguro." (allow-listed negation).
+  - P4 pledge = the §3.9 pledge keys, verbatim (three checkbox items): `onboarding.pledge.title` "Before you start" / "Antes de empezar" · `onboarding.pledge.item1` "I will never drive into water." / "Nunca manejaré en el agua." · `onboarding.pledge.item2` "I will obey barricades and official warnings." / "Respetaré las barricadas y las alertas oficiales." · `onboarding.pledge.item3` "FordCast is a student-built forecast. It can be wrong or late, and it never tells me a road is safe." / "FordCast es un pronóstico creado por un estudiante. Puede equivocarse o llegar tarde, y nunca me dice que un camino es seguro." · `onboarding.pledge.accept` "I understand" / "Entiendo" · `onboarding.pledge.hint` "Check all three statements to continue" / "Marque las tres frases para continuar" · footer `onboarding.tadd` "Turn around, don't drown." / "¡Dé la vuelta, no se ahogue!" (if §3.9 changes any of these, §3.9 wins).
+- **Interactions:** Next / Back (iOS edge-swipe back, Android system back); "Skip" (top-right, P1–P3) jumps to P4 — the pledge can never be skipped. Language selection applies instantly (re-renders all pages). On accept: store `pledgeAcceptedAt` + `pledgeVersion` (kv-store); re-show P4 when `pledgeVersion` increases. Onboarding is re-openable from Settings → About → "Replay introduction".
+- **A11y:** each page = one heading + body; dots hidden from screen readers; Next labeled "Next, page 2 of 4"; checkboxes are real `checkbox` roles; the disabled button exposes `onboarding.pledge.hint` ("Check all three statements to continue") as its hint. ≤ 40 words of body per page.
+- **States:** Reduce Motion → static illustration; fontScale ≥ 2 → each page scrolls vertically; Spanish +30% verified.
+- Done when: a fresh install cannot reach Map Home without accepting the pledge; changing language on P1 changes the whole flow.
+
+### 13.3 Permission priming (progressive, contextual) [MVP location + notifications; Stretch background]
+```
+┌─────────────────────────────┐   permission/location — contextual (§30.1): shown once, right before
+│                    Not now  │   the first "Locate me", Check My Drive or Drive Mode — never on the
+│                             │   first Map Home render. The map centers on Austin until then.
+│      [LocationPin SVG]      │
+│                             │   Title  "See crossings near you"
+│ See crossings near you      │          "Vea los cruces cerca de usted"
+│ • Centers the map on you    │   Body   §3.9 "Location primer" (`permissions.location.body`):
+│ • Checks crossings on your  │   "FordCast uses your location to show crossings near you
+│   drive                     │    and on your route. Your location stays on your phone."
+│ • Your location stays on    │   [Continue] → requestForegroundPermissionsAsync()
+│   your phone                │   [Not now]  → map centers on Austin (30.2672, −97.7431), z 10.5
+│ [        Continue         ] │
+└─────────────────────────────┘
+```
+| Primer | Trigger (never at first launch) | Before the OS prompt | Denied / later state |
+|---|---|---|---|
+| `location` (When In Use) [MVP F110] | Before the first "Locate me" (`[➤]`), Check My Drive [Stretch F49] or Drive Mode — whichever comes first; **never on the first Map Home render** (§30.1). Until then the map centers on Austin (30.2672, −97.7431), z 10.5 | Primer above | Map centers on Austin; collapsed sheet row "Location is off — showing Austin" / "La ubicación está apagada — mostrando Austin" [Turn on] → `Linking.openSettings()` |
+| `notifications` | User taps **Notify me** on a crossing, saves a place/route, or enables Alerts in Settings | **Create Android channels first** (§31), then primer: "Get warnings for crossings you save" / "Reciba avisos de los cruces que guarde" + "Alerts can arrive minutes late." | Alerts tab shows `CapabilityBanner notificationsOff`: "Notifications are off. FordCast can't warn you in the background." [Turn on] |
+| `background` (Always) [Stretch] | User turns on **"Alert me while I use other apps"** (Drive tab or Settings → Drive Mode) | Primer = §3.9 "Background location primer" (`permissions.background.body`) + platform step: iOS "Choose **Change to Always Allow**"; Android 11+ "On the next screen, tap **Allow all the time**" (settings opens) + "We watch the nearest at-risk crossings, not your trips." | Settings row "Background alerts: off. Tap to enable." Drive Mode still works in the foreground |
+| Precise location (Approximate granted) [Stretch, §4 F110b] | Detected after grant: Android `android.accuracy === 'coarse'`; iOS reduced accuracy is unverified — VERIFY BEFORE USE in `Location.types.d.ts`; fallback: `coords.accuracy > 1000` m for 3 consecutive fixes (§30.1) | — | `CapabilityBanner kind="preciseOff"`: `permissions.precise_needed` "Precise location is needed for crossing alerts." / "Se necesita la ubicación precisa para los avisos de cruces." [Go to Settings] → `Linking.openSettings()`. Done when: granting Approximate on Android shows the banner once per session and the map still works |
+
+Every primer has **Not now**; the app stays fully usable without any permission. A11y: the primer title is focused first; buttons labeled with visible text. Done when: the OS location prompt never appears before the primer; a fresh install that only browses the map (no Locate me, no Drive Mode) never sees the location primer; and the notification prompt never appears before the user asked for alerts.
+
+### 13.4 Map Home [MVP] (route `(tabs)/index`)
+
+**Calm (collapsed sheet, 148 pt):**
+```
+┌─────────────────────────────────┐
+│(● Checked 2 min ago)    [?] [⚙] │ FreshnessPill (check age; solid tonal — glass = Stretch F41) · Legend · Settings (44 visual / 48 hit)
+│▓▓▓▓▓▓~~~▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓│ ~ calm creeks (cyan @50%)
+│▓▓○▓▓▓▓▓~~~▓▓▓▓▓▓○▓▓▓▓▓▓▓▓▓▓▓▓▓▓│ ○ NO_RISE (z ≥ 11), · gauge dots
+│▓▓▓▓▓·▓▓▓▓~~~~▓▓▓▓▓▓▓▓▓▓▓▓▓▓[☰]▓│ [☰] List
+│▓▓▓▓▓▓▓▓▓▓▓▓▓▓~~~○▓▓▓▓▓▓▓▓▓▓[≡]▓│ [≡] Layers (hidden until the §4 F38 Layers sheet ships)
+│▓▓▓▓▓▓▓▓◉▓▓▓▓▓▓▓▓~~▓▓▓▓▓▓▓▓▓[➤]▓│ [➤] Locate me (first tap → location primer, §13.3); controls ride 16 pt above the sheet
+│╭──────────────═══──────────────╮│ SheetHandle (48 pt hit)
+││(○ NO RISE DETECTED) near you  ││ chip md + `area.near_you`
+││[⌕]  [    Drive Mode ▶    ]    ││ 48 search · Drive Mode = primary inverse pill [MVP]. [Check my drive] (secondary)
+││                               ││   is inserted left of Drive Mode only once §4 F49 ships [Stretch] — never a dead button
+││Turn around, don't drown.      ││ DisclaimerFooter tadd (always visible)
+│╰───────────────────────────────╯│
+│ [Map]  [Drive]  [Replay] [Alerts]│ NativeTabs
+└─────────────────────────────────┘
+```
+**Storm (AVOID near you):**
+```
+┌─────────────────────────────────┐
+│(● Checked 1 min ago)    [?] [⚙] │
+│┌───────────────────────────────┐│ AlertBanner (persists): 4 pt red left bar; chip + name + `state.avoid.headline`
+││◆ AVOID  Bull Creek at Loop 360 ││ "Avoid · likely flooded within 15–30 min"   [Show ›]
+│└───────────────────────────────┘│
+│▓▓▓▓~~~~▓▓▓▓▲▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓│ ▲ WATCH + static amber halo
+│▓▓▓▓▓▓~~~»»»◆▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓[≡]▓│ »»» water-travel pulse [Stretch, F32] → ◆ AVOID (halo ×3)
+│▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▧▓▓▓▓▓▓▓▓▓▓[➤]▓│ ▧ CLOSED (`ic-closed-official` shield)
+│╭──────────────═══──────────────╮│
+││(◆ AVOID) 1 · (▲ WATCH) 2 ·    ││ worst state first; counts tnum (`area.nearby_count`)
+││(▧ CLOSED) 1 near you          ││
+││[⌕]  [    Drive Mode ▶    ]    ││
+││Turn around, don't drown.      ││
+│╰───────────────────────────────╯│
+│ [Map]  [Drive]  [Replay] [Alerts•2]  badge = unread AVOID/CLOSED
+└─────────────────────────────────┘
+```
+**Offline / stale:**
+```
+┌─────────────────────────────────┐
+│(◌ Data offline · 47 min) [?] [⚙]│ FreshnessPill offline (dashed ring, `fresh.offline`)
+│┌───────────────────────────────┐│ OfflineBanner: `fresh.as_of_offline` "Risk as of 10:01 PM — you're offline"
+│└───────────────────────────────┘│
+│▓▓◌▓▓▓▓▓~~~▓▓▓▓▓▓◌▓▓▓▓▓▓▓▓▓▓▓▓▓▓│ every crossing → ◌ UNKNOWN (last-known AVOID keeps a
+│▓▓▓▓▓▓▓▓▓▓▓▓▓▓~~~◌▓▓▓▓▓▓▓▓▓▓[≡]▓│ small red octagon badge inside the dashed frame: `ic-unknown-lastavoid`)
+│╭──────────────═══──────────────╮│
+││(◌ UNKNOWN) Data offline       ││ `area.offline` "Data offline. Treat low-water crossings as if they could flood."
+││[⌕]  [    Drive Mode ▶    ]    ││
+││Turn around, don't drown.      ││
+│╰───────────────────────────────╯│
+```
+**One crossing's readings are old (per-crossing UNKNOWN, check age fresh):** the pill still says "Checked 2 min ago"; only the crossings whose own newest upstream reading has passed its gauge's stale limit (§18.9; the snapshot's `latest_obs_at`) render `◌ UNKNOWN` with reason `DATA_STALE` and their last-known badge; every other crossing keeps its state (§3.4, §8.1 P6). The sheet's worst-state row counts them as Unknown.
+**Loading (first launch / cold cache):** basemap renders; **no crossing markers are drawn** until data arrives; FreshnessPill `fresh.connecting` "Connecting…" / "Conectando…"; sheet row = `LoadingState` "Loading crossings…" / "Cargando cruces…" (skeleton bar + spinner) — never a NO_RISE chip. After 10 s without data and no cache → the bundled seed crossings render as UNKNOWN with the offline layout above (F86).
+**Replay-active (a replay is loaded in the Replay tab):** the live map is unchanged (live data only — replay states never appear on Map Home). **MVP:** there is no mini-bar; leaving the Replay player paused the replay (§13.13), so Map Home shows nothing replay-related. **[Stretch F41]:** a violet `ReplayMiniBar` sits above the tab bar: `▶ REPLAY · Memorial Day 2015 · 10:42 PM  [Pause] [Back to replay]` (iOS 26: `NativeTabs.BottomAccessory`; elsewhere the JS bar, A18b).
+**Location denied or not yet asked:** camera at Austin (30.2672, −97.7431, z 10.5); sheet chip row replaced by "Location is off — showing Austin" / "La ubicación está apagada — mostrando Austin" [Turn on] (denied → `Linking.openSettings()`; never asked → the §13.3 primer).
+**Screen reader on (or Settings → Accessibility → "Show the list first"):** Map Home opens with the sheet at 88 % in **List** view (wireframe in §13.5); the map container's label summarizes: "Map. 1 crossing Avoid, 2 Watch within 10 miles. Use the list for details."
+**Kill switch / app banner:** `CapabilityBanner kind="appBanner"` with `banner_en`/`banner_es` from `app_config` under the top chrome.
+
+- **Copy (EN / ES):** chip row `state.no_rise.short` + `area.near_you` "near you" / "cerca de usted"; counts `area.nearby_count` (§3.7) "{{state}} · {{count}} near you" / "{{state}} · {{count}} cerca de usted"; half-detent headline `state.no_rise.area_headline` (§3.7 "area headline") "No upstream rise detected near you" / "No se detecta crecida río arriba cerca de usted"; `area.offline` "Data offline. Treat low-water crossings as if they could flood." / "Sin datos. Trate los cruces bajos como si pudieran inundarse."; buttons `cta.driveMode` "Drive Mode" / "Modo manejo" [MVP], `cta.checkDrive` "Check my drive" / "Revisar mi ruta" [Stretch F49]; freshness (§3.4) `fresh.checked` "Checked {{age}}" / "Revisado {{age}}" ({{age}} = "2 min ago" / "hace 2 min"), `fresh.as_of` "As of {{time}}" / "A las {{time}}", `fresh.partial` "Some gauges delayed" / "Algunos medidores con retraso", `fresh.offline` "Data offline · {{age}}" / "Sin datos · {{age}}". The word "Live" / "En vivo" never appears on its own anywhere (§3.4).
+- **Freshness thresholds (check age = `now − snapshot.as_of`, skew-corrected):** read `stale_after_s` from the snapshot (§22.3; default 1,200 s = the §3.4 20-minute rule). Pill: check age ≤ 10 min → normal; 10–20 min → aging (slate dot + "as of" chip); > `stale_after_s` or `data_status: offline` → offline, and **every** crossing renders UNKNOWN client-side with "Last known" (§28.6). Separately, per-crossing UNKNOWN from **reading** age comes from the server (§18.9) and is shown whatever the check age. `data_status: degraded` → `fresh.partial` + affected crossings UNKNOWN with reason.
+- **Interactions:** tap marker → `crossing/[id]` formSheet (persistent sheet stays collapsed beneath); tap cluster → camera eases to the expansion zoom; if the cluster contains AVOID/CLOSED, the list sheet also opens filtered to them; tap gauge dot → gauge mini-card [Stretch F39] (MVP: no action beyond the dot's a11y label); `[☰]` → sheet to 88 % List view; `[≡]` → `layers` [Stretch F38]; `[➤]` → location primer if never asked (§13.3), then center on user; `[?]` → `legend`; `[⚙]` → `settings`; FreshnessPill → Settings → Data sources (§13.16.5); AlertBanner [Show] → `crossing/[id]`. **The camera never moves by itself on data updates** (the user stays in control).
+- **Drive Mode suggestion [Stretch F62]:** if the **median speed over the last 15 s is > 6.7 m/s** (fixes with accuracy < 50 m only) or motion activity reports **automotive** (`watchMotionActivityAsync`, VERIFY on device; §30.6), with the app in the foreground, a single 64 pt banner appears: `drive.suggest` "Driving? Switch to Drive Mode" / "¿Va manejando? Cambie a Modo manejo" [Start Drive Mode] [Not now]. Never auto-starts; shown at most once per trip. This trigger is separate from the driver-lockout threshold (≥ 4.5 m/s for ≥ 5 s, §13.12).
+- **A11y order:** FreshnessPill → Legend → Settings → AlertBanner (if any) → map summary element → List/Layers/Locate → sheet handle → sheet headline → search → Check my drive (once F49 ships) → Drive Mode → footer → tabs.
+- Done when: calm / storm / offline / one-crossing-stale / loading / replay-active (MVP and, once shipped, Stretch) / location-denied / list-first / app-banner are each reproducible from the debug screen's "Map Home states" section (§13.22) and match the wireframes; no marker is ever drawn green or calm on stale data.
+
+### 13.5 Map Home persistent sheet — detent content [MVP]
+
+| Detent | Height | Content (top → bottom) |
+|---|---|---|
+| 0 (collapsed) | 148 pt (grows to fit at fontScale ≥ 1.35) | handle · worst-state chip row + "near you" · [Search] [Drive Mode] (+ [Check my drive] once F49 ships) · TADD footer |
+| 1 (half) | 45% | + headline `state.no_rise.area_headline` (calm) or the worst state's count line · supporting line `state.no_rise.area_sub` ("Watching {{g}} upstream gauges for {{c}} crossings · updated {{age}}") · segmented **Nearby · Saved · Ranked** · first rows (CrossingRow, sorted by **rank desc, then distance**) · calm extras: Storm Replay invite card ("See how FordCast handled a real storm →" / "Vea cómo FordCast manejó una tormenta real →"), "How FordCast works" card (first 7 days) |
+| 2 (full) | 88% | **List view** (below): Map/List toggle · search field pinned at top · segments · full list (FlashList) · footer compact disclaimer |
+
+Segments: **Nearby** = crossings within 10 km of the user (or of Austin center when location is off), rank desc then distance [MVP]; **Saved** = the user's saved crossings (F46) with live chips [MVP], plus saved routes with route-verdict chips and saved places once §4 F51 ships [Stretch]; **Ranked** = all monitored crossings by state, then the window's lower bound (the same sort as the Stretch `crew` route, §13.18) [MVP]. An empty segment shows its `EmptyState` (Saved: "Save crossings you drive through to get warnings." [Find crossings]).
+
+**Full detent (88 %) — List view [MVP, §4 F34, the accessible alternative to the map]:**
+```
+┌─────────────────────────────────┐
+│(● Checked 2 min ago)    [?] [⚙] │ top chrome stays visible
+│╭──────────────═══──────────────╮│ SheetHandle (button: "Crossings list", expand/collapse actions)
+││( Map )(•List )                ││ Map/List toggle (toggle-group, 48 pt); List is selected
+││[⌕ Search crossings          ] ││ SearchField pinned (typing locked while moving, §13.12)
+││(•Nearby)( Saved )( Ranked )   ││ segments, 48 pt
+││(◆ AVOID) Bull Creek @ Loop 360││ CrossingRow 72 pt: chip · name · window · distance
+││  likely 15–30 min · 2.3 mi    ││
+││(▲ WATCH) Bear Ck @ FM 1626    ││
+││  water rising upstream · 4 mi ││
+││(◌ UNKNOWN) Shoal Ck @ W 12th  ││ last-known badge when present
+││  Last known: Watch · 1 h ago  ││
+││(○ NO RISE) Barton Ck @ SH 71  ││
+││  no rise detected · 6.1 mi    ││
+││ …                             ││ FlashList (all rows)
+││FordCast is a supplementary    ││ DisclaimerFooter compact (end of list)
+││tool. Obey barricades…         ││
+│╰───────────────────────────────╯│
+│ [Map]  [Drive]  [Replay] [Alerts]│
+└─────────────────────────────────┘
+```
+- Row label (screen reader) = `row.spoken`: "Bull Creek at Loop 360. Avoid, likely flooded within 15 to 30 minutes. 2.3 miles. Checked 2 minutes ago." Custom actions: "Show on map", "Save"/"Remove", "Detour" [Stretch F50].
+- "Map" in the toggle collapses the sheet to detent 0 and moves focus to the map summary element. With a screen reader on, the List view is the default on every Map Home open (§13.4).
+- Done when: VoiceOver/TalkBack users can find any crossing's status from the List view with screen curtain on (F34), and the view renders in the dev gallery (§12.7).
+
+Snap haptic `selectionAsync`. `contentInset` of the map = `{ top: safeTop + 56, bottom: sheetHeight + TAB_BAR_H + 16 }` updated on `animatedPosition` settle (§29). Row tap opens `crossing/[id]`.
+
+### 13.6 Legend [MVP, §4 F33] & Layers [Stretch, §4 F38] sheets
+```
+legend (formSheet fitToContents)        layers (formSheet fitToContents) [Stretch F38]
+┌─────────────────────────────┐         ┌─────────────────────────────┐
+│ What the map shows          │         │ Map layers                  │
+│ ○ No rise detected          │         │ Crossings            [on ●] │ (always on; disabled switch
+│   No rising water seen at   │         │ Creeks we watch      [on ●] │  with reason "Required")
+│   linked gauges.            │         │ Upstream gauges      [on ●] │
+│ ▲ Watch  water rising       │         │ Not-monitored        [on ●] │ tier-C crossings (◌)
+│ ◆ Avoid  likely flooded soon│         │ My route             [on ●] │ [Stretch F49]
+│ ▧ Flooded – Closed (OFFICIAL│         │ NWS area alerts      [off ○]│ [Stretch F17b] context only
+│   when from the City)       │         │ Radar rain           Planned│ [Roadmap] label only
+│ ◌ Unknown – data offline    │         │ Offline map  Download ~50 MB│ [Stretch F87] Wi-Fi only;
+│ ▶ REPLAY real past storm    │         │ Show zoom buttons    [off ○]│  size is an estimate
+│ · gauge   ~ creek  ━ route  │         └─────────────────────────────┘
+│ FordCast never says a road  │
+│ is safe.                    │
+└─────────────────────────────┘
+```
+- **Legend copy (EN / ES):** title `legend.title` "What the map shows" / "Qué muestra el mapa"; each state row = `StatusGlyph` + `state.<s>.label` + one meaning line: `legend.no_rise` "No rising water seen at linked gauges." / "No se ve agua subiendo en los medidores vinculados." · `legend.watch` "water rising upstream" / "el agua sube río arriba" · `legend.avoid` "likely flooded soon" / "probablemente inundado pronto" · `legend.closed` "OFFICIAL when from the City" / "OFICIAL cuando lo reporta la Ciudad" · `legend.unknown` uses the label "Unknown – data offline" · `legend.replay` "real past storm" / "tormenta pasada real" · route row ━ only once F49 ships. The closing line is `legend.never_safe` "FordCast never says a road is safe." / "FordCast nunca dice que un camino es seguro." — the only legend key that may contain "safe"/"seguro" (allow-listed negation, §3.12). No other legend row says "safe", "Not safe" or similar.
+- The same rows render on onboarding P3 (`onboarding.legend.*`, §13.2) from the shared `LegendContent` component.
+- Done when: each legend row is one screen-reader stop ("Avoid. Likely flooded soon.") and every map symbol on screen appears in the legend; the copy test passes with only `legend.never_safe` matching a banned word.
+
+### 13.7 Search sheet [MVP crossings F37; Stretch places F52] (route `search`, formSheet `[0.9]`)
+- **Idle:** focused `SearchField` (`search.placeholder` "Search crossings or places" / "Buscar cruces o lugares"; MVP placeholder "Search crossings" / "Buscar cruces" until F52 ships), Saved places [Stretch F51], Recent searches (stored only on this phone in SQLite `recents`; deletable with Settings → Privacy → "Delete cached data", §13.16.6).
+- **Typing (≥ 3 chars, 350 ms debounce):** section **Crossings** (local fuzzy match on name/road/creek with `StatusChip`; works offline) first, then **Places** [Stretch F52] (backend `/v1/search`, §22.6/§32.6). Place search **never sends the user's location**: the request carries only the text and the fixed Travis County bias defined in §22.6.
+- **Empty:** "No crossings or places match '{{q}}'. Try a road or creek name." / "Ningún cruce o lugar coincide con '{{q}}'. Pruebe con el nombre de un camino o arroyo."
+- **Error/offline:** crossings still searchable from cache; places row "Place search needs internet." / "La búsqueda de lugares necesita internet."
+- **Locked while moving [MVP F59]:** field disabled with `drive.lockout.title` "Typing is locked while the car is moving. Are you a passenger?" → passenger dialog (§13.12).
+- Selecting a crossing → closes search, camera eases to it, opens `crossing/[id]`. Selecting a place [Stretch] → Check My Drive with destination prefilled [Stretch F49] or camera to the place.
+
+### 13.8 Crossing Detail [MVP, §4 F43] (route `crossing/[id]`, formSheet detents `[0.32, 0.62, 1.0]`, `sheetLargestUndimmedDetentIndex: 1`, grabber, initial detent 0; deep link `fordcast://crossing/<id>`)
+
+**Peek (0.32 ≈ 273 pt) — AVOID:**
+```
+┌─────────────────────────────┐
+│             ───             │ grabber
+│ (◆ AVOID)               [✕] │ StatusChip lg + close (48 hit)
+│ Bull Creek at Loop 360      │ title.lg, ≤ 2 lines
+│ Likely flooded within       │ status.word (#FF5470, 18 pt semibold) next to chip
+│ 15–30 min                   │ num.xl range (EtaRangePill rules, §12.5)
+│ Newest gauge reading:       │ `fresh.newest_reading` — reading age (§3.4)
+│ 8 min ago · checked 10:42 PM│ + check age (snapshot as_of)
+│ FordCast forecast (experim.)│ source label: "FordCast forecast (experimental)" vs "Official: …"
+│ [ Notify me ]               │ action row (visible at peek; Google Maps pattern). MVP shows only
+└─────────────────────────────┘ Notify me; [⤳ Detour +4] (F50) and [⇪ Share] (F48) join it once shipped
+```
+**Half (0.62) — tab "Now" / "Ahora":**
+```
+│ (Now)( Upstream )( History )│ RNR tabs, 48 pt
+│  ╭───╮   Next 90 min        │ RiskRing 96 + RiskWindow
+│  │ ◆ │   Now━━[15–30]━60━━90│ likely bracket (red), ticks tnum
+│  ╰───╯   as of 10:42 PM     │
+│ Why this alert?             │ ReasonList (§3.7 `reason.*` templates; params from §18.10)
+│ • W Bull Ck at Loop 360:    │ `reason.UPSTREAM_ABOVE_TRIGGER`: "{{gauge}}: +{{rise}} ft over the
+│   +3.1 ft over the last 30  │  last 30 min, upstream. Water usually takes {{tau_lo}}–{{tau_hi}} min
+│   min, upstream. Water      │  to get here." — a range, never a single travel-time number
+│   usually takes 30–45 min   │  (§3.5 rule 8, §3.11)
+│   to get here.              │
+│ • Above trigger 6.0 ft since│
+│   10:20 PM                  │
+│ Upstream  ╱╱╱  6.8 ft ↑     │ Sparkline 48 + num.lg
+│ FordCast is a supplementary │ DisclaimerFooter compact (§3.9 persistent footer)
+│ tool. Obey barricades…      │
+```
+**Full (1.0) — tab "Upstream" / "Río arriba":**
+```
+│ Upstream gauges (river-network linked)                  │
+│ ┌ W Bull Ck at Loop 360 · 6.8 ft ↑ +3.1/30m · 2 min ago┐│ Hydrograph 200 pt: cyan line, amber dashed
+│ │ ___________________╱‾‾ Trigger 6.0 ft ┄┄┄┄┄┄┄┄┄┄    ││ trigger, now dot, axes num.sm
+│ └ [Show readings]                                      ┘│ ReadingsList (text alternative)
+│ [2nd linked gauge, example] (◌ UNKNOWN · last data 9:55 PM)│ stale gauge → UNKNOWN chip
+│ Travel time: water usually takes 30–45 min to get here  │ `travel.range` (τ bucketed from P25/P75)
+│ (learned from 6 past storms)                            │ + `travel.n_storms`; exact τ only in §13.22
+│ LagPair: upstream vs road ┄┄ 30–45 min ┄┄               │ only for tier A (road sensor exists) [Stretch F45 live]
+│ Model: baseline rule v1 · Built                         │ ML (if live): "Model: about 7 in 10 similar
+│                                                         │  situations flooded within 60 min · Prototype"
+```
+**Tab "History" / "Historial":** `UpdateLog` [Stretch F47] (newest first: "10:42 PM · Watch → Avoid · Upstream above trigger"), plus the official status row when available: `official.no_closure` "City of Austin: no closure reported · 10:31 PM" (quoted, never "open"); with no official feed, the row is a link "Official status: ATXfloods.com ›" / "Estado oficial: ATXfloods.com ›" (`expo-web-browser`, F10). 7-day mini timeline of states [Stretch, §4 F47b]. In MVP (before F47 ships) the History tab shows only the official status row; if there is no official row either, the History tab is hidden (no empty tabs, no dead ends, §8.1 P9).
+
+**Pinned actions** (row under the headline, always visible at peek; a Stretch action is **hidden** until it ships — never a dead button):
+| Action | Tier | Behaviour |
+|---|---|---|
+| **Notify me** / "Avisarme" (toggle) | MVP (§4 F46) | Saves the crossing locally (SQLite `saved_crossings`) and adds its **crossing ID** to the device's subscriptions (`PUT /v1/devices/{id}/subscriptions`, `reason: 'starred'`, §22.7; queued in the outbox when offline); first use triggers the notifications primer (§13.3). Off state `bell`, on state `bell.fill` + "Notifying" / "Avisando" label. When on, the full detent shows a second switch **"Also alert me at Watch"** / "Avisarme también en Precaución" (per-subscription `want_watch`, default **off**, §23.2; disabled with a hint until Settings → Notifications → Watch is on, §13.16.2). |
+| **Detour +{{n}} min** / "Desvío +{{n}} min" | Stretch (§4 F50) | Opens the Check My Drive result with this crossing avoided (from current location to the last destination, or asks for a destination). Hidden when routing is unavailable. |
+| **Share** / "Compartir" | Stretch (§4 F48) | RN `Share.share` with the single §3.7 share text `share.crossing`: "{{name}}: {{state}} — FordCast forecast (experimental), as of {{time}}. Obey barricades and official warnings. Never drive into water. {{link}}" (`{{link}}` = `fordcast://crossing/<id>`). Never shares the user's location. |
+
+**State variants of the header (peek)** — headline/body strings are the §3.7 `state.*` slots, verbatim:
+| Variant | Chip | Headline (EN / ES) | Window / extras |
+|---|---|---|---|
+| NO_RISE | `(○ NO RISE DETECTED)` | `state.no_rise.headline` "No upstream rise detected" / "No se detecta crecida río arriba" + `state.no_rise.body` ("…That doesn't mean the road is clear…", allow-listed) | no window; ring 8% slate |
+| WATCH | `(▲ WATCH)` | `state.watch.headline` "Watch · water rising upstream" / "Precaución · el agua sube río arriba" | with a window: `state.watch.body` ("…could flood in about {{lo}}–{{hi}} min. Plan another route."); without: `state.watch.body_nowindow` |
+| AVOID | `(◆ AVOID)` | `state.avoid.headline` "Avoid · likely flooded within {{lo}}–{{hi}} min" / "Evite · probablemente inundado en {{lo}}–{{hi}} min" | `lo = 0` (windows [0,15] or [0,30]) or a held window (`null` during hysteresis) → `state.avoid.headline_now` "Avoid · water may already be on the road" / "Evite · puede que ya haya agua en el camino"; body `state.avoid.body` |
+| CLOSED official | `(▧ CLOSED · OFFICIAL)` | `state.closed.headline` official "Closed · {{source}}" (e.g. "Closed · City of Austin" / "Cerrado · Ciudad de Austin") + "Reported 10:31 PM" | model forecast moves below as secondary ("FordCast also expected flooding"); body `state.closed.body` ("…Do not drive around barricades. Turn around, don't drown.") |
+| CLOSED official — manual source | `(▧ CLOSED · OFFICIAL)` + source label "Manual entry: {{note}}" (§3.6) | as official | used for the demo/test path (F10) |
+| CLOSED sensor | `(▧ CLOSED)` (no OFFICIAL) | `state.closed.headline` sensor "Water over road · reported {{time}}" / "Agua sobre el camino · reportada a las {{time}}" | body `state.closed.body_sensor`; source label "Sensor at the road: {{gauge}}" |
+| UNKNOWN stale (reading age past the gauge's stale limit, §18.9, or snapshot older than 20 min) | `(◌ UNKNOWN)` | `state.unknown.headline` offline "Unknown · data offline" / "Desconocido · sin datos" + `state.unknown.body` offline ("We can't reach the gauges for this crossing (last data {{age}}). Treat it as if it could flood, and check official sources.") | ring dashed; window hidden; if the last known state was WATCH/AVOID/CLOSED: `state.unknown.last_known` "Last known: Avoid · {{age}}" with that shape in a dashed frame |
+| UNKNOWN tier C | `(◌ UNKNOWN)` + `TierBadge C` | `state.unknown.headline` not_monitored "Unknown · not monitored by FordCast" / "Desconocido · FordCast no lo monitorea" + its body | official status if any |
+| Tier B | normal chip + `TierBadge B` "Estimated" | as state | footnote "Travel time estimated from nearby creeks; not validated on past storms." / "Tiempo de viaje estimado a partir de arroyos cercanos; no validado con tormentas pasadas." |
+| Replay | violet `REPLAY` chip before the state chip; banner stays on the player | as state at sim time | actions hidden except "Back to replay" |
+
+- **A11y:** on open, focus moves to the header (state + name + window as one label from `state.*.spoken`: "Avoid. Bull Creek at Loop 360. Likely flooded within 15 to 30 minutes. Use another route."); RiskRing hidden; order header → window → reading age → why → actions → tabs → content → footer; grabber is a button with expand/collapse actions; full detent sets `accessibilityViewIsModal`; `onAccessibilityEscape` closes. Hydrograph has the "Show readings" alternative. The travel range is read as `travel.range_spoken` ("Water usually takes 30 to 45 minutes to get here").
+- **Detent listener:** `sheetDetentChange` → update the map `contentInset` so the crossing stays visible above the sheet; snap haptic.
+- Done when: every variant above renders from the debug screen's "Crossing fixtures" (§13.22); the deep link opens the sheet over Map Home from a cold start; no text in the sheet contains a single-number travel time.
+
+### 13.9 Gauge mini-card [Stretch, §4 F39] (route `gauge/[id]`, fitToContents)
+"Bull Ck at Loop 360 nr Austin · USGS 08154700" · stage `num.lg` "6.8 ft" + trend "↑ +3.1 ft / 30 min" · Sparkline 48 · "Updated 2 min ago · provisional data" / "Actualizado hace 2 min · datos provisionales" · "Linked to 3 crossings" (rows) · [View on USGS] / [Ver en USGS] (`expo-web-browser`, opens the gauge's USGS Water Data monitoring-location page on `waterdata.usgs.gov` — VERIFY BEFORE USE the page URL pattern by opening one gauge in a browser and record it in `docs/decisions/verifications.md`; never link the legacy `waterservices` hosts). Stale → dashed dot + "No data since {{time}}" / "Sin datos desde las {{time}}".
+
+### 13.10 Drive tab: MVP shell [MVP] → Check My Drive [Stretch, §4 F49–F55] (Drive tab `(tabs)/drive/index` → `drive/result`)
+
+**MVP shell (`drive/index` until route check, §4 F49, ships)** — the Drive tab's job in MVP is one big way into Drive Mode plus the crossings the user saved:
+```
+DRIVE TAB — MVP SHELL
+┌─────────────────────────────┐
+│ Drive                   [⚙] │ ScreenHeader (display.md) + gear (same spot on every tab)
+│┌───────────────────────────┐│ CapabilityBanner slot (one at a time): expoGo · backgroundOff [Stretch]
+││ⓘ In this preview, FordCast││  e.g. expoGo: "Background alerts need the FordCast app build. In this
+││  warns you only while the ││  preview, FordCast warns you only while the app is on screen."
+││  app is on screen.        ││  (`capability.expoGo`; "open" is banned in status scope, §3.12)
+│└───────────────────────────┘│
+│ ┌─────────────────────────┐ │
+│ │    ▶  Start Drive Mode  │ │ BigActionButton 76 pt, primary inverse pill → start sheet (§13.11)
+│ └─────────────────────────┘ │ stays usable while moving (lockout never blocks it, §13.12)
+│ FordCast speaks warnings for│ caption `drive.shell.caption` / "FordCast le avisa en voz alta
+│ crossings ahead.            │  sobre los cruces que tiene adelante."
+│ SAVED CROSSINGS             │ SectionHeader (§4 F46)
+│ (◆ AVOID) Bull Creek @ 360  │ CrossingRow variant 'saved' 72 pt: chip · name
+│   likely 15–30 min          │   · window (EtaRangePill rules) or state line
+│ (○ NO RISE) Bear Ck @ FM1626│
+│   no rise detected          │
+│ See all saved ›             │ → alerts/saved (§13.15)
+│ ┌─────────────────────────┐ │
+│ │ Check My Drive (Planned)│ │ neutral `badge` "Planned"; card has NO button and no tap target
+│ │ Checks your route       │ │ (replaced by the INPUT screen below once F49 ships)
+│ │ against every crossing. │ │
+│ └─────────────────────────┘ │
+│ FordCast is a supplementary │ DisclaimerFooter compact
+│ tool. Obey barricades…      │
+│ [Map] [Drive] [Replay] [Alerts]
+└─────────────────────────────┘
+```
+- **Empty saved list:** the SAVED CROSSINGS section shows `EmptyState kind="no-saved"`: "Save crossings you drive through to get warnings." / "Guarde los cruces por los que maneja para recibir avisos." [Find crossings] → Map Home sheet at 88 % List view (§13.5).
+- **Saved places** rows (Home / School / Work) appear here only once §4 F51 ships [Stretch]; until then nothing about places is shown.
+- **A11y order:** title → banner (if any) → Start Drive Mode → caption → saved rows → See all saved → Check My Drive card (read as "Check My Drive. Planned. Checks your route against every crossing.") → footer → tabs.
+- Done when: the shell renders with 0, 1 and 5 saved crossings and with the expoGo banner (dev gallery, §12.7); Start Drive Mode opens the start sheet; nothing on the screen is a dead button.
+
+**Check My Drive [Stretch-1, §4 F49–F50] — replaces the "Planned" card once shipped:**
+```
+INPUT                                   RESULT — AVOID ON ROUTE
+┌─────────────────────────────┐         ┌─────────────────────────────┐
+│ Drive                   [⚙] │         │ ‹ Home → Westlake HS        │
+│ ┌─────────────────────────┐ │         │▓▓━━━━━━◆┄┄▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓│ route (blue 6 pt) ghosted;
+│ │◉ From: Current location │ │         │▓▓▓▓━━━━━━━━━━━━━━━┓▓▓▓▓▓▓▓▓▓│ dashed red at ◆; detour blue
+│ │⦿ To:  Search or saved…  │ │         │▓▓▓▓▓▓▓[Detour +4 min]▓▓▓▓▓▓▓│ ViewAnnotation pill [F50]
+│ └─────────────────────────┘ │         │╭───────────────────────────╮│
+│ (Home)(School)(Work)        │         ││(◆ AVOID) on your route     ││ chips = saved places [F51]
+│ Leave: (Now)(+15 min)       │         ││Bull Creek at Loop 360      ││
+│ [     Check my drive      ] │         ││Likely flooded 15–30 min    ││
+│ Saved routes                │         ││Detour adds 4 min (19 min)  ││
+│ Home → School   (○) 7:02 AM │         ││[Show detour in ▾ Google ]  ││
+│ Home → Work     (▲) 7:02 AM │         ││[  Start Drive Mode  ]      ││
+│ (Alert me while I use other │         ││3 crossings: ◆ ○ ○ · as of  ││
+│  apps)               [off ○]│         ││10:42 PM                    ││
+└─────────────────────────────┘         │╰───────────────────────────╯│
+                                        └─────────────────────────────┘
+```
+"Saved routes" rows are [Stretch-2 F51]; the "Alert me while I use other apps" switch is [Stretch F63/F70] (background primer, §13.3). The From field uses the location only on the phone; route endpoints are the only coordinates that ever leave the device (§24.3, §32.3).
+
+| Result state | Card headline (EN / ES; §3.7 keys) | Actions |
+|---|---|---|
+| No rise on route | `(○ NO RISE DETECTED)` `state.no_rise.route_verdict` "No rise detected at {{c}} monitored crossings on this route" / "No se detecta crecida en {{c}} cruces monitoreados en esta ruta" + " · as of {{time}}" — never "safe to go" | [Start Drive Mode] |
+| Watch on route | `(▲ WATCH)` "{{name}}: water rising upstream. Check again before you leave." / "{{name}}: el agua sube río arriba. Revise de nuevo antes de salir." | [Re-check] [Start Drive Mode] |
+| Avoid/Closed on route | as wireframe; `state.avoid.detour_line` "Detour adds {{n}} min" / "El desvío agrega {{n}} min" (+ " ({{total}} min)") | [Show detour in …] / [Mostrar el desvío en …] [Start Drive Mode] |
+| Unknown segments | `(◌ UNKNOWN)` `route.unknown_count` "{{count}} crossings on this route have no recent data" / "{{count}} cruces en esta ruta no tienen datos recientes" | [Start Drive Mode] |
+| No detour found | `(◆ AVOID)` `routing.no_detour` "No detour found that avoids {{name}}. Wait or choose another destination." / "No se encontró un desvío que evite {{name}}. Espere o elija otro destino." | [Change destination] |
+| Routing offline/error | `routing.offline` "Routing needs internet. Showing crossings on your last route." / "Para calcular rutas se necesita internet. Mostrando los cruces de su última ruta." · 429 → `routing.busy` "Routing is busy. Try again in a minute." / "El servicio de rutas está ocupado. Intente de nuevo en un minuto." | [Retry] |
+| Route status changed (Realtime) [F55] | top banner `route.changed` "Route status changed · {{time}}" / "El estado de la ruta cambió · {{time}}" | [View] |
+
+**Hand-off sheet** [Stretch-3, §4 F53] (route `handoff`, fitToContents): rows **Apple Maps** (iOS only), **Google Maps**, **Waze**; each shows "via detour point" or, for two-leg apps, "Goes to the detour point first, then you continue." The button wording is "Show detour in {{app}}" / "Mostrar el desvío en {{app}}" — never "Open …" (banned in status scope, §3.12). Warning line (always): `state.avoid.handoff_warning` "Your map app doesn't know about this forecast. If it routes you back toward {{name}}, don't follow it." / "Su app de mapas no conoce este pronóstico. Si lo lleva de vuelta hacia {{name}}, no la siga." URL formats are owned by §32.
+- **A11y:** inputs have `textContentType`/`autoComplete` for addresses; result card header is the first focus after "Check my drive"; the route map has a summary label ("Route with 3 crossings: 1 Avoid.").
+- Done when (Stretch): each result state is reachable with fixtures and the hand-off opens the chosen app with the via point.
+
+### 13.11 Drive Mode [MVP, §4 F57–F61] (route `drive-mode`, fullScreenModal, `gestureEnabled: false`, Drive Night tokens, `useKeepAwake`; **portrait [MVP]**, landscape [Stretch, §4 F94 step 1, §8.7])
+
+**Start sheet** (before entering): §3.9 "Drive Mode start": "Mount your phone. Don't touch it while driving. FordCast will speak." / "Coloque su teléfono en un soporte. No lo toque mientras maneja. FordCast le hablará." [Start] (76 pt) [Cancel]. Shows the voice language, `onboarding.how.late` "Alerts can arrive minutes late.", and — while background continuation (F63) hasn't shipped — `drive.start.foreground_only` "Keep FordCast on screen. Warnings stop if you switch apps." / "Mantenga FordCast en la pantalla. Los avisos se detienen si cambia de app." (honest capability, §8.1 P9). Tapping [Start] the first time shows the location primer (§13.3) if location was never asked; if location is denied, the start sheet replaces [Start] with `drive.start.needs_location` "Drive Mode needs your location to warn you about crossings ahead." / "El Modo manejo necesita su ubicación para avisarle de los cruces que tiene adelante." [Go to Settings] (the Replay drive, F128, still works).
+```
+PORTRAIT — AVOID AHEAD [MVP]            LANDSCAPE (car mount) [Stretch F94] — same content, two columns
+┌─────────────────────────────┐         ┌─────────────────────────────────────────────────┐
+│ DRIVE MODE · voice on  [End]│ 76 pt   │ DRIVE MODE · voice on                    [End]  │
+│                             │         │ ┌───────────────────────┐ ┃ ◆ 2.3 mi Bull Ck   │
+│ NEXT CROSSING   2.3 mi      │ 24 pt   │ │ ◆ AVOID               │ ┃ ○ 5.8 mi Barton Ck │
+│ ┌─────────────────────────┐ │         │ │ 15–30 min             │ ┃ ▲ 9.1 mi Onion Ck  │
+│ │ ◆ AVOID                 │ │ 32 pt+  │ │ Bull Creek            │ ┃                    │
+│ │ 15–30                   │ │ 56 tnum │ └───────────────────────┘ ┃[Take detour +4 min]│ 96 pt (approach)
+│ │ min · Bull Creek        │ │ 24 pt   │                           ┃[ Repeat ] [ Mute ]  │ 76 pt
+│ └─────────────────────────┘ │         └─────────────────────────────────────────────────┘
+│ ┃ ◆ 2.3 mi  Bull Creek      │ RouteRibbon: MVP = the 3 nearest at-risk crossings ahead of the
+│ ┃ ○ 5.8 mi  Barton Creek    │ heading (§30.5); with a checked route [Stretch F49] = next 3 on it
+│ ┃ ▲ 9.1 mi  Onion Creek     │
+│ [  Take detour (+4 min)   ] │ [Stretch F50] 76 → 96 pt; shown only when a checked route exists
+│ [ Repeat ]     [ Mute ]     │ 76 pt, 24 pt gap
+└─────────────────────────────┘
+```
+| Drive state | HUD (≤ 3 items, ≤ 120 chars) | Voice (EN / ES — §3.7 keys, verbatim) |
+|---|---|---|
+| Calm | `(○ NO RISE DETECTED)` "next crossing 5.8 mi" (+ "on route" with a checked route [Stretch]) | silent (no "all clear" speech ever) |
+| WATCH ahead | `(▲ WATCH)` name + "water rising upstream" | `state.watch.tts` "Heads up. Water is rising upstream of {{name}}. Plan another route." / "Atención. El agua está subiendo río arriba de {{name}}. Planee otra ruta." |
+| AVOID ahead | as wireframe + red 8 pt static edge glow | `state.avoid.tts` "Avoid {{name}}. Flooding likely soon. Take another route." / "Evite {{name}}. Inundación probable pronto. Tome otra ruta." |
+| CLOSED ahead | `(▧ CLOSED)` "{{name}} is closed" | `state.closed.tts` "{{name}} is closed. Turn around. Don't drown." / "{{name}} está cerrado. Dé la vuelta. No se ahogue." |
+| UNKNOWN ahead | `(◌ UNKNOWN)` "no recent data · watch for water" | `drive.tts.unknown_ahead` "No recent data for {{name}}. Watch for water and barricades." / "No hay datos recientes de {{name}}. Esté atento al agua y a las barricadas." |
+| Offline | dashed FreshnessPill `fresh.as_of_offline` "Risk as of {{time}} — you're offline" | spoken once: `drive.tts.offline` "FordCast is offline. Watch for water and barricades." / "FordCast está sin conexión. Esté atento al agua y a las barricadas." |
+| De-escalation | "Update" line (`update.deescalate.body`) | `update.deescalate.tts` "Update on {{name}}. Rising water upstream has stopped. Water may still be on the road." / "Actualización sobre {{name}}. El agua dejó de subir río arriba. Todavía puede haber agua en el camino." |
+| Crash (error boundary) | §13.20 root error screen | spoken once: `drive.tts.stopped` "FordCast stopped. Watch for water and barricades." / "FordCast se detuvo. Esté atento al agua y a las barricadas." |
+
+- **Rules:** no typing, no list scrolling, no map panning (if a map is shown it is follow-mode, gestures off); one decision per screen; speak on escalation, on a new at-risk crossing within ~5 min ahead, and on state change; never the same crossing more than once per 60 s; `onMagicTap` (iOS) = repeat last alert; Android uses the Repeat button. Never speak a window ("15–30 min") — TTS uses `*_tts`/`*_spoken` keys only (§3.10).
+- **Exit:** [End] → confirm dialog "End Drive Mode?" / "¿Terminar Modo manejo?" [End] (secondary styling — no red button) [Keep driving]. Auto-end [F61]: after 10 min stationary, spoken + shown `drive.autoend.prompt` "You've been stopped for 10 minutes. End Drive Mode?" / "Lleva 10 minutos detenido. ¿Desea terminar el Modo manejo?" with 76 pt [End] / [Keep driving]; no answer in 60 s → end.
+- **Background (left the app):** MVP = foreground only (start-sheet line above). [Stretch F63 + F111] Android sticky ongoing notification "FordCast Drive Mode · Watching crossings on your route" (§15.2); [Stretch F41] iOS 26 BottomAccessory; [Stretch F112, Lane B] Live Activity (§15.3).
+- **Replay drive [MVP, §4 F128] ("Drive this storm (simulated)", §30.7):** opened from the Replay player's "More" menu (§13.13). Same screen and voice, with `mode: 'replay'`: the violet REPLAY banner (`replay.banner`) **and** the `replay.simulated_drive` label "SIMULATED DRIVE" / "MANEJO SIMULADO" stay visible in every frame; risk comes from the replay timeline; no geofences, no pushes, no live-cache writes; the only notification allowed is the REPLAY-labeled local demo notification (§15.1). Done when: the AVOID approach in a replay drive gives chime → EN and ES TTS → haptic with both labels visible.
+- **A11y:** live region assertive on the HUD; Large Content Viewer on the End button; every button ≥ 76 pt.
+- Done when: a fixture drive (debug "Simulate drive", §13.22) produces the AVOID approach (frames in §14.3) in portrait with voice in EN and ES; [Stretch F94] the same in landscape once the per-screen orientation lock is verified.
+
+### 13.12 Driver lockout & passenger confirm [MVP, §4 F59] (outside Drive Mode)
+Trigger: the user taps a locked control (search typing, list scrolling beyond the collapsed sheet, Settings text fields, the place editor) while `speed ≥ 4.5 m/s for ≥ 5 s` (§30.6). This lockout threshold is separate from the Drive Mode suggestion trigger (§13.4). The map, the collapsed sheet and the big "Start Drive Mode" button stay usable.
+```
+┌─────────────────────────────┐  Dialog (surface.2, radius 24, large type) — copy `drive.lockout.title` (§3.7)
+│ Typing is locked while the  │  ES: "Escribir está bloqueado mientras el carro está
+│ car is moving.              │       en movimiento. ¿Es usted pasajero?"
+│ Are you a passenger?        │
+│ [ ◔ Hold: I'm a passenger ] │  PassengerHoldButton 1.5 s hold, progress ring, cancel by sliding off
+│ [        Cancel           ] │  "Soy pasajero (mantenga presionado)" · "Cancelar"; a11y action "Confirm I am a passenger"
+└─────────────────────────────┘
+```
+Unlock lasts for the current trip; re-locks after speed < 1 m/s for 3 min or relaunch; never offered inside Drive Mode; no history stored. Without foreground location permission the app can't detect motion, so there is no lockout — Settings → Drive Mode says so (§13.16.4). Done when: the lockout unit test (synthetic fixes) passes and the debug screen's speed slider (§13.22) engages the dialog after 5 s at ≥ 4.5 m/s.
+
+### 13.13 Storm Replay [MVP, §4 F75–F80, F128] (Replay tab `(tabs)/replay/index` → `replay/[stormId]`; results = `replay/results?storm=<id>` presented as a formSheet)
+```
+PICKER                                   PLAYER
+┌─────────────────────────────┐          ┌─────────────────────────────┐
+│ Storm Replay            [⚙] │          │▒REPLAY · Memorial Day 2015 ▒│ violet banner, striped top
+│ Real storms, same pipeline. │          │ real data · not live  [ⓘ][⋯]│ ⓘ: `replay.no_lookahead` + `replay.assumes_delay`
+│ ┌─────────────────────────┐ │          │▓▓▓▓~~~»»»▲▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓│  ("Assumes gauge data arrives {{d}} min after it's
+│ │ May 2015 · Memorial Day │ │          │▓▓▓▓▓▓▓▓~~~◆▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓│  measured.") · ⋯ = "More" menu
+│ │ {n} crossings scored    │ │          │ ┌─────────────────────────┐ │
+│ │ Median lead {m} min     │ │          │ │Upstream ╱╱╱   Road __╱  │ │ LagPair (compact)
+│ │ [▶ Play]  Results ›     │ │          │ └─────────────────────────┘ │
+│ └─────────────────────────┘ │          │ May 23 · 10:42 PM CDT       │ clock HUD (tnum)
+│ ┌ Oct 31 2013 · Onion Ck ─┐ │          │ (1×)(10×)(60×)  |◀  ▶  ▶|   │ SpeedToggle · prev/play/next
+│ ┌ Oct 30 2015 · Onion Ck ─┐ │          │ |━━▲━━◆━━━━●━○━━━━━━━━━━━|  │ scrubber: ticks ▲◆●▮, ⌀ gaps
+│ ┌ Jul 4 2025 · Bull Ck ───┐ │          │ [−5 min]          [+5 min]  │ step buttons (WCAG 2.5.7)
+│ ┌ Oct 2018 · Llano (calm  ┐ │          └─────────────────────────────┘
+│ │  where it should be)    │ │
+│ Results & methodology ›     │
+└─────────────────────────────┘
+```
+- **Picker:** one `StormCard` per storm listed in the generated `mobile/assets/replays/index.json` (`fordcast.replay-index.v1`; files `<id>.json.gz`, schema `fordcast.replay.v1`, §19/§33), in its `sort_order`. The canonical candidates are `halloween-2013`, `memorial-day-2015`, `halloween-2015`, `oct-2018` (the "stays calm where it should" control) and `july-2025` — **July 2025 uses USGS gauges only** (Bull Ck); Sandy Creek crossings are added only if LCRA permission arrives; its modest Austin-creek signals are reported honestly (§16.19). Each storm is bundled only if its data checks pass. Card metrics come **only** from `index.json` (`median_lead_min`, `n_crossings`) / the timeline's `metrics` block; if absent show `MetricTile` pending ("—" "Pending backtest"). Works in airplane mode.
+- **Player:** speeds **1× / 10× / 60×** visible (default **60×** = 1 storm-minute per second) + 30×/120× in the "More" (⋯) menu (§4 F78); the same menu holds `replay.drive_cta` **"Drive this storm (simulated)"** / "Manejar esta tormenta (simulado)" [MVP, §4 F128] → Drive Mode in replay mode (§13.11). Prev/next-event buttons (`backward.fill`/`forward.fill`) jump between events, "Skip to action" (30 min before the first WATCH) offered on first play, ±5 min step buttons, drag to scrub (pauses; haptic tick every 15 storm-min). States are never interpolated; gauge sparkline draws only samples with `t + avail_delay ≤ simT`; the water pulse runs at `p = clamp((simT − t_trigger)/τ, 0, 1)`. Under Reduce Motion: static `ic-flow-arrow` arrowheads + one caption with the §3.7 travel range (`travel.range`, "Water usually takes 30–45 min to get here"), never a single number (A6). Optional "Reveal truth" toggle after the end [Stretch F81] (dotted future line + observed overtop marker).
+- **Leaving the player [MVP]:** switching tabs or going back **pauses** playback and keeps `simT`; returning resumes from the same moment. [Stretch F41] With the `ReplayMiniBar`, playback keeps running and the mini-bar shows on every tab instead (Map Home always stays live).
+- **Gauge failure moment (2013 Onion Creek at US 183):** the storm's `meta.toml` lists the documented transmission outage (`outages = [{site, start, end}]`); every reading observed inside it becomes available only at the outage end (`available_at = max(time + latency, outage_end)`, §19.4, §19.10), so during the outage the gauge went silent — its readings only arrived later. The gauge dot becomes a dashed ring, the hydrograph shows the hatched "No data" band (`viz.gap`) for the span with no **available** reading, any crossing depending only on it renders `◌ UNKNOWN`, and the storyboard caption (generated by code into the timeline's `storyboard` from the §3.7 template) reads `replay.gauge_silent`: "{{gauge}} went silent. Its readings only arrived later, so FordCast shows Unknown here." / "{{gauge}} dejó de transmitir. Sus lecturas llegaron después, así que FordCast muestra Desconocido aquí." A true gap in the archive gives the same UNKNOWN result.
+- **Results** (formSheet; opens when the playhead passes the hero onset, or from the picker):
+```
+┌─────────────────────────────┐
+│ FordCast warned             │
+│      38 MIN EARLIER         │ display.lg count-up (A12) — a measured past lead, = onset − first AVOID (from JSON)
+│ than water reached the road │
+│ {honesty line}              │ `replay.honesty` (§3.7) — ALWAYS shown with the hero number:
+│ Across {n} storms the median│  the hero is picked by the pre-registered rule in `results.json.hero`
+│ lead time was {m} min.      │  (tier-A hit closest to the overall median lead; never the maximum)
+│ [POD {p}%][FAR {f}%][CSI {c}]│ MetricTiles from the backtest only; FAR "lower is better ↓"
+│ Lead time per crossing ▇▅▇▃ │ victory-native bars (#6CB4FF), median line
+│ (Baseline rule)(ML · Proto) │ toggle only if ML metrics exist
+│ How we scored this ›        │ methodology: no lookahead, data delay, event split, LOSO (→ §13.17.2)
+│ FordCast is a supplementary │ DisclaimerFooter compact (§3.9 placement: Replay results)
+│ tool. Obey barricades…      │
+└─────────────────────────────┘
+```
+- **Copy (§3.7):** `replay.banner` "REPLAY · real data from {{storm}} · not live" / "REPRODUCCIÓN · datos reales de {{storm}} · no es en vivo"; `replay.result` "FordCast warned {{x}} min before water reached the road" / "FordCast avisó {{x}} min antes de que el agua llegara al camino"; `replay.honesty` with `{{n}}`/`{{m}}` from `results.json.headline`; `replay.no_lookahead`; `replay.assumes_delay` (`{{d}}` = the storm's assumed delay; default 60 min where no measured latency exists, §19.4).
+- **A11y:** scrubber is `adjustable`; its value is the spoken sim time plus the last event already passed ("May 23, 10:40 PM. Avoid issued at 10:31 PM.") — never a count of minutes until the (future) flood; iOS magic tap on the player root toggles play/pause; autoplay disabled when a screen reader is on; announcements only on play/pause and key events (Watch issued, Avoid issued, water over road, gauge offline).
+- Done when: the storm named by `HERO_STORM_ID` in `mobile/assets/replays/index.json` (the first bundled storm if unset — never hard-coded) plays end-to-end offline, the lead-time number equals the `metrics`/onset math from the JSON, `replay.honesty` is on screen whenever the number is, and REPLAY labeling is visible in every frame.
+
+### 13.14 Alerts inbox & history [MVP, §4 F71–F72] (route `(tabs)/alerts/index`)
+```
+┌─────────────────────────────┐
+│ Alerts                  [⚙] │
+│┌───────────────────────────┐│ CapabilityBanner (if any): e.g. "Notifications are off.
+││ⓘ Notifications are off…   ││ FordCast can't warn you in the background." [Turn on]
+│└───────────────────────────┘│
+│ (All)(My crossings)(Nearby) │ ToggleGroup ("My crossings" = saved; "On my routes" once F51 ships)
+│ TODAY                       │
+│ (◆ AVOID) Bull Creek @ 360  │ 10:42 PM · "likely 15–30 min" · unread dot
+│   ↳ City of Austin reported │ outcome line only if official data exists
+│     it closed 10:58 PM      │
+│ (▲ WATCH) Bear Ck @ FM 1626 │ 10:20 PM
+│ (◌ UNKNOWN) 3 gauges offline│ 9:55 PM
+│ Update: Bull Creek …        │ de-escalation entry (`update.deescalate.body`: "…Water may still be on the road…")
+│ (▶ REPLAY) Memorial Day 2015│ replay demo notifications keep their violet REPLAY chip (kind 'replay')
+│ YESTERDAY …                 │
+│ What you're alerted about › │ → saved crossings (§13.15); places/routes once F51 ships
+│ Send a test alert ›         │ Watch Duty pattern; same action as Settings → Notifications (F72)
+└─────────────────────────────┘
+```
+- Entries = notifications received + in-app escalations for subscribed/saved crossings (local SQLite `alerts_log`; nothing uploaded). Tap → `crossing/[id]` (REPLAY entries → the Replay player at that time). Badge counts unread AVOID/CLOSED only.
+- **Capability banners** (one at a time, priority order): `killSwitch` → `expoGo` (`capability.expoGo` "Background alerts need the FordCast app build. In this preview, FordCast warns you only while the app is on screen." / "Los avisos en segundo plano necesitan la app de FordCast. En esta versión de prueba, FordCast le avisa solo mientras la app está en la pantalla.") → `notificationsOff` → `pushUnavailable` → `backgroundOff`.
+- **Empty state:** BellQuiet illustration + `alerts.empty` "No alerts yet. You'll see warnings here for your saved places and drives." / "Todavía no hay alertas. Aquí verá avisos sobre sus lugares guardados y sus trayectos." (never "all clear").
+- **Test alert (F72):** posts a local notification on `crossing-urgent` titled "TEST · " + `state.avoid.push_title` rendered with `alerts.test_name` → "TEST · Avoid Example Crossing" / "PRUEBA · Evite Cruce de ejemplo" (key `alerts.test_title`), body `alerts.test` "This is a test. No crossing has changed." / "Esto es una prueba. Ningún cruce ha cambiado." (layout in §15.1).
+- Done when: alert history persists across restarts, the badge clears when entries are viewed, and the test alert arrives on `crossing-urgent` with the §3.7 body.
+
+### 13.15 Saved crossings, places & routes [MVP saved crossings §4 F46; Stretch places/routes F51] (route `(tabs)/alerts/saved`)
+```
+SAVED CROSSINGS [MVP]                    EMPTY
+┌─────────────────────────────┐          ┌─────────────────────────────┐
+│ ‹ Saved crossings           │          │ ‹ Saved crossings           │
+│ You'll get Avoid and Closed │          │                             │
+│ alerts for these crossings. │          │        [BellQuiet SVG]      │
+│ (◆ AVOID) Bull Creek @ 360  │          │ Save crossings you drive    │
+│   likely 15–30 min       ⋯  │          │ through to get warnings.    │
+│   Also alert me at Watch [○]│          │ [     Find crossings      ] │ → Map Home sheet, 88 % List
+│ (○ NO RISE) Bear Ck @ FM1626│          └─────────────────────────────┘
+│   no rise detected       ⋯  │
+│   Also alert me at Watch [○]│
+│ (◌ UNKNOWN) Shoal Ck @ W 12th│
+│   Last known: Watch · 1 h ⋯ │
+│   Also alert me at Watch [○]│
+│ PLACES · ROUTES             │ hidden entirely until F51 ships
+└─────────────────────────────┘
+```
+- **Saved crossings [MVP]** = every crossing toggled "Notify me" (§13.8): `CrossingRow variant="saved"` (72 pt, live chip, window or state line, last-known badge when UNKNOWN). Caption `saved.caption` "You'll get Avoid and Closed alerts for these crossings." / "Recibirá avisos de Evite y Cerrado para estos cruces." (when alerts are off: "Alerts are off. Turn them on in Settings → Notifications." / "Los avisos están apagados. Actívelos en Configuración → Notificaciones.").
+- **Per-crossing Watch opt-in:** switch "Also alert me at Watch" / "Avisarme también en Precaución" = the subscription's `want_watch` (default **off**, §23.2). Disabled, with that hint, until the device-level Watch switch (Settings → Notifications) is on.
+- **Remove:** swipe left reveals [Remove] / [Quitar]; the ⋯ menu and the a11y custom action "Remove" do the same. Confirm dialog: "Stop alerts for {{name}}?" / "¿Desea dejar de recibir avisos de {{name}}?" [Remove] [Cancel] (secondary styling, never red). Removing deletes the local row and sends the new crossing-ID set (`PUT /v1/devices/{id}/subscriptions`; outbox when offline).
+- **Empty:** "Save crossings you drive through to get warnings." / "Guarde los cruces por los que maneja para recibir avisos." [Find crossings] / [Buscar cruces] → Map Home sheet at 88 % List view (§13.5).
+- **Places [Stretch F51]:** Home / School / Work / custom (max 10); radius chip **1 / 3 / 5 mi (default 3 mi = 4,828 m)**; toggles **Watch** (default off, §3.8) and **Avoid/Closed** (default on). Turning Avoid/Closed off → confirm: "You won't be warned about likely flooding near {{place}}." / "No recibirá avisos de inundación probable cerca de {{place}}." Editor: search + draggable pin; coordinates and the radius stay on the device; the phone computes the crossing IDs inside the radius and sends **only those IDs** (`reason: 'saved_place'`, §23.1).
+- **Routes [Stretch F51]:** name, endpoints, usual departure time (stored for display only; a departure re-check reminder is [Roadmap F56]), last verdict chip. The phone computes the crossing IDs within 300 m of the route line and sends only those IDs (`reason: 'saved_route'`).
+- **Privacy (MVP rule):** the server only ever stores explicit crossing-ID subscriptions from saved crossings, places and routes. FordCast never uploads location-derived "nearby" subscriptions; "near me" awareness while moving comes only from on-device geofences and local notifications [Stretch F70, §30.3].
+- Done when: saving, removing and the Watch opt-in update the server's crossing-ID set (checked with the debug screen's subscription count, §13.22); the empty state and the filled list render in the dev gallery.
+
+### 13.16 Settings [MVP, §4 F103] (route `settings/index`, a stack pushed on the root stack from any gear; sub-routes per §8.8/§28.2)
+```
+┌─────────────────────────────┐
+│ ‹ Settings                  │
+│ GENERAL                     │ SectionHeader
+│ Language       English    › │ → settings/language (§13.16.1)
+│ Units          ft · mi    ▾ │ inline picker (RNR select, 56 pt rows): stage ft / m · distance mi / km
+│ Appearance     Dark       ▾ │ inline picker: Dark (default) · System · Light [Stretch F42 light]
+│ ALERTS & DRIVING            │
+│ Notifications  Avoid on   › │ → settings/notifications (§13.16.2); value = current alert summary
+│ Drive Mode                › │ → settings/drive (§13.16.4)
+│ Accessibility             › │ → settings/accessibility (§13.16.3)
+│ DATA & PRIVACY              │
+│ Privacy                   › │ → settings/privacy (§13.16.6): Delete my alert data · Delete cached data
+│ Data sources   Working    › │ → settings/data-sources (§13.16.5); value = worst source status word
+│ ABOUT FORDCAST              │
+│ How FordCast works        › │ → settings/how-it-works (§13.17.1)
+│ How accurate is FordCast? › │ → settings/accuracy (§13.17.2)
+│ About & credits           › │ → settings/about (§13.17.3, credits §13.17.5)
+│ Legal & disclaimer        › │ → settings/legal (§13.17.4)
+│ Version 1.0.0 (build 12)    │ long-press (5 s) in __DEV__ → settings/debug (§13.22); no-op in preview
+└─────────────────────────────┘
+```
+- **Rows that appear only when their feature ships:** a TOOLS group with "Likely to flood next ›" (`crew`, [Stretch F100], §13.18) appears above ABOUT FORDCAST once F100 ships; the Appearance "Light" option appears once [Stretch F42] ships. A row that is not built is **absent**, never a dead row (§8.1 P9).
+- **Shared rules for every sub-screen:** `ScreenHeader` with back chevron + title; rows 56 pt (`ListRow`), switches = RNR `Switch` (§12.4; on = `#6CB4FF` track, never green); every value persists in `stores/settings.ts` (§28.7) and survives restart; server-relevant values (`alerts_enabled`, `watch_alerts`, `updates_enabled`, quiet hours, `locale`) are sent with `PUT /v1/devices/{id}` (§22.7) — when offline they are queued in the SQLite `outbox` and the row shows `settings.sync_pending` "Will sync when you're online" / "Se sincronizará cuando tenga conexión"; destructive actions use a **secondary** button + confirm dialog, never red, never "¿Está seguro?" (use "¿Desea…?", §3.12). Help stays in the same place on every screen (gear, WCAG 3.2.6). On open, screen-reader focus lands on the sub-screen's header.
+- **Copy:** row titles `settings.<row>` (EN / ES): Language / Idioma · Units / Unidades · Appearance / Apariencia · Notifications / Notificaciones · Drive Mode / Modo manejo · Accessibility / Accesibilidad · Privacy / Privacidad · Data sources / Fuentes de datos · How FordCast works / Cómo funciona FordCast · How accurate is FordCast? / ¿Qué tan preciso es FordCast? · About & credits / Acerca de y créditos · Legal & disclaimer / Aviso legal · Version / Versión.
+- Done when: every row opens a working screen or picker (no blank screen, no "coming soon"); all 11 sub-screens below render in the dev gallery in their listed states; every toggle persists and is screen-reader operable (F103).
+
+#### 13.16.1 Language (`settings/language`) [MVP, §4 F97]
+```
+┌─────────────────────────────┐
+│ ‹ Language                  │
+│ ◉ Device language           │ radio (RNR radio-group, 56 pt); subtitle shows the resolved language:
+│   (recommended) · English   │  "(recommended) · English" / "(recomendado) · Español"
+│ ○ English                   │ accessibilityLanguage="en-US"
+│ ○ Español                   │ accessibilityLanguage="es-US"
+│ Spoken alerts and           │ caption `settings.language.caption` / "Las alertas habladas y las notificaciones
+│                             │  también usan este idioma."
+│ notifications use this      │
+│ language too.               │
+│ Change in system settings › │ → Linking.openSettings() (per-app language, expo-localization plugin)
+└─────────────────────────────┘
+```
+- Applies immediately (no restart): i18next `changeLanguage`; re-creates Android channel **names** (IDs are permanent) and re-registers notification categories so action titles translate (§31.1); re-picks the TTS voice (§30.8); sends `locale` with `PUT /v1/devices/{id}` (queued offline) so the next push uses it; toast "Language changed" / "Idioma cambiado". "Device language" resolves via expo-localization; any language other than English or Spanish falls back to English. Android re-reads the locale on resume.
+- States: online · offline (change applies locally; caption `settings.sync_pending`).
+- Done when: switching updates the UI, the next TTS line and the next push language (F97).
+
+#### 13.16.2 Notifications (`settings/notifications`) [MVP §4 F65, F72, F64; Stretch quiet hours F73]
+```
+┌─────────────────────────────┐
+│ ‹ Notifications             │
+│┌───────────────────────────┐│ CapabilityBanner slot (one at a time): notificationsOff · expoGo ·
+││ⓘ Notifications are off…   ││  pushUnavailable · killSwitch
+│└───────────────────────────┘│
+│ ALERTS FOR SAVED CROSSINGS  │
+│ Avoid & Closed      [on ●]  │ `alerts_enabled` — default on once the user enables alerts
+│ Watch (opt-in)      [off ○] │ device-level `watch_alerts`, default OFF (§3.8, Step 0 D2)
+│ Updates             [on ●]  │ `updates_enabled`: the one "Update" after an escalation (§23.2)
+│ Quiet hours         [off ○] │ [Stretch F73] when on: start/end time pickers
+│   10:00 PM – 6:00 AM      › │
+│ Watch alerts and updates    │ caption `settings.quiet.caption` (always visible with the row)
+│ wait during quiet hours.    │
+│ Avoid and Closed alerts     │
+│ always come through, even   │
+│ at night.                   │
+│ [   Send a test alert     ] │ F72 — secondary button
+│ Time Sensitive alerts     › │ iOS only (F64): tip + [Go to Settings]
+│ Alerts can arrive minutes   │ `alerts.why_late` (§3.7)
+│ late, and FordCast doesn't  │
+│ cover every road.           │
+└─────────────────────────────┘
+```
+- **Avoid & Closed:** first switch-on with no OS permission → `permission/notifications` primer (§13.3; Android channels already exist, §31.1). Switching off → confirm "Turn off Avoid and Closed alerts? You won't be warned about likely flooding at your saved crossings." / "¿Desea apagar los avisos de Evite y Cerrado? No recibirá avisos de inundación probable en sus cruces guardados." [Turn off] [Keep on] (Keep on = inverse pill, default focus).
+- **Watch (opt-in):** off by default; when on, per-crossing "Also alert me at Watch" switches (§13.15) become available — each defaults off (`want_watch`). Caption: "Watch alerts come more often and can be false alarms." / "Los avisos de Precaución llegan con más frecuencia y pueden ser falsas alarmas."
+- **Quiet hours [Stretch F73]** (row and caption absent until F73 ships; caption EN as wireframe / ES "Las alertas de Precaución y las actualizaciones esperan durante las horas de silencio. Los avisos de Evite y Cerrado siempre llegan, incluso de noche."): Watch, Update and (Stretch) Unknown pushes wait; Avoid/Closed **ignore** quiet hours for saved crossings, saved places and saved routes (Step 0 D3, §23.3). Times stored as minutes (`quiet_start_min`/`quiet_end_min`) in the device's time zone.
+- **Send a test alert (F72):** posts the local TEST notification on `crossing-urgent` (title "TEST · Avoid Example Crossing", body `alerts.test` "This is a test. No crossing has changed."; §15.1). With permission denied the button opens the primer instead. Works in Expo Go (local only). The server test push and per-channel tests live on the debug screen (§13.22).
+- **Time Sensitive tip [iOS only, F64]:** "To get FordCast alerts while Driving Focus is on, allow Time Sensitive notifications for FordCast." / "Para recibir avisos de FordCast con el modo Conducción activado, permita las notificaciones urgentes de FordCast." [Go to Settings] → `Linking.openSettings()`. Never requests DND bypass.
+- **States:** permission granted · permission denied (switches disabled; banner "Notifications are off. FordCast can't warn you in the background." [Turn on] → `Linking.openSettings()`) · Expo Go (banner `expoGo`; push rows disabled, test alert still works) · offline (`settings.sync_pending`) · kill switch on (banner `killSwitch`; switches still editable).
+- Done when: each toggle round-trips to `GET /v1/devices/{id}` (debug screen); the test alert arrives on `crossing-urgent`; the Watch default is off on a fresh install.
+
+#### 13.16.3 Accessibility (`settings/accessibility`) [MVP §4 F92, F93; Stretch F38b]
+```
+┌─────────────────────────────┐
+│ ‹ Accessibility             │
+│ FEEDBACK                    │
+│ Haptics             [on ●]  │ `haptics` (§11.6)
+│ Sounds              [on ●]  │ `sounds` (in-app chimes, §11.7)
+│ Spoken alerts       [on ●]  │ `spokenAlerts` (Drive Mode TTS)
+│ Voice speed  0.95×          │ slider 0.8–1.2, step 0.05 (`adjustable`)
+│ ────●───────────            │
+│ [ ▶ Play a sample ]         │ speaks `settings.voice_sample` "This is how FordCast sounds." / "Así suena FordCast."
+│ DISPLAY                     │
+│ Animations                  │ toggle-group (System · Full · Reduced); default System (§11.3)
+│ (System)( Full )(Reduced)   │
+│ Increase contrast   [off ○] │ HC token set (§9.4); also follows the OS setting
+│ Show zoom buttons   [off ○] │ auto-on while a screen reader / Switch Control runs
+│ Show the list first [off ○] │ `listFirst`: Map Home opens in List view (§13.5)
+│ Controls on left    [off ○] │ [Stretch F38b] mirrors map controls (§8.6)
+└─────────────────────────────┘
+```
+- Every change applies live without restart (`A11yPrefsProvider`, §34.1). "Play a sample" uses the current language voice and speed; never an alert sentence.
+- Done when: toggling each control changes behavior immediately and persists (F92); every control is operable with TalkBack and Switch Access (F93).
+
+#### 13.16.4 Drive Mode (`settings/drive`) [MVP §4 F57–F59; Stretch F62, F63, F70]
+```
+┌─────────────────────────────┐
+│ ‹ Drive Mode                │
+│ VOICE                       │
+│ Voice language  Español     │ read-only: follows the app language (§13.16.1); shows the picked voice
+│ es-US · Enhanced            │  (`pickVoice`, §30.8) or the missing-voice tip below
+│ Voice speed               › │ → Accessibility (one place for the slider)
+│ Turn off silent mode for    │ `drive.silent_tip` (§3.7), iOS only
+│ spoken alerts.              │
+│ WHILE DRIVING               │
+│ Alert me while I use        │ [Stretch F63/F70] → background primer (§13.3); off by default
+│ other apps          [off ○] │
+│ Auto-suggest Drive Mode     │ [Stretch F62] → motion permission (§30.1 step 4)
+│                     [off ○] │
+│ DRIVER LOCKOUT              │
+│ While the car is moving,    │ `settings.drive.lockout_help`
+│ typing and list browsing are│
+│ locked outside Drive Mode.  │
+│ Passengers can unlock by    │
+│ holding a button.           │
+│ FordCast can only do this   │ shown when foreground location is not granted (honest limitation, §30.6)
+│ when location is allowed.   │
+└─────────────────────────────┘
+```
+- **Missing Spanish voice:** "No Spanish voice is installed. Add one in your phone's settings." / "No hay una voz en español instalada. Agregue una en la configuración del teléfono." [Go to Settings]; Drive Mode then falls back to chime + haptic + visual (F58).
+- **Background row states [Stretch]:** off · on (Always granted) · "Background alerts: off. Tap to enable." when the OS permission was later revoked · Expo Go (row disabled + `expoGo` banner).
+- Done when: the voice row shows the voice actually used by Drive Mode on the test phone; the lockout explanation appears; Stretch rows are absent until their feature ships.
+
+#### 13.16.5 Data sources (`settings/data-sources`) [MVP, §4 F105]
+```
+┌─────────────────────────────┐
+│ ‹ Data sources              │
+│ Checked 2 min ago           │ `fresh.checked` (snapshot check age)
+│ via FordCast's public       │ read-path rung: storage → "public snapshot" · api → "FordCast server"
+│ snapshot                    │  · cache → "saved on this phone" (§28.4)
+│ USGS stream gauges        › │ DataSourceRow ← `/v1/meta/freshness` `sources.usgs`
+│ ● Working · 3 min ago       │  status word + `last_ok_at` age
+│ 2 of 31 gauges delayed      │  count of `gauges[].stale`
+│ Official closures         › │ ← `sources.official` (kind manual | atxfloods)
+│ ● Working · Manual entry    │
+│ NWS alerts                  │ ← `sources.nws`; "Not used" until §4 F17 ships
+│ ○ Not used                  │
+│ Push alerts                 │ ← `sources.push`: `last_send_at`; `receipt_errors_24h > 0` → "Delayed"
+│ ● Last sent 2 h ago         │
+│ Data: U.S. Geological Survey│ §3.9 "Data attribution" line (EN/ES), verbatim
+│ (provisional, subject to    │
+│ revision) · NOAA/NWS · City │
+│ of Austin · Map © OSM …     │
+└─────────────────────────────┘
+```
+- **Data:** TanStack query `['freshness']` → `GET /v1/meta/freshness` (§22.4; fetched only while this screen is open; staleTime 60 s). One `DataSourceRow` per `sources` key, in the order usgs · official · nws · push.
+- **Status words (EN / ES; never "OK", never green/amber/red dots):** `ok` → "Working" / "Funcionando" (solid slate dot) · `degraded` → "Delayed" / "Con retraso" (half-filled dot) · `down` → "Not responding" / "Sin respuesta" (dashed ring) · not configured → "Not used" / "No se usa" (hollow ring). Age from `last_ok_at` via `{{age}}`.
+- **Links:** tapping a row with a public site opens it with `expo-web-browser` as "View source ›" / "Ver fuente ›": USGS → the USGS Water Data site (`waterdata.usgs.gov`, VERIFY BEFORE USE the landing URL), official → `https://www.atxfloods.com/crossings` only when the source is ATXfloods (manual entry has no link), NWS → `weather.gov`. Push has no link.
+- **States:** loading (`LoadingState kind="list"`) · loaded · cold server (> 3 s → `common.waking_server` "Waking server…" / "Activando el servidor…") · error ("Status unavailable right now." / "Estado no disponible en este momento." [Retry]) · offline ("Status unavailable offline" / "Estado no disponible sin conexión"; the check-age line still shows the cached snapshot's age).
+- Done when: stopping the USGS ingest in a test environment turns the USGS row to "Delayed"/"Not responding" (F105); the offline state renders in airplane mode.
+
+#### 13.16.6 Privacy (`settings/privacy`) — "Delete my alert data" & "Delete cached data" [MVP, §4 F106]
+```
+┌─────────────────────────────┐
+│ ‹ Privacy                   │
+│ Your location stays on your │ summary of §24.3 (`settings.privacy.summary`)
+│ phone.                      │
+│ • On this phone only: your  │
+│   location, saved places,   │
+│   routes, recent searches.  │
+│ • Sent to FordCast: a push  │
+│   token, language, alert    │
+│   settings and the IDs of   │
+│   crossings you save.       │
+│ • Never: accounts, names,   │
+│   ads or analytics.         │
+│ Privacy policy            ↗ │ policy page (EN) — expo-web-browser
+│ Política de privacidad    ↗ │ policy page (ES)
+│ [  Delete my alert data   ] │ secondary button (never red)
+│ [  Delete cached data     ] │ secondary button
+│ Offline map  52 MB [Delete] │ [Stretch F87] only when a pack exists
+└─────────────────────────────┘
+```
+- **Policy links:** the policy's source is `docs/privacy/index.md` (EN) with its Spanish twin in the same `docs/privacy/` folder, published by GitHub Pages (Settings → Pages → `main` /docs; the repo must be public — a stop-and-ask moment, §1.7). The URLs live in one constant in `src/lib/env.ts`; until Pages is live they point at the GitHub file view of the same files. The same links appear in the README (§24.3, §40).
+
+**"Delete my alert data" flow** (`settings.delete_data` "Delete my alert data" / "Borrar mis datos de alertas"; this is the only name for this action — never "Forget this device"):
+```
+CONFIRM (RNR alert-dialog, local PortalHost)      RESULT
+┌─────────────────────────────┐                   online  → toast "Deleted" / "Borrado"; the screen shows
+│ Delete your alert data?     │                             "Your alert data was deleted." / "Sus datos de
+│ This deletes your alert     │                             alertas se borraron."
+│ settings and saved crossings│                   offline → row: "Deleted on this phone. FordCast's server
+│ from FordCast's server and  │                   or error  copy will be deleted when you're online." /
+│ this phone. You'll stop     │                             "Se borró en este teléfono. La copia del servidor de
+│ getting FordCast alerts     │                             FordCast se borrará cuando tenga conexión."
+│ until you turn them on again│
+│ [         Cancel          ] │ inverse pill, default focus
+│ [  Delete my alert data   ] │ secondary styling (never red)
+└─────────────────────────────┘
+```
+Keys: `settings.delete_confirm.title` "Delete your alert data?" / "¿Desea borrar sus datos de alertas?" · `settings.delete_confirm.body` (EN above) / "Esto borra su configuración de alertas y sus cruces guardados del servidor de FordCast y de este teléfono. Dejará de recibir avisos de FordCast hasta que los vuelva a activar." · `settings.delete_done` · `settings.delete_pending`.
+
+Steps (`deleteMyAlertData()` in `features/alerts/subscriptions.ts`):
+1. **Local first (always, even offline):** stop geofences [Stretch F70] and cancel scheduled local notifications; delete the rows of `saved_crossings`, `saved_places`, `saved_routes` and `alerts_log`; clear `stores/saved`; set `alertsEnabled = false` and the Watch switches off; clear the Alerts badge.
+2. **Server:** if no `deviceId` exists (alerts were never enabled) → done. Otherwise call `DELETE /v1/devices/{id}` with `Authorization: Device <id>:<secret>` (§22.7; cascades subscriptions and alert history). `204`, `401` or `404` → done: delete the device secret from SecureStore and reset `stores/device` (`deviceId`, `lastSubscriptionHash`, `registeredAt`).
+3. **Offline, timeout, 429 or 5xx:** insert an `outbox` row `{method: 'DELETE', path: '/v1/devices/{id}'}`, **keep** the device id + secret (needed to authenticate the delete), show `settings.delete_pending`, and flush the outbox on reconnect / app foreground with backoff. Until the server confirms, a push that was already queued may still arrive; turning alerts back on first waits for the pending delete to finish, then registers a **new** device.
+4. A11y: focus is trapped in the dialog; the result line is announced politely; no haptic.
+- Done when: after the online flow, DB inspection shows no `private.devices`/`private.device_subscriptions` rows for that device and the local tables above are empty; in airplane mode the local part completes at once and the server delete runs after reconnecting (logged on the debug screen).
+
+**"Delete cached data"** (`settings.delete_cache` "Delete cached data" / "Borrar datos guardados"): confirm "Delete cached data? This removes recent searches, cached routes and downloaded map data from this phone. Your saved crossings and alert settings stay." / "¿Desea borrar los datos guardados? Esto quita las búsquedas recientes, las rutas guardadas en caché y los datos de mapa descargados de este teléfono. Sus cruces guardados y su configuración de alertas se conservan." [Delete cached data] [Cancel]. Deletes SQLite `recents` and `route_cache` (the only on-device tables that hold coordinates besides saved places/routes, §28.8), the persisted query cache (`fordcast-rq-v1`), and any offline map pack [Stretch F87]; keeps the bundled seed, the cached `risk` and `last_known` rows (so a last-known Avoid is never silently forgotten), saved items and alert history; then refetches the snapshot. Toast "Deleted" / "Borrado". Done when: after the action the `recents` and `route_cache` row counts on the debug screen are 0 and the map still shows the last risk with its age.
+
+### 13.17 Info screens: How it works / Accuracy / About / Legal / Credits [MVP, §4 F104, F80]
+
+#### 13.17.1 How FordCast works (`settings/how-it-works`) [MVP, §4 F104]
+```
+┌─────────────────────────────┐
+│ ‹ How FordCast works        │
+│ ① ·  Gauges upstream        │ vertical 5-step diagram (brand glyphs), each step one a11y stop
+│ │   USGS stream gauges      │
+│ │   report water levels.    │
+│ ② ~  River network          │
+│ │   USGS NLDI links each    │
+│ │   crossing to the gauges  │
+│ │   upstream of it.         │
+│ ③ ⏱  Travel time            │
+│ │   Past storms show how    │
+│ │   long water takes to     │
+│ │   reach each crossing.    │
+│ ④ ▲  Risk state             │
+│ │   Watch, Avoid, Closed or │
+│ │   Unknown.                │
+│ ⑤ ▯  Your phone             │
+│     Alerts, map, Drive Mode.│
+│ FordCast never says a road  │ `about.never_safe` (allow-listed negation)
+│ is safe.                    │
+│ WHAT'S BUILT                │ Built / Prototype / Roadmap list
+│ (Built) Live gauge checks … │  rendered from claims.generated.json — never hand-edited
+│ (Prototype) …               │
+│ (Planned) …                 │
+└─────────────────────────────┘
+```
+- **Built / Prototype / Roadmap list** is rendered from `mobile/src/features/about/claims.generated.json`, generated by `make claims` (`tools/gen_claims.py`) from the Claims Ledger `docs/CLAIMS.md` (§1.6, §44.1) — the same source as the README and the video, so they can't disagree. Neutral `badge` tags: "Built" / "Construido", "Prototype" / "Prototipo", "Planned" / "Planeado". `src/lib/capabilities.ts` is **only** the runtime capability flags (Expo Go, push, background, time-sensitive…) and is never a source of claims. Test `src/__tests__/about-claims-test.tsx` asserts that the rendered rows equal the JSON (same order, same labels, same badges).
+- The diagram never contains a number (no hand-typed travel time); step ③ may show the §3.7 travel-range string of a real tier-A link only if it is read from data.
+- Done when: the list matches `docs/CLAIMS.md` (test green, F104); each step is one screen-reader stop.
+
+#### 13.17.2 How accurate is FordCast? (`settings/accuracy`) [MVP, §4 F80]
+```
+┌─────────────────────────────┐
+│ ‹ How accurate is FordCast? │
+│ Tested on {n} real storms   │ `results.json.headline.n_storms`; label quality note when
+│ (leave-one-storm-out).      │  `headline.labels` is "proxy"
+│ [POD {p}%][FAR {f}%]        │ MetricTiles: `methods.upstream_rule.avoid.pooled` (pod, far, csi) with
+│ [CSI {c}][Median lead {m}]  │  ci95; median lead = `headline.median_lead_min`; FAR "lower is better ↓"
+│ False alarms: {x} per       │ `calm_fa_per_crossing_per_100d.avoid` (calm-day set)
+│ crossing per 100 calm days  │
+│ {honesty line}              │ `replay.honesty` (hero vs median)
+│ STORM BY STORM              │ table: `methods.upstream_rule.avoid.per_storm` + `storms[].name_*`
+│ Storm      Hits Miss FA Lead│  H · M · F · median_lead_min; "—" for null
+│ Halloween 2013  …           │
+│ Compared with: nearest gauge│ comparator rows (nearest_gauge, reactive = 0 min, ML if any)
+│ · reacting at the road      │
+│ Assumes gauge data arrives  │ `replay.assumes_delay` from `assumptions.data_delay_min`
+│ {d} min after it's measured.│
+│ How we scored this ›        │ collapsible: no lookahead, data delay, event split, LOSO,
+└─────────────────────────────┘  truth sources and the hero rule (plain language)
+```
+- **Source:** the bundled `mobile/assets/results/results.json` (`fordcast.results.v1`, §18.13); works offline. Every number on this screen comes from that file — no literal metric is typed in code (CI grep, §24.7). Null values render `MetricTile` pending ("—", "Pending backtest" / "Pendiente de evaluación").
+- **Plain-language FAR line:** "FAR is the share of Avoid alerts that weren't followed by water on the road. Lower is better." / "FAR es la proporción de avisos de Evite que no terminaron con agua en el camino. Menos es mejor."
+- [Stretch] reliability diagram image only if the ML model is live and calibrated; live-alert audit counts only once `risk_transitions` holds a real event.
+- Done when: every number traces to `results.json` (test renders the screen from a fixture JSON and compares), and the honesty line is present (F80).
+
+#### 13.17.3 About (`settings/about`) [MVP, §4 F104]
+```
+┌─────────────────────────────┐
+│ ‹ About & credits           │
+│ FordCast                    │ app name + `app.tagline` "Know before it crosses."
+│ Know before it crosses.     │
+│ Made by {{student}},        │ from Step 0 #7 (config), never invented; placeholder `[NAME]`,
+│ {{school}}, for the 2026    │  `[SCHOOL]` until answered
+│ Congressional App Challenge.│
+│ Not affiliated with or      │ short form; the full text is on Legal (§13.17.4)
+│ endorsed by NWS, USGS, the  │
+│ City of Austin, Travis      │
+│ County or the U.S. House.   │
+│ Contact: {{email}}        ↗ │ project contact email (Step 0 #7), mailto:
+│ Replay introduction       › │ re-opens onboarding (pledge stays accepted)
+│ Version 1.0.0 (12) · abc1234│ app version · build · git sha
+│ CREDITS & LICENSES          │ §13.17.5 (same screen, anchor "credits")
+└─────────────────────────────┘
+```
+- Done when: About shows real Step-0 values (or the visible placeholders) and "Replay introduction" re-opens onboarding P1.
+
+#### 13.17.4 Legal & disclaimer (`settings/legal`) [MVP]
+```
+┌─────────────────────────────┐
+│ ‹ Legal & disclaimer        │
+│ FordCast is an independent  │ `legal.about` — the §3.9 "About → Legal" text, verbatim (EN/ES)
+│ student project made for …  │
+│ … In an emergency, call 911.│
+│ Provided "as is," without   │
+│ warranty of any kind.       │
+│ FordCast is a supplementary │ §3.9 persistent footer (`disclaimer.footer`)
+│ tool. Obey barricades and   │
+│ official warnings. Never    │
+│ drive into water.           │
+│ "Turn Around, Don't Drown"  │ trademark note (§3.7): text use only, no endorsement implied
+│ is a registered trademark of│
+│ the National Weather Service│
+│ Data attribution            │ §3.9 "Data attribution" line
+│ Privacy policy            ↗ │ same link as §13.16.6
+└─────────────────────────────┘
+```
+- The text is selectable and scrolls; at fontScale ≥ 2 it reflows to one column. Done when: the EN and ES legal text match §3.9 character-for-character (snapshot test).
+
+#### 13.17.5 Credits & licenses (section of `settings/about`, anchor `credits`) [MVP]
+```
+│ CREDITS & LICENSES          │
+│ Templates & assets          │ THIRD_PARTY_NOTICES.md part 1 (§12.1): T1–T8 name · license
+│ Expo template · 0BSD        │
+│ React Native Reusables · MIT│
+│ gorhom bottom sheet · MIT   │
+│ OpenFreeMap Positron · …    │
+│ Inter · OFL-1.1             │
+│ Map data © OpenStreetMap    │ attribution rows (OSM ODbL, OpenFreeMap, OpenMapTiles, ORS, USGS, NOAA/NWS)
+│ contributors · …            │
+│ Animation: {creator}        │ only if the Stretch Lottie ships
+│ Spanish review: {name}      │ only with written permission; testers likewise
+│ View all licenses         ↗ │ THIRD_PARTY_NOTICES.md on GitHub (expo-web-browser)
+```
+- The in-app list is a small static array maintained next to part 1 of the notices file (no Markdown renderer is added to the app). Done when: every T1–T8 row and every data attribution in §12.1 part 4 appears here, and the "View all licenses" link opens the full file.
+
+### 13.18 Crew / Hotspot list [Stretch, §4 F100; CSV export Stretch F101] (route `crew`; reachable from the sheet's "Ranked" segment via "See full list ›" and from Settings → TOOLS once shipped)
+```
+┌─────────────────────────────┐
+│ ‹ Likely to flood next  [⇪] │ ⇪ export CSV via expo-sharing [Stretch F101]
+│ (Watch+Avoid)(All)(Closed)  │
+│ 1 (◆) Bull Ck @ Loop 360    │ 15–30 min · ↑3.1 ft/30m · 2 gauges
+│ 2 (▲) Bear Ck @ FM 1626     │ water rising upstream · ↑1.2 ft/30m
+│ 3 (▲) Shoal Ck @ W 12th St  │
+│ … (○) 61 more               │ collapsed group
+└─────────────────────────────┘
+```
+Sorted by rank, then the lower end of the window; dense 56 pt rows. Copy title "Likely to flood next" / "Con más probabilidad de inundarse". The MVP **accessible alternative to the map** is the Map Home List view (§13.5, F34) — its "Ranked" segment uses this same sort and stays [MVP]; only this separate `crew` route is Stretch. Typing/scrolling here is locked while moving (§13.12).
+
+### 13.19 Report water over road [Roadmap, §4 F115 — feature-flagged OFF]
+Only a row in the crossing full detent: "Report water over a road — Planned" / "Reportar agua sobre el camino — Planeado", opening a static explainer ("Reports will be for passengers or parked drivers, reviewed, and will never override official closures."). No form, no network call. Done when: the flag `features.reportWater=false` hides any form code path.
+
+### 13.20 Global error, offline & empty states [MVP]
+
+| Case | UI (EN / ES keys) |
+|---|---|
+| No network | `OfflineBanner` `fresh.as_of_offline` "Risk as of {{time}} — you're offline" / "Riesgo a las {{time}} — está sin conexión" (+ age); markers keep their last state until `stale_after_s`, then UNKNOWN (dashed; last-known badge for WATCH/AVOID/CLOSED); bundled crossings/creeks still drawn; map tiles from cache/offline pack or plain land background |
+| Server/partial data (`degraded`) | FreshnessPill `fresh.partial` "Some gauges delayed"; affected crossings UNKNOWN with reason `DATA_STALE` in "Why" |
+| Slow API rung (Render cold start) | after 3 s: `common.waking_server` "Waking server…" / "Activando el servidor…" (never a calm placeholder) |
+| One crossing record fails validation | that crossing renders UNKNOWN (offline copy) and the error is logged; every other crossing renders normally (§9.6) |
+| Map style fails to load | switch to bundled `fordcast-night-minimal.json`; if that fails, land-colored background + GeoJSON layers only; small banner `errors.map_details` "Map details unavailable" / "Detalles del mapa no disponibles" |
+| Replay file corrupt/missing | StormCard `replay.unavailable` "Unavailable — reinstall or update the app" / "No disponible: reinstale o actualice la app"; other storms unaffected |
+| Routing busy (429) [Stretch] | `routing.busy` "Routing is busy. Try again in a minute." / "El servicio de rutas está ocupado. Intente de nuevo en un minuto." |
+| Location denied | §13.3 |
+| Notifications denied | Alerts `CapabilityBanner notificationsOff` |
+| Push token failure | `CapabilityBanner pushUnavailable` "Push alerts unavailable right now. Check crossings in FordCast." / "Las alertas push no están disponibles ahora. Revise los cruces en FordCast." |
+| `min_app_version` above current | blocking card `errors.update_required` "Please update FordCast to keep getting current data." / "Actualice FordCast para seguir recibiendo datos actuales." (Storm Replay still works offline) |
+| Empty search / list / alerts | `EmptyState` variants (copy above); never "all clear" |
+| Unexpected JS error | Route error boundary (§28.9): `errors.root` "Something went wrong. FordCast can't show crossing status right now. Obey barricades and official warnings." / "Algo salió mal. FordCast no puede mostrar el estado de los cruces en este momento. Respete las barricadas y las alertas oficiales." [Try again] [Back to map] — never a blank or calm screen; in Drive Mode it also speaks `drive.tts.stopped` once |
+
+Done when: each row is reachable from the debug screen (§13.22: rung toggles, network off, style failure, corrupt replay, forced throw) and renders its copy in EN and ES.
+
+### 13.21 Deep links & notification landing [MVP, §4 F44]
+`fordcast://crossing/<id>` → Map Home (camera eases to the crossing — the only camera move FordCast makes on its own, because the user tapped the link) + `crossing/[id]` at peek; notification tap → same; summary notification → `fordcast://alerts`; action "Show detour" [Stretch F69] → Check My Drive result avoiding that crossing [Stretch F49] or the crossing sheet if routing is unavailable; cold start uses `getLastNotificationResponseAsync()` (§31). Unknown id → toast-free inline message in the sheet: `errors.unknown_crossing` "This crossing isn't in FordCast's list anymore." / "Este cruce ya no está en la lista de FordCast."
+
+### 13.22 Debug screen (`settings/debug`) [MVP, `__DEV__` only, §4 F107]
+One screen that collects **every** debug control referenced anywhere in this prompt, so any §13 state can be reproduced on the dev build in seconds. Route `settings/debug` renders `<Redirect href="/" />` unless `__DEV__` (§28.2); it is therefore absent from `preview`/`production` builds. Reached by long-pressing the Settings version row for 5 s, or from the dev gallery (§12.7). Strings here are English-only developer text (not in the locale files; not scanned by the copy tests) — but a debug control never changes any user-facing copy. Every override is in-memory, marked `fixture: true`, never written to the SQLite `risk`/`last_known` tables, never sent to the server (except the explicit push/subscription buttons in section 7), and cleared on relaunch. While any override is active, a dashed-outline "DEBUG FIXTURE" tag (`text.tertiary`; not violet, not a state color) shows under the top chrome on every screen.
+```
+┌─────────────────────────────┐
+│ ‹ Debug (dev build only)    │
+│ 1 CAPABILITIES            ▾ │ collapsible sections (accordion), all open by default
+│ 2 DATA & READ PATH        ▾ │
+│ 3 MAP HOME STATES         ▾ │
+│ 4 CROSSING FIXTURES       ▾ │
+│ 5 ESCALATION              ▾ │
+│ 6 SIMULATE DRIVE          ▾ │
+│ 7 PUSH & SUBSCRIPTIONS    ▾ │
+│ 8 REPLAY                  ▾ │
+│ 9 GEOFENCES [Stretch]     ▾ │
+│ Dev gallery ›               │ → dev/gallery (§12.7)
+│ [ Reset all overrides ]     │
+└─────────────────────────────┘
+```
+| # | Section | Shows | Controls |
+|---|---|---|---|
+| 1 | Capabilities | every `caps.*` flag from `src/lib/capabilities.ts` (runtime capability flags only: `isExpoGo`, `remotePush`, `geofencing`, `backgroundLocation`, `backgroundTask`, `timeSensitive`, …); build lane (Step 0); EAS profile + update channel + `runtimeVersion`; every `features.*` flag (`src/lib/flags.ts`, §28.10); `DEMO_MODE` | none (read-only) |
+| 2 | Data & read path | snapshot `seq`, `as_of`, check age, `data_status`, `stale_after_s`, source rung (`storage` / `api` / `cache`), server clock offset (ms), Realtime channel status, SQLite row counts per table (`crossings`, `risk`, `last_known`, `alerts_log`, `saved_*`, `route_cache`, `recents`, `outbox`), every `meta.*` key | **Fake clock** +5 / +15 / +25 min and Reset (offsets `useNowMinute` and the staleness rule, so the 10/20-min thresholds fire — §3.4 fake-clock test) · **Disable Storage rung** · **Disable API rung** · **Network off** (simulated; proves the F85 ladder rung by rung) · **Fail map style** (→ §13.20 style fallback) · **Corrupt a replay file** (in memory) · **Throw in render** (error boundary) · **Force refetch** · **Flush outbox** · **Delete cached data** (same function as §13.16.6) |
+| 3 | Map Home states | the active override | one tap each forces Map Home into: calm · storm · offline · one-crossing-stale · degraded · loading · replay-active (MVP pause behavior; Stretch mini-bar once F41 ships) · location-denied · location-not-asked · app banner · kill switch · screen-reader list-first · List view (88 %) · Drive suggestion banner [Stretch F62] |
+| 4 | Crossing fixtures | fixture list | each opens `crossing/[id]` for the test crossing `test-0001` with a fixture state (gauge names taken from real §16.18 records, e.g. W Bull Ck at Loop 360 · USGS 08154750): NO_RISE · WATCH with window [30,60] · WATCH no window · AVOID [15,30] · AVOID lo = 0 ([0,15]) · AVOID held (window `null`) · CLOSED official (City) · CLOSED official (manual entry) · CLOSED sensor · UNKNOWN stale with last-known WATCH / AVOID / CLOSED · UNKNOWN tier C (not monitored) · tier B "Estimated" · official "no closure reported" · replay variant · deep link from a cold start |
+| 5 | Escalation | last escalation event | **Escalate fixture crossing** (§14.2): injects a Realtime-shaped row for `test-0001` WATCH → AVOID (`seq + 1`) into the query cache so the marker swap, banner, one haptic, one announcement and the inbox entry run through the real code path · **De-escalate fixture** (→ "Update") · **Make fixture stale** (→ UNKNOWN with last-known) |
+| 6 | Simulate drive | fixture position, speed, heading, lockout state, suggestion state | **Simulate drive**: opens Drive Mode with a fixture `LocationSource` that moves along a polyline approaching `test-0001` (fixture risk AVOID) to produce the §14.3 frames · **speed slider 0–30 m/s** (+ heading) feeding the lockout reducer (lockout at ≥ 4.5 m/s for ≥ 5 s, §13.12) and the Drive suggestion (median > 6.7 m/s over 15 s, §13.4) · Stop. (The judge-facing simulated drive is the MVP Replay drive, F128, §13.11 — not this control.) |
+| 7 | Push & subscriptions | Expo push token (copy button), `device_id` (never the secret), `pushStatus`, subscription count + hash from `GET /v1/devices/{id}`, outbox rows, last 10 `alerts_log` rows | **Subscribe to test-0001** (adds `{crossing_id: 'test-0001', reason: 'starred'}` to the subscription set — step 1 of the §23.9 end-to-end test) · **Unsubscribe test-0001** · **Local test on each channel** (one TEST-prefixed local notification each on `crossing-urgent`, `crossing-watch`, `updates`, `drive-mode`) · **Replay demo notification** (the REPLAY-prefixed local notification on `updates`, §15.1) · **Re-register device** |
+| 8 | Replay | storm id, `simT` (ISO + local), speed, playing, timeline `file_sha256` / `content_sha256`, `replayIndexSha`, assumed delay, `HERO_STORM_ID`; **exact τ** (median, P25, P75, n storms) for each link of the selected crossing — the only place in the app where an exact travel time appears (§3.5; users only ever see the bucketed range) | **Jump to T_W − 30 min** · **Jump to hero onset** · **Speed ×** any value |
+| 9 | Geofences [Stretch F70] | registered set (ids), count vs cap (Android 60 default, iOS 19 + 1 re-rank fence), last re-rank time | **Re-rank now** · **Unregister all** |
+
+Done when: every state named in §13 (Map Home, Crossing Detail variants, §13.20 cases, Drive Mode approach, lockout, replay-active) is reachable from this screen; F107's "Done when" (absent from preview builds) passes; and the phone side of the §23.9 end-to-end push test (subscribe to `test-0001`, watch the push arrive, read `alerts_log`) runs from section 7 while the server side uses the `fordcast official set` CLI.
+
+---
+## §14. Signature moments (frame by frame)
+
+> All numbers below are **example values**. At runtime every time, window and minute count comes from the replay timeline JSON (`fordcast.replay.v1`, §19) or the live snapshot — never typed by hand. Symbols: `T_trig` = time the upstream gauge's upcrossing of its trigger stage becomes **available** (`obs_time + latency`), `τ` = learned travel time, `T_W` / `T_A` = first WATCH / AVOID event, `T_O` = observed water-over-road onset (truth).
+
+### 14.1 "The warning arrives first" — Storm Replay (demo video 0:35–1:20) [MVP]
+
+Storm: the one named by `HERO_STORM_ID` in `mobile/assets/replays/index.json` (first bundled storm if unset; never hard-coded); crossing and lead time: `results.json.hero` (pre-registered rule — the tier-A hit whose lead is closest to the overall median, never the maximum; §18.13). Pacing: play at **60×** (1 storm-minute per second); the human operator taps **10×** just before `T_W` and back to 60× after the result, or DEMO_MODE auto-slows to **10×** around key events (Step 0 D7, F83) (research/cac.md §8.6 suggests slowing around key moments; 10× is the slowest preset that keeps the scene under ~1 min). Use "Skip to action" to start at `T_W − 30 min`.
+
+| Frame | Storm time | Wall time (example) | What the viewer sees | Motion / haptic / a11y |
+|---|---|---|---|---|
+| F0 | `T_W − 30 min` | 0.0 s | Player opens; violet REPLAY banner slides down; camera fits gauge + creek reach + crossing (48 pt padding + sheet inset); clock HUD "May 23 · 9:48 PM CDT" | A18 240 ms; A19 600 ms |
+| F1 | → `T_trig` | 0–12 s | Calm: creek 50% cyan, crossing `○`, hydrograph flat, clock ticks in tabular digits (no jitter) | none |
+| F2 | `T_trig` | ~12 s | Upstream gauge crosses the trigger: gauge dot pops; the hydrograph's dashed amber trigger line highlights once (opacity 0.4 → 1 → 0.6, 600 ms — no strobe); storyboard caption "Upstream gauge +2.1 ft in 30 min" | `spring.pop`; announce (polite) |
+| F3 | `T_trig` → `T_trig + τ` | 12 s → (12 + τ s at 60×) | **Water travel:** cyan gradient head runs down the NHDPlus reach toward the crossing at `p = (simT − T_trig)/τ`; the reach switches to active cyan + glow; it reaches the crossing exactly when the forecast says | A6 (replay-driven) |
+| F4 | `T_W` (operator switches to 10×) | ~18 s | Crossing morphs `○ → ▲` with one amber ripple; scrubber drops a `▲` tick; caption "Watch issued" | A3; Warning haptic; announce |
+| F5 | `T_A` | ~26 s | `▲ → ◆`; red halo pulses ×3; RiskRing sweeps amber → red (700 ms); crossing card slides to peek: "AVOID · likely flooded within 30–60 min" (example); `◆` tick; a bracket starts on the scrubber at `◆` with caption "Waiting for the road sensor…" / "Esperando el sensor del camino…" | A2/A4/A8; Error haptic once; announce high |
+| F6 | `T_O` (example `T_A + 38 min`; at 10× ≈ 3.8 s later) | ~30 s | Road sensor records water over road: white `●` tick; LagPair's lower line rises; marker gains barricade stripes `▧` ("Water over road") | A3 |
+| F7 | `T_O` + 0.4 s wall | ~30.4 s | Bracket `◆ → ●` highlights; the callout counts up **"38 MIN EARLIER"** (display.lg; a measured past lead time from the JSON, not a countdown); the `replay.honesty` line (median across storms) appears with it — always; Results button appears | A12; Medium impact |
+| RM | (Reduce Motion) | — | Steps snap; no travel or pulse: static `ic-flow-arrow` arrowheads + one caption with the §3.7 travel **range** (`travel.range`, e.g. "Water usually takes 30–45 min to get here" — τ bucketed from its P25/P75, never a single number, never "min to crossing"); the counter shows the final number; storyboard captions narrate each step | — |
+
+**Variant 14.1b — gauge failure (Halloween 2013, Onion Creek at US 183):** the gauge went silent; its readings only arrived later. The storm's `meta.toml` lists the transmission outage, so every reading observed inside it becomes available only at the outage end (`available_at = max(time + latency, outage_end)`, §19.4, §19.10) — even though today's archive holds those readings. At the outage start the gauge dot becomes a dashed ring, the hydrograph shows the hatched "No data" band, dependent crossings flip to `◌ UNKNOWN`, and the caption reads `replay.gauge_silent` "{{gauge}} went silent. Its readings only arrived later, so FordCast shows Unknown here." When readings become available again, states resume from real data only.
+
+Done when: recording the Replay screen at 60×/10× reproduces F0–F7 with numbers matching the JSON, in EN and ES, and 14.1b shows UNKNOWN for the whole documented outage window.
+
+### 14.2 Live Crossing Card escalation (real data) [MVP]
+1. A Realtime row update (or snapshot poll) changes a crossing WATCH → AVOID (`seq` increases).
+2. The marker sprite swaps with one ripple; the AVOID halo pulses 3×.
+3. If the crossing is in the viewport, saved, or on a saved route: `AlertBanner` drops in (A13) and persists; otherwise only the Alerts tab badge and inbox update (no banner spam).
+4. Tapping the banner opens `crossing/[id]` at peek: the RiskRing sweeps (A8), the EtaRangePill (and the Detour button, once [Stretch F50] ships) fade in with a 60 ms stagger.
+5. Screen readers hear (once, high priority) the `state.avoid.spoken` line: "Avoid. Bull Creek at Loop 360. Likely flooded within 15 to 30 minutes. Use another route." / "Evite. Bull Creek en Loop 360. Probablemente inundado en 15 a 30 minutos. Use otra ruta." (+ "Detour adds 4 minutes." / "El desvío agrega 4 minutos." only once F50 ships).
+6. The camera does not move unless the user taps Show.
+Done when: the debug screen's "Escalate fixture crossing" (§13.22, section 5) reproduces steps 1–5 with one haptic and one announcement.
+
+### 14.3 Drive Mode heads-up (eyes-free) [MVP]
+1. ~10 s before the spoken prompt (computed from distance ÷ speed to the crossing; never shown as a countdown), the `RouteRibbon` advances so the at-risk crossing's node rises to the top.
+2. A static 8 pt red inner edge glow appears (no flashing).
+3. One Error haptic; the alert chime plays with other audio ducked; TTS speaks the AVOID line (§13.11) in the app language.
+4. "Take detour" [Stretch F50, only with a checked route] grows 76 → 96 pt for 10 s; the HUD shows ≤ 3 items (word, range, name).
+5. If the user doesn't act, nothing else repeats for 60 s for that crossing; on de-escalation the "Update" line is spoken once.
+Done when: the debug "Simulate drive" fixture (§13.22, section 6) and the MVP Replay drive (F128) each produce steps 1–3 (and 4 once F50 ships) in portrait [MVP] — and in landscape once [Stretch F94] ships — with the phone on silent (or the documented silent-mode tip `drive.silent_tip` shown, §30.8).
+
+### 14.4 The calm-day moment (what judges most likely see live) [MVP]
+Map Home at night palette: freshness capsule breathing once every 10 s ("Checked 2 min ago" — never "Live"), thin cyan creek veins, small cyan gauge dots (tapping one shows its latest stage once the gauge mini-card [Stretch F39] ships; in MVP the dot only has its a11y label), slate `○` crossings, the sheet reading "No rise detected near you · Watching {g} upstream gauges for {c} crossings", and the Storm Replay invite card one swipe up. It must look finished and alive with nothing broken — and contain no green and no reassurance.
+
+---
+
+## §15. Notification, Live Activity, widget, app icon & splash visuals
+
+### 15.1 Push & local notification layouts (EN / ES) [MVP Android push + local; Stretch iOS push]
+
+**Anatomy rules:** every title and body is copied **verbatim from the §3.7 bank** (keys shown below; push templates in `backend/fordcast/push/templates/{en,es}.json` are the same strings, §23.5) — this table never introduces copy. The **state word starts the title** (shape-free surfaces need the word); title ≤ 50 characters (truncate `{{name}}` with "…"), body ≤ 150; escalation bodies contain a range or the `*_now`/`*_nowindow` wording (never a countdown, never a single number) and an action; no emoji; `fresh.as_of` "as of {{time}}" is appended to **local** alerts built from cached data older than 20 min. Push `ttl` **1800 s** (decision sheet — a flood alert hours late is harmful). `collapseId`/`tag` = `crossing-<id>` so a newer alert replaces an older one for the same crossing (summaries use `summary`). Delivery rules (who/when) are owned by §23; channel creation by §31.1.
+
+| Type (§23.5 template) | Title (EN / ES) | Body (EN / ES) | iOS `interruptionLevel` (push / local) | Android channel | Actions [Stretch F69, category `crossing-alert`] |
+|---|---|---|---|---|---|
+| AVOID (`avoid`, window `lo > 0`) | `state.avoid.push_title` "Avoid {{name}}" / "Evite {{name}}" | `state.avoid.push_body` "Likely flooded within {{lo}}–{{hi}} min. Use another route. Never drive into water." / "Probablemente inundado en {{lo}}–{{hi}} min. Use otra ruta. Nunca maneje en el agua." | `time-sensitive` / `timeSensitive` (Lane B; else `active`) | `crossing-urgent` | Show detour [F50] · Details · Mute this crossing 1 h |
+| AVOID, `lo = 0` or held window (`avoid_now`) | `state.avoid.push_title` "Avoid {{name}}" / "Evite {{name}}" | `state.avoid.push_body_now` "Water may already be on the road. Use another route. Never drive into water." / "Puede que ya haya agua en el camino. Use otra ruta. Nunca maneje en el agua." | time-sensitive | `crossing-urgent` | same |
+| CLOSED official (`closed_official`) | `state.closed.push_title` "Closed: {{name}}" / "Cerrado: {{name}}" | `state.closed.push_body` "{{source}} reports it closed. Turn around, don't drown." / "{{source}} lo reporta cerrado. ¡Dé la vuelta, no se ahogue!" | time-sensitive | `crossing-urgent` | Show detour [F50] · Details |
+| CLOSED sensor (`closed_sensor`) | `state.closed.push_title` "Closed: {{name}}" / "Cerrado: {{name}}" | `state.closed.body_sensor` "The sensor at this crossing shows water over the road. Turn around, don't drown." / "El sensor de este cruce muestra agua sobre el camino. ¡Dé la vuelta, no se ahogue!" | time-sensitive | `crossing-urgent` | Details |
+| WATCH, opt-in (`watch`) | `state.watch.push_title` "Watch: {{name}}" / "Precaución: {{name}}" | `state.watch.push_body` "Water rising upstream. Possible flooding in {{lo}}–{{hi}} min. Plan another route." / "El agua sube río arriba. Posible inundación en {{lo}}–{{hi}} min. Planee otra ruta." | `active` | `crossing-watch` | Details |
+| WATCH, no window (`watch_nowindow`) | same title | `state.watch.push_body_nowindow` "Water rising upstream. Plan another route." / "El agua sube río arriba. Planee otra ruta." | `active` | `crossing-watch` | Details |
+| SUMMARY, coalesced (`summary`) | `push.summary` title "{{c}} crossings on your routes need caution" / "{{c}} cruces en sus rutas requieren precaución" | `push.summary` body "Tap for details." / "Toque para ver detalles." | `time-sensitive` if it contains an Avoid/Closed, else `active` | `crossing-urgent` if it contains an Avoid/Closed, else `crossing-watch` | none (tap → `fordcast://alerts`) |
+| UPDATE, de-escalation (`update`) | `update.deescalate.push_title` "Update: {{name}}" / "Actualización: {{name}}" | `update.deescalate.push_body` "FordCast no longer sees water rising upstream. Water may still be on the road. Obey barricades." / "FordCast ya no detecta agua subiendo río arriba. Todavía puede haber agua en el camino. Respete las barricadas." | `passive` | `updates` | — |
+| UNKNOWN push [Stretch] (`unknown`; saved-route subscription + previous state ≥ Watch + active NWS flood warning) | `state.unknown.push` title "FordCast can't see {{name}} right now" / "FordCast no puede ver {{name}} ahora" | `state.unknown.push` body "Data is offline during flood alerts. Avoid low-water crossings." / "No hay datos mientras hay alertas de inundación. Evite los cruces bajos." | `active` | `updates` | Details |
+| UNKNOWN last-known, local geofence approach [Stretch F70] | `state.unknown.geofence_lastknown.push_title` "{{name}}: data offline" / "{{name}}: sin datos" | `state.unknown.geofence_lastknown.push_body` "Last known: {{state}} · {{age}}. Treat it as if it could flood." / "Último estado conocido: {{state}} · {{age}}. Trátelo como si pudiera inundarse." (`{{state}}` = the last-known state word — Watch, Avoid or Closed — never hard-coded) | local `active` | `crossing-watch` | Details |
+| TEST (`test`; Settings → "Send a test alert", F72) | `alerts.test_title` = "TEST · " + the AVOID title with `alerts.test_name`: "TEST · Avoid Example Crossing" / "PRUEBA · Evite Cruce de ejemplo" | `alerts.test` "This is a test. No crossing has changed." / "Esto es una prueba. Ningún cruce ha cambiado." | local `timeSensitive` (else `active`) | `crossing-urgent` | — |
+| REPLAY demo, local only (Replay / Replay drive, F66, F128) | `replay.prefix` "REPLAY" / "REPRODUCCIÓN" + " · " + the state's push title (e.g. "REPLAY · Avoid {{name}}") | `replay.notif_prefix` "REPLAY — not a live alert:" / "REPRODUCCIÓN — no es una alerta real:" + the state's push body (the body MUST start with this prefix) | local `active` (never time-sensitive) | `updates` (never `crossing-urgent`) | — (`data.type: 'replay'`) |
+
+**Push policy (decided; §3.8, §23.2, Step 0 D4):** escalations to AVOID/CLOSED push on `crossing-urgent`; WATCH pushes only for opted-in subscriptions; exactly **one** passive `update` is pushed when a crossing that was pushed as an escalation reaches `no_rise` (step-downs such as AVOID → WATCH send nothing; a transition to UNKNOWN never sends an update); NO_RISE is never pushed; the UNKNOWN push is Stretch only. Local notifications (in-app escalation, geofence, Drive Mode) use the same layouts. The WATCH Spanish title is always "Precaución" (the state word) — never "Atención".
+
+**iOS layout (Lock Screen / banner):** app icon + "FORDCAST" + relative time; bold title line ("Avoid Bull Creek at Loop 360"); body up to 4 lines; long-press reveals actions [Stretch F69]. Grouping `threadId` = `fordcast-risk` (§23.6). Time Sensitive requires the entitlement and a paid account (Lane B, §31); without it, alerts fall back to `active` and Settings shows the tip "To get FordCast alerts while Driving Focus is on, allow Time Sensitive notifications for FordCast." (§13.16.2).
+**Android layout:** small icon (§15.6) tinted with the accent color `#6CB4FF` — the link/focus accent, never a status color (amber would make every notification read as Watch, and navy disappears on a dark shade); app name; title; BigText style shows the full body; up to 3 action buttons; heads-up only on the HIGH channel.
+
+**Android channels (create before requesting permission; names localized at creation and updated by name on language change — IDs are permanent):** these four IDs are canonical (§3.8, §4 F65, §31.1) and the server's `channelId` (§23.6) MUST use exactly them, or Android will not show the notification.
+
+| Channel ID | Name EN / ES | Importance | Sound | Vibration | Light | Lock screen | Badge |
+|---|---|---|---|---|---|---|---|
+| `crossing-urgent` | "Avoid & Closed alerts" / "Alertas: Evite y Cerrado" | HIGH | system default (custom `fordcast_alert.wav` = Roadmap, §4 F121) | `[0, 400, 200, 400]` | `#FF5470` | PUBLIC | yes |
+| `crossing-watch` | "Watch alerts" / "Alertas de precaución" | DEFAULT | system default | `[0, 250]` | `#F5A623` | PUBLIC | yes |
+| `updates` | "Updates & summaries" / "Actualizaciones y resúmenes" | LOW | none | none | none | PUBLIC | no |
+| `drive-mode` | "Drive Mode status" / "Estado de Modo manejo" | LOW | none | none | none | PUBLIC | no |
+
+`bypassDnd: false` on all (never request DND access); no full-screen intents. Channel names use keys `channel.urgent`, `channel.watch`, `channel.updates`, `channel.drive` (§31.1).
+
+### 15.2 Android ongoing Drive Mode notification [Stretch, §4 F111]
+Sticky (`sticky: true`, `autoDismiss: false`) on `drive-mode`, updated in place (`identifier: 'drive-status'`): title `drive.sticky_title` "Drive Mode · {{state}} ahead" / "Modo manejo · {{state}} adelante" (`{{state}}` = the §3.7 state label in the app language); body "{{name}} · {{lo}}–{{hi}} min · as of {{time}}" (AVOID with `lo = 0` → "{{name}} · water may already be on the road") or "No rise detected ahead · next crossing {{d}} mi" / "Sin crecida detectada adelante · próximo cruce a {{d}} mi"; color `#6CB4FF`; it coexists with the location foreground-service notification ("FordCast Drive Mode · Watching crossings on your route" / "Modo manejo de FordCast · Vigilando los cruces de su ruta"). Never a timer.
+
+### 15.3 Live Activity + Dynamic Island [Stretch, §4 F112 — iOS + paid Apple account only] (`expo-widgets` `createLiveActivity`)
+```
+compactLeading: [octagon glyph]    compactTrailing: "15–30m"    minimal: [octagon glyph]
+expanded:
+┌──────────────────────────────────────────────┐
+│ [◆] AVOID                         15–30 min  │ expandedLeading / expandedTrailing
+│          Bull Creek at Loop 360              │ expandedCenter
+│ Upstream +3.1 ft/30 min · Detour +4 min      │ expandedBottom (tap → fordcast://crossing/<id>); "Detour" only once F50 ships
+└──────────────────────────────────────────────┘
+banner (Lock Screen):
+┌──────────────────────────────────────────────┐
+│ FordCast   [◆] AVOID                as of 10:42│
+│ Bull Creek at Loop 360                        │
+│ Likely flooded within 15–30 min · Detour +4  │
+│ Never drive into water.                       │
+└──────────────────────────────────────────────┘
+bannerSmall (Watch/CarPlay surfaces): glyph + word + range only.
+```
+- Starts only during Drive Mode or for an AVOID/CLOSED crossing on a saved route active now; `staleDate = now + 15 min`; when `isStale`, all colors go slate, glyph → `questionmark.circle` and text "Data may be outdated · check FordCast" / "Los datos pueden estar desactualizados · consulte FordCast" (never "open", §3.12). Text slots use the §3.7 `widget` strings ("AVOID · {{lo}}–{{hi}} min"; `lo = 0` → `widget_now` "AVOID · water may be on the road"). Ends 30 min after the state drops below WATCH (dismissal after +15 min). Background tint navy `#0E1726`. SF Symbols allowed here (custom SVG cannot render): WATCH `exclamationmark.triangle.fill`, AVOID `exclamationmark.octagon.fill`, CLOSED `xmark.octagon.fill`, UNKNOWN `questionmark.circle` — VERIFY names in the SF Symbols app. Use `env.isLuminanceReduced` → white glyphs. **No running timer, ever.**
+
+### 15.4 Widgets [Stretch, §4 F113 — iOS via expo-widgets, Lane B, built last; Android = Roadmap F114]
+```
+systemSmall          systemMedium (route)                    accessoryRectangular
+┌──────────┐         ┌───────────────────────────────┐       ┌──────────────────────┐
+│FordCast  │         │ Home → School      as of 7:02 │       │[◆] 1 Avoid near you  │
+│[◆] 1     │         │ [◆] AVOID  Bull Ck @ 360      │       │Bull Ck · 15–30 min   │
+│Avoid near│         │ Detour +4 min ›               │       └──────────────────────┘
+│as of 7:02│         └───────────────────────────────┘       accessoryInline: "Avoid · Bull Creek"
+└──────────┘                                                 accessoryCircular: ring + count
+```
+Every widget prints "as of"; if the timeline entry is older than 30 min render `[◌]` "Check FordCast for current data" / "Consulte FordCast para ver datos actuales" (WidgetKit refresh is not guaranteed). "Detour +4 min ›" appears only once F50 ships. Support `vibrant`/`accented` rendering modes — shapes and words carry meaning when color is lost. Calm widget text: "No rise detected near you · as of {time}" (never "all clear").
+
+### 15.5 App icon — "The Dip" production [MVP]
+| Asset | Spec |
+|---|---|
+| iOS 26/27 `.icon` (Icon Composer) | Layers: (1) background navy gradient `#0E1726 → #16233A`; (2) road band `#F2F5FA`, dipping into a shallow V at center; (3) creek S-curve `#2BD9D9` from upper-left into the dip (glass ON for this group); (4) gauge dot `#F2F5FA` with 1.5 pt cyan ring upstream. No baked masks. Preview Default / Dark / Clear / Tinted. The SDK 57 template already points `ios.icon` to an `.icon` file. Built by the human (Icon Composer needs a Mac); if unavailable, ship the PNG below. |
+| `assets/images/icon.png` | 1024 × 1024 PNG, same composition flattened, no transparency |
+| Android adaptive | `android-icon-foreground.png` 1024 × 1024 transparent, glyph inside the central safe zone (keep all artwork within the middle ~66% — VERIFY against Android adaptive-icon guidance); `adaptiveIcon.backgroundColor: '#0E1726'` |
+| Android themed (monochrome) | `android-icon-monochrome.png` 1024 × 1024, single-color white silhouette of road + creek (no dot detail) → `adaptiveIcon.monochromeImage` |
+| Tests | Legible at 29 pt and 48 dp; recognizable in iOS tinted and Android themed modes; **contains no red or amber**; never includes text or SF Symbols. |
+
+**Decision (B owns visual values):** the upstream gauge dot is **ice `#F2F5FA` with a 1.5 pt cyan ring** — never amber — so the icon can never resemble a Watch alert (research/design.md §C.6's amber dot is not used). §4 F108 follows this.
+
+### 15.6 Notification & service small icon [MVP]
+`assets/images/notification-icon.png`: 96 × 96, **pure white on transparent**, the road-dip + creek silhouette (2 strokes, no fill details, no text); used by the `expo-notifications` plugin `icon` and as `androidForegroundServiceIcon`. Accent color `#6CB4FF` (§15.1).
+
+### 15.7 Splash [MVP]
+`expo-splash-screen` plugin: `backgroundColor: '#0E1726'`, `image: './assets/images/splash-icon.png'` (1024 × 1024 transparent PNG of the Dip glyph with cyan creek, no wordmark), `imageWidth: 76`. Same in dark mode. Android 12+ shows the icon inside the system splash circle — keep the glyph within the inner area (VERIFY on device). JS overlay animation per §13.1. The wordmark "FordCast" and tagline render in the JS overlay with Inter (not baked into the PNG, so they localize).
+
+### 15.8 Acceptance for §14–§15
+- [ ] Done when: the TEST notification renders correctly on the Android test phone (heads-up on `crossing-urgent`, small icon visible, accent `#6CB4FF`, title starts with "TEST · Avoid", body = `alerts.test` "This is a test. No crossing has changed."), in EN and ES.
+- [ ] Done when: all four Android channels (`crossing-urgent`, `crossing-watch`, `updates`, `drive-mode`) exist with localized names after first launch (`adb shell dumpsys notification` or system Settings → Apps → FordCast → Notifications), and the debug screen's "Local test on each channel" (§13.22) shows one notification per channel.
+- [ ] Done when: a REPLAY demo notification arrives on `updates` (never `crossing-urgent`) and its body starts with "REPLAY — not a live alert:" / "REPRODUCCIÓN — no es una alerta real:".
+- [ ] Done when: a unit test renders every §15.1 row from the locale files and asserts title ≤ 50 and body ≤ 150 characters with a 30-character crossing name, and that no body contains a single-number time or the word "Open".
+- [ ] Done when: the app icon, adaptive icon, monochrome icon, notification icon and splash are present and pass the legibility tests; no red/amber in any icon asset.
+- [ ] Done when (Stretch, iOS paid only): a Live Activity started from Drive Mode shows compact/minimal/expanded/banner layouts and turns slate when stale.
+
+---
+
+### Part B decisions already made (do not re-open; each is applied in the section named)
+1. **Orientation:** portrait everywhere in MVP, Drive Mode included; landscape Drive Mode, then Map + Crossing sheet, is [Stretch F94]; no WCAG 1.3.4 claim until F94 step 2 ships (§8.7, Step 0 D8).
+2. **Map palette:** research/design.md §A.4 is canonical over research/maps.md §4.2 (§9.8).
+3. **Text scaling:** body and status text are uncapped (research/cac.md §3.5), not design.md §B's 2.0 caps (§10.2).
+4. **Replay speeds:** 1× · 10× · 60× visible, 30× and 120× in the "More" menu; default 60×; DEMO_MODE auto-slows to 10× (§13.13, F78, Step 0 D7).
+5. **Notifications:** channel IDs `crossing-urgent` / `crossing-watch` / `updates` / `drive-mode`; accent `#6CB4FF`; exactly one passive `update` push after an escalation, UNKNOWN push Stretch only; every string from §3.7 (§15.1, Step 0 D4).
+6. **App icon dot:** ice with a cyan ring, never amber (§15.5).
+7. **Persistent gorhom sheet:** documented Day-1 fallback to a fixed `AreaStatusCard` + `nearby` formSheet (§12.2 Step 4).
+8. **Tiers (§4 is the authority):** Crew list, Share, glass chrome, the JS replay mini-bar, saved places/routes and landscape Drive Mode are [Stretch]; saved crossings, foreground Drive Mode + lockout and the Replay drive (F128) are [MVP]; the departure reminder is [Roadmap F56].

@@ -1,13 +1,13 @@
 # Part C — Data bridge, forecast science, Storm Replay & backend (§16–§24)
 
-**Scope.** Part C specifies everything behind the phone: every external data source, the crossing inventory and river-network linking, the forecast science, the Storm Replay engine, the Python backend and its hosting, the database, the REST API, push fan-out, and backend security, observability, testing and CI. It uses the canonical state names, copy, channel IDs and precedence rules from **§3**, the feature IDs (F1–F127) from **§4**, and the paths from **§5**. If anything here conflicts with §3, §3 wins.
+**Scope.** Part C specifies everything behind the phone: every external data source, the crossing inventory and river-network linking, the forecast science, the Storm Replay engine, the Python backend and its hosting, the database, the REST API, push fan-out, and backend security, observability, testing and CI. It uses the canonical state names, copy, channel IDs and precedence rules from **§3**, the feature IDs (F1–F128 plus the suffixed IDs such as F17b and F106b) from **§4**, the paths from **§5**, and the root `Makefile` targets from **§5.2** (referenced by name, never re-defined here). If anything here conflicts with §3, §3 wins. Part C owns the data and API contracts (§21, §22); other parts conform to them.
 
 **Conventions used in Part C**
 - Wire-format states are `no_rise | watch | avoid | closed | unknown` (§3.2). Severity order: `no_rise < unknown < watch < avoid < closed`. The research reports' `no_signal`/`flooded` names are retired.
 - `[V]` = verified by the research (package source, docs or registry), `[U]` = unverified. Every `[U]` item that matters becomes **VERIFY BEFORE USE: <how>**, followed by the safe fallback.
 - ★ marks a **student-owned core file** (§1.8, §39). For those files this prompt gives the *contract* (signatures, algorithm, tests), never a finished implementation. You MUST follow the §1.8 pause protocol: failing tests, skeleton with `TODO(student)`, explain-back doc, stop.
 - All times are UTC in storage and on the wire (ISO-8601 with `Z`). Display uses America/Chicago (§35).
-- Python commands run from `backend/`: `uv run python -m fordcast <cmd>`.
+- Python commands run from `backend/`: `uv run python -m fordcast <cmd>`. Repo scripts in `tools/` run from the repo root in the separate tools project: `uv run --project tools python tools/<script>.py` (A §5.3), except `smoke_test.py` and `build_replays.py`, which run in the backend environment.
 
 ---
 
@@ -30,11 +30,11 @@
    ```
 2. **User-Agent** on every request: `FordCast/1.0 (+https://github.com/godtier812/Fordcast-CAC; contact: <PROJECT_CONTACT_EMAIL>)`. Use a project contact address, never the student's personal email (§24). NWS returns **403** without a descriptive UA `[V]`.
 3. **Retries**: tenacity, `stop_after_attempt(3)`, `wait_exponential_jitter(initial=1, max=20)`. Retry only on `httpx.TransportError`, HTTP 429 and 5xx. Honor `Retry-After` (cap at 60 s). Never retry other 4xx.
-4. **Validate every response** with a pydantic v2 model (`model_config = ConfigDict(extra="ignore")`). The model *is* the contract (§24.8). A validation failure counts as a source failure. It is logged and sent to Sentry, and it never crashes the tick. The affected data simply ages, and staleness turns it into `unknown` (§18.10).
+4. **Validate every response** with a pydantic v2 model (`model_config = ConfigDict(extra="ignore")`). The model *is* the contract (§24.7). A validation failure counts as a source failure. It is logged and sent to Sentry, and it never crashes the tick. The affected data simply ages, and staleness turns it into `unknown` (§18.9).
 5. **Keys go in headers**, except where a provider only accepts a query key (Stadia `api_key`, possibly ORS geocoding; see §16.11–16.12). The log redaction filter strips query strings (§24.4).
 6. **Base URLs are config values** (`USGS_OGC_BASE`, `NLDI_BASE`, `NWPS_BASE`, `NWS_BASE`, …; §20.12), so an API version change is a config edit.
-7. **Banned endpoints**: never call `waterservices.usgs.gov`, never import `dataretrieval.nwis` (removed on or after 2027-05-06 `[V]`). A CI grep test fails on either string outside `docs/` (§24.7).
-8. **Every source has a recorded-cassette contract test**, plus a nightly live test if it is used live (§24.8).
+7. **Banned endpoints**: never call `waterservices.usgs.gov`, never import `dataretrieval.nwis` (removed on or after 2027-05-06 `[V]`). A CI grep test fails on either string outside `docs/` and Markdown files (§24.7, §24.9). The guard test itself never contains the literal strings: it builds them by concatenation (`"water" + "services.usgs.gov"`, `"dataretrieval" + ".nwis"`), so the repo-wide grep can't match its own test.
+8. **Every source has a recorded-cassette contract test**, plus a nightly live test if it is used live (§24.7).
 9. **Attribution** for every source appears in About → Data sources, the README and the video end card (§16.16).
 10. **Offline-only sources** (NLDI, inventory layers, storm archives) are cached in the repo or in Storage. The app and the live tick never depend on them at runtime.
 
@@ -181,11 +181,12 @@ async def fetch_latest_stage(client: httpx.AsyncClient) -> list[RawObs]:
 - Many gauges *measure* every 15 min but *transmit* less often (often hourly, by satellite) `[U: engineering inference; measure it]`. A reading stamped 06:15 may have been unavailable until about 07:15.
 - **Measure** per live reading: `latency = received_at − obs_time` (only rows with `ingest='L'`). Nightly, compute per gauge over the last 7 days (n ≥ 50): `latency_p75_min`, `latency_p90_min`, `latency_n` → `public.gauges`.
 - **Second estimator** (Step 0 S2): `last_modified − time` on `latest-continuous` records. VERIFY BEFORE USE that `last_modified` reflects arrival rather than later revision; use it only as a cross-check.
-- **Staleness threshold per gauge** (§18.10): `stale_after_min = clamp(ceil5(latency_p90_min + 20), 30, 120)`. The default is **60** while `latency_n < 50`. Hydro rule: never call data older than **2 h** fresh `[V hydro §11]`.
-- **Replay** uses `available_at = obs_time + latency_p75_min` (§19.4).
+- **Staleness threshold per gauge** (§18.9): `stale_after_min = clamp(ceil5(latency_p90_min + 20), 30, 120)`. The default is **60** while `latency_n < 50`. Hydro rule: never call data older than **2 h** fresh `[V hydro §11]`.
+- **Snapshot for replay (`make latency`):** the nightly values live in the DB and change every night, so replays never read them directly. `make latency` (= `uv run python -m fordcast latency recompute --out ../data/latency/gauge_latency.json`, A §5.2) freezes the per-gauge `n`, `p75`, `p90`, delay and stale threshold into the committed file `data/latency/gauge_latency.json` (format in §19.4). Run it on Day 8 before the science freeze (A §6.1).
+- **Replay** uses `available_at = obs_time + delay[gauge]`, with `delay` read only from that frozen file (60 min when a gauge has fewer than 50 samples), and documented transmission outages push `available_at` to the outage end (§19.4).
 
 #### History (Storm Replay, training)
-- `continuous` serves the period of record in windows of ≤ 3 years. Most sites have data from **2007-10-01** onward (legacy IV docs) `[V]`, so the 2013, 2015, 2018 and 2025 storms should be covered.
+- `continuous` serves the period of record in windows of ≤ 3 years. Most sites have data from **2007-10-01** onward (legacy IV docs) `[V]`, so the 2013, 2015, 2018 and 2025 storms and the 2024 calm days (`calm-2024`, §16.19) should be covered.
 - VERIFY BEFORE USE per site: `combined-metadata`/`time-series-metadata` `begin ≤ storm start`.
 - The one report of "continuous is a rolling one-year window" was a request without `time` `[V]`. Always pass `time`.
 
@@ -193,13 +194,13 @@ async def fetch_latest_stage(client: httpx.AsyncClient) -> list[RawObs]:
 | Failure | Behavior |
 |---|---|
 | 429 | Back off per `Retry-After`; skip this tick's backfill; the next tick retries. Alarm if it happens on 3 consecutive ticks. |
-| 5xx / timeout / DNS | 3 retries, then give up for this tick. Readings age; per-gauge staleness → `unknown`; snapshot `data_status` → `degraded`/`offline` (§18.10). |
-| Validation error (schema change) | Sentry error with the response excerpt (no key); treated as an outage. The nightly live contract test should catch it first (§24.8). |
+| 5xx / timeout / DNS | 3 retries, then give up for this tick. Readings age; per-gauge staleness → `unknown`; snapshot `data_status` → `degraded`/`offline` (§18.9). |
+| Validation error (schema change) | Sentry error with the response excerpt (no key); treated as an outage. The nightly live contract test should catch it first (§24.7). |
 | v1 deprecation or redirect | `follow_redirects=True`; the base URL is config; nightly test alarms. |
-| Gauge silent (e.g., failed at the peak) | No special case: staleness → `unknown` (§18.10). This is designed and shown honestly in Replay (§19.10). |
+| Gauge silent (e.g., failed at the peak) | No special case: staleness → `unknown` (§18.9). This is designed and shown honestly in Replay (§19.10). |
 
 #### VERIFY BEFORE USE (Step 0, §16.20)
-S1 collection list · S2 bbox + comma lists + `x-ratelimit-*` + first latency samples + qualifier vocabulary · S3 2013/2015/2025 windows exist at 15-min resolution, and the 2013 US 183 outage is visible in the data.
+S1 collection list · S2 bbox + comma lists + `x-ratelimit-*` + first latency samples + qualifier vocabulary · S3 2013/2015/2025 windows exist at 15-min resolution, and whether today's archive **holds readings inside** the documented 2013 US 183 transmission outage (either way, replay availability follows the `meta.toml` outage table, §19.3–§19.4).
 
 **License/attribution:** U.S. public domain `[U: standard USGS policy]`. Attribute: "Data: U.S. Geological Survey, Water Data for the Nation (provisional, subject to revision)" `[V wording from dr docstrings]`.
 
@@ -269,8 +270,8 @@ out center tags;
   2. Ask the City for permission in the outreach email (§42).
   3. **Without written permission, do not call any ATXfloods endpoint from code. Never scrape.** Every Crossing detail shows the deep link "Official status: ATXfloods.com ›" (§3.6).
   4. With permission: implement `AtxfloodsSource(OfficialStatusSource)`, poll every 5 min inside the tick, and mark data stale after 15 min.
-- **Mapping:** `Closed` / `Long-Term Closure` → `official_state='closed'` → `closed` (precedence §3.3). `Caution` → `'caution'` → at least `watch`. `Open` → `'open'`, displayed only as "{source}: no closure reported" and **never lowers** the model's state.
-- **Manual source** (`source='manual'`) is the MVP official source, used for test crossings and curated entries (§22.8). It is always labeled "Manual entry: {note}".
+- **Mapping:** `Closed` / `Long-Term Closure` → `official_state='closed'` → `closed` (precedence §3.3). `Caution` → `'caution'` → at least `watch`. `Open` → `'open'`, displayed only as `official.no_closure` ("{{source}}: no closure reported", §3.7) and **never lowers** the model's state.
+- **Manual source** (`source='manual'`) is the MVP official source, used for test crossings and curated entries (§22.8). It is always labeled with the §3.6 source label "Manual entry: {{note}}".
 - **Attribution:** "Official status: ATXfloods (City of Austin)".
 
 ---
@@ -360,7 +361,7 @@ out center tags;
 | `avoid_features` | includes `"fords"` `[V: openrouteservice-js README]` (not used; FordCast avoids by forecast) |
 | Quota | Directions **2,000/day, 40/min**: daily limit → **403**, minute limit → **429** `[V]` |
 | Polygon caps (default config) | `maximum_avoid_polygon_area: 200000000`, `maximum_avoid_polygon_extent: 20000`, `maximum_distance_avoid_areas: 100000`. The public API may differ `[V config; U public]`. FordCast stays far below them (≤ 10 polygons of 150 m radius). |
-| Geocoding | `GET https://api.openrouteservice.org/geocode/autocomplete?api_key=KEY&text=…&focus.point.lat=…&focus.point.lon=…&boundary.rect.min_lon=-98.6&boundary.rect.min_lat=29.6&boundary.rect.max_lon=-97.0&boundary.rect.max_lat=31.0&boundary.country=US&size=6&layers=venue,address,street,neighbourhood,locality`. **1,000/day, 100/min** each for search, reverse and autocomplete `[V]`. `api_key` as a query param `[U]`: VERIFY; fallback is the `Authorization` header. |
+| Geocoding | `GET https://api.openrouteservice.org/geocode/autocomplete?api_key=KEY&text=…&focus.point.lat=30.2672&focus.point.lon=-97.7431&boundary.rect.min_lon=-98.6&boundary.rect.min_lat=29.6&boundary.rect.max_lon=-97.0&boundary.rect.max_lat=31.0&boundary.country=US&size=6&layers=venue,address,street,neighbourhood,locality`. The focus point and rectangle are the **fixed Austin-area search bias** defined once in §16.13, never the user's location. **1,000/day, 100/min** each for search, reverse and autocomplete `[V]`. `api_key` as a query param `[U]`: VERIFY; fallback is the `Authorization` header. |
 | Attribution | "Routing © openrouteservice.org by HeiGIT · Map data © OpenStreetMap contributors" `[U exact wording; OSM credit mandatory]` |
 | Failure | 403/429/5xx/timeout (12 s) → Stadia (directions) or Photon (geocoding); see §22.5–22.6 |
 
@@ -370,8 +371,17 @@ out center tags;
 - Free tier: 200k credits/month, non-commercial `[V secondary]`. Env `STADIA_KEY`.
 
 ### 16.13 Photon (komoot) — geocoding fallback `[Stretch]`
-- `GET https://photon.komoot.io/api/?q=…&lat=…&lon=…&limit=6&lang=en&bbox=-98.6,29.6,-97.0,31.0`. Free, no key. "Extensive usage will be throttled or banned… no guarantees for availability" `[V]`. Languages: English/German/French/local only, so for Spanish UI use `lang=en` and localize nothing `[V]`.
-- Reverse: `GET https://photon.komoot.io/reverse?lat=…&lon=…` `[U]`: VERIFY; fallback is client `expo-location.reverseGeocodeAsync` (§32).
+- `GET https://photon.komoot.io/api/?q=…&lat=30.2672&lon=-97.7431&limit=6&lang=en&bbox=-98.6,29.6,-97.0,31.0`. Free, no key. "Extensive usage will be throttled or banned… no guarantees for availability" `[V]`. Languages: English/German/French/local only, so for Spanish UI use `lang=en` and localize nothing `[V]`.
+- Reverse: `GET https://photon.komoot.io/reverse?lat=…&lon=…` `[U]`: VERIFY; fallback is client `expo-location.reverseGeocodeAsync` (§32). Reverse geocoding is only ever called for a point the user explicitly picked on the map (§22.6), never with the device's own GPS fix.
+
+**Fixed Austin-area search bias (privacy; the only definition, used by §16.11, §22.6 and §32.6).** Place search MUST NOT send or use the user's location. Every forward-geocoding request (ORS autocomplete and the Photon fallback) is biased with these constants, defined once in `backend/fordcast/config.py` (module constants, not environment variables, so nothing can switch them to a device location):
+```python
+# backend/fordcast/config.py — fixed search bias (never the device location; §16.13, §24.3)
+SEARCH_FOCUS_LAT, SEARCH_FOCUS_LON = 30.2672, -97.7431       # downtown Austin (Travis County seat)
+SEARCH_BBOX = (-98.6, 29.6, -97.0, 31.0)                     # min_lon, min_lat, max_lon, max_lat: Travis County + neighbors
+```
+- ORS: `focus.point.lat/lon` = `SEARCH_FOCUS_*`, `boundary.rect.*` = `SEARCH_BBOX`, `boundary.country=US`. Photon: `lat/lon` = `SEARCH_FOCUS_*`, `bbox` = `SEARCH_BBOX`.
+- The client request is only `GET /v1/search?q=&lang=` (§22.6); the server rejects `lat`/`lon` query parameters. The same results come back for every user, which is the point.
 
 ### 16.14 Expo Push API `[MVP Android · Stretch iOS]` (F67, F68)
 | Item | Value `[V: expo-server-sdk 7.2.0 source; docs.expo.dev]` |
@@ -454,32 +464,57 @@ The agent MUST regenerate this table with `waterdata.get_combined_metadata(bbox=
 | 08171000 | Blanco Rv at Wimberley | 2015: last reading ~40.21 ft before washout; USGS estimate 44.9 ft / 175,000 cfs | `[U]` | outside TX-10; context only | [V] |
 | — | Gilleland, Brushy, Cypress, Big/Little Sandy Ck | **not verified** as USGS continuous; Big Sandy at Jonestown is **LCRA** | – | use the API inventory | [U] |
 
-- **Datum:** `00065` is stage above a local gauge datum. Road comparisons use `elevation = stage + datum_ft`. Store `datum_ft`/`datum_name` from `monitoring-locations` (field names `[U]`: VERIFY in S1/S2). If a gauge datum changed between storms (`[U]`, check `time-series-metadata`), learn triggers per era (§18.5).
-- **Reliability:** a USGS page once said about 25–30 % of sites were not transmitting because of a satellite issue, and third-party trackers flagged stale Austin gauges in Aug 2026 `[V snippets; U current]`. **Staleness handling is mandatory** (§18.10).
+- **Datum:** `00065` is stage above a local gauge datum. Road comparisons use `elevation = stage + datum_ft`. Store `datum_ft`/`datum_name` from `monitoring-locations` (field names `[U]`: VERIFY in S1/S2). If a gauge datum changed between storms (`[U]`, check `time-series-metadata`), learn triggers per era (§18.4). The road elevations for the `gauge` truth class are converted to this datum (§17.6).
+- **Reliability:** a USGS page once said about 25–30 % of sites were not transmitting because of a satellite issue, and third-party trackers flagged stale Austin gauges in Aug 2026 `[V snippets; U current]`. **Staleness handling is mandatory** (§18.9).
 
 ### 16.19 Storm Replay storm catalog
 
-Storm IDs are canonical (used in `data/storms/<id>/`, `storms.id`, `fordcast://replay/<id>`, and `mobile/assets/replays/<id>.json.gz`). Windows are **initial UTC bounds**. The final window is computed from data as **first upstream rise − 12 h → last truth onset + 12 h**, and the Parquet extends **24 h before** the window start for baselines (§19.3). Local times below are CDT.
+Storm IDs are canonical (used in `data/storms/<id>/`, `storms.id`, `fordcast://replay/<id>`, `data/replays/<id>.json.gz` and, after `make app-data`, `mobile/assets/replays/<id>.json.gz`). Windows are **initial UTC bounds**. The final window is computed from data as **first upstream rise − 12 h → last truth onset + 12 h**, and the Parquet extends **24 h before** the window start for baselines (§19.3). Local times below are CDT.
+
+**Canonical list (Step 0 decided default D10, A §1.2).** Bundled storms: `halloween-2013`, `memorial-day-2015`, `halloween-2015`, `oct-2018` (the "should stay calm" control) and `july-2025` (USGS-only data, reported honestly; LCRA is optional enrichment, F19). Each is bundled **only if its data checks pass** (S3 window coverage, ≤ 150 KB timeline, schema-valid; a storm that fails is dropped from `bundle`, logged in `docs/data-bridge-verification.md`, and never replaced by a hand-picked substitute). The calm-day set `calm-2024` (below) is scored but never bundled. No other ID is used anywhere (code, fixtures, Maestro flows, README, video).
 
 | ID | Name EN / ES | Initial window (UTC) | Gauges that show it | Facts | Replay notes | Tag |
 |---|---|---|---|---|---|---|
-| `halloween-2013` | Halloween Flood 2013 / Inundación de Halloween 2013 | 2013-10-30T12:00Z → 2013-11-01T00:00Z | 08158700 Driftwood → 08159000 US 183; Bear, Slaughter, Williamson | US 183 **40.15 ft (NWS) / ~41 ft (USGS)**, ~120,000 cfs. Gauge **stopped transmitting ~06:15 CDT (11:15Z) at 21 ft**, rose **11 ft in 15 min** (06:15–06:30), and was back ~2.5 h later near 40 ft. About 5 deaths, ~660 structures. | **Best Q4 story:** a real upstream→downstream lag **plus a real outage that shows `unknown`**. No MRMS (gauge-only). VERIFY BEFORE USE: the exact gap in S3. | [V] |
+| `halloween-2013` | Halloween Flood 2013 / Inundación de Halloween 2013 | 2013-10-30T12:00Z → 2013-11-01T00:00Z | 08158700 Driftwood → 08159000 US 183; Bear, Slaughter, Williamson | US 183 **40.15 ft (NWS) / ~41 ft (USGS)**, ~120,000 cfs. Gauge **stopped transmitting ~06:15 CDT (11:15Z) at 21 ft**, rose **11 ft in 15 min** (06:15–06:30), and was back ~2.5 h later near 40 ft. The "rose 11 ft in 15 min" figure means the logger **recorded** through the outage and the readings were recovered later. About 5 deaths, ~660 structures. | **Best Q4 story:** a real upstream→downstream lag **plus a documented transmission outage that shows `unknown`**: the gauge went silent; its readings only arrived later. `meta.toml` lists it in `outages` (§19.3), so every reading observed inside the outage becomes available only at the outage end (§19.4), even though today's archive may hold those readings. No MRMS (gauge-only). VERIFY BEFORE USE: the outage bounds (~11:15–13:45Z) from the USGS alert and S3. | [V] |
 | `memorial-day-2015` | Memorial Day Flood 2015 / Inundación del Día de los Caídos 2015 | 2015-05-23T12:00Z → 2015-05-27T00:00Z | Onion Ck (Driftwood, US 183 crest ~22.9 ft listed 05-26), Blanco 08171000 (washed out) | Rain ~19:00Z May 23 → 10:00Z May 24. Wimberley last reading ~40.21 ft; USGS estimate 44.9 ft / 175,000 cfs. | Moderate Onion response; MRMS via IEM `GaugeCorr_QPE_01H` `[U availability]` | [V] |
 | `halloween-2015` | Oct 30, 2015 Flood / Inundación del 30 de octubre de 2015 | 2015-10-30T00:00Z → 2015-11-01T00:00Z | 08158700 Driftwood (**record peak**) → 08159000 US 183 | US 183 **39.22 ft (P)**; Austin-Bergstrom **14.99 in** daily; LCRA gauge at Onion/US 183 logged 13.40 in in 3 h; 3–4 deaths | **Strong second storm** for the event split | [V] |
-| `llano-2018` | Oct 2018 Llano Flood / Inundación del Llano 2018 | 2018-10-15T00:00Z → 2018-10-18T00:00Z | Llano River (39.91 ft, highest since 1935) | FM 2900 bridge at Kingsland destroyed; 150+ crossings closed regionally | **Control storm**: the river is regulated below the dams, so FordCast should stay calm on Austin creeks. Count its alerts as false alarms if no onsets. | [V] |
-| `july-2025` | July 4–5, 2025 Flood / Inundación del 4 y 5 de julio de 2025 | 2025-07-04T12:00Z → 2025-07-06T12:00Z | Bull Ck 08154700 crest 5.07 ft; Big Sandy at Jonestown (**LCRA**) | FFW 13:30 Jul 4; 3–5 in/h around midnight; Flash Flood Emergency for western Travis; 15–20 in bullseye; ~9 deaths in the Sandy Creek area | **Best MRMS replay** (AWS v12). Sandy Creek needs LCRA (permission). Alert overlay (F82). With USGS only, Austin creek signals may be modest; report that honestly. | [V] |
-| (check) `may-2019` | — | 2019-05-08 | Bull Ck 5.71 ft | | Add only if it yields onsets for tier-A crossings | [V]/[U] |
+| `oct-2018` | Oct 2018 Llano Flood / Inundación del Llano 2018 | 2018-10-15T00:00Z → 2018-10-18T00:00Z | Llano River (39.91 ft, highest since 1935) | FM 2900 bridge at Kingsland destroyed; 150+ crossings closed regionally | **Control storm**: the river is regulated below the dams, so FordCast should stay calm on Austin creeks. Count its alerts as false alarms if no onsets. Its timeline `metrics` are `null` where undefined (no onsets → POD undefined). | [V] |
+| `july-2025` | July 4–5, 2025 Flood / Inundación del 4 y 5 de julio de 2025 | 2025-07-04T12:00Z → 2025-07-06T12:00Z | Bull Ck 08154700 crest 5.07 ft; Big Sandy at Jonestown (**LCRA**) | FFW 13:30 Jul 4; 3–5 in/h around midnight; Flash Flood Emergency for western Travis; 15–20 in bullseye; ~9 deaths in the Sandy Creek area | **Best MRMS replay** (AWS v12). **USGS-only data** in MVP; Sandy Creek needs LCRA (permission, F19, optional enrichment). Alert overlay (F82). With USGS only, Austin creek signals may be modest; report that honestly. | [V] |
+| `calm-2024` | Calm days 2024 / Días sin crecida 2024 | 40 sampled UTC days in 2024 (rule below) | every active linked gauge | No flood products, no overtop (by construction) | **Not a storm and never bundled.** Feeds `calm_fa_per_crossing_per_100d` and ML calm sampling only; never a LOSO fold; never a hero. | [U] until sampled |
+| (not canonical) `may-2019` | — | 2019-05-08 | Bull Ck 5.71 ft | | **Not bundled and not trained on in MVP.** Adding it as a training storm changes every number, so it needs the human's OK before the science freeze (stop-and-ask, §1.7 item 8) and a README note. | [V]/[U] |
 | (excluded) | Memorial Day 1981 | — | Shoal Ck 23.11 ft | | Predates 15-min data; cannot be replayed | [V] |
 
-**Hero storm selection:** choose it **after** the backtest (Day 4), from `results.json`. Candidates are `halloween-2013` and `halloween-2015`. The app and video always pair the hero number with the honesty line (`replay.honesty`, §3.7).
+**Hero selection (no cherry-picking).** Nobody picks the hero by hand, and it is never the best case. `results.json.hero` is filled by the **pre-registered rule** in `tools/select_hero.py` (§18.13): among the bundled storms, the tier-A crossing hit whose AVOID lead time is closest to the overall median lead time (ties: earlier storm in this table's order, then the smaller crossing id). The script is committed, with its tests, **before** the first backtest result exists (A §6.1 Day 4), so the git history proves the rule came first. The README states the rule (E §40.2). The app and video always pair the hero number with the honesty line (`replay.honesty`, §3.7). `app_config.featured_storm` and the replay index's `hero_storm_id` follow `hero.storm_id` (§19.14, §20.9).
+
+#### Calm-day set `calm-2024` (false alarms per 100 calm days; ML calm sampling)
+
+The trust metric "false alarms per crossing per 100 calm days" (§18.12) and the ML calm samples (§18.11) need days on which nothing flooded. `calm-2024` is that set. It is defined by a fixed, documented rule that never looks at FordCast's own output, so it can't be tuned to make the model look good.
+
+1. **Candidate days:** every UTC calendar day from `2024-01-01` to `2024-12-31` (a full recent year inside the v1 archive, before the live run, overlapping no catalog storm).
+2. **Exclude official flood days:** drop any day whose UTC interval overlaps an NWS `Flood Warning`, `Flood Watch`, `Flood Advisory`, `Flood Statement`, `Flash Flood Warning`, `Flash Flood Watch` or `Flash Flood Statement` covering any of `settings.nws_ugc` (TXC453, TXC209, TXC491, TXC053), taken from the IEM CAP archive (§16.7), **plus the day after** each such day (recession). VERIFY BEFORE USE that the IEM CAP files exist for 2024 (fetch one day's file; log the result in `docs/data-bridge-verification.md`); fallback: skip this step, rely on step 3 alone, and write `assumptions.calm_rule_fallback = "no CAP archive; truth-only exclusion"` into `results.json`.
+3. **Exclude observed overtops:** drop any day on which any tier-A crossing's target gauge reaches its `overtop_stage_ft` (§17.6), plus the day after. This is the truth definition, so `truth.csv` for `calm-2024` is empty **by construction**.
+4. **Exclude incomplete days:** drop any day on which fewer than 80 % of the active linked gauges have at least 90 % of their 15-min readings (missing data would make crossings `unknown`, which is neither a hit nor a false alarm).
+5. **Never** exclude a day because of rises, watch stages, trigger stages or anything the model computes: those are exactly the days where false alarms happen.
+6. **Sample:** `days = sorted(random.Random(20241231).sample(sorted(candidates), 40))` (N = 40; at least 30 required; if fewer than 30 candidates remain, use them all and report the count). Record `n_candidates`, `seed` and `days` in `data/storms/calm-2024/meta.toml` (`kind = "calm"`, `bundle = false`).
+
+**Commands** (after `link tiers`, so overtop stages exist; Day 2):
+```text
+uv run python -m fordcast calm-days --year 2024 --n 40 --seed 20241231   → data/storms/calm-2024/meta.toml (days, n_candidates, exclusions log)
+uv run python -m fordcast backfill --storm calm-2024                     → data/storms/calm-2024/readings.parquet
+```
+`backfill --storm calm-2024` sends **one** `continuous` request per linked gauge for `2023-12-31T00:00:00Z/2025-01-01T00:00:00Z` (≤ 3 years; about 4 pages of 10,000 at 15-min resolution), then keeps only each sampled day plus the 24 h before it. About 30 gauges × 4 pages ≈ 120 requests, well under the keyed quota. `backfill --all` includes it.
+
+**Scoring:** each day is replayed as its own window (`[day 00:00Z, day + 1 00:00Z)`, 6-h lookback, tracker starting at `unknown`) with the **live** parameter set learned from all storms (calm days are in no storm's training fold, so this is out-of-sample), the frozen delays (§19.4) and no outages unless documented. The scorer re-checks every day against the overtop stages and fails loudly if any overtop appears. Formula and reporting: §18.12.
+
+**Done when:** `data/storms/calm-2024/meta.toml` lists ≥ 30 days with the seed and the exclusion log; `results.json` reports `calm_fa_per_crossing_per_100d` for `upstream_rule` and `nearest_gauge`, with `assumptions.calm_set`, `calm_days`, `calm_candidates` and `calm_seed`.
 
 ### 16.20 Step-0 live smoke test — `tools/smoke_test.py` `[MVP, Day 0]`
 
 **Purpose:** prove every endpoint above works **today**, record real field names and limits, and catch API drift before any code depends on it. Output is committed to `docs/data-bridge-verification.md` (human-readable) and `docs/data-bridge-verification.json` (machine-readable, read by the contract tests to choose fallbacks).
 
-**Usage**
+**Usage** (`make smoke` runs the first line; A §5.2. `smoke_test.py` runs in the **backend** environment because it uses `httpx`/`dataretrieval`/`pynhd`, A §5.3)
 ```bash
-cd backend && uv run python ../tools/smoke_test.py --out ../docs/data-bridge-verification   # all checks
+cd backend && uv run python ../tools/smoke_test.py --out ../docs/data-bridge-verification   # all checks (= make smoke)
 uv run python ../tools/smoke_test.py --only S2,S3 --verbose
 ```
 **Environment:** `USGS_API_KEY` (required), `PROJECT_CONTACT_EMAIL` (required, for the User-Agent), `ORS_API_KEY`, `STADIA_KEY` and `SOCRATA_APP_TOKEN` (optional; their checks are skipped if absent). Python 3.13, httpx only (plus `dataretrieval`/`pynhd` for S3/S4 cross-checks if installed).
@@ -490,7 +525,7 @@ uv run python ../tools/smoke_test.py --only S2,S3 --verbose
 |---|---|---|---|
 | S1 | `GET {usgs}/collections?f=json` | `latest-continuous`, `continuous`, `monitoring-locations`, `time-series-metadata`, `combined-metadata`, `peaks` exist | collection ids; v1 base reachable |
 | S2 | `latest-continuous` bbox request (§16.2) with key; then repeat with `parameter_code=00065,00060` and with `monitoring_location_id=USGS-08158700,USGS-08159000` | ≥ 10 Austin gauges returned; `x-ratelimit-limit` present | rate-limit headers; whether comma lists work (true/false); per-site `now − time` and `last_modified − time`; qualifier values seen; datum/altitude field names from `monitoring-locations` for 08159000 |
-| S3 | `continuous` for USGS-08159000, `00065`, `2013-10-30T00:00:00Z/2013-11-01T00:00:00Z`; same for `2015-10-29/2015-11-01`, `2015-05-23/2015-05-27`, `2025-07-04/2025-07-06`; and 08158700 for 2013 | 15-min data present in each window | row counts; **largest gap in 2013 (expect ~11:15–13:45Z)**; peak value/time per storm |
+| S3 | `continuous` for USGS-08159000, `00065`, `2013-10-30T00:00:00Z/2013-11-01T00:00:00Z`; same for `2015-10-29/2015-11-01`, `2015-05-23/2015-05-27`, `2025-07-04/2025-07-06`; and 08158700 for 2013 | 15-min data present in each window | row counts; largest gap in 2013; **whether the archive holds readings inside the documented outage (~11:15–13:45Z)** (expected: yes, recovered later; either way replay availability follows the `meta.toml` outage table, §19.4); peak value/time per storm |
 | S4 | NLDI `hydrolocation?coords=POINT(-97.6886 30.1757)` (example point near Onion Ck/US 183 `[U]`) → `comid/{comid}/navigation/UT/nwissite?distance=100`; also DM flowlines from `nwissite/USGS-08158700` with `stopComid` | `08158700` in the upstream list | comid, measure, snap distance; whether `stopComid` works on DM |
 | S5 | NWPS `GET /gauges/08159000`; `/gauges/ATIT2/stageflow`; `/reaches/{reachId}/streamflow?series=short_range` | `lid == "ATIT2"`; categories 15/17/23/27; `flood.impacts` non-empty | impact statements (verbatim); the real reach path |
 | S6 | NWS `GET /alerts/active?area=TX` and `?point=30.2672,-97.7431` with UA; `GET /zones/county/TXC453` | 200 with UA (also confirm 403 without UA, once) | UGC codes; where `flashFloodDamageThreat` lives if any FFW is active (else "not observed") |
@@ -545,12 +580,24 @@ uv run python -m fordcast nwps sync          → nws_gauges + impact statements 
 uv run python -m fordcast link snap          → data/nldi_cache/snaps.geojson (+ snap_overrides.csv applied)
 uv run python -m fordcast link upstream      → data/nldi_cache/upstream/<crossing>.geojson, flowlines
 notebooks/01_inventory_and_snaps.ipynb       → human map review → data/overrides/snap_review.csv
+uv run --project tools --group dem python tools/road_elevation.py   → data/overrides/road_elevations.csv
+                                             (from the repo root; only for `gauge`-class crossings whose road elevation
+                                              sources 1–2 failed, §17.6)
 uv run python -m fordcast link tiers         → tiers + truth classes (crossing_tiers.csv, overtop_stages.csv)
-uv run python -m fordcast backfill --all     → data/storms/<id>/readings.parquet               (§19.3)
-uv run python -m fordcast learn              → data/links/crossing_gauge_links.csv (τ, triggers; §18)
-uv run python -m fordcast seed-sql           → supabase/seed.sql                                (§21.6)
+uv run python -m fordcast calm-days --year 2024 --n 40 --seed 20241231 → data/storms/calm-2024/meta.toml  (§16.19)
+uv run python -m fordcast backfill --all     → data/storms/<id>/readings.parquet (every catalog storm + calm-2024; §19.3)
+uv run python -m fordcast learn --loso       → data/links/crossing_gauge_links.csv (τ, triggers; live + per-fold; §18)
+uv run python -m fordcast seed-sql > ../supabase/seed.sql                                       (§21.5)
+uv run --project tools python tools/data_manifest.py [--upload]   → data/MANIFEST.json (+ Parquet > 5 MB to Storage)
+                                             (from the repo root; = make data-upload with --upload)
 ```
-`make data` runs the non-interactive steps in order. A step refuses to run if an input it needs is missing or older than its upstream input.
+`make data` (A §5.2) runs the non-interactive steps in order (`road_elevation.py`, `calm-days` and the upload are run by hand when needed). A step refuses to run if an input it needs is missing or older than its upstream input.
+
+**Large data files (`tools/data_manifest.py`, `make data-upload` / `make data-fetch`).** Git holds data files up to 5 MB. Larger files (in practice some `readings.parquet`) live in the public Storage bucket under a **content-hashed** path, `fordcast-public/data/<path without extension>.<sha256[:12]>.<extension>` (e.g. `data/storms/halloween-2015/readings.3f2a9c1b7d04.parquet`; cache-control `31536000, immutable`; new content → new path), and are listed in `data/.gitignore`.
+- `tools/data_manifest.py` (tools env; `httpx` + standard library) walks `data/**` and writes `data/MANIFEST.json`: one entry per file `{"path", "sha256", "bytes", "location": "git" | "storage", "url"}` (`url` is the public Storage URL for `storage` entries, `null` for git files), sorted by path, so the file is deterministic.
+- `--upload` (`make data-upload`, needs `SUPABASE_URL` + `SUPABASE_SECRET_KEY` from `backend/.env`) uploads every file > 5 MB that isn't in Storage with that sha256 yet, adds its path to `data/.gitignore`, then rewrites the manifest. Run it after every backfill that produced a large file.
+- `--download` (`make data-fetch`; no keys needed: the bucket is public) fetches every `storage` entry that is missing locally or whose sha256 differs, verifies the sha256, and fails on any mismatch. CI and every clean clone run it before `replay-verify` and the backtest (§24.9).
+- `--verify` (no network; CI `docs-guards`, §24.9) recomputes the sha256 of every git-tracked data file and compares it with `data/MANIFEST.json`; a stale manifest fails the build.
 
 ### 17.2 Crossing record (one schema everywhere)
 
@@ -571,7 +618,7 @@ uv run python -m fordcast seed-sql           → supabase/seed.sql              
 | `truth_quality`, `truth_source` | enum?, str? | `sensor · gauge · impact_statement · proxy`, plus a human-readable source citation |
 | `source`, `source_refs` | str, list | primary source key (`coa:q6kt-v2zm`, `travis:Low_Water_Crossings/1`, `txgio:Low_Water_Crossing/0`, `osm`, `manual`) and every merged `{source, ref}` |
 | `divided_road` | bool | widens on-route tolerance to 60 m (§32) |
-| `is_active`, `is_test` | bool | test crossings never appear publicly (§21.3) |
+| `is_active`, `is_test` | bool | test crossings never appear publicly (§21.2) |
 | `inventory_version` | str | `inv-YYYYMMDD` of the build |
 
 ### 17.3 Normalizing each source
@@ -601,8 +648,8 @@ Keep crossings inside Travis County plus the immediate upstream counties that dr
 
 | Tier | Definition | Model | UI (§3) |
 |---|---|---|---|
-| **A — validated** | Has **ground truth** (a truth class below) **and** a known `overtop_stage_ft`, **and** ≥ 1 upstream link with τ learned from ≥ 1 storm | Rule (+ ML Stretch); full backtest | normal |
-| **B — linked, not validated** | ≥ 1 active upstream gauge via NLDI, but no ground truth | Rule with **transferred** parameters (§17.13) | "Estimated" badge (`tier: "B"`) |
+| **A — validated** | Has **real ground truth** (truth class `sensor`, `gauge` or `impact_statement`; **never** `proxy`) **and** a known `overtop_stage_ft`, **and** ≥ 1 upstream link with τ learned from ≥ 1 storm | Rule (+ ML Stretch); full backtest | normal |
+| **B — linked, not validated** | ≥ 1 active upstream gauge via NLDI, but no real ground truth: either no label at all, or only a `proxy` label (including every `gauge`-class candidate whose road elevation could not be obtained, below) | Rule with **transferred** parameters (§17.13); a `proxy`-labeled crossing may instead learn its parameters from proxy onsets and is scored only in the separate `proxy` split (§18.12) | "Estimated" badge (`tier: "B"`) |
 | **C — not monitored** | No usable upstream gauge (no flowline, no gauge, or snap rejected) | Official status only | `unknown`, reason `NO_UPSTREAM_GAUGE` ("not monitored by FordCast") |
 
 **Ground-truth classes** (`truth_quality`, best first; §18.2 explains how each becomes labels):
@@ -610,15 +657,22 @@ Keep crossings inside Travis County plus the immediate upstream counties that dr
 | Class | Meaning | Source of `overtop_stage_ft` |
 |---|---|---|
 | `sensor` | A City/FEWS sensor at the crossing with a known water-over-road history | City data (gage number + threshold), with permission |
-| `gauge` | A USGS gauge **at the road** (same structure or within 500 m along the channel with no tributary between) | Documented road/low-chord elevation − gauge datum, or City/County data |
+| `gauge` | A USGS gauge **at the road** (same structure or within 500 m along the channel with no tributary between) | `overtop_stage_ft = road_elev_ft − gauge_datum_ft`, both in the same vertical datum; road elevation from the ordered sources below |
 | `impact_statement` | An NWS impact statement naming the road at a stage on a nearby gauge | NWPS `flood.impacts` (§16.6), human-confirmed |
-| `proxy` | No direct evidence; a documented stand-in | The gauge's NWS **action stage**, else the P99 of its 15-min record. **Reported separately** in every result (§18.13) |
+| `proxy` | No direct evidence; a documented stand-in | The gauge's NWS **action stage**, else the P99 of its 15-min record. **Reported separately** in every result (§18.12). A `proxy` crossing is **tier B**, never tier A |
+
+**Road elevation for the `gauge` class (sources in this order; stop at the first that works).** Every value names its source in `truth_source`, and the student confirms each row (`confirmed_by`) after looking at the USGS site page/photo or webcam.
+1. **NWS NWPS** (§16.6): an impact statement or flood-category description that names the crossing's road gives the overtop stage at the gauge directly (`truth_source = "NWS impact <lid> @ <stage> ft"`). No datum conversion is needed because the stage is already on the gauge datum.
+2. **City of Austin low-water-crossing gate data** (§16.4 source A/B; the "gage number" + threshold columns if present, verified in S7): a documented water-over-road stage for that gate's gauge (`truth_source = "COA LWC gate <id>: <field> = <value>"`).
+3. **USGS 3DEP 1 m DEM via `py3dep`** (HyRiver), only if 1–2 fail: `tools/road_elevation.py` runs in the tools environment's `dem` group (`uv run --project tools --group dem python tools/road_elevation.py`, A §5.3; `py3dep` lives there because its pins conflict with the backend's `pynhd`). VERIFY BEFORE USE: `pip index versions py3dep` (the pinned 0.19.0 must exist) and, from the package's shipped docstrings, the point-elevation function and its `source` options (e.g. `py3dep.elevation_bycoords`); record both in `docs/decisions/verifications.md`. Method: sample the DEM every 5 m along the road within 30 m of the crossing point and take the **lowest** value (water tops the low point first); 3DEP elevations are NAVD88 meters, so convert to feet (× 3.28084). Convert to the gauge datum with the USGS site datum metadata from `monitoring-locations` (`datum_ft`, `datum_name`, §16.18): if the gauge datum is NAVD88, `overtop_stage_ft = road_elev_ft − datum_ft`; if it is NGVD29, use the site's published NGVD29→NAVD88 offset from the USGS site metadata (`datum_offset_ft`): `overtop_stage_ft = road_elev_ft − (datum_ft + datum_offset_ft)`; if no offset is published, stop at step 3 and treat the crossing as not obtainable (never guess an offset). Output: `data/overrides/road_elevations.csv` (`crossing_id, gauge_id, road_elev_ft_navd88, n_samples, method, datum_name, datum_ft, datum_offset_ft, overtop_stage_ft, source, confirmed_by, date`), merged into `overtop_stages.csv` with `truth_source = "USGS 3DEP 1 m via py3dep <date>: road <x> ft NAVD88; datum <y> ft <name>"`. A DEM can show a bridge deck, vegetation or water instead of the road surface, so sanity-check the result: an `overtop_stage_ft` ≤ 0 (at or below the gauge datum) or above the gauge's record stage (from NWPS or the USGS `peaks` collection; a low-water crossing that never flooded in the record is implausible) is rejected and logged in `docs/data-bridge-verification.md`, never used.
+4. **None obtainable** → the crossing gets the `proxy` class and is **tier B**, labeled honestly ("Estimated"). It is never silently counted as tier A. The Day 1–2 gate (A §6.1) counts **only real** tier-A crossings.
 
 **Override files (committed, one row per decision, each with a `source`/`note` column):**
 - `data/overrides/overtop_stages.csv`: `crossing_id, gauge_id, overtop_stage_ft, truth_quality, truth_source, confirmed_by, date`
+- `data/overrides/road_elevations.csv`: the source-3 evidence rows above (only when source 3 was used)
 - `data/overrides/crossing_tiers.csv`: `crossing_id, tier, reason` (forces a tier, e.g. demote to C after a bad snap)
 
-**Tier assignment (`link tiers`):** apply the overrides; then tier A if the A conditions hold, B if it has an active upstream link, else C. A DB check constraint enforces "tier A ⇒ overtop stage and truth class present" (§21.2).
+**Tier assignment (`link tiers`):** apply the overrides; then tier A if the A conditions hold, B if it has an active upstream link, else C. A DB check constraint enforces "tier A ⇒ overtop stage present and a non-proxy truth class" (§21.1, constraint `tier_a_has_truth`).
 
 ### 17.7 MVP shortlist
 Pick **10–20 tier-A crossings** (Step 0 Q6 with the student; Day 1). Prefer crossings along Onion, Bear, Slaughter, Williamson, Bull and Barton creeks that have the best truth class and a gauge-rich upstream network. All other crossings stay tier B or C and are still shown (never hidden) with their honest labels. **Done when:** `docs/data-bridge-verification.md` lists the shortlist with tier, truth class and source per crossing.
@@ -645,11 +699,11 @@ def snap_crossing(c: CrossingIn, nldi: NLDI, overrides: dict[str, SnapOverride])
 1. **Upstream candidates:** `nldi.navigate_byid("comid", comid, "upstreamTributaries", "nwissite", distance=100)` → site ids.
 2. **Activity filter:** keep sites present in the active inventory (§16.18: `00065` continuous, `end` within 2 days) **and** with `begin ≤` the earliest storm start used for training. Inactive-but-historical gauges may be used **only** for training-storm analysis, never for live links.
 3. **Channel distance** for each gauge→crossing pair: navigate **DM flowlines from the gauge** (`nwissite/USGS-xxxx/navigation/DM/flowlines?distance=150`, with `stopComid=<crossing comid>` if S4 showed it works). Order the segments by chaining endpoints, cut the line at the crossing's projected point, and compute the **geodesic length** with `pyproj.Geod(ellps="WGS84").geometry_length(line)`. VERIFY BEFORE USE that the NLDI flowline response carries no length attribute you could use instead; fallback: the geodesic method above. Store `channel_dist_km`.
-4. **Pulse path for the app:** the same cut line, simplified with `shapely.simplify(line, 0.0002, preserve_topology=False)` (about 20 m), is saved as the link's `flowline` (DB `geography(LineString)`, replay JSON `links[].flowline`, and `data/creeks/creeks.geojson`). Keep `creeks.geojson` under 1 MB (§5).
+4. **Pulse path for the app:** the same cut line, simplified with `shapely.simplify(line, 0.0002, preserve_topology=False)` (about 20 m), is saved as the link's `flowline` (DB `geography(LineString)`, replay JSON `links[].flowline`, and `data/creeks/creeks.geojson`). Keep `creeks.geojson` under 1 MB (§5). `creeks.geojson` has one LineString feature per `upstream`/`at_site` link with properties `{reach_id: "<crossing_id>__<gauge_id>", crossing_id, gauge_id, relation}`, coordinates ordered **gauge → crossing** (a test asserts the first coordinate is nearer the gauge); `make app-data` copies it into the app (§17.14, F86).
 5. **At-site (target) gauge:** a gauge within 500 m channel distance of the crossing (upstream or downstream) with no tributary junction between becomes the `at_site` link and the crossing's `target_gauge_id`. Use the signed distance `Δd_km` (positive if the crossing is downstream of the gauge). An `at_site` gauge is also an upstream predictor only if it lies upstream.
-6. **Comparison link (Q4):** the **nearest gauge by straight-line distance**, whatever creek it is on, is stored with `relation='nearest_baseline'`. It is used **only** by the `nearest_gauge` comparator in the backtest (§18.13), never live.
-7. **Primary link:** per crossing, `is_primary = true` for the upstream link with the best `xcorr_r` among links with `n_storms ≥ 1` (ties → smallest τ). Before τ is learned, use the smallest channel distance. The primary link matters for staleness (§18.10).
-8. **Cap:** keep at most **5 upstream links** per crossing (the 5 smallest channel distances). The ML model uses the top 3 by τ (§18.8).
+6. **Comparison link (Q4):** the **nearest gauge by straight-line distance**, whatever creek it is on, is stored with `relation='nearest_baseline'`. It is used **only** by the `nearest_gauge` comparator in the backtest (§18.12), never live.
+7. **Primary link:** per crossing, `is_primary = true` for the upstream link with the best `xcorr_r` among links with `n_storms ≥ 1` (ties → smallest τ). Before τ is learned, use the smallest channel distance. The primary link matters for staleness (§18.9).
+8. **Cap:** keep at most **5 upstream links** per crossing (the 5 smallest channel distances). The ML model uses the top 3 by τ (§18.11).
 
 ### 17.10 Link table fields (`data/links/crossing_gauge_links.csv` ⇄ `public.crossing_gauge_links`)
 
@@ -682,9 +736,35 @@ def snap_crossing(c: CrossingIn, nldi: NLDI, overrides: dict[str, SnapOverride])
 - `test_tiers.py` (tier rules and the tier-A constraint).
 
 ### 17.13 Tier B parameter transfer
-For a tier-B link with no truth: **τ_B = channel_dist_km / ĉ**, where ĉ is the median celerity of tier-A links in the same HUC10 (if HUC is available `[U]`), else region-wide. Window: **±40 %** (`lag_p25 = 0.6·τ_B`, `lag_p75 = 1.4·τ_B`). The trigger is set as `baseline + 0.75·(NWS action stage − baseline)` when the gauge has an action stage, else the gauge's P98 stage within training storms, with `params_source='transferred'`. Tier-B crossings never contribute to headline metrics. Their accuracy is unknown, and the UI's "Estimated" badge says so.
+For a tier-B link with no truth: **τ_B = channel_dist_km / ĉ**, where ĉ is the median celerity of tier-A links in the same HUC10 (if HUC is available `[U]`), else region-wide. Window: **±40 %** (`lag_p25 = 0.6·τ_B`, `lag_p75 = 1.4·τ_B`). The trigger is set as `baseline + 0.75·(NWS action stage − baseline)` when the gauge has an action stage, else the gauge's P98 stage within training storms, with `params_source='transferred'`. Tier-B crossings never contribute to headline metrics. Their accuracy is unknown, and the UI's "Estimated" badge says so. A tier-B crossing with a `proxy` label (§17.6) may learn τ and triggers from its proxy onsets instead (`params_source='learned'`, `truth_quality='proxy'`); its scores appear only in the `proxy` split.
 
-**Done when (F1, F2):** `data/seed/crossings.geojson`, `data/seed/gauges.geojson`, `data/links/crossing_gauge_links.csv` and `data/creeks/creeks.geojson` are committed and the DB is seeded; ≥ 10 tier-A crossings are reviewed on a map; every row has a source; counts per source and tier are logged in `docs/data-bridge-verification.md`.
+### 17.14 App bundle data — `make app-data` (`tools/export_app_data.py`) `[MVP]` (F86)
+
+The app ships its static data so the first launch works offline (every crossing `unknown` until a snapshot arrives). `make app-data` (A §5.2; tools environment, run from the repo root) is the **only** way data reaches `mobile/assets/`. It runs after `make data`, `make backtest` and `make replays`, and a second run produces no diff (idempotent; no timestamps in its outputs).
+
+| Source (committed) | Written to | Rule |
+|---|---|---|
+| `data/seed/crossings.geojson` | `mobile/assets/seed/crossings.geojson` | §17.2 **static** fields only (no risk state); `is_test` rows excluded; sorted by `id` |
+| `data/seed/gauges.geojson` | `mobile/assets/seed/gauges.geojson` | Point features with properties `{id, name, nws_lid}` (gauge names for reason text, positions for map gauge dots); active gauges only |
+| `data/creeks/creeks.geojson` | `mobile/assets/seed/creeks.geojson` | one LineString per link, `{reach_id, crossing_id, gauge_id, relation}`, coordinates gauge → crossing (§17.9 rule 4; a test asserts the direction with shapely) |
+| `data/replays/index.json` + `data/replays/<id>.json.gz` (bundled storms only) | `mobile/assets/replays/` | copied byte for byte, except that `index.json` gets the top-level `hero_storm_id` (= `docs/results/results.json` `hero.storm_id`, or `null`) and each entry's `featured = (id == hero_storm_id)` |
+| `docs/results/results.json` | `mobile/assets/results/results.json` | byte for byte |
+| (generated) | `mobile/src/features/replay/assets.ts` | static `require()` per bundled storm (Metro bundles only static requires) |
+| (generated) | `mobile/assets/manifest.json` | `{"inventory_version", "files": [{"path", "sha256", "bytes"}]}` for every file above, sorted by path |
+
+```ts
+// mobile/src/features/replay/assets.ts — GENERATED by tools/export_app_data.py (make app-data). Do not edit.
+export const REPLAY_FILES = {
+  'halloween-2013': require('../../../assets/replays/halloween-2013.json.gz'),
+  // … one line per bundled storm, sorted by id
+} as const;
+export const REPLAY_INDEX = require('../../../assets/replays/index.json');
+```
+- Maestro flows read `HERO_STORM_ID` from `mobile/assets/replays/index.json` (`hero_storm_id`, else the first bundled storm); no flow hard-codes a storm (A F124, D §36.2).
+- The script refuses to run if a source file's sha256 differs from `data/MANIFEST.json` (run `make data-fetch` first) and fails if the bundled replays exceed 1 MB in total (§19.11).
+- Style JSONs and marker sprites are **not** copied here; `make style` and `make markers` write them directly (A §5.2).
+
+**Done when (F1, F2, F86):** `data/seed/crossings.geojson`, `data/seed/gauges.geojson`, `data/links/crossing_gauge_links.csv` and `data/creeks/creeks.geojson` are committed and the DB is seeded; ≥ 10 **real** tier-A crossings (non-proxy truth) are reviewed on a map; every row has a source; counts per source and tier are logged in `docs/data-bridge-verification.md`; `make app-data` has filled `mobile/assets/{seed,replays,results}/` and a second run shows no diff.
 
 ---
 ## §18. Forecast science
@@ -721,7 +801,8 @@ For every ★ file the agent writes the tests and the explain-back doc (`docs/ex
 - **Censored onsets (gauge outages):** if the readings just before the first observed overtop reading are missing for more than 30 min, **and** the last reading before the gap was below the overtop stage, the true onset lies somewhere inside the gap. Set `onset = last_below_time + 15 min` (the earliest possible), and `censored = true`. Lead times computed against it are lower bounds. 2013 at US 183 is the known case.
 - **Storage:** `data/storms/<id>/truth.csv` (`crossing_id, onset, end, quality, censored, notes`) and `public.ground_truth_events` (no public RLS policy; eval only; §21).
 - **Isolation:** runtime modules never import `fordcast.scoring` or read truth files; enforced by `tests/test_truth_isolation.py` (§19.8). Offline learners (`linking/triggers.py`, `model/train_ml.py`, `replay/build.py`) get labels only through `scoring.labels.load_onsets(storm_ids, crossing_ids)`.
-- **Reporting:** every metric is reported overall **and** split by `truth_quality`. `proxy` labels are never mixed silently into headline numbers (§18.13).
+- **Reporting:** every metric is reported overall **and** split by `truth_quality`. `proxy` labels are never mixed silently into headline numbers (§18.12).
+- **Documented transmission outages** (§19.3–§19.4) don't change the truth: truth is computed from the archive's readings, whenever they arrived. They only change what FordCast could have **seen** at each tick. A true gap in the archive follows the censored-onset rule above.
 
 ### 18.3 Travel time τ ★ (`linking/travel_time.py`, student-owned) `[MVP]` (F6)
 
@@ -799,7 +880,7 @@ def evaluate(crossing: Crossing, links: Sequence[Link], series: Mapping[str, Seq
 | 1 | Keep links with `relation='upstream'` whose series is fresh (`is_fresh(s, as_of, l.gauge.stale_after_min)`) | `usable` |
 | 2 · AVOID candidate | `S ≥ l.trigger_stage_ft` **and** (`rise30 > l.min_rise_ft_30m` **or** the water crossed the trigger recently: `as_of − t_cross ≤ l.lag_p75_min + 30 min`) | `t_cross = last_upcrossing_time(s, trigger)`; `eta_mid = l.lag_min − minutes(as_of − t_cross)`; `eta_lo = max(0, eta_mid − (l.lag_min − l.lag_p25_min))`; `eta_hi = max(eta_lo, eta_mid + (l.lag_p75_min − l.lag_min))` |
 | 3 · WATCH candidate | `S ≥ l.watch_stage_ft` **and** `rise30 > 0.20 ft` | — |
-| 4 | Any AVOID candidate with `eta_lo < 90` | **AVOID**; pick the candidate with the smallest `eta_lo`; `window = to_window(eta_lo, eta_hi)`; reason `UPSTREAM_ABOVE_TRIGGER{gauge_id, value_ft, rise_ft_30m, tau_min, trigger_ft, obs_at}` |
+| 4 | Any AVOID candidate with `eta_lo < 90` | **AVOID**; pick the candidate with the smallest `eta_lo`; `window = to_window(eta_lo, eta_hi)`; reason `UPSTREAM_ABOVE_TRIGGER{gauge_id, value_ft, rise_ft_30m, tau_min, trigger_ft, obs_at}` (`explain.py` later adds the display range `tau_lo_min`/`tau_hi_min`, §18.10) |
 | 5 | AVOID candidates exist but all have `eta_lo ≥ 90` (water still far away) | **WATCH**, `window = None`; reason `UPSTREAM_ABOVE_TRIGGER` (same params) |
 | 6 | Any WATCH candidate | **WATCH**, `window = None`; reason `UPSTREAM_RISING{gauge_id, rise_ft_30m, value_ft, watch_ft, obs_at}` |
 | 7 | none | **NO_RISE**, no reasons |
@@ -817,7 +898,7 @@ def evaluate(crossing: Crossing, links: Sequence[Link], series: Mapping[str, Seq
 | WATCH rise threshold | 0.20 ft / 30 min | backend.md §4.7 |
 | Transit grace | `lag_p75 + 30` min | this section |
 | Horizon | 90 min | product promise (~90 min) |
-| `stale_after_min` | per gauge, 30–120 (default 60) | §16.2, §18.9 |
+| `stale_after_min` | per gauge, 30–120 (default 60; in replay never below the assumed delay + 20, §18.9) | §16.2, §18.9 |
 
 **Tests (agent-written first):** one test per table row; window bucketing via `windows`; a stale upstream link is ignored; an empty `usable` returns NO_RISE (combine then turns tier/staleness into UNKNOWN); determinism (same input → same reasons order).
 **Explain-back questions** (`docs/explain/baseline_rule.md`): Why must the gauge be *rising*, not just high? Why do we show the window that starts at the *earliest* arrival? What happens when the upstream gauge stops reporting?
@@ -927,33 +1008,35 @@ def step(tr: Tracker, raw: RawState, now: datetime, ctx: StepContext) -> Tracker
 | Snapshot `data_status` | **live**; **degraded** if > 25 % of active linked gauges are stale; **offline** if > 75 % are stale **or** the last OK tick is > 20 min old (computed at read time by `/v1/risk/current` and `/v1/meta/freshness`) | §22.3 |
 | Client | snapshot older than `stale_after_s` (1,200 s) → every crossing renders `unknown` + "Last known" | §3.4, §28 |
 | NWS feed | unreachable > 10 min | `nws_status: "unavailable"` |
-| Replay | the same rules, with `available_at` (§19.4) | gauge outages show as `unknown` (§19.10) |
+| Replay / backtest | the same rules, with `available_at` from §19.4 (frozen delays + documented outages) and per-gauge thresholds from `data/latency/gauge_latency.json`. **Consistency rule:** in replay the threshold is `max(stale_after_min, delay[gauge] + 20)`, so an assumed delivery delay can never make every reading stale the moment it arrives (with the 60-min default delay the threshold is 80 min; with `--delay-override N` it is at least `N + 20`) | documented outages and true archive gaps show as `unknown` (§19.10) |
 
 ### 18.10 "Why this alert" explanations (`model/explain.py`) `[MVP rule codes · Stretch SHAP]` (F14)
 
 **Reason object (JSON; the same shape in the snapshot, the API, the replay timeline and the push `data`):**
 ```json
 {"code": "UPSTREAM_ABOVE_TRIGGER", "gauge_id": "USGS-08158700", "value_ft": 9.4, "rise_ft_30m": 3.1,
- "tau_min": 40, "trigger_ft": 9.0, "obs_at": "2026-10-14T17:45:00Z"}
+ "tau_min": 40, "tau_lo_min": 30, "tau_hi_min": 45, "trigger_ft": 9.0, "obs_at": "2026-10-14T17:45:00Z"}
 ```
-- Numbers: feet to 1 decimal; minutes as integers rounded to 5. The client resolves `gauge_id` → display name from the bundled `gauges.geojson` seed or `/v1/crossings/{id}` (names are not repeated in the snapshot, to save bytes).
+- Numbers: feet to 1 decimal; minutes as integers rounded to 5. The client resolves `gauge_id` → display name from the bundled `gauges.geojson` seed (§17.14) or `/v1/crossings/{id}` (names are not repeated in the snapshot, to save bytes).
 - **Every non-`no_rise` state carries ≥ 1 reason** (snapshot validation test). At most 3 reasons, ordered as in §18.5.
+- **Travel time is sent as a range.** `explain.py` adds `tau_lo_min`/`tau_hi_min` to every reason that carries a link's τ (A §3.5 rule 8): `tau_lo = 15·floor(lag_p25_min/15)`, `tau_hi = 15·ceil(lag_p75_min/15)`; if `tau_hi − tau_lo < 15`, then `tau_hi = tau_lo + 15`; a link learned from one storm (`n_storms = 1`) uses `lag_min ± 10` as P25/P75 before rounding; a range would never start at 0 ("0–15" is banned by the A §3.12 countdown guard), so `tau_lo_min` is at least 5. Example: P25 33, median 38, P75 44 → `tau_lo_min = 30`, `tau_hi_min = 45` → "Water usually takes 30–45 min to get here". `tau_min` (the exact median) stays in the object only for the debug screen (F107) and the replay pulse math; **no template, label, TTS line or storyboard may use it** (§3.5 rule 8).
+- **Rendering is client-side and the server never sends text.** Every code renders from the A §3.7 `reason.*` keys (visual key + `_spoken` sibling, EN/ES, i18next `{{var}}` interpolation). Each source variant has its own key; there is no `{a|b}` syntax anywhere. The backend copy test reads the same keys from `mobile/src/locales/{en,es}.json` (A §3.12).
 
-| Code | Params | EN template | ES template | Emitted by |
+| Code | Params (wire) | §3.7 key(s) (EN/ES + `_spoken`) | Placeholders filled from | Emitted by |
 |---|---|---|---|---|
-| `UPSTREAM_ABOVE_TRIGGER` | gauge_id, value_ft, rise_ft_30m, tau_min, trigger_ft, obs_at | "{gauge}: +{rise} ft in 30 min (upstream, ~{tau} min away)" | "{gauge}: +{rise} pies en 30 min (río arriba, a ~{tau} min)" | rule, ML |
-| `UPSTREAM_RISING` | gauge_id, rise_ft_30m, value_ft, watch_ft, obs_at | "Water rising upstream at {gauge}" | "El agua sube río arriba en {gauge}" | rule, ML |
-| `WATER_AT_ROAD` | gauge_id, value_ft, overtop_ft, obs_at | "Sensor at the road: {gauge} shows water over the road" | "Sensor en el camino: {gauge} muestra agua sobre el camino" | combine |
-| `OFFICIAL_CLOSED` | source, as_of | "Official: {source} reports it closed" | "Oficial: {source} lo reporta cerrado" | combine |
-| `OFFICIAL_CAUTION` | source, as_of | "Official: {source} reports caution" | "Oficial: {source} reporta precaución" | combine |
-| `DATA_STALE` | gauge_id?, source?, last_obs_at | "No recent data from {gauge|source} (last {age})" | "Sin datos recientes de {gauge|source} (últimos: {age})" | combine, state machine |
-| `NO_UPSTREAM_GAUGE` | — | "Not monitored by FordCast: no upstream gauge" | "FordCast no lo monitorea: no hay medidor río arriba" | combine |
-| `RAIN_OVER_BASIN` (Stretch) | qpe_in, hours, source | "{qpe} in of rain over this creek's basin in {hours} h" | "{qpe} pulg. de lluvia en la cuenca en {hours} h" | ML |
-| `HOLDING` | since, held_state | "Keeping this warning while water upstream goes down" | "Mantenemos este aviso mientras baja el agua río arriba" | state machine |
-| `CLOSURE_LIFTED` | source, at | "{source}: closure lifted at {time}. Water may remain. Use caution." | "{source}: cierre levantado a las {time}. Puede quedar agua. Tenga cuidado." | state machine |
-| `NEAR_ROAD_RISING` (Stretch) | gauge_id, rise_ft_30m | "Water rising at {gauge} near the road" | "El agua sube en {gauge} cerca del camino" | ML |
+| `UPSTREAM_ABOVE_TRIGGER` | gauge_id, value_ft, rise_ft_30m, tau_min, tau_lo_min, tau_hi_min, trigger_ft, obs_at | `reason.UPSTREAM_ABOVE_TRIGGER` | `{{gauge}}` ← gauge name, `{{rise}}` ← `rise_ft_30m`, `{{tau_lo}}`/`{{tau_hi}}` ← `tau_lo_min`/`tau_hi_min` | rule, ML |
+| `UPSTREAM_RISING` | gauge_id, rise_ft_30m, value_ft, watch_ft, obs_at | `reason.UPSTREAM_RISING` | `{{gauge}}` | rule, ML |
+| `WATER_AT_ROAD` | gauge_id, value_ft, overtop_ft, obs_at | `reason.WATER_AT_ROAD` | `{{gauge}}` | combine |
+| `OFFICIAL_CLOSED` | source, as_of | `reason.OFFICIAL_CLOSED` | `{{source}}` ← source label (§3.6) | combine |
+| `OFFICIAL_CAUTION` | source, as_of | `reason.OFFICIAL_CAUTION` | `{{source}}` | combine |
+| `DATA_STALE` | gauge_id **or** source (exactly one), last_obs_at | `reason.DATA_STALE_gauge` when `gauge_id` is set; `reason.DATA_STALE_source` when `source` is set | `{{gauge}}` or `{{source}}`, `{{age}}` ← `last_obs_at` | combine, state machine |
+| `NO_UPSTREAM_GAUGE` | — | `reason.NO_UPSTREAM_GAUGE` | — | combine |
+| `RAIN_OVER_BASIN` (Stretch) | qpe_in, hours, source | `reason.RAIN_OVER_BASIN` | `{{qpe}}` ← `qpe_in`, `{{hours}}` | ML |
+| `HOLDING` | since, held_state | `reason.HOLDING` | — | state machine |
+| `CLOSURE_LIFTED` | source, at | `reason.CLOSURE_LIFTED` | `{{source}}`, `{{time}}` ← `at` (America/Chicago) | state machine |
+| `NEAR_ROAD_RISING` (Stretch) | gauge_id, rise_ft_30m | `reason.NEAR_ROAD_RISING` | `{{gauge}}` | ML |
 
-> NOTE TO REVIEWER: `HOLDING`, `CLOSURE_LIFTED` and `NEAR_ROAD_RISING` are additions to the F14 code list in §4. Their EN/ES templates above MUST be added to the §3.7 bank (`reason.*` keys in `en.json`/`es.json`), and they pass the banned-words test.
+`HOLDING`, `CLOSURE_LIFTED` and `NEAR_ROAD_RISING` are part of the F14 code list (A §4) and their EN/ES/spoken templates are in the §3.7 bank. A new code needs a §3.7 key first (stop-and-ask, A §1.7 item 1). The pytest copy test fails if any code emitted by `explain.py` lacks a `reason.*` key (or both `DATA_STALE_*` variants) in either language.
 
 **SHAP mapping (Stretch, only when ML is live):** `shap.TreeExplainer(base)` on the **uncalibrated** base model (log-odds; sigmoid/isotonic calibration is monotone, so rankings hold) `[V: code shap 0.52]`. Take the top-3 **positive** contributions and map feature groups to codes: `g{k}_stage_rel`/`g{k}_above_trigger`/`g{k}_tsince_trigger_minus_tau` → `UPSTREAM_ABOVE_TRIGGER` (gauge k); `g{k}_rise_*`/`g{k}_max_rise30_last2h` → `UPSTREAM_RISING`; `qpe_*` → `RAIN_OVER_BASIN`; `tgt_*` → `NEAR_ROAD_RISING`; calendar/antecedent features → dropped. Deduplicate by (code, gauge). **Never show raw SHAP numbers or "% safe"** (§3.11).
 
@@ -973,7 +1056,7 @@ def step(tr: Tracker, raw: RawState, now: datetime, ctx: StepContext) -> Tracker
 | Antecedent | `g1_stage_24h_ago_rel` | 0 |
 | Calendar | `hour_sin, hour_cos, doy_sin, doy_cos` | 0 |
 
-- **Sampling and imbalance:** every step inside storm windows (first rise − 12 h → last onset + 12 h), plus a random **5 % of calm days** with `sample_weight = 20` so base rates stay true. **No SMOTE and no `class_weight="balanced"`** (both distort calibration).
+- **Sampling and imbalance:** every step inside storm windows (first rise − 12 h → last onset + 12 h), plus every 15-min step of the **`calm-2024` days** (§16.19), weighted with `sample_weight = n_candidates / n_days` from its `meta.toml` (each sampled calm day stands for that many calm days of the year), so base rates stay true. **No SMOTE and no `class_weight="balanced"`** (both distort calibration). The calm days are split into two fixed halves (even and odd positions in the sorted `days` list): ML trained with one half is scored on the other for `calm_fa_per_crossing_per_100d`, so the ML calm false-alarm rate is never in-sample.
 - **Model** `[V: code sklearn 1.9.1]`:
 ```python
 from sklearn.calibration import CalibratedClassifierCV
@@ -1005,7 +1088,9 @@ cal = CalibratedClassifierCV(FrozenEstimator(base), method=method).fit(X_cal, y_
 - **False alarm:** an episode not matched to any onset within `[start, start + max(τ_p75 + 60, 120) min]`.
 - **Censored onsets** (§18.2): leads computed against the earliest possible onset are lower bounds; they are counted and listed.
 
-**Scores (pooled and per storm):** `H, M, F`; **POD = H/(H+M)**, **FAR = F/(H+F)**, **CSI = H/(H+M+F)** `[V: NWSI 10-1601; CAWCR]`; **median lead (IQR)**; **% of hits with lead ≥ 15 min**; and the trust metric **false alarms per crossing per 100 calm days** (run the full pipeline on ≥ 60 archived calm days, e.g. a dry Aug–Sep 2026 stretch confirmed with no NWS flood products, via the same replay engine).
+**Scores (pooled and per storm):** `H, M, F`; **POD = H/(H+M)**, **FAR = F/(H+F)**, **CSI = H/(H+M+F)** `[V: NWSI 10-1601; CAWCR]`; **median lead (IQR)**; **% of hits with lead ≥ 15 min**; and the trust metric **false alarms per crossing per 100 calm days**, computed on the `calm-2024` set (§16.19) through the same replay engine and the same live parameter set:
+
+`calm_fa_per_crossing_per_100d[L] = 100 × E_L / (C × D)`, where `E_L` = alert episodes at level ≥ L (L ∈ {WATCH, AVOID}) summed over all calm days, `C` = tier-A crossings scored, `D` = calm days scored. Tier-B crossings are reported in a separate `tier_b` row, never in the headline. Every calm-day episode is a false alarm by definition (truth is empty), and the backtest lists each one (crossing, day, start, level, reasons) in `results.md` so a human can read them. Written to `results.json` for `upstream_rule`, `nearest_gauge` and (if trained) `ml`, together with `assumptions.calm_set`, `calm_days`, `calm_candidates` and `calm_seed`.
 
 **Student contract (`scoring/metrics.py`):**
 ```python
@@ -1032,27 +1117,31 @@ def bootstrap_ci(per_storm: Mapping[str, MatchResult], *, n: int = 1000, seed: i
 
 **Uncertainty:** **bootstrap CIs** with 1,000 resamples of storms (seed 0), 95 % percentile intervals. With fewer than 5 storms, say plainly "few storms; wide intervals".
 **Probabilistic scores (ML only):** Brier score, **Brier skill score** `BSS = 1 − BS/BS_clim` (climatology = the training base rate), and a **reliability diagram** via `calibration_curve(y, p, n_bins=10, strategy="quantile")` saved to `docs/results/figures/reliability_p60.png` `[V: code sklearn]`.
-**Data-delay sensitivity (honesty):** rerun the backtest with replay delays of **0, 15, 30 and 60 min** (§19.4) and report the median AVOID lead for each. The headline uses the measured/assumed delay.
+**Data-delay sensitivity (honesty):** rerun the backtest with replay delays of **0, 15, 30 and 60 min** (§19.4) and report the median AVOID lead for each. The headline uses the frozen measured delays (`data/latency/gauge_latency.json`; 60 min for unmeasured gauges). Documented transmission outages apply in every sensitivity run (they are facts about the storm, not an assumption about delay).
 **Split by truth quality:** report `sensor/gauge/impact_statement` together, and `proxy` separately. The **headline** uses non-proxy labels when ≥ 3 onsets exist; otherwise it states that proxy labels were used.
 **Nearest-gauge story extraction:** `backtest` writes `examples.nearest_gauge_story` (one concrete storm/crossing where nearest-gauge raised a false alarm on a different creek or missed an onset that the upstream rule caught), with the times. The student uses it in Q4 (§38).
 
 ### 18.13 `make backtest` → `docs/results/results.json` (the only source of numbers)
 
-```make
-backtest:   ## LOSO backtest → docs/results/{results.json,results.md,figures/}
-	cd backend && uv run python -m fordcast backtest --all --out ../docs/results
-	cp docs/results/results.json mobile/assets/results/results.json
-```
+**Command.** `make backtest` is defined once, in the root Makefile (A §5.2); do not copy its recipe here. It runs `uv run python -m fordcast backtest --all --out ../docs/results` in the backend environment, then `uv run --project tools python tools/select_hero.py docs/results/results.json` (the hero rule below), then `make app-data` (§17.14), which copies `results.json` into the app. `make backtest CHECK=1` (make rejects a `--check` flag) runs a fresh full LOSO backtest into `build/results-check/` with `--compare ../docs/results/results.json` and fails on any difference (ignoring only `generated_by.git_sha`, `hero` and `hero_by_storm`; the hero is re-checked by `tools/select_hero.py --check`): the pipeline is deterministic (fixed seeds, sorted IDs, frozen delays), so a fresh run must reproduce the committed numbers exactly. CI runs both (§24.9).
+
+**CLI flags:** `backtest (--all | --storm ID) --out DIR [--smoke] [--compare FILE] [--delay-override N]`. `--smoke` scores one storm with its LOSO fold and compares only that storm's row (POD tolerance 10 points, for the fast per-push CI step); `--compare` without `--smoke` requires exact equality of every number and prints a field-level diff on failure.
+
 **`results.json` (`fordcast.results.v1`):**
 ```json
 {
   "schema": "fordcast.results.v1",
   "generated_by": {"command": "make backtest", "git_sha": "abc1234", "model_version": "rule-2026.10.18",
-                   "data_manifest_sha256": "…", "python": "3.13.16"},
+                   "data_manifest_sha256": "…", "latency_sha256": "…", "python": "3.13.16",
+                   "hero_rule": "tools/select_hero.py@abc1234"},
   "assumptions": {"lead_window_min": 180, "tick_s": 300, "cv": "leave-one-storm-out",
-                  "data_delay_min": {"USGS-08158700": 60, "USGS-08159000": 15}, "calm_days": 61},
-  "storms": [{"id": "halloween-2013", "name_en": "…", "name_es": "…", "n_crossings": 6, "n_onsets": 5,
-              "n_censored": 1, "unknown_at_onset": 1}],
+                  "delays_source": "data/latency/gauge_latency.json", "default_delay_min": 60,
+                  "data_delay_min": {"USGS-08158700": 60, "USGS-08159000": 15},
+                  "outages": [{"storm_id": "halloween-2013", "site": "USGS-08159000",
+                               "start": "2013-10-31T11:15:00Z", "end": "2013-10-31T13:45:00Z"}],
+                  "calm_set": "calm-2024", "calm_days": 40, "calm_candidates": 0, "calm_seed": 20241231},
+  "storms": [{"id": "halloween-2013", "name_en": "…", "name_es": "…", "catalog_order": 1, "bundle": true,
+              "n_crossings": 6, "n_onsets": 5, "n_censored": 1, "unknown_at_onset": 1}],
   "methods": {
     "upstream_rule": {
       "avoid": {"pooled": {"H": 0, "M": 0, "F": 0, "pod": null, "far": null, "csi": null,
@@ -1061,10 +1150,11 @@ backtest:   ## LOSO backtest → docs/results/{results.json,results.md,figures/}
                                     "median_lead_min": [null, null]}},
                 "per_storm": [{"storm_id": "halloween-2013", "H": 0, "M": 0, "F": 0, "pod": null,
                                "far": null, "csi": null, "median_lead_min": null}],
-                "per_crossing": [{"crossing_id": "atx-081", "storm_id": "halloween-2013", "lead_min": null,
-                                  "censored": false, "capped": false}]},
+                "per_crossing": [{"crossing_id": "atx-081", "storm_id": "halloween-2013", "tier": "A",
+                                  "truth_quality": "impact_statement", "onset": "…", "first_alert_at": "…",
+                                  "lead_min": null, "censored": false, "capped": false}]},
       "watch": {"pooled": {}, "per_storm": [], "per_crossing": []},
-      "calm_fa_per_crossing_per_100d": {"avoid": null, "watch": null}},
+      "calm_fa_per_crossing_per_100d": {"avoid": null, "watch": null, "tier_b": {"avoid": null, "watch": null}}},
     "nearest_gauge": {"avoid": {}, "watch": {}, "calm_fa_per_crossing_per_100d": {}},
     "ml": null,
     "reactive": {"median_lead_min": 0}
@@ -1074,21 +1164,35 @@ backtest:   ## LOSO backtest → docs/results/{results.json,results.md,figures/}
                         {"delay_min": 30, "median_lead_min": null}, {"delay_min": 60, "median_lead_min": null}],
   "headline": {"method": "upstream_rule", "level": "avoid", "n_storms": 0, "pod": null,
                "median_lead_min": null, "labels": "non_proxy"},
-  "hero": {"storm_id": null, "crossing_id": null, "lead_min": null, "level": "avoid"},
+  "hero": {"storm_id": null, "crossing_id": null, "lead_min": null, "level": "avoid", "onset": null,
+           "first_alert_at": null, "censored": false, "target_median_lead_min": null,
+           "rule": "tier-A AVOID hit closest to the overall median lead; ties: catalog order, then crossing id"},
+  "hero_by_storm": {"halloween-2013": null},
   "examples": {"nearest_gauge_story": null}
 }
 ```
 (The `null`s show the shape. Real runs fill every field, and nothing in this file is ever typed by hand.)
+- `per_crossing` lists every scored onset (a miss has `lead_min: null`), with the crossing's tier and truth class, so the hero rule and the README tables need no other input.
 - `results.md` + figures (`docs/results/figures/`: per-storm hydrograph overlays of upstream vs. target with alert episodes; lead-time bar chart per crossing; reliability diagram if ML) are generated from `results.json` by the same command.
 - **Every number** in the README, the app's "How accurate is FordCast?" screen (F80), the Replay result banner, the video and the CAC answers comes from this file (§1.5, §7.1, §40, §41). A CI test fails if `README.md`, `submission/answers.md` or `mobile/src` contain a hand-typed metric that doesn't match `results.json` (§24.7).
-- CI runs a **one-storm smoke backtest** on every push. A POD change of more than 10 points vs. the committed `results.json` fails CI and is a stop-and-ask (§7.1).
+- CI runs a **one-storm smoke backtest** (`--smoke`) on every push, and `make backtest CHECK=1` (full LOSO, exact compare). A POD change of more than 10 points vs. the committed `results.json` is also a stop-and-ask (§1.7 item 8, §7.1).
 - **Science freeze** (Thu Oct 22, 18:00 CT, §6.2): after it, any change to `results.json` needs human approval and a regeneration of README, app assets and video numbers.
 
+#### The hero rule (`tools/select_hero.py`, pre-registered; no cherry-picking)
+
+The "X minutes earlier" example in the app, README and video is chosen by code, never by a person, and never as the best case.
+1. **Candidates:** entries of `methods.upstream_rule.avoid.per_crossing` that are hits (`lead_min` not null), with `tier == "A"` (so `truth_quality` is never `proxy`, §17.6), in a storm whose `bundle` is `true` (the example must be playable offline in the app). Censored and capped hits are eligible; the app then adds "(at least)" for a censored onset (D §33.4).
+2. **Target:** `m = headline.median_lead_min` (the overall median AVOID lead time across storms; exactly the value the honesty line `replay.honesty` quotes).
+3. **Pick:** the candidate with the smallest `|lead_min − m|`. Ties: the earlier storm in §16.19 catalog order (`catalog_order`), then the smaller `crossing_id` (string order). **Never** the maximum lead.
+4. **Write:** `hero = {storm_id, crossing_id, lead_min, level: "avoid", onset, first_alert_at, censored, target_median_lead_min: m, rule}`; if there is no candidate, `hero = null` and the app shows no callout. `hero_by_storm[<storm_id>]` = the same rule restricted to that one bundled storm (target still the overall `m`), or `null`; the replay builder copies it into that storm's timeline `hero` (§19.11), so every bundled storm's callout follows the same rule.
+5. **Pre-registration:** `select_hero.py` and its tests (synthetic `per_crossing` lists: closest-to-median wins over the maximum, both tie-breaks, proxy and tier-B rows ignored, unbundled storms ignored, empty → `null`) are committed **before** the first real `results.json` (A §6.1 Day 4). `select_hero.py --check FILE` recomputes both fields and fails on any difference (CI, §24.9). There is no override flag. If the human wants a different featured storm for the video, that is a stop-and-ask, and the README must say the featured example was not the rule's pick.
+6. The README states the rule in one sentence (E §40.2): "The example is picked by a fixed rule: the warning whose lead time is closest to the median across all storms."
+
 ### 18.14 Scientific honesty rules (MUST)
-1. Never tune parameters, thresholds, delays or the hero choice using the held-out storm. The fold's storm is invisible to learning.
+1. Never tune parameters, thresholds or delays using the held-out storm. The fold's storm is invisible to learning. The hero is never chosen by hand: only the pre-registered rule in §18.13 picks it.
 2. Report weak numbers as they are. "The simple rule nearly matched ML" is a valid Q4 finding.
-3. Proxy labels, censored onsets, `unknown_at_onset` counts and data-delay assumptions are always reported next to the numbers they affect.
-4. The best example (hero) is always shown together with the median across storms (`replay.honesty`).
+3. Proxy labels, censored onsets, `unknown_at_onset` counts, documented outages and data-delay assumptions are always reported next to the numbers they affect.
+4. The example (hero) is always shown together with the median across storms (`replay.honesty`).
 5. Say "I'm not aware of a published system that forecasts low-water-crossing overtopping per crossing from upstream gauges", never "first ever". The literature review in backend.md §4.1 is the source.
 6. Tier-B "Estimated" crossings never enter the headline.
 
@@ -1176,7 +1280,7 @@ def assert_no_lookahead(readings: Sequence[Reading], as_of: datetime) -> None:
 | File | Content |
 |---|---|
 | `meta.toml` | below (TOML, read with stdlib `tomllib`) |
-| `readings.parquet` | `gauge_id: str, param: str, obs_time: timestamp[us, UTC], value: float32, approval: str, qualifiers: list<str>, fetched_at: timestamp[us, UTC]`; window **[window.start − 24 h, window.end]**; committed if ≤ 5 MB, else uploaded to Storage `data/storms/<id>/readings.parquet` and listed in `data/MANIFEST.json` with its sha256 |
+| `readings.parquet` | `gauge_id: str, param: str, obs_time: timestamp[us, UTC], value: float32, approval: str, qualifiers: list<str>, fetched_at: timestamp[us, UTC]`; window **[window.start − 24 h, window.end]**; committed if ≤ 5 MB, else uploaded by `make data-upload` to the content-hashed Storage path `data/storms/<id>/readings.<sha12>.parquet` and listed in `data/MANIFEST.json` with its sha256 and URL (`make data-fetch` restores it, §17.1). For `calm-2024` it holds only the sampled days plus the 24 h before each |
 | `truth.csv` | §18.2 (read only through `scoring.labels`) |
 | `alerts.parquet` (Stretch) | parsed IEM CAP alerts (§16.7) |
 | `rain.parquet` (Stretch) | basin rain series with `valid_at` + product |
@@ -1190,9 +1294,18 @@ tz = "America/Chicago"
 headline_event = "2013-10-31T11:15:00Z"
 gauges = ["USGS-08158700", "USGS-08158810", "USGS-08158840", "USGS-08159000"]
 official_status = "none"      # no timestamped historic closures → ReplayOfficial is empty
-bundle = true                 # ship in the app (§19.14)
-data_sha256 = "…"             # sha256 of readings.parquet
+kind = "storm"                # "storm" | "calm" (calm-2024 is never bundled and never a LOSO fold)
+bundle = true                 # ship in the app (§19.14); only if the storm's data checks pass (§16.19)
+catalog_order = 1             # §16.19 table order (hero tie-break, §18.13)
+data_sha256 = "…"             # sha256 of readings.parquet (also listed in data/MANIFEST.json)
 notes = "US 183 gauge silent ~11:15–13:45Z (USGS alert 2013-10-31); values are today's APPROVED data"
+
+# Documented TRANSMISSION outages: the gauge kept measuring but nothing reached users until `end`.
+# Today's archive may hold readings from inside the window; replay must still not see them before `end` (§19.4).
+# (TOML 1.0: each inline table must stay on ONE line; the array itself may span lines.)
+outages = [
+  { site = "USGS-08159000", start = "2013-10-31T11:15:00Z", end = "2013-10-31T13:45:00Z", source = "USGS alert 2013-10-31; Statesman 2013-11-10; bounds: VERIFY BEFORE USE with smoke check S3" },
+]
 
 [window]                      # refined from data (§16.19)
 start = "2013-10-30T12:00:00Z"
@@ -1202,23 +1315,37 @@ end = "2013-11-01T00:00:00Z"
 source = "api.waterdata.usgs.gov/ogcapi/v1 continuous"
 at = "2026-10-16T15:02:00Z"
 ```
-> NOTE TO REVIEWER: §5 lists `data/storms/<id>/meta.yaml`. This prompt uses `meta.toml` because Python's stdlib `tomllib` reads it, while PyYAML is not in the research-verified dependency set. If you prefer YAML, add PyYAML after verifying it resolves under `exclude-newer`.
-`StormReplaySource.from_storm(storm, delays)` loads the Parquet once, computes `available_at = obs_time + delays[gauge_id]`, sorts by `(available_at, gauge_id, obs_time)`, keeps an `available_index`, and answers `series()` with the student's `visible()` + `assert_no_lookahead()` (per the prototype `[V: code]`).
+- Storm metadata is TOML and is read with the standard library's `tomllib` (Step 0 decided default D9); no YAML parser is needed.
+- `outages` is required in every `meta.toml` (an empty list `outages = []` when none is documented). Each entry needs a written public `source` (a USGS alert, an agency report or a news report quoting one); never infer an outage from the data alone, because that would be tuning the replay. Times are UTC; the window is half-open (`start ≤ obs_time < end`).
+- `calm-2024/meta.toml` has `kind = "calm"`, `bundle = false`, `seed`, `n_candidates`, `days = ["2024-01-07", …]` and the exclusion log path, and no `[window]` (each day is its own window, §16.19).
+- **Delays are not stored in `meta.toml`.** They come from the frozen `data/latency/gauge_latency.json` (§19.4), so one file governs every storm.
+
+`StormReplaySource.from_storm(storm, delays)` loads the Parquet once, computes each reading's `available_at` with the §19.4 rule (delay plus documented outages), sorts by `(available_at, gauge_id, obs_time)`, keeps an `available_index`, and answers `series()` with the student's `visible()` + `assert_no_lookahead()` (per the prototype `[V: code]`). Because `visible()` bisects on `available_at`, an outage needs no special code in the student's file: the readings simply arrive late.
 
 ### 19.4 Data-arrival latency model `[MVP]`
 
 | Data | Visible in replay at | Notes |
 |---|---|---|
-| USGS stage | `obs_time + delay[gauge]` | `delay[gauge] = latency_p75_min` measured live (§16.2) when `latency_n ≥ 50`; otherwise **60 min** (conservative satellite assumption; hydro.md §9) |
+| USGS stage | `available_at = obs_time + delay[gauge]`; **if `obs_time` falls inside a documented outage for that gauge** (`start ≤ obs_time < end`): `available_at = max(obs_time + delay[gauge], outage.end)` | `delay[gauge]` comes **only** from the committed `data/latency/gauge_latency.json`: the measured live P75 (rounded up to 5 min) when the gauge has `n ≥ 50` live samples, otherwise **60 min** (conservative satellite assumption; hydro.md §9; Step 0 decided default D6) |
 | NWS alert (Stretch) | `sent` | |
 | MRMS RadarOnly 1H (Stretch) | `valid + 5 min` | Pass2 `valid + 2 h` (training only) |
 | Official status | historic record time, only if timestamped | none expected; stated in `assumptions` |
 
-- The timeline header records the delay used for every gauge, and the app shows `replay.assumes_delay` (§3.7).
-- `replay-build --delay-override N` produces the sensitivity runs (§18.12). Those are not bundled.
+**The frozen latency file** (`data/latency/gauge_latency.json`, written by `make latency` = `uv run python -m fordcast latency recompute --out ../data/latency/gauge_latency.json`; reads `public.readings` rows with `ingest = 'L'` from the live DB, so it needs `DATABASE_URL`):
+```json
+{"schema": "fordcast.gauge-latency.v1", "computed_from": {"start": "2026-10-20T15:00:00Z", "end": "2026-10-22T20:00:00Z"},
+ "min_n": 50, "default_delay_min": 60, "default_stale_after_min": 60,
+ "gauges": {"USGS-08158700": {"n": 212, "p75_min": 58.0, "p90_min": 66.0, "delay_min": 60, "stale_after_min": 90},
+            "USGS-08159000": {"n": 230, "p75_min": 14.0, "p90_min": 19.0, "delay_min": 15, "stale_after_min": 40}}}
+```
+(Values illustrative. A gauge with `n < 50` is written as `{"n": <n>, "p75_min": null, "p90_min": null, "delay_min": 60, "stale_after_min": 60}`.)
+- `delay_min = ceil5(p75_min)` if `n ≥ 50`, else 60. `stale_after_min = clamp(ceil5(p90_min + 20), 30, 120)` if `n ≥ 50`, else 60 (the §18.9 rule; replay then applies the consistency rule `max(stale_after_min, delay_min + 20)`). A gauge missing from the file gets the defaults. Keys sorted, no wall-clock timestamp beyond `computed_from`, so the file only changes when the data does.
+- `replay-build`, `replay-verify`, `backtest` and CI read **only** this file, never the live DB, so golden hashes can't drift with the nightly statistics. Run `make latency` once on Day 8 before the science freeze (A §6.1); after the freeze, changing the file is a science change (stop-and-ask, §6.2).
+- **Outages (the 2013 case):** a reading observed inside an outage becomes visible no earlier than `outage.end`. The replay therefore shows `unknown` for that gauge's dependent crossings during the outage (once the last pre-outage reading ages past the threshold, §18.9), even though today's archive holds the readings. If the archive has a true gap instead, there is simply nothing to see, which also yields `unknown`. Both are tested (§19.8).
+- The timeline header records the delay used for every gauge and the outage windows (§19.11), and the app shows `replay.assumes_delay` (§3.7).
+- `replay-build --delay-override N` produces the sensitivity runs (§18.12): every gauge's delay becomes `N`; outages still apply. Those runs are not bundled.
 - **Approval caveat:** today's archive holds **approved** values, not the provisional values that were live in 2013–2025. Record this in `assumptions.values`.
-
-> NOTE TO REVIEWER: §4 F75 says "default 15 min if unmeasured; satellite gauges ~60 min". This section makes 60 min the default for any gauge without ≥ 50 measured live samples, because the default should be the conservative case. Live ingest starts on Day 6, so most gauges will have measured P75 latencies before the final replay build on Day 9–10. The sensitivity table (§18.12) shows what 15 min would give.
+- A 15-min delay appears only as a row of the delay-sensitivity table (§18.12), never as a default.
 
 ### 19.5 Clocks (`clock.py`)
 ```python
@@ -1280,7 +1407,7 @@ async def tick(now: datetime, source: DataSource, official: OfficialStatusSource
 ```python
 async def run_replay(storm: Storm, model: RiskModel, *, delays: Mapping[str, int],
                      until: datetime | None = None) -> list[Frame]:
-    source = StormReplaySource.from_storm(storm, delays=delays)
+    source = StormReplaySource.from_storm(storm, delays=delays)   # delays: frozen file (§19.4); outages: storm.outages
     official = ReplayOfficial(storm)                     # empty unless timestamped records exist
     state, clock = MemoryStateStore(), ReplayClock(storm.window_start)
     frames: list[Frame] = []
@@ -1330,7 +1457,32 @@ async def test_source_rejects_lookahead():                  # a buggy source mus
     bad = BadSource(leak_minutes=5)                          # returns one reading from the future
     with pytest.raises(LookaheadError):
         await tick(T0, bad, EmptyOfficial(), MemoryStateStore(), tiny_model())
+
+async def test_outage_is_respected(storm):                  # documented transmission outage (meta.toml `outages`)
+    g = storm.gauge_ids[0]
+    start = storm.window_start + timedelta(hours=6)
+    end = start + timedelta(hours=2, minutes=30)
+    out = storm.with_outages([Outage(site=g, start=start, end=end, source="test fixture")])
+    src = StormReplaySource.from_storm(out, delays={x: 15 for x in out.gauge_ids})
+    inside = {r.obs_time for r in out.readings if r.gauge_id == g and start <= r.obs_time < end}
+    assert inside, "the fixture must hold readings INSIDE the outage (the 2013 situation)"
+    during = await src.series([g], "00065", as_of=end - timedelta(minutes=5), lookback=timedelta(hours=6))
+    at_end = await src.series([g], "00065", as_of=end, lookback=timedelta(hours=6))
+    assert not inside & {x.obs_time for x in during[g]}     # silent for the whole outage
+    assert inside <= {x.obs_time for x in at_end[g]}         # everything arrives at the outage end
+
+@pytest.mark.parametrize("archive", ["readings_present", "true_gap"])
+async def test_outage_makes_dependent_crossings_unknown(outage_storm, model, archive):
+    # Fixture: crossing test-0001 whose ONLY upstream link is the outage gauge (synthetic readings under a
+    # real §16.18 gauge id); "true_gap" deletes the in-outage readings and the outage entry instead.
+    s = outage_storm if archive == "readings_present" else outage_storm.without_outage_readings()
+    o = outage_storm.outages[0]
+    thr = max(model.stale_after_min(o.site), outage_storm.delays[o.site] + 20)    # §18.9 replay rule
+    frames = await run_replay(s, model, delays=outage_storm.delays)
+    checked = [f for f in frames if o.start + timedelta(minutes=thr) < f.t < o.end]
+    assert checked and all(f.states["test-0001"] == "unknown" for f in checked)
 ```
+A data test, `tests/replay/test_halloween_2013_outage.py` (skipped with a clear reason when the storm Parquet isn't present; CI fetches it with `make data-fetch`), rebuilds `halloween-2013` and asserts that no `USGS-08159000` reading observed inside the `meta.toml` outage is visible before the outage end, that every crossing for which 08159000 is the only usable upstream gauge is `unknown` from `start + threshold` until `end`, and that the storyboard holds the `gauge_silent` line (§19.13).
 ```python
 # tests/test_truth_isolation.py — static import scan (AST, handles relative imports)
 import ast, pathlib
@@ -1374,14 +1526,15 @@ Also add a **hypothesis property test**: for random cut times within a storm, `f
   - `timeline_sha256`: of the **uncompressed canonical JSON bytes** (the whole document). The app verifies this after gunzip (§33.1).
   - `content_sha256`: of the canonical JSON **with the `pipeline` block removed**. This is the CI golden value, because `pipeline.git_sha` and `generated_at` change on every commit.
   - `file_sha256`: of the `.gz` bytes. It names the immutable Storage path (§19.15).
-- `mobile/assets/replays/index.json` lists all three per storm (§19.14). CI runs `uv run python -m fordcast replay-verify --all`, which rebuilds every timeline from `data/storms/*` and the committed link parameters and asserts **`content_sha256` matches**. That proves the app's demo data came out of the real pipeline.
-- Timelines are regenerated **only** by `make replays`, with a devlog line, and after the science freeze only with human approval.
+- `data/replays/index.json` lists all three per storm (§19.14; `make app-data` copies it into the app). CI runs `uv run python -m fordcast replay-verify --all`, which rebuilds every bundled timeline from `data/storms/*` (Storage-hosted Parquet fetched first with `make data-fetch`), the committed link parameters, the frozen `data/latency/gauge_latency.json`, each storm's `meta.toml` outages and the committed `docs/results/results.json` (for `hero_by_storm`), and asserts **`content_sha256` matches**. It never reads the live DB. That proves the app's demo data came out of the real pipeline.
+- Timelines are regenerated **only** by `make replays`, with a devlog line, and after the science freeze only with human approval. A new `results.json` (new hero) or a new latency file means `make replays` must run too, or `replay-verify` fails.
 
 ### 19.10 Gauge-failure `unknown` moments (shown honestly)
-- If a crossing's primary gauge goes silent (no reading arrives within `stale_after_min`), §18.9 turns the crossing `unknown` with `DATA_STALE`. The timeline records the transition like any other, and the storyboard adds "Gauge {gauge} stopped reporting" / "El medidor {gauge} dejó de reportar".
-- **Halloween 2013:** crossings whose primary gauge is **08159000 (US 183)** go `unknown` from about **11:15Z until about 13:45Z** (VERIFY BEFORE USE: the exact gap from S3) and come back at a much higher level. Crossings upstream that rely on 08158700 keep their state.
-- The player shows the dashed `unknown` ring with "Last known: {state}" (§3.4, §33). This is the safety rule demonstrated on real data, and it is a strong judge moment.
-- Truth onsets inside such gaps are **censored** (§18.2), and the lead is a lower bound.
+- If a crossing's primary gauge goes silent (no reading **arrives** within its threshold), §18.9 turns the crossing `unknown` with `DATA_STALE`. The timeline records the transition like any other, and the storyboard adds the `gauge_silent` line (§19.13), rendered from `replay.gauge_silent` (§3.7): "{{gauge}} went silent. Its readings only arrived later, so FordCast shows Unknown here."
+- **Two causes, one result.** (a) A **documented transmission outage** (`meta.toml` `outages`, §19.3): the gauge kept measuring, but the readings only arrived at the outage end, so the replay can't see them before then (§19.4), even though today's archive holds them. (b) A **true gap** in the archive: there is nothing to see. Both yield `unknown`; neither is ever shown as calm.
+- **Halloween 2013:** the gauge went silent; its readings only arrived later. Crossings for which **08159000 (US 183)** is the primary (or only usable) upstream gauge go `unknown` from shortly after **11:15Z** (once the last pre-outage reading is older than the threshold) **until 13:45Z**, then come back at a much higher level when the delayed readings arrive. Crossings that rely on 08158700 (Driftwood) keep their state. VERIFY BEFORE USE: the outage bounds from the USGS alert and S3, written into `meta.toml` with their source.
+- The player shows the dashed `unknown` ring with `state.unknown` "last known" ("Last known: {{state}} · {{age}}", §3.4, §3.7, §33.7), the gauge's hydrograph shows the hatched "No data" band until the delayed samples become visible, and it is announced once. This is the safety rule demonstrated on real data, and it is a strong judge moment.
+- Truth onsets inside a **true** archive gap are **censored** (§18.2), and the lead is a lower bound. Inside a documented outage the archive has the readings, so the onset is exact; only FordCast's view was late.
 
 ### 19.11 Timeline format `fordcast.replay.v1` (bundled + Storage mirror)
 
@@ -1392,9 +1545,9 @@ Also add a **hypothesis property test**: for random cut times within a storm, `f
 | `schema` | `"fordcast.replay.v1"` | version |
 | `storm` | object | `id, name_en, name_es, start, end, tz, headline_event, description_en?, description_es?` |
 | `step_s` | 300 | tick step |
-| `assumptions` | object | `data_delay_min` (number: the median delay over the storm's linked gauges, shown in the header), `data_delay_min_by_gauge: {gauge_id: min}`, `default_delay_min: 60`, `official_status: "not available for this storm"`, `values: "approved archive values, not the provisional values live at the time"`, `params: "learned without this storm (leave-one-storm-out)"`, `rain: null \| "MRMS …"` |
-| `pipeline` | object | `git_sha, model_version, data_sha256, generated_at` (**excluded** from `content_sha256`) |
-| `gauges[]` | array | `id, name, lon, lat, t0, dt_s (900), stage_ft[] (**`null` for gaps**, e.g. the 2013 US 183 outage), avail_delay_s, trigger_ft \| null, watch_ft \| null` (from the gauge's primary link, for the sparkline lines), `nws_categories {action, minor, moderate, major} \| null` |
+| `assumptions` | object | `data_delay_min` (number: the median delay over the storm's linked gauges, shown in the header via `replay.assumes_delay`), `data_delay_min_by_gauge: {gauge_id: min}`, `default_delay_min: 60`, `delays_source: "data/latency/gauge_latency.json"`, `outages: [{site, start, end, source}]` (copied from `meta.toml`; `[]` when none), `official_status: "not available for this storm"`, `values: "approved archive values, not the provisional values live at the time"`, `params: "learned without this storm (leave-one-storm-out)"`, `rain: null \| "MRMS …"` |
+| `pipeline` | object | `git_sha, model_version, data_sha256, latency_sha256, results_sha256, generated_at` (**excluded** from `content_sha256`) |
+| `gauges[]` | array | `id, name, lon, lat, t0, dt_s (900), stage_ft[]` (**`null` only where the archive has no value**, a true gap), `avail_delay_s`, `outages: [{start, end}]` (this gauge's documented transmission outages; `[]` when none), `trigger_ft \| null, watch_ft \| null` (from the gauge's primary link, for the sparkline lines), `nws_categories {action, minor, moderate, major} \| null`. **Visibility rule for the sparkline** (the same rule as §19.4): the sample at time `t` may be drawn at `simT` only if `t + avail_delay_s ≤ simT` **and**, when `t` lies inside one of the gauge's `outages` (`start ≤ t < end`), `simT ≥ end`. The 2013 US 183 samples therefore exist in the file but stay hidden (hatched "No data" band) until the outage end. |
 | `crossings[]` | array | `id, name, name_es?, lon, lat, tier, initial_state, overtop_stage_ft?, target_gauge_id?` |
 | `links[]` | array | `crossing_id, gauge_id, relation, is_primary, tau_min, tau_p25, tau_p75, trigger_ft, watch_ft, channel_dist_km, flowline [[lon,lat],…]` (simplified) |
 | `events[]` | array, sorted by `t` | **state changes only**: `t, crossing_id, state, window ([lo,hi] \| null), reasons[] (§18.10), p ([p30,p60,p90] \| null), held (bool)` |
@@ -1403,7 +1556,7 @@ Also add a **hypothesis property test**: for random cut times within a storm, `f
 | `truth[]` | array | `crossing_id, onset, end, quality, censored`. `end` is always a string (clipped to the window end). Used for "Reveal truth" and the result banner; **never** used to compute states. |
 | `official[]` (optional) | array | historic **timestamped** official records `t, crossing_id, status, source`; omitted when none exist (expected; see `assumptions.official_status`) |
 | `metrics` | object | this storm's headline row for `upstream_rule` at the AVOID level: `method, level, pod, far, csi, median_lead_min, n_events` (numbers, or `null` when undefined, e.g. a control storm with no onsets), plus `comparators: {nearest_gauge: {…same keys…}, watch_level: {…}}` |
-| `hero` | object \| null | `crossing_id, lead_min, level: "avoid", onset, first_alert_at` (§19.12) |
+| `hero` | object \| null | `crossing_id, lead_min, level: "avoid", onset, first_alert_at, censored`: this storm's example picked by the pre-registered rule (`results.json.hero_by_storm[<storm id>]`, §18.13); `null` when the storm has no tier-A AVOID hit (e.g. the `oct-2018` control), and then the app shows no callout (§19.12) |
 | `storyboard[]` | array | `t, kind, en, es` (§19.13) |
 
 ```json
@@ -1414,15 +1567,22 @@ Also add a **hypothesis property test**: for random cut times within a storm, `f
             "headline_event": "2013-10-31T11:15:00Z"},
   "step_s": 300,
   "assumptions": {"data_delay_min": 38, "data_delay_min_by_gauge": {"USGS-08158700": 60, "USGS-08159000": 15},
-                  "default_delay_min": 60,
+                  "default_delay_min": 60, "delays_source": "data/latency/gauge_latency.json",
+                  "outages": [{"site": "USGS-08159000", "start": "2013-10-31T11:15:00Z", "end": "2013-10-31T13:45:00Z",
+                               "source": "USGS alert 2013-10-31"}],
                   "official_status": "not available for this storm",
                   "values": "approved archive values, not the provisional values live at the time",
                   "params": "learned without this storm (leave-one-storm-out)", "rain": null},
   "pipeline": {"git_sha": "abc1234", "model_version": "rule-loso-halloween-2013", "data_sha256": "…",
-               "generated_at": "2026-10-19T20:00:00Z"},
+               "latency_sha256": "…", "results_sha256": "…", "generated_at": "2026-10-19T20:00:00Z"},
   "gauges": [{"id": "USGS-08158700", "name": "Onion Ck nr Driftwood", "lon": -98.01, "lat": 30.08,
               "t0": "2013-10-30T12:00:00Z", "dt_s": 900, "stage_ft": [3.1, 3.1, 3.2, null, 3.4],
-              "avail_delay_s": 3600, "trigger_ft": 9.0, "watch_ft": 6.4, "nws_categories": null}],
+              "avail_delay_s": 3600, "outages": [], "trigger_ft": 9.0, "watch_ft": 6.4, "nws_categories": null},
+             {"id": "USGS-08159000", "name": "Onion Ck at US Hwy 183", "lon": -97.69, "lat": 30.18,
+              "t0": "2013-10-30T12:00:00Z", "dt_s": 900, "stage_ft": [4.2, 4.2, 4.3, 4.3, 4.4],
+              "avail_delay_s": 900, "outages": [{"start": "2013-10-31T11:15:00Z", "end": "2013-10-31T13:45:00Z"}],
+              "trigger_ft": null, "watch_ft": null,
+              "nws_categories": {"action": 15, "minor": 17, "moderate": 23, "major": 27}}],
   "crossings": [{"id": "atx-081", "name": "…", "lon": -97.8, "lat": 30.2, "tier": "A", "initial_state": "no_rise",
                  "overtop_stage_ft": 17.0, "target_gauge_id": "USGS-08159000"}],
   "links": [{"crossing_id": "atx-081", "gauge_id": "USGS-08158700", "relation": "upstream", "is_primary": true,
@@ -1439,9 +1599,11 @@ Also add a **hypothesis property test**: for random cut times within a storm, `f
               "median_lead_min": null, "n_events": 0,
               "comparators": {"nearest_gauge": {"pod": null, "far": null, "csi": null, "median_lead_min": null, "n_events": 0},
                               "watch_level": {"pod": null, "far": null, "csi": null, "median_lead_min": null, "n_events": 0}}},
-  "hero": {"crossing_id": "atx-081", "lead_min": null, "level": "avoid", "onset": "…", "first_alert_at": "…"},
+  "hero": {"crossing_id": "atx-081", "lead_min": null, "level": "avoid", "onset": "…", "first_alert_at": "…",
+           "censored": false},
   "storyboard": [{"t": "2013-10-31T08:10:00Z", "kind": "first_watch",
-                  "en": "Onion Ck nr Driftwood rose 2.1 ft in 30 min", "es": "Onion Ck nr Driftwood subió 2.1 pies en 30 min"}]
+                  "en": "Water rising upstream at Onion Ck nr Driftwood",
+                  "es": "El agua sube río arriba en Onion Ck nr Driftwood"}]
 }
 ```
 (Example values are illustrative. Every value in a real file is generated.)
@@ -1450,19 +1612,30 @@ Also add a **hypothesis property test**: for random cut times within a storm, `f
 - **States are step functions.** The app finds the state at `simT` by binary search over a crossing's events (§33). Before the first event it uses `initial_state`. States are never interpolated.
 - **The schema is shared:** `docs/schemas/replay.v1.example.json` is validated by pydantic (`replay/schema.py`) in backend tests and by zod in mobile tests (§7.1).
 
-> NOTE TO REVIEWER: §33.2's zod schema was drafted from the research report. To match this section it MUST: (1) make `metrics.pod/far/csi/median_lead_min` `.nullable()` (the Llano 2018 control storm has no onsets, so POD is undefined); (2) read `assumptions.data_delay_min` as a number (as it does) and MAY show `data_delay_min_by_gauge`; (3) read `index.json` as `{schema, generated_at, storms: [...]}` with entry field `bytes_gz`. Unknown extra keys (`held`, `pulses`, `hero`, `initial_state`, `links[].relation`, …) are additive.
+- **Client mirror:** D §33.2 mirrors this table with zod. `metrics` values may be `null` (no onsets → POD undefined); `assumptions.data_delay_min` is a number; `index.json` is `{schema, generated_at, hero_storm_id, storms: [...]}` with the entry field `bytes_gz` (§19.14). Nullable fields are always present as explicit `null` (§22.3 rule); the client uses `.nullable()` for them.
 
 ### 19.12 The "X minutes earlier" metric (definition)
 - For crossing *c* in storm *s*: **`lead_avoid(c, s)` = onset − start of the AVOID episode that is the hit for that onset** (§18.12), in minutes, a multiple of 5 (floored), or **undefined** if the onset was missed.
 - "Earlier" means **earlier than water reached the road**. Reactive tools (closures after water is over the road) have lead 0 by definition, so the same number is also "earlier than reactive tools".
-- **Hero** = the crossing/storm pair chosen after the backtest (§16.19), stored in `results.json.hero` and in that storm's timeline `hero`. If its onset is censored, the lead is a lower bound and still shown as computed.
-- **The app** shows "FordCast: AVOID {x} min earlier" (`replay.result`) when `simT` passes the hero onset, **always** together with `replay.honesty` ("Best example shown. Across {n} storms the median lead time was {m} min.") using `results.json.headline`. The video uses the same two numbers (§41).
+- **Hero** = the crossing/storm pair picked by the **pre-registered rule** (§18.13: the tier-A AVOID hit closest to the overall median lead, within a bundled storm; never the maximum), stored in `results.json.hero`; each bundled storm's own example (same rule, same target median) is in its timeline `hero`. If its onset is censored, the lead is a lower bound, still shown as computed, with "(at least)".
+- **The app** shows `replay.result` ("FordCast warned {{x}} min before water reached the road") when `simT` passes the storm's `hero.onset`, **always** together with `replay.honesty` ("Example picked by a fixed rule: the warning closest to the typical one. Across {{n}} storms the median lead time was {{m}} min.") using `results.json.headline`. A storm whose `hero` is `null` shows no callout. The video uses the same two numbers (§41).
 - WATCH-level leads are reported in `results.json` but are **not** the headline.
 
 ### 19.13 Storyboard generation (`replay/storyboard.py`)
-- Generated from events, truth and gauge arrays. Never hand-typed. Kinds: `first_watch`, `first_avoid`, `gauge_silent`, `gauge_back`, `water_at_road` (truth onset), `peak` (upstream peak), `official` (if any), `alert` (NWS, Stretch).
-- Templates live in `backend/fordcast/replay/storyboard_templates.json` (EN/ES, placeholders `{gauge}`, `{rise}`, `{crossing}`, `{tau}`), reviewed by a fluent Spanish speaker, and scanned by the banned-words test (§3.12, §24.7).
-- At most 8 lines per storm.
+- Generated from events, truth, outages and gauge arrays. Never hand-typed. At most 8 lines per storm, in time order.
+- **All storyboard copy comes from the §3.7 bank** (A §3.7 owns all user-facing copy). `backend/fordcast/replay/storyboard_templates.json` maps each kind to the §3.7 key it renders, with the EN/ES text copied verbatim and i18next `{{var}}` placeholders:
+  ```json
+  {"first_watch":  {"key": "reason.UPSTREAM_RISING",        "en": "Water rising upstream at {{gauge}}", "es": "El agua sube río arriba en {{gauge}}"},
+   "first_avoid":  {"key": "reason.UPSTREAM_ABOVE_TRIGGER", "en": "{{gauge}}: +{{rise}} ft over the last 30 min, upstream. Water usually takes {{tau_lo}}–{{tau_hi}} min to get here.", "es": "{{gauge}}: +{{rise}} pies en los últimos 30 min, río arriba. El agua suele tardar {{tau_lo}}–{{tau_hi}} min en llegar aquí."},
+   "gauge_silent": {"key": "replay.gauge_silent",           "en": "{{gauge}} went silent. Its readings only arrived later, so FordCast shows Unknown here.", "es": "{{gauge}} dejó de transmitir. Sus lecturas llegaron después, así que FordCast muestra Desconocido aquí."},
+   "gauge_gap":    {"key": "reason.DATA_STALE_gauge",       "en": "No recent data from {{gauge}} (last {{age}})", "es": "Sin datos recientes de {{gauge}} (últimos: {{age}})"},
+   "official":     {"key": "reason.OFFICIAL_CLOSED",        "en": "Official: {{source}} reports it closed", "es": "Oficial: {{source}} lo reporta cerrado"},
+   "alert":        {"key": "nws.ffw",                       "en": "…", "es": "…"}}
+  ```
+  (`alert` is Stretch F82 and uses the matching `nws.*` key per product.) `{{tau_lo}}`/`{{tau_hi}}` come from the link's `tau_lo_min`/`tau_hi_min` (§18.10); a bare `{{tau}}` and any single-number travel time are forbidden (A §3.5 rule 8). A test asserts that every `en`/`es` value equals the referenced key in `mobile/src/locales/{en,es}.json`, so the two can't drift; the banned-words and countdown guards scan both the templates and the rendered `storyboard[]` strings of every built timeline (§3.12, §24.7).
+- `gauge_silent` is emitted when a gauge in a **documented outage** stops delivering (its newest visible reading becomes older than its threshold); its `t` is the moment the dependent crossing turns `unknown`. A **true archive gap** (no documented outage, so the readings never arrived) emits `gauge_gap` instead, because "its readings only arrived later" would not be true there. `{{age}}` is rendered in the storm's local time zone relative to the line's `t`.
+- A kind whose sentence is not in the §3.7 bank (for example "the gauge is reporting again", "upstream peak" or "water reached the road") is **not generated**; the player's scrubber ticks and result banner already show those moments. Adding such a line needs a new §3.7 key first (stop-and-ask, A §1.7 item 1).
+- Spanish lines are reviewed by a fluent Spanish speaker with the rest of the bank (§35).
 
 ### 19.14 CLI and `tools/build_replays.py`
 ```text
@@ -1470,25 +1643,25 @@ uv run python -m fordcast backfill --storm <id> | --all          # USGS continuo
 uv run python -m fordcast learn --loso                           # per-fold link params (rule-loso-<id>) + live params
 uv run python -m fordcast replay-build --storm <id> [--delay-override N] [--out DIR]
 uv run python -m fordcast replay-verify --all                    # rebuild + compare content_sha256 (CI)
-python tools/build_replays.py [--upload]                         # all storms → gzip → app assets + index.json (+ Storage)
+make replays [UPLOAD=1]                                          # = uv run python ../tools/build_replays.py [--upload], then make app-data
 ```
-`tools/build_replays.py` (agent-written, run via `make replays`):
-1. For each `data/storms/*/meta.toml` with `bundle = true`: run `replay-build`, then validate against the pydantic schema and the size budget.
-2. Write `mobile/assets/replays/<id>.json.gz` (gzip, `mtime=0`) and `mobile/assets/replays/index.json`:
+`tools/build_replays.py` (agent-written; runs in the **backend** environment because it calls the `fordcast` CLI, A §5.3) is run only via `make replays` (A §5.2):
+1. For each `data/storms/*/meta.toml` with `bundle = true`: run `replay-build` (delays from `data/latency/gauge_latency.json`, outages from `meta.toml`, `hero` from `docs/results/results.json` `hero_by_storm`), then validate against the pydantic schema and the size budget.
+2. Write `data/replays/<id>.json.gz` (gzip, `mtime=0`) and `data/replays/index.json`, and copy the same `.json.gz` files to `backend/fordcast/replay/data/` (the server copy for `states_at`, §19.16). It **never** writes into `mobile/`: `make app-data` copies `data/replays/` into `mobile/assets/replays/`, stamps `hero_storm_id`/`featured`, and generates `assets.ts` (§17.14).
    ```json
-   {"schema": "fordcast.replay-index.v1", "generated_at": "…",
+   {"schema": "fordcast.replay-index.v1", "generated_at": "…", "hero_storm_id": null,
     "storms": [{"id": "halloween-2013", "name_en": "…", "name_es": "…", "start": "…", "end": "…",
                 "file": "halloween-2013.json.gz", "bytes_gz": 31244, "generated_at": "…",
                 "timeline_sha256": "…", "content_sha256": "…", "file_sha256": "…",
-                "model_version": "rule-loso-halloween-2013", "featured": true, "sort_order": 1,
+                "model_version": "rule-loso-halloween-2013", "featured": false, "sort_order": 1,
                 "median_lead_min": null, "n_crossings": 6}]}
    ```
-3. Copy `docs/results/results.json` → `mobile/assets/results/results.json`.
-4. Run the banned-words test on every `storyboard` string.
-5. With `--upload`: put each file in Supabase Storage at **content-hashed paths** `replays/<id>.v1.<file_sha256[:12]>.json.gz` (cache-control `31536000, immutable`), plus `replays/index.json` (cache-control `300`); upsert `public.storms` rows (`timeline_path`, `timeline_sha256`, `content_sha256`, `file_sha256`, `timeline_bytes`, `metrics`, `model_version`, `pipeline_git_sha`).
+   (`hero_storm_id` and `featured` are filled by `make app-data` from `results.json`; `sort_order` = §16.19 catalog order.)
+3. Run the banned-words and countdown guards on every `storyboard` string.
+4. With `--upload` (`make replays UPLOAD=1`; needs `SUPABASE_URL` + `SUPABASE_SECRET_KEY` from `backend/.env`): put each file in Supabase Storage at **content-hashed paths** `replays/<id>.v1.<file_sha256[:12]>.json.gz` (cache-control `31536000, immutable`), plus `replays/index.json` (cache-control `300`). The upload touches Storage only; the `public.storms` rows come from `seed.sql` (§21.5) via `make seed-prod`, so there is one path into the production DB.
 
 ### 19.15 Bundling and the Storage mirror
-- The app ships the bundled `index.json` + `.json.gz` files (offline first). On launch with network, it fetches `{storage}/replays/index.json`. For any storm whose `timeline_sha256` differs **and** whose `generated_at` is newer, it downloads the content-hashed file, gunzips it, verifies `timeline_sha256`, validates the schema, and caches it. A failed verification keeps the bundled copy.
+- The app ships the bundled `index.json` + `.json.gz` files (offline first; copied into `mobile/assets/replays/` by `make app-data`, §17.14). On launch with network, it fetches `{storage}/replays/index.json`. For any storm whose `file_sha256` differs from the bundled entry **and** whose `generated_at` is newer, it downloads the content-hashed file, checks the bytes' sha256 against `file_sha256`, gunzips it, verifies `timeline_sha256`, validates the schema, and caches it. A failed verification keeps the bundled copy.
 - `.gz` handling, Metro asset extensions and on-device gunzip are specified in §27 and §33.
 - Storage mirror files are immutable (new content → new path). `index.json` is the only mutable file.
 
@@ -1496,10 +1669,10 @@ python tools/build_replays.py [--upload]                         # all storms �
 `replay/states_at.py::states_at(storm_id, t) -> dict[crossing_id, (state, window)]` loads the bundled timeline (server copy in `backend/fordcast/replay/data/` or the Storage mirror) and binary-searches events, exactly like the app. `/v1/route` uses it when `replay_at` is given (`storm_id` optional; §22.5). The response is marked `mode: "replay"` and is never cached with live results.
 
 ### 19.17 Done when (F75, F76)
-- [ ] `test_prefix_invariance`, `test_future_poison_is_invisible`, `test_latency_is_respected`, `test_source_rejects_lookahead` and `test_runtime_cannot_import_or_read_truth` pass in CI.
-- [ ] `replay-verify --all` matches every committed `content_sha256`.
+- [ ] `test_prefix_invariance`, `test_future_poison_is_invisible`, `test_latency_is_respected`, `test_source_rejects_lookahead`, `test_outage_is_respected`, `test_outage_makes_dependent_crossings_unknown` (both archive variants) and `test_runtime_cannot_import_or_read_truth` pass in CI; the `halloween-2013` outage data test passes once the storm data is fetched.
+- [ ] `replay-verify --all` matches every committed `content_sha256`, reading delays only from the committed `data/latency/gauge_latency.json` (no DB access in CI).
 - [ ] Each bundled timeline is ≤ 150 KB gzipped, validates against the schema in both pydantic and zod, and carries out-of-sample (`rule-loso-*`) parameters.
-- [ ] The hero storm plays on the phone in airplane mode, shows `unknown` during a real gauge outage (if the hero is 2013), and its result banner number equals `results.json.hero.lead_min`.
+- [ ] The storm named by `hero_storm_id` plays on the phone in airplane mode, its result banner number equals `results.json.hero.lead_min`, and the 2013 replay (if bundled) shows `unknown` at US 183 for the documented outage window with the `gauge_silent` storyboard line.
 
 ---
 ## §20. Backend architecture & hosting
@@ -1534,10 +1707,12 @@ python tools/build_replays.py [--upload]                         # all storms �
 ```text
 OFFLINE (CLI + notebooks; re-run when storms or crossings change)
   inventory pull/build ─► NLDI snap + upstream ─► map review ─► tiers + truth classes
-  backfill storms (USGS continuous) ─► Parquet ─► learn τ + triggers (live + LOSO folds) ─► crossing_gauge_links
-  backtest (LOSO) ─► docs/results/results.json ─► README · app "How accurate" · video
-  replay-build (rule-loso-<storm>) ─► mobile/assets/replays/*.json.gz + Storage mirror (+ golden content_sha256)
-  seed-sql ─► supabase/seed.sql (gauges, crossings, links, model_versions, storms, app_config)
+  backfill storms + calm-2024 (USGS continuous) ─► Parquet (+ make data-upload > 5 MB) ─► learn τ + triggers (live + LOSO folds) ─► crossing_gauge_links
+  make latency (live DB, Day 8) ─► data/latency/gauge_latency.json (frozen delays for every replay and backtest)
+  make backtest (LOSO) ─► docs/results/results.json ─► select_hero.py (pre-registered rule) ─► README · app "How accurate" · video
+  make replays: replay-build (rule-loso-<storm>, frozen delays, outages) ─► data/replays/*.json.gz + server copy + Storage mirror (+ golden content_sha256)
+  make app-data ─► mobile/assets/{seed,replays,results}/ + assets.ts + manifest.json (§17.14)
+  seed-sql ─► supabase/seed.sql (gauges, crossings, links, model_versions, storms, app_config) ─► make seed-prod ─► make model-live (only to switch versions)
 
 LIVE (every 5 min)
   USGS ─► readings ─► tick() ─► risk_current (change-only) ─► Realtime ─► app (foreground hint)
@@ -1554,7 +1729,7 @@ LIVE (every 5 min)
 pg_cron ─ net.http_post(tick_url?source=pg_cron, X-Tick-Secret, timeout 10 s) ─► FastAPI
  0  verify secret (hmac.compare_digest; wrong/missing → 404) ; acquire lease for slot = date_bin(5 min, now())
     → 202 {"accepted": true|false}            (pg_net stores the response for 6 h; GH watchdog may call the same slot)
- 1  background task run_live_tick(slot, holder) — whole task wrapped in asyncio.timeout(240)
+ 1  background task run_live_tick(slot, holder) — whole task wrapped in asyncio.timeout(240) (hard timeout; lease is 6 min)
  2  ingest_runs row (status 'running', source, slot)
  3  USGS latest-continuous (1 req) + gap backfill (≤ 10 req)  → upsert readings (ON CONFLICT DO NOTHING)   [errors → continue]
  4  daily jobs (first tick after 06:00 UTC): USGS metadata + latency stats + stale_after_min · NWPS sync
@@ -1571,13 +1746,13 @@ pg_cron ─ net.http_post(tick_url?source=pg_cron, X-Tick-Secret, timeout 10 s) 
     (last_ok_slot unchanged, so the watchdog or the next slot retries)
 ```
 - **Partial failure is normal.** If USGS fails, the tick still runs, states age into `unknown`, and the snapshot is still written with `data_status` degraded or offline. That is the honest result. Only a crash in steps 7–9 fails the tick.
-- **Budget:** p95 end-to-end ≤ 60 s (§7.4); hard timeout 240 s, under the lease length.
+- **Budget:** p95 end-to-end ≤ 60 s (§7.4). **Timing (canonical):** tick hard timeout **240 s** (`asyncio.timeout(240)`); lease interval **6 minutes**, so a tick that hits the timeout is cancelled, logged (`ingest_runs` `error`, reason `timeout`) and releases its lease long before the lease could expire under it. A `TimeoutError` takes the handled-failure path (release, `hc /fail`). The GitHub watchdog and a second pg_cron call **skip** while a lease is held: the acquire below returns no row and the endpoint answers `{"accepted": false}`.
 
 **Lease (dedupes pg_cron + the GitHub watchdog exactly per 5-minute slot):**
 ```sql
 -- acquire: returns 1 row only if no tick is running AND this slot hasn't succeeded yet
 update private.tick_lease
-   set holder = %(holder)s, lease_until = now() + interval '4 minutes',
+   set holder = %(holder)s, lease_until = now() + interval '6 minutes',
        slot = date_bin('5 minutes', now(), timestamptz '2000-01-01')
  where id = 1
    and lease_until < now()
@@ -1591,7 +1766,7 @@ update private.tick_lease set lease_until = now(), last_ok_at = now(), last_ok_s
 -- release on handled failure (allow a retry in the same slot)
 update private.tick_lease set lease_until = now() where id = 1 and holder = %(holder)s;
 ```
-(`date_bin` needs PostgreSQL ≥ 14; Supabase runs ≥ 15.) The research validated the acquire/release pattern on PostgreSQL 16: the second concurrent acquire returned 0 rows `[V: code]`. The slot column replaces its "last_ok_at < now() − 4 min" guard, which could skip a slot after a slow tick.
+(`date_bin` needs PostgreSQL ≥ 14; Supabase runs ≥ 15.) The research validated the acquire/release pattern on PostgreSQL 16: the second concurrent acquire returned 0 rows `[V: code]`. The slot column replaces its "last_ok_at < now() − 4 min" guard, which could skip a slot after a slow tick. If the worker dies without releasing (a Render restart mid-tick), the 6-minute lease blocks at most the next slot; the watchdog (§20.6) or the slot after that retries.
 
 ```python
 # backend/fordcast/api/routes/internal.py (agent-written)
@@ -1619,10 +1794,10 @@ def secret_ok(given: str | None, expected: SecretStr) -> bool:
 ### 20.4 Supabase setup (Day 0–1 checklist; the human creates the project, the agent writes the SQL)
 
 1. Create the project (Free). Pick the region closest to the Render region (both in US East or both in US West). VERIFY BEFORE USE which regions both offer.
-2. **Keys:** the publishable key `sb_publishable_…` goes to the app (`EXPO_PUBLIC_SUPABASE_KEY`). The secret key `sb_secret_…` goes to Render/GitHub secrets only. New-format keys are **not JWTs** and go in the `apikey` header `[V: supabase-js 2.117.3 fetch.ts]`. VERIFY BEFORE USE that the publishable key maps to the `anon` role: an anon `insert` must fail (test in §21.10).
+2. **Keys:** the publishable key `sb_publishable_…` goes to the app (`EXPO_PUBLIC_SUPABASE_KEY`). The secret key `sb_secret_…` goes to Render/GitHub secrets only. New-format keys are **not JWTs** and go in the `apikey` header `[V: supabase-js 2.117.3 fetch.ts]`. VERIFY BEFORE USE that the publishable key maps to the `anon` role: an anon `insert` must fail (test in §21.9).
 3. **Extensions:** PostGIS (`create extension postgis with schema extensions`; or Dashboard → Database → Extensions); **Cron** (Dashboard → Integrations → Cron, which enables `pg_cron`); **pg_net** (Dashboard → Extensions). Vault ships with Supabase projects. VERIFY BEFORE USE in the dashboard; fallback: store the tick URL/secret in a `private.secrets` table readable only by `postgres`.
 4. **Migrations** `supabase/migrations/0001…0004` (§21) via the Supabase CLI (`npx supabase@2.120.0 db push` after `supabase link`) `[V: npm supabase@2.120.0]`, or paste them into the SQL editor in order. Local API tests run against `npx supabase@2.120.0 start` (Docker) in CI (§24.9).
-5. **Storage:** create a **public** bucket `fordcast-public`. Paths: `snapshots/current.json`, `snapshots/archive/<slot>.json` (optional, hourly), `replays/index.json`, `replays/<id>.v1.<sha12>.json.gz`, `results/results.json`, `data/storms/<id>/readings.parquet` (large storm files; public data). The public URL is `{SUPABASE_URL}/storage/v1/object/public/fordcast-public/<path>`.
+5. **Storage:** create a **public** bucket `fordcast-public`. Paths: `snapshots/current.json`, `snapshots/archive/<slot>.json` (optional, hourly), `replays/index.json`, `replays/<id>.v1.<sha12>.json.gz`, `results/results.json`, `data/storms/<id>/readings.<sha12>.parquet` (large storm files, content-hashed, written by `make data-upload`, §17.1; public data). The public URL is `{SUPABASE_URL}/storage/v1/object/public/fordcast-public/<path>`.
 6. **Vault secrets** (run once in the SQL editor; **never commit real values**; `supabase/manual/vault_secrets.example.sql` holds placeholders):
    ```sql
    select vault.create_secret('https://<render-service>.onrender.com/internal/tick?source=pg_cron', 'tick_url');
@@ -1648,6 +1823,12 @@ def secret_ok(given: str | None, expected: SecretStr) -> bool:
    VERIFY BEFORE USE (Day 6): that the Storage REST API accepts the `sb_secret_` key this way (with or without the `Authorization` header) and that the object's `cache-control` comes out as `max-age=30` on a public GET. Fallback: `storage3` (the version `uv add storage3` resolves under `exclude-newer`; the research read 2.32.0) with `upload(path, body, {"cache-control": "30", "content-type": "application/json", "upsert": "true"})` `[V: code storage3 2.32.0]`.
 9. **Debugging:** `select * from cron.job_run_details order by start_time desc limit 20;` and `select * from net._http_response order by created desc limit 20;` (pg_net keeps responses 6 h `[V]`).
 10. **Pausing:** Free projects pause after a week without enough DB activity `[V]`. The 5-min ingest is activity, and the heartbeat alarm (§20.7) fires long before 7 days.
+11. **Seed production and pick the live model (Day 6; `supabase db push` applies migrations only, never the seed):**
+    1. `uv run python -m fordcast seed-sql > ../supabase/seed.sql` (also the last backend step of `make data`), commit.
+    2. **Tell the human first** (it writes production data), then `set -a; . backend/.env; set +a` and `make seed-prod` (A §5.2): `psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -1 -f supabase/seed.sql`, i.e. one transaction, idempotent upserts. Use the Supabase **session** pooler URL (port 5432) for `psql` (A §1.9). Re-running it changes no row counts.
+    3. The seed makes the newest baseline rule version live **only if no version is live yet** (§21.5), so the baseline rule is live by default and a re-seed never undoes a deliberate switch. To switch versions (a new `learn` run, or ML promotion in Stretch): `make model-live VERSION=rule-YYYY.MM.DD` (A §5.2; runs `supabase/manual/set_model_live.sql`, which aborts if the version doesn't exist and leaves exactly one live row).
+    4. Verify: `uv run python -m fordcast tick --once --dry-run` from a laptop, then one real tick (`POST /internal/tick?source=manual` with both secrets), then `select count(*) from public.risk_current` equals `select count(*) from public.crossings where is_active` (the test crossing is evaluated too; RLS hides it from clients) and `select version from public.model_versions where is_live` returns exactly one row.
+    5. After the science freeze (A §6.2), `make seed-prod` and `make model-live` run only with the human's approval, together with `make backtest`/`make replays` if numbers change.
 
 ### 20.5 Render (API + tick worker)
 
@@ -1685,8 +1866,8 @@ Render staff say artificially keeping a free service awake "goes against the spi
 ### 20.6 GitHub Actions watchdog (backup clock)
 - `.github/workflows/tick-backup.yml` (full YAML in §24.9) runs at **`7-59/15 * * * *`** (off the top of the hour, when GitHub delays are worst `[V]`). It POSTs `/internal/tick?source=gha`, then reads `/v1/meta/freshness` and **fails the job** (GitHub emails the owner) if `data_status == "offline"`.
 - It is a watchdog, not the clock. GitHub schedules can be delayed or dropped `[V]`, and Actions terms discourage using them as a serverless backend `[U]`.
-- **Public repos auto-disable scheduled workflows after 60 days without repository activity** `[V]`. The last commit around Oct 25 + 60 days ≈ Dec 24, inside judging. **Commit at least every 3 weeks** (Nov 10, Nov 30, Dec 15: refresh `docs/status.md`) (§43).
-- Secrets: `API_BASE` (e.g. `https://<service>.onrender.com`, no trailing slash), `TICK_SECRET`.
+- **Public repos auto-disable scheduled workflows after 60 days without repository activity** `[V]`. The last commit around Oct 25 + 60 days ≈ Dec 24, inside judging. **Commit at least every 3 weeks**: on **Nov 10, Nov 30 and Dec 15** (+ **Jan 4** only if judging runs into January), each a refresh of `docs/status.md` (A §6.1 "After submission", E §43).
+- Secrets: `API_BASE` (e.g. `https://<service>.onrender.com`, no trailing slash), `TICK_SECRET` (both in the §24.2 inventory).
 
 ### 20.7 Monitoring and alarms
 
@@ -1704,11 +1885,11 @@ Render staff say artificially keeping a free service awake "goes against the spi
 ### 20.8 Judging-proof fallback ladder (the app never shows a broken screen)
 1. **Storm Replay is offline-first.** Timelines and `results.json` are bundled in the app (§19.15). Replay works in airplane mode, with Render down, and with Supabase paused.
 2. **Live map read order:** Storage snapshot (CDN) → `GET /v1/risk/current` → SQLite cache. Every step shows its age. Older than 20 min → every crossing renders `unknown` with "Last known" (§3.4).
-3. **Calm day:** "No upstream rise detected near you · Watching {g} gauges for {c} crossings · updated {age}" + "Try Storm Replay" (§3.7). Honest and complete.
+3. **Calm day:** `state.no_rise.area headline` ("No upstream rise detected near you") + `area sub` ("Watching {{g}} upstream gauges for {{c}} crossings · updated {{age}}") + "Try Storm Replay" (§3.7). Honest and complete; never an all-clear.
 4. **`app_config`** (§20.9) shows a banner without a release, stops pushes (`kill_switch_push`), and forces an update notice (`min_app_version`).
 5. **Server down:** the snapshot file stays readable (static), and the app ages it into `unknown`. Route/search show "Routing needs internet / unavailable" copy (§3.7).
 6. **USGS outage or API change:** states become `unknown` (designed), the nightly live contract test alarms, and the base URL/version is config.
-7. **Calendar:** Render Starter on Oct 20; commits every 3 weeks; weekly dashboard check during judging; keep everything running until Dec 31 (§43).
+7. **Calendar:** Render Starter on Oct 20; commits on Nov 10, Nov 30 and Dec 15 (+ Jan 4 only if judging runs into January); weekly dashboard check during judging; keep everything running until Dec 31 (§43).
 
 ### 20.9 `app_config` (remote config, public read)
 
@@ -1718,7 +1899,7 @@ Render staff say artificially keeping a free service awake "goes against the spi
 | `min_app_version` | `"1.0.0"` | `"1.0.0"` | update notice (F35) |
 | `kill_switch_push` | `true\|false` | `false` | push fan-out (§23.8) |
 | `demo_mode_default` | `true\|false` | `false` | app DEMO_MODE default (F83; build check still applies) |
-| `featured_storm` | `"halloween-2013"` | hero storm id | Replay picker ordering |
+| `featured_storm` | `"halloween-2013"` | `results.json.hero.storm_id` (written by `seed-sql`; never hand-picked, §18.13) | Replay picker ordering |
 
 - Edit only with the CLI: `uv run python -m fordcast config set banner '{"en":"…","es":"…","level":"info"}'`. The CLI **runs the banned-words check (§3.12) and requires both languages** before writing. Raw SQL edits are allowed only in emergencies and are logged in the devlog.
 - The snapshot carries `config` (§22.3), so the app needs no extra request.
@@ -1795,9 +1976,11 @@ markers = ["live: hits real external APIs (nightly only)"]
 - VERIFY BEFORE USE: `uv lock` succeeds, `uv run python -c "import fordcast"` works from `backend/`, and `uv run uvicorn fordcast.api.app:app` starts. Fallback for `package = false`: a hatchling build backend with `[tool.hatch.build.targets.wheel] packages = ["fordcast"]`.
 - Commit `uv.lock`. Never edit it by hand. Upgrades only with a reason in the devlog (§1.3).
 
-**CLI (`fordcast/__main__.py`, argparse sub-commands):** `inventory {pull,build}` · `nwps sync` · `link {snap,upstream,tiers}` · `backfill --storm ID|--all` · `learn [--loso]` · `backtest (--all | --storm ID) --out DIR [--smoke] [--compare results.json]` · `replay-build --storm ID [--delay-override N]` · `replay-verify --all` · `seed-sql` · `tick --once [--dry-run]` (one live tick from a laptop) · `official {set,clear}` · `config {get,set}` · `push test --device ID` · `latency recompute`.
+**CLI (`fordcast/__main__.py`, argparse sub-commands):** `inventory {pull,build}` · `nwps sync` · `link {snap,upstream,tiers}` · `calm-days --year 2024 --n 40 --seed 20241231` (§16.19) · `backfill --storm ID|--all` · `learn [--loso]` · `backtest (--all | --storm ID) --out DIR [--smoke] [--compare FILE] [--delay-override N]` (§18.13) · `replay-build --storm ID [--delay-override N] [--out DIR]` · `replay-verify --all` · `seed-sql` (writes SQL to stdout) · `tick --once [--dry-run]` (one live tick from a laptop) · `official {set,clear}` · `config {get,set}` · `push test --device ID [--kind avoid|watch|update]` · `latency recompute [--out FILE]` (nightly it only updates `public.gauges`; with `--out ../data/latency/gauge_latency.json` it also writes the frozen file, §19.4; both need `DATABASE_URL`).
 
-**Root `Makefile` targets (backend-related):** `setup` (uv sync --all-extras, npm ci) · `test` · `lint` · `data` (§17.1 non-interactive steps) · `backtest` (§18.13) · `replays` (`uv run python ../tools/build_replays.py`) · `smoke` (§16.20) · `api` (local uvicorn with reload) · `seed` (`seed-sql` + apply to local Supabase).
+**Root `Makefile`:** the exact file, with every target, is in **A §5.2**; this section never repeats recipes. Backend-related targets used in Part C: `setup` · `smoke` (§16.20) · `data` and `link` (§17.1) · `latency` (§16.2, §19.4) · `backtest` and `backtest CHECK=1` (§18.13) · `replays` (`UPLOAD=1` for the Storage mirror; §19.14) · `app-data` (§17.14) · `seed` (local Supabase) · `seed-prod` and `model-live VERSION=<v>` (§20.4 step 11, §21.5) · `data-upload` / `data-fetch` (§17.1) · `notices` · `test` · `lint` · `ci` · `api`.
+
+**Two Python projects (A §1.3 rule 5, A §5.3).** `backend/pyproject.toml` (above) is the service and CLI. Repo scripts in `tools/` that need third-party packages (`export_app_data.py`, `data_manifest.py`, `road_elevation.py`, `make_markers.py`, `cvd_screens.py`, …) use the separate `tools/pyproject.toml` project (`fordcast-tools`) and run as `uv run --project tools python tools/<script>.py` from the repo root (or through their `make` target). `smoke_test.py` and `build_replays.py` are the exceptions: they need the backend's packages and run in the backend environment (`cd backend && uv run python ../tools/<script>.py`). Never add a tools dependency group to the backend project, and never run a tools script that imports a third-party package with bare `python3`.
 
 ### 20.12 Configuration (`fordcast/config.py`, pydantic-settings; fails fast in production)
 
@@ -1825,19 +2008,20 @@ markers = ["live: hits real external APIs (nightly only)"]
 | `GIT_SHA` | — | Render's commit env var `[U name]` or set at deploy | `/v1/health`, Sentry release |
 | `LOG_LEVEL` | — | `INFO` | |
 
-`backend/.env.example` lists every variable with a placeholder (§1.9). The service refuses to start in `production` if any required value is missing or still a placeholder.
+`backend/.env.example` lists every variable with a placeholder (§1.9). The service refuses to start in `production` if any required value is missing or still a placeholder. The search bias (`SEARCH_FOCUS_LAT`, `SEARCH_FOCUS_LON`, `SEARCH_BBOX`) is a set of module constants in `config.py`, deliberately **not** environment variables (§16.13).
 
 ### 20.13 Done when (F22, F23, F26)
 - [ ] `cron.job_run_details` shows `fordcast-tick` runs every 5 min; `private.ingest_runs` has `ok` rows; a second call in the same slot returns `{"accepted": false}`.
 - [ ] `snapshots/current.json` updates every tick, with public `cache-control: max-age=30`, and the app reads it with the Render service stopped.
 - [ ] A deliberately failing tick (`TICK_FAIL_TEST=1` in development) triggers healthchecks `/fail`, a Sentry issue and a phone alert.
-- [ ] ≥ 24 h of green heartbeats before the first preview APK (Day 7), with Render on Starter from Oct 20.
+- [ ] Production is seeded with `make seed-prod`, exactly one `model_versions` row is live (the baseline rule unless `make model-live` switched it), and a manual tick fills `risk_current` for every active crossing (§20.4 step 11).
+- [ ] **Live-run gate (same as A §6.1):** ≥ 6 **continuous** hours of successful ticks (healthchecks history) before the Day-7 preview build, and ≥ 48 h of continuous successful ticks before submission (Day 11), with Render on Starter from Oct 20. Link both in the devlog.
 
 ---
 
 ## §21. Database schema (Supabase Postgres + PostGIS)
 
-Four migrations (§5): `0001_init.sql` (types, tables, indexes, functions), `0002_rls.sql` (RLS, policies, grants), `0003_realtime.sql` (publication), `0004_cron.sql` (tick + retention). The research validated the core DDL, the RLS block, the change-only upsert and the lease on a throwaway PostgreSQL 16 (with `geography` stubbed): an identical upsert wrote **0 rows**, and anon got "new row violates row-level security policy" on INSERT and "permission denied for schema private" `[V: code]`. Re-run those checks as tests (§21.10).
+Four migrations (§5): `0001_init.sql` (types, tables, indexes, functions), `0002_rls.sql` (RLS, policies, grants), `0003_realtime.sql` (publication), `0004_cron.sql` (tick + retention). The research validated the core DDL, the RLS block, the change-only upsert and the lease on a throwaway PostgreSQL 16 (with `geography` stubbed): an identical upsert wrote **0 rows**, and anon got "new row violates row-level security policy" on INSERT and "permission denied for schema private" `[V: code]`. Re-run those checks as tests (§21.9).
 
 ### 21.1 `supabase/migrations/0001_init.sql`
 ```sql
@@ -1899,7 +2083,8 @@ create table public.crossings (
   is_test            boolean not null default false,
   inventory_version  text not null,
   updated_at         timestamptz not null default now(),
-  constraint tier_a_has_truth check (tier <> 'A' or (overtop_stage_ft is not null and truth_quality is not null))
+  constraint tier_a_has_truth check (tier <> 'A' or (overtop_stage_ft is not null and truth_quality is not null
+                                                    and truth_quality <> 'proxy'))   -- proxy ⇒ tier B (§17.6)
 );
 create index crossings_geom_gix on public.crossings using gist (geom);
 
@@ -2082,7 +2267,7 @@ create table public.storms (
   sort_order        smallint not null default 0
 );
 
-create table public.ground_truth_events (            -- eval only: NO public policy (§21.3)
+create table public.ground_truth_events (            -- eval only: NO public policy (§21.2)
   id            bigserial primary key,
   crossing_id   text not null references public.crossings(id) on delete cascade,
   storm_id      text references public.storms(id),
@@ -2119,12 +2304,11 @@ create table private.devices (
   last_seen_at     timestamptz not null default now()
 );
 
-create table private.device_subscriptions (           -- crossing IDs only; NO coordinates anywhere
+create table private.device_subscriptions (           -- explicit crossing IDs only; NO coordinates, radius or place anywhere
   device_id    uuid not null references private.devices(id) on delete cascade,
   crossing_id  text not null references public.crossings(id) on delete cascade,
-  reason       text not null check (reason in ('saved_route', 'saved_place', 'starred', 'recent_area')),
-  want_watch   boolean not null default false,        -- per-subscription Watch opt-in
-  expires_at   timestamptz,                           -- recent_area: now() + 12 h
+  reason       text not null check (reason in ('saved_route', 'saved_place', 'starred')),   -- §23.1; computed on the phone
+  want_watch   boolean not null default false,        -- per-subscription Watch opt-in (§3.8; default off)
   created_at   timestamptz not null default now(),
   primary key (device_id, crossing_id, reason)
 );
@@ -2306,18 +2490,31 @@ select cron.schedule('retention-nws',          '51 3 * * *', $$delete from publi
 select cron.schedule('retention-rain',         '53 3 * * *', $$delete from public.basin_rain where valid_at < now() - interval '14 days'$$);
 select cron.schedule('retention-cron-log',     '57 3 * * *', $$delete from cron.job_run_details where end_time < now() - interval '7 days'$$);
 select cron.schedule('retention-orphans',      '41 3 * * *', $$delete from private.devices d where d.expo_push_token is null and d.created_at < now() - interval '7 days' and not exists (select 1 from private.device_subscriptions s where s.device_id = d.id)$$);
-select cron.schedule('expire-subscriptions',   '7 * * * *',  $$delete from private.device_subscriptions where expires_at < now()$$);
 ```
 `cron.schedule` with an existing job name replaces that job, so re-applying is safe (VERIFY on the installed pg_cron version; fallback: `select cron.unschedule('<name>')` first).
 
 ### 21.5 `supabase/seed.sql` (generated, never hand-edited)
-`uv run python -m fordcast seed-sql > supabase/seed.sql` writes, from the committed data files: `gauges` (from `data/seed/gauges.geojson`), `crossings` (from `data/seed/crossings.geojson`) **plus the test crossing**, `model_versions` (live + every `rule-loso-*`), `crossing_gauge_links` (from `data/links/crossing_gauge_links.csv` with flowlines as WKT), `storms` (from `mobile/assets/replays/index.json`), `nws_gauges`, and `app_config` defaults (§20.9). Use `insert … on conflict (…) do update` so re-seeding is idempotent.
+`uv run python -m fordcast seed-sql > ../supabase/seed.sql` (from `backend/`; part of `make data` and `make seed`) writes, from the committed data files: `gauges` (from `data/seed/gauges.geojson`), `crossings` (from `data/seed/crossings.geojson`) **plus the test crossing**, `model_versions` (the live rule version + every `rule-loso-*`), `crossing_gauge_links` (from `data/links/crossing_gauge_links.csv` with flowlines as WKT), `storms` (from `data/replays/index.json`), `nws_gauges`, and `app_config` defaults (§20.9; `featured_storm` = `docs/results/results.json` `hero.storm_id`). Use `insert … on conflict (…) do update` so re-seeding is idempotent. The output is deterministic (rows sorted by key, no timestamps), so a second run produces no diff.
 ```sql
 insert into public.crossings (id, name, jurisdiction, geom, tier, source, is_test, inventory_version)
 values ('test-0001', 'FordCast Test Crossing', 'FordCast test', 'SRID=4326;POINT(-97.7431 30.2672)', 'C', 'manual', true, 'test')
 on conflict (id) do nothing;
+
+-- model_versions: upsert metadata but NEVER touch is_live on conflict (a re-seed must not undo `make model-live`)
+insert into public.model_versions (version, kind, scope, is_live, git_sha, card)
+values ('rule-2026.10.18', 'rule', 'live', false, 'abc1234', '{}'::jsonb)
+on conflict (version) do update set git_sha = excluded.git_sha, card = excluded.card;
+-- the baseline rule is live by default, but only when nothing is live yet
+update public.model_versions set is_live = true
+ where version = 'rule-2026.10.18'
+   and not exists (select 1 from public.model_versions where is_live);
 ```
 The test crossing exists so a real end-to-end escalation → push can be tested (§22.8, §23.9) **without** showing a fake closure on any real crossing.
+
+**Applying it:**
+- **Local** (Docker): `make seed` regenerates `seed.sql` and runs `npx --yes supabase@2.120.0 db reset` (migrations + seed).
+- **Production:** `supabase db push` applies migrations only. The seed goes in with **`make seed-prod`** (A §5.2): `psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -1 -f supabase/seed.sql`, one transaction, using the Supabase session pooler URL (port 5432). It writes production data, so tell the human first (A §1.7). Procedure and verification: §20.4 step 11.
+- **Switching the live model:** **`make model-live VERSION=<model_version>`** (A §5.2) runs `supabase/manual/set_model_live.sql`, which aborts if the version doesn't exist and leaves exactly one live row (the `model_versions_one_live` unique index also enforces this). `RiskModel`, the `crossing_gauge_links` RLS policy and the tick all read the live version, so run one manual tick afterwards.
 
 ### 21.6 Write-on-change (protects the Realtime quota) — step 8 of the tick, one transaction
 ```sql
@@ -2368,7 +2565,9 @@ where (rc.state, rc.window_lo_min, rc.window_hi_min, rc.official, rc.held, rc.re
 - An anon `select` on `crossings` doesn't return `test-0001`; `ground_truth_events` returns 0 rows to anon.
 - An identical `risk_current` upsert writes 0 rows (`cur.rowcount == 0`); a changed state writes 1.
 - A concurrent lease acquire for the same slot returns 0 rows; a new slot acquires.
-- The tier-A check constraint rejects a tier-A crossing without an overtop stage.
+- The tier-A check constraint rejects a tier-A crossing without an overtop stage, and a tier-A crossing whose `truth_quality` is `proxy`.
+- `device_subscriptions.reason` rejects anything but `saved_route`, `saved_place`, `starred`, and the table has no coordinate, radius or place column (a schema test lists the columns).
+- Applying `supabase/seed.sql` twice leaves the row counts unchanged and exactly one `model_versions` row live; after `set_model_live.sql` with another version, re-applying the seed does not change which version is live.
 - Enum order: `select 'avoid'::public.risk_state > 'watch'::public.risk_state` is true.
 
 ---
@@ -2441,7 +2640,8 @@ Internal endpoints return **404** (not 401) when the secret is missing or wrong,
      "closed_source": null, "latest_obs_at": "2026-10-14T17:45:00Z", "changed_at": "2026-10-14T17:55:00Z",
      "last_known": null,
      "reasons": [{"code": "UPSTREAM_ABOVE_TRIGGER", "gauge_id": "USGS-08158700", "value_ft": 9.4,
-                  "rise_ft_30m": 3.1, "tau_min": 40, "trigger_ft": 9.0, "obs_at": "2026-10-14T17:45:00Z"}]},
+                  "rise_ft_30m": 3.1, "tau_min": 40, "tau_lo_min": 30, "tau_hi_min": 45, "trigger_ft": 9.0,
+                  "obs_at": "2026-10-14T17:45:00Z"}]},
     {"id": "tc-0310", "state": "unknown", "tier": "C", "window": null, "held": false, "p": null, "official": null,
      "closed_source": null, "latest_obs_at": null, "changed_at": "2026-10-01T00:00:00Z",
      "last_known": null, "reasons": [{"code": "NO_UPSTREAM_GAUGE"}]}
@@ -2456,17 +2656,15 @@ Internal endpoints return **404** (not 401) when the secret is missing or wrong,
 | `state` | wire enum (§3.2) |
 | `window` | one of the 7 allowed windows (§18.6) or `null` |
 | `p` | `[p30, p60, p90]` only when ML is live, else `null` |
-| `official` | `null` or `{status: open\|caution\|closed\|unknown, source, as_of}`. `open` is displayed only as "{source}: no closure reported". |
+| `official` | `null` or `{status: open\|caution\|closed\|unknown, source, as_of}`. `open` is displayed only as `official.no_closure` ("{{source}}: no closure reported", §3.7). |
 | `last_known` | `{state, at}` when `state == "unknown"` and an earlier non-unknown state exists (§3.4) |
-| `reasons` | §18.10; ≥ 1 for every state except `no_rise` |
+| `reasons` | §18.10; ≥ 1 for every state except `no_rise`. Codes and numbers only (the phone renders the §3.7 `reason.*` templates); travel time as `tau_lo_min`/`tau_hi_min` |
 | `gauges[]` | active linked gauges: newest reading, 30-min rise, staleness (map gauge dots, mini-cards) |
 | `nws` / `nws_status` | Stretch F17: `[{id, event, sent, expires, damage_threat, emergency, headline_en}]`; `disabled` until enabled |
-| `config.banner` | `null` or `{"en": str, "es": str, "level": "info"\|"warning", "until": ISO\|null}`. One snapshot serves both languages, so the banner carries both (§20.9). |
+| `config.banner` | `null` or `{"en": str, "es": str, "level": "info"\|"warning", "until": ISO\|null}`. One snapshot serves both languages, so the banner carries both (§20.9). Client zod (D §28.5): `z.object({ en, es, level: z.enum(['info','warning']), until: Iso.nullable() }).nullable()`. |
 
 - **Nullable fields are always present** (value `null`), never omitted. Client schemas use `.nullable()`, not `.optional()`.
 - Size target: ≤ 10 KB gzipped (§7.4). Validation: `docs/schemas/snapshot.v1.example.json` passes the pydantic model (`fordcast/snapshot.py`) and the app's zod schema.
-
-> NOTE TO REVIEWER: §28.5 currently types `config.banner` as `z.string().nullable()`. It MUST be `z.object({ en: z.string(), es: z.string(), level: z.enum(['info', 'warning']), until: Iso.nullable() }).nullable()` to match this section and §20.9.
 
 ### 22.4 Read endpoints (details)
 - **`GET /v1/health`** → `200 {"status": "ok"|"degraded", "version": "0.1.0", "git_sha": "…", "db": "ok"|"down", "last_tick_ok_at": "…", "data_status": "live"}`. Always 200 (so Render's health check doesn't restart the service on a DB blip). `degraded` when the DB is unreachable or the last OK tick is > 20 min old. UptimeRobot alarms on anything but `"status":"ok"`.
@@ -2505,13 +2703,13 @@ Internal endpoints return **404** (not 401) when the secret is missing or wrong,
 ```
 - `provider` is `ors` or `stadia`. `warning` is `null` or `"no_detour_found"`. The code name deliberately avoids the word "safe" (§3.12), and the UI shows `routing.no_detour`.
 
-> NOTE TO REVIEWER: §32.2 currently mirrors research/maps.md's camelCase contract. Part D defers API contracts to Part C, and every other `/v1` endpoint (snapshot, devices, crossings) is snake_case, so §32.2's zod schema MUST use these names: `crossingsOnBaseline→crossings_on_baseline`, `durationS→duration_s`, `distanceM→distance_m`, `alongM→along_m`, `detourAddedMin→detour_added_min`, `viaPoints→via_points`, `issuedAt (epoch)→issued_at (ISO)`, `riskAsOf (epoch)→risk_as_of (ISO)`, `replayAt→replay_at`, `warning "no_safe_detour_found"→"no_detour_found"`. The extra fields `mode`, `risk_seq`, `verdict`, `monitored_count`, `unknown_count`, `tier`, `detour.avoided` and `detour.still_on_route` are additive.
-- **Verdict** (§3.3): the highest-ranked state among `crossings_on_baseline` (rank `no_rise < unknown < watch < avoid < closed`), with `unknown_count` reported separately. A route is **never** called safe. With no crossings or only `no_rise`, the copy is "No rise detected at {c} monitored crossings on this route" (§3.7).
+- **This section is the canonical route contract.** D §32.2 (zod schema, request body and every client call) mirrors these snake_case names exactly; replay requests use the flat `replay_at` + `storm_id` fields; the request model uses `extra="forbid"`, so any other field is a `422`.
+- **Verdict** (§3.3): the highest-ranked state among `crossings_on_baseline` (rank `no_rise < unknown < watch < avoid < closed`), with `unknown_count` reported separately. A route is **never** called safe. With no crossings or only `no_rise`, the copy is `state.no_rise` route verdict ("No rise detected at {{c}} monitored crossings on this route", §3.7).
 - **Algorithm** (`fordcast/api/routes/route.py` + `fordcast/routing.py`, agent-written, from maps.md §6.3):
   1. Baseline route with **no** polygons (ORS; 12 s timeout).
   2. `crossings_on(baseline)`: project to UTM 14N (EPSG:32614), keep crossings within **40 m** of the line (**60 m** if `divided_road`), and order them by `line.project(pt)` (= `along_m`). This is identical to the on-device Turf check (§32).
   3. If `want_detour` and any crossing **within 2 km of the baseline** is `avoid` or `closed` (`ROUTE_AVOID_STATES`; WATCH is shown but not routed around): build **75 m** circles (16 vertices, `buffer(75, quad_segs=4)` in UTM, back to WGS84) → `MultiPolygon` → ORS `options.avoid_polygons`.
-  4. Re-check the detour with `crossings_on`. If an avoided crossing is still on it, retry once with **150 m** circles. If it is still there, return the detour with `warning: "no_detour_found"` and `detour.still_on_route: [...]`; the app shows "No detour found that avoids {name}. Wait or choose another destination." (§3.7).
+  4. Re-check the detour with `crossings_on`. If an avoided crossing is still on it, retry once with **150 m** circles. If it is still there, return the detour with `warning: "no_detour_found"` and `detour.still_on_route: [...]`; the app shows `routing.no_detour` ("No detour found that avoids {{name}}. Wait or choose another destination.", §3.7).
   5. `detour_added_min = round((detour.duration − baseline.duration)/60)`.
   6. **Fallback:** ORS 403 (daily quota), 429 (minute quota), 5xx or timeout → the same request on **Stadia** (`exclude_polygons` = polygon rings; ≤ 100 vertices total, merging circles with `shapely.union_all` and simplifying if needed). Both failing → `503 routing_unavailable` (the app shows `routing.offline` copy).
   7. **Via points** for hand-off (`pick_via_points`, maps.md §8.2): sample the detour every 50 m; mark samples > 150 m from the baseline and > 400 m from every avoided crossing; take the longest divergent run; return its midpoint (or its quarter and three-quarter points if the run is ≥ 5 km); max 2 points.
@@ -2555,14 +2753,14 @@ curl -X POST https://api.openrouteservice.org/v2/directions/driving-car/geojson 
 
 ### 22.6 `POST /v1/route/check`, `GET /v1/search`, `GET /v1/geocode/reverse` `[Stretch]`
 - **`POST /v1/route/check`** `{"geometry": LineString (≤ 500 points), "buffer_m": 40, "locale": "es"}` → `{"risk_as_of", "risk_seq", "data_status", "verdict", "monitored_count", "unknown_count", "hits": [{"id", "state", "window", "tier", "along_m"}], "disclaimer_key"}`. Used for saved routes whose geometry the phone already has. No external calls.
-- **`GET /v1/search?q=<≥3 chars>&lat=&lon=&lang=en|es`** → `{"results": [{"id", "label", "sublabel", "lng_lat": [lon, lat], "source": "ors"|"photon"}]}` via ORS Pelias autocomplete (Austin `boundary.rect` and `focus.point`; §16.11) → Photon fallback (§16.13) on 403/429/5xx. **Privacy:** in-memory cache keyed by `(normalized q, lang, focus rounded to 0.1°)`, TTL 24 h, ≤ 2,000 entries; never persisted or logged. This deliberately differs from maps.md's 7-day cache, to keep less location-derived data.
-- **`GET /v1/geocode/reverse?lat=&lon=&lang=`** → `{"label", "sublabel", "source"}` via ORS `/geocode/reverse` → Photon reverse (VERIFY) → `404 not_found` (the app falls back to `expo-location.reverseGeocodeAsync`, §32).
+- **`GET /v1/search?q=<≥3 chars>&lang=en|es`** → `{"results": [{"id", "label", "sublabel", "lng_lat": [lon, lat], "source": "ors"|"photon"}]}` via ORS Pelias autocomplete → Photon fallback (§16.13) on 403/429/5xx. **Privacy: the request carries only the text and the language, never the user's location.** The server always applies the fixed Austin-area bias defined once in §16.13 (`SEARCH_FOCUS_LAT/LON` = 30.2672, −97.7431 as ORS `focus.point` / Photon `lat`/`lon`; `SEARCH_BBOX` = −98.6, 29.6, −97.0, 31.0 as ORS `boundary.rect` / Photon `bbox`). The query parameters are declared as a pydantic model with `extra="forbid"`, so a request that adds `lat`, `lon` or any other parameter gets `422 validation_error` (VERIFY BEFORE USE: FastAPI 0.142 supports query-parameter models with `extra="forbid"`; fallback: read `request.query_params` and reject unknown keys explicitly). In-memory cache keyed by `(normalized q, lang)`, TTL 24 h, ≤ 2,000 entries; never persisted or logged. Every user gets the same results for the same text, which is the point.
+- **`GET /v1/geocode/reverse?lat=&lon=&lang=`** → `{"label", "sublabel", "source"}` via ORS `/geocode/reverse` → Photon reverse (VERIFY) → `404 not_found` (the app falls back to `expo-location.reverseGeocodeAsync`, §32). Only for a point the user **explicitly long-pressed on the map** (F52); the app never sends its own GPS fix here. Not cached, never logged (§22.9).
 
 ### 22.7 Devices (anonymous identity; crossing-ID subscriptions) `[MVP]` (F27)
 - **`POST /v1/devices`** `{"platform": "android", "locale": "es", "app_version": "1.0.0", "expo_push_token": "ExponentPushToken[…]"|null}` → `201 {"device_id": "<uuid>", "device_secret": "<64 hex>"}`. The secret is returned **once**. The server stores only `sha256(secret)`. The app keeps it in `expo-secure-store` (§28; VERIFY there).
 - **Auth** for all other device routes: `Authorization: Device <device_id>:<device_secret>`. The server compares `sha256(secret)` with `hmac.compare_digest`. Any mismatch or unknown id → `401 unauthorized` (never reveal existence). Every authenticated call updates `last_seen_at`.
 - **`PUT /v1/devices/{id}`** (partial): `{"expo_push_token", "locale", "tz", "alerts_enabled", "watch_alerts", "updates_enabled", "quiet_start_min", "quiet_end_min", "app_version"}` → `204`. A new token replaces the old one; a token already registered to another device moves to this one (unique constraint, in one transaction).
-- **`PUT /v1/devices/{id}/subscriptions`** `{"items": [{"crossing_id": "atx-081", "reason": "saved_route", "want_watch": false}, {"crossing_id": "tc-0123", "reason": "recent_area"}]}` → `204`. **Replaces** the whole set (≤ 300 items). `recent_area` items get `expires_at = now() + 12 h`. Unknown crossing ids → `422`. **No coordinates are accepted anywhere**; the request model has no lat/lon fields, and extra fields are rejected (`extra="forbid"`).
+- **`PUT /v1/devices/{id}/subscriptions`** `{"items": [{"crossing_id": "atx-081", "reason": "starred", "want_watch": false}, {"crossing_id": "tc-0123", "reason": "saved_route", "want_watch": true}]}` → `204`. **Replaces** the whole set (≤ 300 items). `reason ∈ {"saved_route", "saved_place", "starred"}` (any other value → `422`); `want_watch` is required per item (the client sends it; the device default is `false`, §3.8). Unknown crossing ids → `422`. The phone computes the IDs on the device (saved crossings → `starred` [MVP]; saved routes and the saved place's radius chip → `saved_route`/`saved_place` [Stretch F51], §23.1); the server never receives a radius, a place or a coordinate. **No coordinates are accepted anywhere**; the request model has no lat/lon fields, and extra fields are rejected (`extra="forbid"`). There is no location-derived ("near me") subscription: awareness while moving comes only from on-device geofences and local notifications (§30.3).
 - **`PUT /v1/devices/{id}/mutes`** (Stretch F69) `{"crossing_id": "atx-081", "minutes": 60}` → `204` (≤ 24 h).
 - **`GET /v1/devices/{id}`** → the current settings and subscription count (debug and settings sync).
 - **`DELETE /v1/devices/{id}`** → `204`. Cascades subscriptions and alert history. Settings → "Delete my alert data" calls it, then clears local storage (F106).
@@ -2585,6 +2783,7 @@ curl -X POST https://api.openrouteservice.org/v2/directions/driving-car/geojson 
 - [ ] API tests (FastAPI `TestClient` / httpx `ASGITransport`) cover every MVP endpoint: schemas, Cache-Control, `ETag`/304, 429 from the limiter, 401 on a bad device secret, 404 on internal routes without a secret, 413 on a large body, and bbox/points validation.
 - [ ] `docs/schemas/snapshot.v1.example.json` validates in pydantic and zod.
 - [ ] A log-capture test proves that a `/v1/route` call with coordinates leaves no coordinate in the logs or the Sentry event.
+- [ ] `/v1/search` rejects `lat`/`lon` query parameters with `422`, and a recorded ORS/Photon request from the search route carries exactly the §16.13 constants; `PUT /v1/devices/{id}/subscriptions` rejects any reason other than `saved_route`/`saved_place`/`starred` and any extra field.
 - [ ] OpenAPI renders at `/docs` without internal routes.
 
 ---
@@ -2594,23 +2793,21 @@ curl -X POST https://api.openrouteservice.org/v2/directions/driving-car/geojson 
 1. Push **only adds caution**. A push never says or implies "safe", is never sent for `no_rise` as good news, and always carries the source's words from the §3.7 bank.
 2. Push targets **crossing IDs that the device chose** (§23.1). The server never stores or receives a location.
 3. **Escalations are immediate**; everything else is rate-limited (§23.4).
-4. **Replay never pushes.** `fordcast/replay/**` must not import `fordcast.push` (static test, §24.7). The only caller of `fan_out()` is the live tick (§20.3 step 10). Replay may raise a **local** demo notification labeled REPLAY on the phone (§31).
-5. Channel IDs, interruption levels, TTL and defaults are those of **§3.8**: `crossing-urgent`, `crossing-watch`, `updates`, `drive-mode`; `ttl 1800`.
-
-> NOTE TO REVIEWER: §3.8 names the Android channels `crossing-urgent` / `crossing-watch` / `updates` / `drive-mode` and declares them canonical. §15.1 names them `avoid-alerts` / `watch-alerts` / `updates` / `drive-mode` and also declares itself canonical. Because §3 overrides every other section, the server payloads here use the §3.8 IDs. §15.1 and §31 MUST be aligned to them, or the server's `channelId` won't match any channel on the device and Android won't show the notification `[V: docs.expo.dev]`.
+4. **Replay never pushes.** `fordcast/replay/**` must not import `fordcast.push` (static test, §24.7). The only caller of `fan_out()` is the live tick (§20.3 step 10). Replay may raise a **local** demo notification on the phone (§31): title `replay.notify_title` ("REPLAY · …"), body starting with **"REPLAY — not a live alert:"** / **"REPRODUCCIÓN — no es una alerta real:"** (`replay.notify_body`), channel `updates`, never `crossing-urgent` (§3.8).
+5. Channel IDs, interruption levels, TTL and defaults are those of **§3.8** (canonical for §15, §23 and §31): `crossing-urgent`, `crossing-watch`, `updates`, `drive-mode`; `ttl 1800`. The server's `channelId` must match a channel the app created, or Android drops the notification `[V: docs.expo.dev]`.
 
 ### 23.1 Who gets notified (privacy-first subscriptions)
 - **On the phone** (§28, §31), the app works out which crossings matter to the user and uploads **only their IDs** with `PUT /v1/devices/{id}/subscriptions` (§22.7):
 
-| `reason` | Computed on device as | Expires |
-|---|---|---|
-| `saved_route` | crossings within **300 m** of a saved route line | when the route is deleted |
-| `saved_place` | crossings within **3 km** of a saved place | when the place is deleted |
-| `starred` | crossings the user tapped "Notify me" on (F46) | when unstarred |
-| `recent_area` (optional setting) | crossings within **10 km** of the last significant location | **12 h** (server sets `expires_at`) |
+| `reason` | Computed on device as | Tier | Removed when |
+|---|---|---|---|
+| `starred` | saved crossings: the user tapped "Notify me" (F46) | MVP | unstarred |
+| `saved_route` | crossings within **300 m** of a saved route line | Stretch (F51) | the route is deleted |
+| `saved_place` | crossings within the place's **radius chip** (1 / 3 / 5 mi; default 3 mi = 4,828 m), chosen on the device | Stretch (F51) | the place is deleted |
 
-- `want_watch` per subscription (default **false**) is the per-route/place Watch opt-in. The device-level `watch_alerts` must also be on (default **false**; §3.8).
-- **Background geofences are entirely on the device** (§30). The server's only role is the snapshot.
+- These three are the **only** subscription reasons. The server stores explicit crossing IDs only; it never sees a radius, a place, a route line or a coordinate. There is no server-side "near me" or recent-location subscription.
+- `want_watch` per subscription (sent by the client for every item; device default **false**) is the per-crossing/route/place Watch opt-in. The device-level `watch_alerts` must also be on (default **false**; §3.8).
+- **"Near me" awareness while moving** comes only from on-device geofences and local notifications (§30.3) plus the in-app map. The server's only role there is the snapshot.
 
 ### 23.2 Event → push matrix
 
@@ -2624,7 +2821,7 @@ curl -X POST https://api.openrouteservice.org/v2/directions/driving-car/geojson 
 | `avoid` → `watch`, `closed` → `avoid` (step-downs) | **none** (the earlier notification stays until the `update` replaces it via `collapseId`) | — | — | — | — | — | — |
 | any → `no_rise` without an earlier pushed escalation | **never** | — | — | — | — | — | — |
 
-- **Why only one `update`, at the end:** de-escalation steps down one level at a time (§18.8), so an update at every step would mean up to 3 pushes per event. One passive update when the crossing reaches `no_rise` replaces the earlier alert (same `collapseId`/`tag`) with "FordCast no longer sees water rising upstream. Water may still be on the road. Obey barricades." This refines §3.8's "de-escalation update".
+- **Why only one `update`, at the end:** de-escalation steps down one level at a time (§18.8), so an update at every step would mean up to 3 pushes per event. One passive update when the crossing reaches `no_rise` replaces the earlier alert (same `collapseId`/`tag`) with "FordCast no longer sees water rising upstream. Water may still be on the road. Obey barricades." (`update.deescalate.*`). This is exactly §3.8's de-escalation rule (Step 0 decided default D4).
 - A transition **to `unknown`** never produces an `update` (that would wrongly sound like an improvement).
 - Test crossings (`is_test`) use the same matrix, with the TEST prefix (§23.9).
 
@@ -2635,12 +2832,11 @@ curl -X POST https://api.openrouteservice.org/v2/directions/driving-car/geojson 
 | **Dedupe** | `unique (device_id, transition_id)` in `private.alerts_sent`. Rows are inserted **before** sending (`ON CONFLICT DO NOTHING RETURNING id`), and only inserted rows are sent, so a retried or watchdog tick can never double-send. | all |
 | **Cooldown** | ≤ 1 push per (device, crossing, level) per **60 min**; a level-L push is skipped if a push at level ≥ L for that crossing went to the device in the last 60 min | escalations, updates |
 | **Per-device budget** | ≤ **3** individual escalation pushes per rolling 60 min (§3.8). Two or more escalations for one device in the same tick → **one `summary`** push. After the budget is spent, at most **1 `summary` per 15 min**, and only if it contains an `avoid`/`closed`; otherwise the change is in-app only (inbox + banner). | escalations |
-| **Quiet hours** (device local time, `tz`) | `watch`, `update` and Stretch `unknown` are **suppressed**. `avoid`/`closed` **ignore** quiet hours for `saved_route`, `saved_place` and `starred` subscriptions (night is the riskiest time); only `recent_area` subscriptions respect quiet hours at every level. | per device |
+| **Quiet hours** (device local time, `tz`; Stretch F73) | `watch`, `update` and Stretch `unknown` are **suppressed** (never sent late). `avoid`/`closed` **ignore** quiet hours for every subscription reason (`saved_route`, `saved_place`, `starred`), because night is the riskiest time (§3.8; Step 0 decided default D3). | per device |
 | **Mute** (Stretch F69) | `muted_until[crossing_id] > now` → skip | per device |
 | **Token** | `expo_push_token is not null` | all |
 | **Freshness** | only transitions from the **current tick** are pushed; after a kill-switch pause or an outage, never send a backlog older than 10 min (a late flood alert is harmful; that is also why `ttl` = 1800) | all |
 
-> NOTE TO REVIEWER: §3.8 lets Avoid/Closed bypass quiet hours "on saved routes". This section extends the bypass to saved places and starred crossings, because those are equally the user's own choices and night is the riskiest period. It adds caution. Revert to saved routes only if the human prefers.
 
 ### 23.4 Algorithm (runs at the end of each live tick)
 ```python
@@ -2656,7 +2852,7 @@ async def fan_out(tick: TickResult, now: datetime, repo: Repo, expo: ExpoClient)
     plans: dict[UUID, list[Plan]] = defaultdict(list)
 
     for t in escal:                                                  # who subscribed to this crossing?
-        for d, sub in await repo.subscribers(t.crossing_id, now):    # alerts_enabled, token, not expired
+        for d, sub in await repo.subscribers(t.crossing_id, now):    # alerts_enabled and a push token
             if eligible_escalation(d, sub, t, now, await repo.recent_pushes(d.id, t.crossing_id, now)):
                 plans[d.id].append(Plan(d, t, "escalation"))
     for t in finals:
@@ -2711,6 +2907,7 @@ async def fan_out(tick: TickResult, now: datetime, repo: Repo, expo: ExpoClient)
 - **Length:** title ≤ 50 characters (truncate `{{name}}` with "…" to fit), body ≤ 150; payload ≤ 4 KiB `[V]`.
 - **Spanish** strings come from §3.7 and need native-speaker review (§35). The WATCH title uses **"Precaución"** (the state word), never "Atención".
 - `backend/tests/test_copy_banned.py` scans both files with the shared banned-words list (§3.12, §24.7) and asserts key parity between EN and ES.
+- `backend/tests/test_push_templates_match_bank.py` asserts that every title/body equals its §3.7 source in `mobile/src/locales/{en,es}.json` (`state.*` push slots, `update.deescalate.*`, `push.summary`, `alerts.test`), so the server can never drift from the bank.
 
 ### 23.6 Payload (Expo message) and sending
 ```json
@@ -2759,7 +2956,7 @@ async def fan_out(tick: TickResult, now: datetime, repo: Repo, expo: ExpoClient)
 - **Anomaly guard `[Stretch]`, off by default:** if more than **50 %** of monitored crossings escalate in a single tick, hold pushes for that tick, send a Sentry error tagged `push_anomaly`, and keep everything in-app. Before enabling it, replay every archived storm through the guard and confirm it would not have held any real event. Document the result in `docs/decisions/`.
 
 ### 23.9 Test pushes and the test crossing
-- **`POST /internal/push/test`** (admin) or `uv run python -m fordcast push test --device <uuid> --kind avoid` sends the `test` template ("TEST · Avoid: Example Crossing" / "PRUEBA · …") on the matching channel (§22.8).
+- **`POST /internal/push/test`** (admin) or `uv run python -m fordcast push test --device <uuid> --kind avoid` sends the `test` template (e.g. "TEST · Avoid FordCast Test Crossing" / "PRUEBA · Evite FordCast Test Crossing", body `alerts.test`) on the matching channel (§22.8).
 - **End-to-end escalation test (Day 7 gate, dev build):**
   1. The debug screen (F107) subscribes the device to `test-0001` (`reason: starred`).
   2. Run `fordcast official set test-0001 closed --note "push test" --ttl 30`.
@@ -2769,7 +2966,8 @@ async def fan_out(tick: TickResult, now: datetime, repo: Repo, expo: ExpoClient)
 - Test crossings never appear in the snapshot, API or Realtime (RLS, §21.2). Their pushes always carry `data.test = true` and the TEST/PRUEBA prefix.
 
 ### 23.10 Done when (F67, F27)
-- [ ] Unit tests for every row of §23.2 and §23.3 (Watch opt-in default off, quiet hours, cooldown, budget → summary, dedupe on retry, no `update` on → `unknown`, kill switch, backlog drop, DeviceNotRegistered, test prefix) pass.
+- [ ] Unit tests for every row of §23.2 and §23.3 (Watch opt-in default off, quiet hours for each subscription reason and each level, cooldown, budget → summary, dedupe on retry, no `update` on → `unknown`, kill switch, backlog drop, DeviceNotRegistered, test prefix) pass.
+- [ ] DB inspection shows only `saved_route`, `saved_place` and `starred` subscriptions and no coordinate, radius or place anywhere; `test_push_templates_match_bank.py` passes.
 - [ ] A contract test with recorded Expo `send` and `getReceipts` responses (ok + DeviceNotRegistered) passes.
 - [ ] The §23.9 end-to-end test succeeds on a real Android phone, with the screenshot and receipt logged in `docs/CLAIMS.md`. Claim "push alerts on Android" only after this.
 
@@ -2788,35 +2986,55 @@ async def fan_out(tick: TickResult, now: datetime, repo: Repo, expo: ExpoClient)
 | Malformed or hostile input | strict pydantic with `extra="forbid"`, Texas bbox, ≤ 500 points, ID regexes, 64 KB body cap |
 | Client writes to the DB | RLS on every public table with **no** write policies; `private` schema has no grants (§21.2); tests prove anon insert fails |
 | Bad upstream data (unit/datum change, spikes) | value sanity filter (§16.2), pydantic validation, staleness → `unknown`, kill switch / anomaly guard (§23.8), nightly live contract tests |
-| Location leaks | no coordinates stored server-side; route/search bodies never logged; Sentry body capture off; log-capture tests (§24.4) |
+| Location leaks | no coordinates stored server-side; subscriptions are explicit crossing IDs only (§23.1); place search sends no device location (fixed Austin bias, §16.13); route bodies never logged; Sentry body capture off; log-capture tests (§24.4) |
 | Dependency drift | `uv.lock` with `exclude-newer`; mobile pins via `npx expo install`; no upgrades during judging (§1.3) |
 | Supply chain on CI | pin GitHub Actions to a major version (VERIFY current majors); third-party actions limited to `actions/*` and `astral-sh/setup-uv` |
 
 ### 24.2 Secrets inventory and rotation
 
-| Secret | Lives in | Used by | Rotate by |
-|---|---|---|---|
-| `SUPABASE_SECRET_KEY` (`sb_secret_…`) | Render env, GitHub secret (nightly only if needed) | Storage uploads, admin | Supabase dashboard → API keys → create a new secret key, update Render, revoke the old one |
-| `DATABASE_URL` (pooler) | Render env | tick + API | reset the DB password in Supabase, update Render |
-| `USGS_API_KEY` | Render env, GitHub secret (nightly) | ingest | request a new key at the signup page |
-| `TICK_SECRET` | Render env, Supabase Vault `tick_secret`, GitHub secret | pg_cron, watchdog | `vault.update_secret` + Render + GitHub, in that order (a few failed ticks are expected and fine) |
-| `ADMIN_SECRET` | Render env, the student's password manager | CLI/admin | Render env |
-| `EXPO_ACCESS_TOKEN` | Render env | push | Expo account → access tokens |
-| `ORS_API_KEY`, `STADIA_KEY` | Render env | routing/search | provider dashboard |
-| `HC_PING_URL`, `SENTRY_DSN` | Render env | monitoring | provider dashboard |
-| App-side (public by design) | `EXPO_PUBLIC_SUPABASE_URL`, `EXPO_PUBLIC_SUPABASE_KEY` (`sb_publishable_…`), `EXPO_PUBLIC_API_BASE` | phone | publishable key rotation is a new app build/OTA |
+This table is an **exact copy of A §1.9** (A §1.9 is the source; if one changes, change both in the same commit). "Get / rotate" says where the value comes from and how to replace it. The §24.10 checklist compares it with Render, GitHub Actions, Supabase Vault and EAS (names only).
+
+| Name | Kind | Lives in | Used by | Get / rotate |
+|---|---|---|---|---|
+| `DATABASE_URL` | secret | Render env; GitHub Actions secret (only for workflows that read the DB); local `backend/.env` (for `make latency`, `make seed-prod`, `make model-live`) | tick + API (Supavisor **transaction** pooler, port 6543); `psql` targets use the **session** pooler (port 5432) | Supabase → Connect. Rotate: reset the DB password, update Render, GitHub and `.env` |
+| `SUPABASE_URL` | config (not secret) | Render env; GitHub Actions secret; local `backend/.env` | Storage uploads, admin calls | Supabase → Project Settings → API |
+| `SUPABASE_SECRET_KEY` (`sb_secret_…`) | secret | Render env; GitHub Actions secret; local `backend/.env` (for `make data-upload`, `build_replays.py --upload`) | snapshot + replay + data uploads to Storage, admin | Supabase → API keys → create a new secret key, update every place, revoke the old one |
+| `USGS_API_KEY` | secret | Render env; GitHub Actions secret (nightly contracts); local `backend/.env` (smoke, backfill) | ingest (`X-Api-Key`) | `https://api.waterdata.usgs.gov/signup/` (instant); rotate by requesting a new key |
+| `PROJECT_CONTACT_EMAIL` | config | Render env; GitHub Actions secret; local `backend/.env` | `User-Agent` for USGS, NWS, NWPS (tick, nightly, smoke) | the project mailbox (Step 0 Q7); edit in all three places |
+| `TICK_SECRET` | secret | Render env; Supabase Vault `tick_secret`; GitHub Actions secret | `pg_cron` → `/internal/tick`; `tick-backup.yml` | `python -c "import secrets;print(secrets.token_hex(32))"`. Rotate: `vault.update_secret` → Render → GitHub, in that order (a few failed ticks are expected) |
+| `tick_url` | Vault entry | Supabase Vault | `pg_cron` (`https://<service>.onrender.com/internal/tick?source=pg_cron`) | `vault.update_secret` when the Render URL changes |
+| `API_BASE` | config | GitHub Actions secret | `tick-backup.yml`, `nightly.yml` (no trailing slash) | the Render service URL |
+| `ADMIN_SECRET` | secret | Render env; the student's password manager | admin endpoints and CLI | regenerate like `TICK_SECRET`; update Render |
+| `EXPO_ACCESS_TOKEN` | secret | Render env; GitHub Actions secret (nightly receipts contract, S12) | push send + receipts (enhanced push security) | Expo → Account settings → Access tokens; revoke the old one |
+| `HC_PING_URL` | secret-ish URL | Render env | heartbeat after each successful tick (`/fail` on error) | healthchecks.io check #1 |
+| `HC_NIGHTLY_URL` | secret-ish URL | GitHub Actions secret | `nightly.yml` heartbeat | healthchecks.io check #2 |
+| `SENTRY_DSN` | config (optional) | Render env | backend error reports | Sentry project settings |
+| `ORS_API_KEY`, `STADIA_KEY` | secret (Stretch) | Render env; local `backend/.env` (smoke S11) | routing + search proxy | provider dashboards |
+| `SOCRATA_APP_TOKEN` | secret (optional) | local `backend/.env` | inventory pull (City of Austin SODA3), smoke S7 | data.austintexas.gov profile → app tokens |
+| `GOOGLE_SERVICES_JSON` | file secret | EAS environment variable of type **file**, visibility secret (VERIFY BEFORE USE: current `eas env:create` flags) | Android build (`android.googleServicesFile`, §27.3) | Firebase console → Android app `org.fordcast.app` → download `google-services.json`; never committed |
+| FCM V1 service-account key | credential | EAS credentials (Android → FCM V1), uploaded with `npx eas-cli@latest credentials` | Expo push delivery to Android | Firebase → Project settings → Service accounts → new key; upload, then delete the local file |
+| APNs key (Lane B only) | credential | EAS credentials (managed by EAS) | iOS push | regenerated by EAS on request |
+| `EXPO_PUBLIC_SUPABASE_URL`, `EXPO_PUBLIC_SUPABASE_KEY` (`sb_publishable_…`), `EXPO_PUBLIC_API_BASE` | public by design | `mobile/.env` (local) + EAS environment variables (plaintext) | the app | a changed value needs a new build or an EAS Update |
+| `EXPO_PUBLIC_DEMO_MODE` | public flag | `eas.json` profile `env` (`0`; `1` only in the `demo` profile) | DEMO_MODE (F83) | a build check fails if it is `1` in `preview`/`production` |
+| `EXPO_PUBLIC_SENTRY_DSN` | public (optional) | `mobile/.env` + EAS env (plaintext) | app crash reports (F125) | Sentry project settings |
+| `FORDCAST_IOS_PAID`, `FORDCAST_SENTRY` | build flags (not secret) | EAS environment variables / your shell | `app.config.ts` plugin switches (§27.3) | — |
+
+Non-secret backend settings (`ENVIRONMENT`, `USGS_OGC_BASE`, `USGS_BBOX`, `NWS_UGC`, feature toggles, …) are listed in §20.12. There is **no** `SENTRY_AUTH_TOKEN` anywhere (§1.2 D1). `.gitignore` covers `.env*` (except `*.example`), `google-services.json`, `GoogleService-Info.plist`, `*.p8`, `*.p12`, `*.jks`, `*.keystore` and any service-account `*.json` key file (A §1.9, A §5.1).
 
 If any secret may have leaked: **stop, rotate, then tell the human** (§1.7 item 12). Cassettes, logs, screenshots and the devlog never contain secrets (§1.9).
 
-### 24.3 Privacy data map (backend view; `PRIVACY.md`/`PRIVACY.es.md` and the store-label drafts must match it)
+### 24.3 Privacy data map (backend view; the privacy policy `docs/privacy/index.md` and the store-label drafts must match it)
 
 | Data | Where processed | Stored server-side? | Retention | Notes |
 |---|---|---|---|---|
-| Precise location (map, nearby ranking, geofences, Drive Mode) | phone only | **No** | — | never sent, except as route endpoints below |
-| Saved places / routes | phone (SQLite) | **No** | until deleted | only derived **crossing IDs** leave the phone |
-| Crossing-ID subscriptions | server (`private.device_subscriptions`) | Yes (IDs only) | until unsubscribed; device deleted after 90 days inactive | coarse public places |
+| Precise location (map, nearby ranking, geofences, Drive Mode) | phone only (last fix in memory, never written to disk) | **No** | — | never sent, except as route endpoints below |
+| Saved crossings / places / routes | phone (SQLite `saved_crossings`, `saved_places`, `saved_routes`) | **No** | until deleted | only derived **crossing IDs** leave the phone; the place's radius chip stays on the phone |
+| Recent searches (`recents`) and recent routes (`route_cache`, 7 days) | phone only (SQLite); they hold coordinates | **No** | until "Delete cached data" (Settings → Privacy), or the 7-day route-cache expiry | on-device statements in F84; the policy wording is generated from them |
+| Cached risk and last-known states | phone only (SQLite) | **No** | until "Delete cached data" | no personal data |
+| Crossing-ID subscriptions | server (`private.device_subscriptions`) | Yes (IDs only; reasons `saved_route`, `saved_place`, `starred`) | until unsubscribed; device deleted after 90 days inactive | IDs of public crossings the user chose; no radius, place, route line or coordinate |
 | Route origin/destination (Check My Drive) | phone → API (in memory) → ORS/Stadia | **No** (5-min in-memory cache only; never logged) | transient | ORS/Stadia retention per their terms `[U]`; disclosed in the privacy policy |
-| Search text (+ rounded focus) | phone → API (in memory) → ORS/Photon | **No** (24-h in-memory cache; never logged) | transient | |
+| Search text | phone → API (in memory) → ORS/Photon | **No** (24-h in-memory cache keyed by text and language; never logged) | transient | **search text only; no device location is sent** (the server uses the fixed Austin bias, §16.13) |
+| Long-pressed map point for reverse geocoding (Stretch) | phone → API (in memory) → ORS/Photon | **No** (not cached; never logged) | transient | a point the user picked, never the device's GPS fix |
 | Expo push token, locale, tz, toggles, quiet hours | `private.devices` | Yes | deleted on "Delete my alert data", `DeviceNotRegistered`, or 90 days inactive | "Device ID, not linked to you" |
 | Alert log (who got which push) | `private.alerts_sent` | Yes | 30 days | dedupe/cooldowns; no location |
 | Public alert log (transitions) | `public.risk_transitions` | Yes | 180 days | no user data; supports live FAR audits |
@@ -2824,7 +3042,26 @@ If any secret may have leaked: **stop, rotate, then tell the human** (§1.7 item
 | Crash/error reports | Sentry (`send_default_pii=False`, no bodies) | Sentry | provider default `[U]` | coordinates scrubbed |
 | Accounts, names, emails, contacts, photos, analytics, ads | — | **None** | — | no ATT prompt; no analytics SDKs |
 
-**Design consequences (MUST):** no accounts, analytics or ad SDKs; no coordinates in request models except route/search endpoints, and those are never persisted or logged; "Delete my alert data" → `DELETE /v1/devices/{id}` (F106); Roadmap features that collect more (crowd reports with photos, SMS numbers) need a new privacy review before any build (§4.P).
+**Design consequences (MUST):** no accounts, analytics or ad SDKs; no coordinates in request models except the route endpoints and the user-picked reverse-geocode point, and those are never persisted or logged; place search carries no location at all; no location-derived subscriptions; "Delete my alert data" → `DELETE /v1/devices/{id}` (F106); "Delete cached data" clears `recents`, `route_cache` and the risk cache on the phone; Roadmap features that collect more (crowd reports with photos, SMS numbers) need a new privacy review before any build (§4.P).
+
+#### Privacy policy outline (`docs/privacy/index.md`, EN then ES) `[MVP]` (F106)
+
+Plain language (9th-grade reading level), EN first and the ES version under an `## Español` heading (anchor `#espanol`), native-speaker review (§35). Content per research cac.md §7.2, every statement traceable to a row of the table above (a test, `backend/tests/test_privacy_policy.py`, checks that each heading below exists in both languages and that the policy names every third party in the table):
+1. **Who we are:** a student project for the 2026 Congressional App Challenge; the project contact email from Step 0 (Q7; a project address, never the student's personal email; a parent may co-manage it).
+2. **What stays on your phone:** location (never stored, never sent except route endpoints), saved crossings/places/routes, recent searches, recent routes, cached risk (the F84 on-device statements, word for word in meaning).
+3. **What reaches our servers, and why:** push token, language, time zone, alert settings and quiet hours, and the **IDs** of crossings you chose to follow; route start/end and search text are used only in memory to answer the request and are never stored or logged; search never includes your location.
+4. **Children:** "FordCast is meant for drivers and is not directed to children under 13. We don't knowingly collect personal information from children."
+5. **Third parties:** Expo push service → Apple/Google push services; openrouteservice and Stadia Maps (routing); openrouteservice and Photon (place search); Render and Supabase (hosting and database); Sentry (error reports, only if enabled). Each named with what it receives.
+6. **Retention:** device record deleted after 90 days without use; alert log kept 30 days; public crossing-status history 180 days (no user data); provider logs per provider.
+7. **How to delete or revoke:** in-app "Delete my alert data" (server) and "Delete cached data" (phone); turning off notifications or location in the OS settings; uninstalling the app.
+8. **Security:** HTTPS everywhere; no accounts or passwords.
+9. **Changes and contact; effective date** (the date the policy was last changed).
+
+**Publishing:** GitHub Pages from `main` → `/docs` (repo Settings → Pages → Deploy from a branch → `main` / `docs`). Pages needs the public repo on a free account, and both making the repo public and turning on Pages are stop-and-ask moments (A §1.7 item 4). URL: `https://<github-user>.github.io/Fordcast-CAC/privacy/` (`#espanol` for ES). Until Pages is on, Settings → Privacy and the README link to the GitHub file view of `docs/privacy/index.md`. Linked from Settings → Privacy and the README (F106; E §40).
+
+#### Store data-safety drafts (`docs/store/`) `[Stretch]` (F106b)
+
+Only needed if the app is ever published (not before judging, E §38.6). `docs/store/apple-privacy.md`: Data Not Linked to You → Identifiers (Device ID) for App Functionality; Diagnostics (Crash Data) for App Functionality only if Sentry ships; Tracking: No; precise location not collected (on-device only; routing endpoints not retained). `docs/store/play-data-safety.md`: Device or other IDs for App functionality; Location (precise) processed ephemerally for App functionality (route requests only); not shared; encrypted in transit; deletion available in-app. Re-check both against the store definitions at submission time `[U]`. Done when both files match this table and a parent has reviewed them.
 
 ### 24.4 Logging, redaction and Sentry
 ```python
@@ -2876,7 +3113,7 @@ sentry_sdk.init(dsn=settings.sentry_dsn or None, environment=settings.environmen
 
 ### 24.6 Freshness monitoring
 - `/v1/meta/freshness` (§22.4) is the single source for data health. The app's Data sources screen (F105) and the GH watchdog read it.
-- The nightly job writes a short summary (stale gauges, tick success rate, push counts, DB size) to its log, and the human copies it into `docs/status.md` on the scheduled commit days (Nov 10, Nov 30, Dec 15; §43). Those commits also keep scheduled workflows enabled (§20.6).
+- The nightly job writes a short summary (stale gauges, tick success rate, push counts, DB size) to its log, and the human copies it into `docs/status.md` on the scheduled commit days (Nov 10, Nov 30, Dec 15, + Jan 4 only if judging runs into January; §43). Those commits also keep scheduled workflows enabled (§20.6).
 
 ### 24.7 Test pyramid (backend)
 
@@ -2884,15 +3121,16 @@ sentry_sdk.init(dsn=settings.sentry_dsn or None, environment=settings.environmen
 |---|---|---|
 | **Unit** | pytest 9 | `features` (rise, upcrossing, freshness) · `travel_time` ★ (±1 min on synthetic lags) · `triggers` · `baseline_rule` ★ (each §18.5 row) · `windows` (allowed set) · `combine` (each §3.3 row) · `metrics` ★ · `inventory` mapping/dedupe · `routing` (circles, via points, verdict) · `push/policy` (§23.10 list) · templates (EN/ES parity) |
 | **Property** | hypothesis 6.168 | state machine invariants and the ≤ 2 transitions/hour flapping bound (§18.8); feature functions equal on truncated vs. full series (§19.8) |
-| **No-lookahead** | pytest | prefix invariance · future poison · latency respected · source rejects lookahead (§19.8) |
-| **Isolation (static)** | pytest + `ast` | runtime cannot import or read truth (§19.8); `fordcast/replay/**` doesn't import `fordcast.push`; no `waterservices.usgs.gov` / `dataretrieval.nwis` outside docs |
-| **Replay golden** | pytest + CLI | `replay-verify --all`: rebuilt `content_sha256` equals `mobile/assets/replays/index.json`; each file ≤ 150 KB gz; schema-valid |
+| **No-lookahead** | pytest | prefix invariance · future poison · latency respected · source rejects lookahead · outage respected · outage → dependent crossings `unknown` (readings present and true gap) (§19.8) |
+| **Isolation (static)** | pytest + `ast` | runtime cannot import or read truth (§19.8); `fordcast/replay/**` doesn't import `fordcast.push`; no legacy USGS host or `dataretrieval` NWIS import outside docs (`tests/test_repo_guards.py` builds the banned strings by concatenation, `"water" + "services.usgs.gov"` and `"dataretrieval" + ".nwis"`, so it never contains the literals it searches for) |
+| **Replay golden** | pytest + CLI | `replay-verify --all`: rebuilt `content_sha256` equals `data/replays/index.json` (delays from the committed `data/latency/gauge_latency.json`, never the DB); each file ≤ 150 KB gz; schema-valid; `make app-data` produces no diff |
 | **Contract (recorded)** | pytest-recording 0.13 / vcrpy 8.3 cassettes + respx 0.23 | USGS `latest-continuous` (bbox) + `continuous` (comma IDs) + 429 with Retry-After; NLDI hydrolocation, UT nwissite, DM flowlines; NWPS gauge; NWS alerts; Expo send + getReceipts (ok + DeviceNotRegistered); ORS directions (+ 403/429 → Stadia); Photon. **The pydantic models are the contract.** |
 | **API** | FastAPI `TestClient` / httpx `ASGITransport` | §22.10 list; snapshot schema; logging privacy (§24.4) |
 | **DB contract** | local Supabase CLI `supabase@2.120.0` (Docker) | §21.9 list (anon insert denied, private denied, 0-row identical upsert, lease, constraints, enum order) |
-| **Copy** | pytest | `test_copy_banned.py`: push templates, storyboard templates, reason templates, and the storyboard strings inside bundled replays (§3.12) |
-| **Numbers** | pytest | `test_no_hand_typed_metrics.py`: numbers next to "POD", "FAR", "CSI", "min earlier", "%" in `README.md`, `submission/answers.md` and `mobile/src/locales/*.json` must equal `results.json` values or be placeholders `[X]` |
-| **Backtest smoke** | CLI | one storm, compared with the committed `results.json` (POD drift > 10 points fails) |
+| **Copy** | pytest | `test_copy_banned.py`: push templates, storyboard templates, reason templates, and the storyboard strings inside built replays (§3.12), with the countdown guard; `test_push_templates_match_bank.py` and the storyboard-template parity test (§19.13, §23.5); `test_privacy_policy.py` (§24.3) |
+| **Numbers** | pytest | `test_no_hand_typed_metrics.py`: numbers next to "POD", "FAR", "CSI", "min earlier", "%" in `README.md`, `submission/answers.md` and `mobile/src/**/*.{ts,tsx,json}` (locales included; `__tests__/` excluded) must equal `results.json` values or be placeholders `[X]`. Run by the `docs-guards` CI job (§24.9) |
+| **Backtest** | CLI | `--smoke`: one storm, compared with the committed `results.json` (POD drift > 10 points fails), on every push; `make backtest CHECK=1`: full LOSO, exact compare (§18.13); `tools/select_hero.py` unit tests (§18.13) |
+| **Data integrity** | pytest + tools | every git-tracked data file's sha256 equals `data/MANIFEST.json`; `calm-2024` truth is empty and no calm day has an overtop; `meta.toml` files parse, each with an `outages` list whose entries name a `source` |
 | **Live (nightly)** | `-m live` | small real calls: USGS v1 `latest-continuous` (1 request), `collections` list, NLDI one navigation, NWPS one gauge, Expo `getReceipts` with a fake id. Catches API drift (the v0→v1 move and the legacy retirement). |
 
 **Cassette config** (keys never recorded):
@@ -2907,33 +3145,67 @@ def vcr_config():
 Re-record deliberately with `uv run pytest tests/contract --record-mode=once` (keys in the local env). Review every new cassette for secrets before committing (`repo-guards` also greps).
 
 ### 24.8 Mobile tests in CI
-The mobile job (typecheck, lint, Jest with the copy/parity/state/staleness/windows/replay-frames tests, `expo-doctor`) is specified in §36. It runs in the same `ci.yml` (below). The shared schema examples in `docs/schemas/` are validated on both sides (§7.1).
+The mobile job (typecheck, lint, Jest with the copy/parity/state/staleness/windows/replay-frames tests, `check-pins`, `npx expo install --check`, `expo-doctor`, the mobile secret grep) is specified in §36.3 and runs in the same `ci.yml` (below). The shared schema examples in `docs/schemas/` are validated on both sides (§7.1).
 
 ### 24.9 CI workflows
+
+**Every gate referenced anywhere in this prompt runs in `ci.yml`** (A F123, A §7.1, D §36.3). Gate → step map:
+
+| Gate | Where it runs (job · step) |
+|---|---|
+| Backend lint (ruff) and all non-live pytest: no-lookahead (incl. outage tests), truth isolation, banned words + countdown guard (pytest), template parity, privacy policy, data integrity | `backend` · "Backend tests" |
+| Golden replays (`replay-verify --all`, frozen delays, no DB) | `backend` · "Golden replays" |
+| Backtest smoke (one storm, 10-point POD tolerance) and `make backtest CHECK=1` (full LOSO, exact compare) + hero rule re-check | `backend` · "Backtest smoke", "Backtest check", "Hero rule check" |
+| Storm Parquet fetched by `data/MANIFEST.json` | `backend` · "Fetch Storage-hosted data" (`make data-fetch`) |
+| DB contract (RLS, lease, constraints, seed idempotency) | `db-contract` |
+| Mobile typecheck, lint, Jest (banned words + countdown guard, i18n parity, state, staleness, windows, replay-frames) | `mobile` |
+| `check-pins` · `npx expo install --check` · `expo-doctor` | `mobile` |
+| Mobile secret grep (no `sb_secret_`, `X-Api-Key`, `ORS_API_KEY`, `STADIA_KEY`, `EXPO_ACCESS_TOKEN` outside tests) | `mobile` · "No server secrets in the app" |
+| Hand-typed-metric check (README, `submission/answers.md`, `mobile/src`) | `docs-guards` · "No hand-typed metrics" |
+| `make claims && git diff --exit-code` | `docs-guards` · "Claims are generated" |
+| `make app-data` idempotent; data manifest matches | `docs-guards` |
+| Cross-references and no unresolved review notes in `docs/MASTER_PROMPT.md` | `docs-guards` |
+| No `TODO(student)` in the four core files on a submission tag | `docs-guards` (tags only) |
+| Legacy USGS endpoints, committed secrets/tokens | `repo-guards` |
 
 ```yaml
 # .github/workflows/ci.yml
 name: ci
 on:
-  push: { branches: [main] }
+  push: { branches: [main], tags: ["cac-*"] }
   pull_request:
 concurrency: { group: "ci-${{ github.ref }}", cancel-in-progress: true }
 permissions: { contents: read }
 jobs:
   backend:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
-    defaults: { run: { working-directory: backend } }
+    timeout-minutes: 40
     steps:
       - uses: actions/checkout@v5            # VERIFY BEFORE USE: current major on GitHub Marketplace
       - uses: astral-sh/setup-uv@v6          # VERIFY BEFORE USE: current major
       - run: uv python install 3.13
-      - run: uv sync --frozen --all-extras
-      - run: uv run ruff check . && uv run ruff format --check .
-      - run: uv run pytest -q -m "not live" --ignore=tests/api/test_db_contract.py
-      - run: uv run python -m fordcast replay-verify --all
-      - run: uv run python -m fordcast backtest --storm halloween-2013 --smoke --out "$RUNNER_TEMP/bt" --compare ../docs/results/results.json
-      - run: uv run mypy fordcast || echo "::warning::mypy findings (tracked, not blocking; §7.1)"
+      - run: uv sync --project backend --frozen --all-extras --all-groups && uv sync --project tools --frozen
+      - name: Fetch Storage-hosted data (sha256-checked against data/MANIFEST.json)
+        run: make data-fetch
+      - name: Backend lint
+        working-directory: backend
+        run: uv run ruff check . && uv run ruff format --check .
+      - name: Backend tests (unit, contract, API, no-lookahead + outage, truth isolation, banned words, parity, data integrity)
+        working-directory: backend
+        run: uv run pytest -q -m "not live" --ignore=tests/api/test_db_contract.py
+      - name: Golden replays (delays from data/latency/gauge_latency.json; never the live DB)
+        working-directory: backend
+        run: uv run python -m fordcast replay-verify --all
+      - name: Backtest smoke (first bundled storm; never a hard-coded id)
+        working-directory: backend
+        run: uv run python -m fordcast backtest --storm "$(jq -r '.storms[0].id' ../data/replays/index.json)" --smoke --out "$RUNNER_TEMP/bt" --compare ../docs/results/results.json
+      - name: Backtest check (full LOSO, exact compare with the committed results.json)
+        run: make backtest CHECK=1
+      - name: Hero rule check (select_hero.py reproduces results.json.hero and hero_by_storm)
+        run: uv run --project tools python tools/select_hero.py --check docs/results/results.json
+      - name: mypy (tracked, not blocking; §7.1)
+        working-directory: backend
+        run: uv run mypy fordcast || echo "::warning::mypy findings"
 
   db-contract:
     runs-on: ubuntu-latest
@@ -2948,7 +3220,7 @@ jobs:
         working-directory: backend
         env: { SUPABASE_LOCAL: "1" }
 
-  mobile:                                      # details owned by §36
+  mobile:                                      # details owned by §36.3
     runs-on: ubuntu-latest
     timeout-minutes: 20
     defaults: { run: { working-directory: mobile } }
@@ -2959,18 +3231,54 @@ jobs:
       - run: npm ci
       - run: npm run typecheck
       - run: npm run lint
-      - run: npm test -- --ci
+      - name: Jest (banned words + countdown guard, i18n parity, risk state, staleness, windows, replay frames, …)
+        run: npm test -- --ci
+      - name: Pin guard
+        run: node scripts/check-pins.mjs
+      - name: SDK-aligned versions
+        run: npx expo install --check
       - run: npx expo-doctor@latest
+      - name: No server secrets in the app (test files excluded; they build such strings by concatenation)
+        run: "! grep -rnE --exclude-dir=__tests__ 'sb_secret_|X-Api-Key|\\bORS_API_KEY\\b|\\bSTADIA_KEY\\b|EXPO_ACCESS_TOKEN' src app.config.ts eas.json"
+
+  docs-guards:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v5
+      - uses: astral-sh/setup-uv@v6
+      - run: uv python install 3.13
+      - run: uv sync --project backend --frozen --all-groups && uv sync --project tools --frozen
+      - name: No hand-typed metrics (README.md, submission/answers.md, mobile/src)
+        working-directory: backend
+        run: uv run pytest -q tests/test_no_hand_typed_metrics.py
+      - name: Claims are generated (docs/CLAIMS.md → app JSON + README splices)
+        run: make claims && git diff --exit-code
+      - name: App data is generated (make app-data is idempotent)
+        run: make app-data && git diff --exit-code
+      - name: Data manifest matches every git-tracked data file
+        run: uv run --project tools python tools/data_manifest.py --verify
+      - name: Cross-references resolve; no unresolved review notes
+        run: |
+          uv run --project tools python tools/check_xrefs.py docs/MASTER_PROMPT.md
+          ! grep -nE "NOTE TO [R]EVIEWER" docs/MASTER_PROMPT.md
+      - name: No student TODOs on a submission tag
+        if: startsWith(github.ref, 'refs/tags/')
+        run: "! grep -n 'TODO(student)' backend/fordcast/linking/travel_time.py backend/fordcast/model/baseline_rule.py backend/fordcast/scoring/metrics.py backend/fordcast/sources/base.py"
 
   repo-guards:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
-      - name: No legacy USGS endpoints
-        run: "! git grep -nE 'waterservices\\.usgs\\.gov|dataretrieval\\.nwis' -- . ':!*.md' ':!docs/**'"
-      - name: No secrets or real push tokens committed
-        run: "! git grep -nE 'sb_secret_[A-Za-z0-9]{8,}|ExponentPushToken\\[[A-Za-z0-9_-]{12,}\\]|hc-ping\\.com/[0-9a-f-]{36}' -- . ':!*.md'"
+      - name: No legacy USGS endpoints (the guard test builds its strings by concatenation and is excluded anyway)
+        run: "! git grep -nE 'water''services\\.usgs\\.gov|dataretrieval\\.nwis' -- . ':!*.md' ':!docs/**' ':!backend/tests/test_repo_guards.py'"
+      - name: No secrets or real push tokens committed (test files excluded)
+        run: "! git grep -nE 'sb_secret_[A-Za-z0-9]{8,}|ExponentPushToken\\[[A-Za-z0-9_-]{12,}\\]|hc-ping\\.com/[0-9a-f-]{36}' -- . ':!*.md' ':!backend/tests/**' ':!mobile/src/__tests__/**'"
 ```
+- `make data-fetch` needs no keys (public bucket). `docs-guards` needs no Parquet: `make app-data` reads only committed files.
+- `tools/data_manifest.py --verify` recomputes the sha256 of every git-tracked file under `data/` and fails on any mismatch with `data/MANIFEST.json` (no network). `tools/select_hero.py --check` recomputes the hero from the file's own `per_crossing` rows and fails if `hero`/`hero_by_storm` differ.
+- `--compare` (used by `make backtest CHECK=1`) ignores `generated_by.git_sha`, `hero` and `hero_by_storm`, because the fresh run happens before `select_hero.py`; the hero is checked by its own step.
+- **Repo-guard exclusions:** the greps skip Markdown and `docs/` (this prompt and the docs must be able to name what is banned) and the test files that have to mention the patterns. Those tests also assemble the literals by concatenation (`"water" + "services.usgs.gov"`, `'sb_' + 'secret_test'`), so they stay clean even without the exclusion. In the legacy-endpoint grep, the shell's `'water''services…'` adjacent-quote form keeps the workflow file itself from containing the host name.
 `.github/workflows/tick-backup.yml` (watchdog; primary clock is pg_cron):
 ```yaml
 name: tick-backup
@@ -3010,24 +3318,26 @@ jobs:
       - uses: actions/checkout@v5
       - uses: astral-sh/setup-uv@v6
       - run: uv python install 3.13
-      - run: uv sync --frozen --all-extras
+      - run: uv sync --frozen --all-extras && uv sync --project ../tools --frozen
       - run: uv run pytest -q -m live
         env:
           USGS_API_KEY: "${{ secrets.USGS_API_KEY }}"
           EXPO_ACCESS_TOKEN: "${{ secrets.EXPO_ACCESS_TOKEN }}"
           PROJECT_CONTACT_EMAIL: "${{ secrets.PROJECT_CONTACT_EMAIL }}"
+      - run: make -C .. data-fetch                # Storage-hosted Parquet by data/MANIFEST.json
       - run: uv run python -m fordcast replay-verify --all
       - name: Heartbeat
         if: success()
         run: curl -fsS "${{ secrets.HC_NIGHTLY_URL }}" --max-time 10 || true
 ```
-- `replay-verify` and `backtest` download any storm Parquet that lives in Storage (listed with its public URL and sha256 in `data/MANIFEST.json`), verify the sha256, and cache it under `data/storms/<id>/`. A hash mismatch fails the job.
+- Storm Parquet files that live in Storage are fetched **before** `replay-verify` and the backtest by `make data-fetch` (`tools/data_manifest.py --download`, §17.1): each `storage` entry of `data/MANIFEST.json` is downloaded from its public URL, sha256-checked and cached under `data/storms/<id>/`. A hash mismatch fails the job. `replay-verify` and `backtest` themselves never download anything; they fail with "run make data-fetch" if a file is missing.
+- The secrets these workflows read (`API_BASE`, `TICK_SECRET`, `USGS_API_KEY`, `EXPO_ACCESS_TOKEN`, `PROJECT_CONTACT_EMAIL`, `HC_NIGHTLY_URL`) are all in the §24.2 inventory.
 - `0004_cron.sql` needs pg_cron/pg_net. If the local Supabase stack lacks them, the DB-contract job skips the cron statements (guarded `do $$ … $$` block with `if exists (select 1 from pg_available_extensions where name = 'pg_cron')`; VERIFY on the CLI version).
 - Scheduled workflows in a public repo are auto-disabled after **60 days without repository activity** `[V]`. The commit plan in §20.6/§43 prevents this.
 - Standard GitHub-hosted runners are free for public repos `[V]`.
 
 ### 24.10 Done when (F123 backend part, F26, F27 privacy)
-- [ ] `ci.yml` is green on `main` (all four jobs); `tick-backup.yml` and `nightly.yml` have run successfully at least once.
-- [ ] The secrets inventory matches Render, GitHub and Vault (a checklist in `docs/decisions/verifications.md`, names only).
-- [ ] The log-privacy test passes, and a manual check of Render logs after a route request shows no coordinates.
-- [ ] `PRIVACY.md`/`PRIVACY.es.md` match §24.3 (Part E §40 checks wording).
+- [ ] `ci.yml` is green on `main` (all five jobs: `backend`, `db-contract`, `mobile`, `docs-guards`, `repo-guards`), including every gate in the §24.9 map; `tick-backup.yml` and `nightly.yml` have run successfully at least once.
+- [ ] The secrets inventory (§24.2 = A §1.9) matches Render, GitHub Actions, Supabase Vault and EAS (a checklist in `docs/decisions/verifications.md`, names only).
+- [ ] The log-privacy test passes, and a manual check of Render logs after a route request shows no coordinates; a search request log shows no coordinates at all.
+- [ ] `docs/privacy/index.md` (EN + ES) follows the §24.3 outline and matches the data map; it is linked from Settings → Privacy and the README (Part E §40 checks wording).

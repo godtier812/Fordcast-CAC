@@ -895,7 +895,7 @@ def evaluate(crossing: Crossing, links: Sequence[Link], series: Mapping[str, Seq
 | `trigger_stage_ft`, `watch_stage_ft`, `baseline_stage_ft` | learned | §18.4 |
 | `lag_min`, `lag_p25_min`, `lag_p75_min` | learned | §18.3 |
 | `min_rise_ft_30m` (AVOID) | 0.10 ft | §18.4 |
-| WATCH rise threshold | 0.20 ft / 30 min | backend.md §4.7 |
+| WATCH rise threshold | 0.20 ft / 30 min | backend.md section 4.7 |
 | Transit grace | `lag_p75 + 30` min | this section |
 | Horizon | 90 min | product promise (~90 min) |
 | `stale_after_min` | per gauge, 30–120 (default 60; in replay never below the assumed delay + 20, §18.9) | §16.2, §18.9 |
@@ -934,7 +934,7 @@ Examples: (10, 20) → [0,30]; (16, 70) → [15,60]; (40, 45) → [30,60]; (95, 
 
 - The **only** combination logic is `model/combine.py::resolve_raw_state` exactly as written in **§3.3** (official closed → `closed`; water at road → `closed`; tier C → `unknown`/`NO_UPSTREAM_GAUGE`; all stale → `unknown`/`DATA_STALE`; else max(rule, ML); official caution lifts to at least `watch`; official open never lowers).
 - **Official freshness** (`is_fresh_official`): a feed record is fresh if `fetched_at ≥ now − 15 min` **and** `source_updated_at` (if given) is not older than 24 h. A `manual` record is fresh while `expires_at > now` (default `expires_at = set_at + 2 h`; max 24 h).
-- **Official source lost while CLOSED:** if the tracker's `closed_source = 'official'` and that crossing's official record is no longer fresh, the state machine forces `unknown` (reason `DATA_STALE{source}`), shown as "Unknown · last known: Closed". It never quietly steps down from an official closure it can no longer see (§18.8).
+- **Official source lost while CLOSED:** if the tracker's `closed_source = 'official'` and that crossing's official record is no longer fresh, the state machine forces `unknown` (reason `DATA_STALE` with `source` set, rendered by `reason.DATA_STALE_source`), shown with `state.unknown.last_known` ("Last known: Closed · {{age}}"). It never quietly steps down from an official closure it can no longer see (§18.8).
 - **NWS alerts never change a state** (§16.7).
 - **Replay:** `ReplayOfficial` returns historic official records only if timestamped ones exist (none are expected), else nothing. `assumptions.official_status` says so (§19.11).
 
@@ -1193,7 +1193,7 @@ The "X minutes earlier" example in the app, README and video is chosen by code, 
 2. Report weak numbers as they are. "The simple rule nearly matched ML" is a valid Q4 finding.
 3. Proxy labels, censored onsets, `unknown_at_onset` counts, documented outages and data-delay assumptions are always reported next to the numbers they affect.
 4. The example (hero) is always shown together with the median across storms (`replay.honesty`).
-5. Say "I'm not aware of a published system that forecasts low-water-crossing overtopping per crossing from upstream gauges", never "first ever". The literature review in backend.md §4.1 is the source.
+5. Say "I'm not aware of a published system that forecasts low-water-crossing overtopping per crossing from upstream gauges", never "first ever". The literature review in backend.md section 4.1 is the source.
 6. Tier-B "Estimated" crossings never enter the headline.
 
 ---
@@ -1543,13 +1543,13 @@ Also add a **hypothesis property test**: for random cut times within a storm, `f
 | Field | Type | Meaning |
 |---|---|---|
 | `schema` | `"fordcast.replay.v1"` | version |
-| `storm` | object | `id, name_en, name_es, start, end, tz, headline_event, description_en?, description_es?` |
+| `storm` | object | `id, name_en, name_es, start, end, tz, headline_event \| null` (null when the storm has no headline moment, e.g. a control storm)`, description_en?, description_es?` |
 | `step_s` | 300 | tick step |
 | `assumptions` | object | `data_delay_min` (number: the median delay over the storm's linked gauges, shown in the header via `replay.assumes_delay`), `data_delay_min_by_gauge: {gauge_id: min}`, `default_delay_min: 60`, `delays_source: "data/latency/gauge_latency.json"`, `outages: [{site, start, end, source}]` (copied from `meta.toml`; `[]` when none), `official_status: "not available for this storm"`, `values: "approved archive values, not the provisional values live at the time"`, `params: "learned without this storm (leave-one-storm-out)"`, `rain: null \| "MRMS …"` |
 | `pipeline` | object | `git_sha, model_version, data_sha256, latency_sha256, results_sha256, generated_at` (**excluded** from `content_sha256`) |
 | `gauges[]` | array | `id, name, lon, lat, t0, dt_s (900), stage_ft[]` (**`null` only where the archive has no value**, a true gap), `avail_delay_s`, `outages: [{start, end}]` (this gauge's documented transmission outages; `[]` when none), `trigger_ft \| null, watch_ft \| null` (from the gauge's primary link, for the sparkline lines), `nws_categories {action, minor, moderate, major} \| null`. **Visibility rule for the sparkline** (the same rule as §19.4): the sample at time `t` may be drawn at `simT` only if `t + avail_delay_s ≤ simT` **and**, when `t` lies inside one of the gauge's `outages` (`start ≤ t < end`), `simT ≥ end`. The 2013 US 183 samples therefore exist in the file but stay hidden (hatched "No data" band) until the outage end. |
 | `crossings[]` | array | `id, name, name_es?, lon, lat, tier, initial_state, overtop_stage_ft?, target_gauge_id?` |
-| `links[]` | array | `crossing_id, gauge_id, relation, is_primary, tau_min, tau_p25, tau_p75, trigger_ft, watch_ft, channel_dist_km, flowline [[lon,lat],…]` (simplified) |
+| `links[]` | array | `crossing_id, gauge_id, relation, is_primary, tau_min, tau_p25, tau_p75, tau_lo_min, tau_hi_min, trigger_ft, watch_ft, channel_dist_km, flowline [[lon,lat],…]` (simplified). `tau_lo_min`/`tau_hi_min` are the §18.10 rounded 15-min range (same `explain.py` helper as the reason object) and the **only** travel time the app renders; `tau_min`/`tau_p25`/`tau_p75` drive the pulse math and the debug screen only |
 | `events[]` | array, sorted by `t` | **state changes only**: `t, crossing_id, state, window ([lo,hi] \| null), reasons[] (§18.10), p ([p30,p60,p90] \| null), held (bool)` |
 | `pulses[]` | array | for the water-travel animation: `crossing_id, gauge_id, t_trigger, tau_min` (one per AVOID-causing upcrossing) |
 | `alerts[]` (optional, Stretch) | array | NWS: `id, event, sent, expires, damage_threat?, headline_en` |
@@ -1586,7 +1586,7 @@ Also add a **hypothesis property test**: for random cut times within a storm, `f
   "crossings": [{"id": "atx-081", "name": "…", "lon": -97.8, "lat": 30.2, "tier": "A", "initial_state": "no_rise",
                  "overtop_stage_ft": 17.0, "target_gauge_id": "USGS-08159000"}],
   "links": [{"crossing_id": "atx-081", "gauge_id": "USGS-08158700", "relation": "upstream", "is_primary": true,
-             "tau_min": 40, "tau_p25": 35, "tau_p75": 46, "trigger_ft": 9.0, "watch_ft": 6.4,
+             "tau_min": 40, "tau_p25": 35, "tau_p75": 46, "tau_lo_min": 30, "tau_hi_min": 60, "trigger_ft": 9.0, "watch_ft": 6.4,
              "channel_dist_km": 38.2, "flowline": [[-98.0, 30.1], [-97.9, 30.15], [-97.8, 30.2]]}],
   "events": [{"t": "2013-10-31T08:10:00Z", "crossing_id": "atx-081", "state": "watch", "window": null,
               "reasons": [{"code": "UPSTREAM_RISING", "gauge_id": "USGS-08158700", "rise_ft_30m": 2.1}],
@@ -2608,7 +2608,7 @@ where (rc.state, rc.window_lo_min, rc.window_hi_min, rc.official, rc.held, rc.re
 | `PUT /v1/devices/{id}` | token, locale, toggles, quiet hours (auth) | MVP | `no-store` | 20/min |
 | `PUT /v1/devices/{id}/subscriptions` | replace the crossing-ID set (auth) | MVP | `no-store` | 20/min |
 | `PUT /v1/devices/{id}/mutes` | mute a crossing for 1 h (auth) | Stretch | `no-store` | 20/min |
-| `DELETE /v1/devices/{id}` | **forget me** (cascade) (auth) | MVP | `no-store` | 5/min |
+| `DELETE /v1/devices/{id}` | **"Delete my alert data"** (cascade) (auth) | MVP | `no-store` | 5/min |
 | `POST /internal/tick` | the 5-min job (`X-Tick-Secret`) | MVP | `no-store` | — |
 | `POST /internal/official` | manual official status (`X-Admin-Secret`) | MVP | `no-store` | — |
 | `POST /internal/push/test` | test push to one device (`X-Admin-Secret`) | MVP | `no-store` | — |
@@ -2671,7 +2671,7 @@ Internal endpoints return **404** (not 401) when the secret is missing or wrong,
 - **`GET /v1/meta/freshness`** → `{"as_of", "data_status", "last_tick_ok_at", "ticks_last_hour": 12, "gauges": [{"id", "latest_obs_at", "age_min", "stale", "stale_after_min", "latency_p75_min"}], "sources": {"usgs": {"status": "ok"|"degraded"|"down", "last_ok_at"}, "official": {…, "kind": "manual"|"atxfloods"}, "nws": {…}, "push": {"last_send_at", "receipt_errors_24h"}}}`. Feeds the Data sources status screen (F105).
 - **`GET /v1/risk/current`** → the last snapshot document held in memory (reloaded from Storage `current.json` on cold start), with `data_status` recomputed at read time. ETag/304.
 - **`GET /v1/crossings?bbox=minLon,minLat,maxLon,maxLat&state=avoid,closed&tier=A,B&format=geojson|json`** → GeoJSON `FeatureCollection` whose properties are the §17.2 static fields plus `state, window, tier, changed_at` (or a JSON array with `format=json`). Header `X-Inventory-Version`. `bbox` must lie inside the Texas bbox (§22.9).
-- **`GET /v1/crossings/{id}`** → `{id, name, name_es, name_spoken_en, name_spoken_es, road, creek, jurisdiction, lon, lat, tier, snap, overtop_stage_ft, truth_quality, risk: <snapshot crossing object>, official: {status, source, as_of, note?} | null, official_link: "https://www.atxfloods.com/crossings", links: [{gauge_id, name, relation, is_primary, channel_dist_km, tau_min, tau_p25, tau_p75, trigger_ft, watch_ft, params_source, nws_lid, nws_categories, latest: {obs_at, value_ft, rise_ft_30m, stale}}], model_version, sources: [{source, ref}], as_of, disclaimer_key}`. A test crossing returns 404.
+- **`GET /v1/crossings/{id}`** → `{id, name, name_es, name_spoken_en, name_spoken_es, road, creek, jurisdiction, lon, lat, tier, snap, overtop_stage_ft, truth_quality, risk: <snapshot crossing object>, official: {status, source, as_of, note?} | null, official_link: "https://www.atxfloods.com/crossings", links: [{gauge_id, name, relation, is_primary, channel_dist_km, tau_min, tau_p25, tau_p75, tau_lo_min, tau_hi_min, trigger_ft, watch_ft, params_source, nws_lid, nws_categories, latest: {obs_at, value_ft, rise_ft_30m, stale}}], model_version, sources: [{source, ref}], as_of, disclaimer_key}`. A test crossing returns 404. `tau_lo_min`/`tau_hi_min` are the §18.10 rounded range (null exactly when `tau_min` is null); the exact `tau_min`/`tau_p25`/`tau_p75` are for the debug screen only (F107).
 - **`GET /v1/crossings/{id}/history?hours=24`** (1–168) → `{crossing_id, from, to, transitions: [{at, from, to, window, reasons}], keyframes: [{as_of, state}]}` (Stretch F47).
 - **`GET /v1/gauges/{id}/series?param=00065&hours=6&crossing_id=atx-081`** (hours 1–72) → `{"gauge_id", "param": "00065", "unit": "ft", "points": [["2026-10-14T17:45:00Z", 4.12], …], "approval": "P", "stale": false, "stale_after_min": 30, "nws_categories": {…}|null, "trigger_ft": 9.0, "watch_ft": 6.4, "as_of"}`. `trigger_ft`/`watch_ft` appear only when `crossing_id` names a linked crossing.
 - **`GET /v1/replays`** → the `index.json` shape (§19.14) from `public.storms`. **`GET /v1/replays/{id}`** → `{id, name_en, name_es, start, end, metrics, model_version, timeline_sha256, content_sha256, file_sha256, bytes_gz, timeline_url}`. **`/timeline`** → `302` to `{SUPABASE_URL}/storage/v1/object/public/fordcast-public/replays/<id>.v1.<sha12>.json.gz`.
@@ -2685,7 +2685,7 @@ Internal endpoints return **404** (not 401) when the secret is missing or wrong,
 {"origin": [-97.7890, 30.3600], "destination": [-97.7431, 30.2672], "lang": "en", "want_detour": true,
  "replay_at": null, "storm_id": null}
 ```
-`replay_at` (F54; ISO time) routes against Storm Replay states (§19.16). `storm_id` is optional: if omitted, the server picks the bundled storm whose window contains `replay_at`, or returns `422` if none does. Such a response has `mode: "replay"` and is never cached with live results.
+`replay_at` (F54; ISO time) routes against Storm Replay states (§19.16). `storm_id` is optional: if omitted, the server picks the bundled storm whose window contains `replay_at`, or returns `422` if none does. Such a response has `mode: "replay"` and is never cached with live results. In a replay response `risk_as_of` = `replay_at`, `risk_seq` = `0` and `data_status` = `"live"` (the bundled timeline is complete; data gaps inside it already appear as `unknown` states). `data_status` never takes the value `replay`; `mode` carries that, and the app banners the result REPLAY (D §32.2).
 
 **Response**
 ```json
@@ -3017,7 +3017,7 @@ This table is an **exact copy of A §1.9** (A §1.9 is the source; if one change
 | `EXPO_PUBLIC_SUPABASE_URL`, `EXPO_PUBLIC_SUPABASE_KEY` (`sb_publishable_…`), `EXPO_PUBLIC_API_BASE` | public by design | `mobile/.env` (local) + EAS environment variables (plaintext) | the app | a changed value needs a new build or an EAS Update |
 | `EXPO_PUBLIC_DEMO_MODE` | public flag | `eas.json` profile `env` (`0`; `1` only in the `demo` profile) | DEMO_MODE (F83) | a build check fails if it is `1` in `preview`/`production` |
 | `EXPO_PUBLIC_SENTRY_DSN` | public (optional) | `mobile/.env` + EAS env (plaintext) | app crash reports (F125) | Sentry project settings |
-| `FORDCAST_IOS_PAID`, `FORDCAST_SENTRY` | build flags (not secret) | EAS environment variables / your shell | `app.config.ts` plugin switches (§27.3) | — |
+| `FORDCAST_IOS_PAID`, `FORDCAST_SENTRY`, `SENTRY_DISABLE_AUTO_UPLOAD` (`true`, only while Sentry is installed, §25.4) | build flags (not secret) | EAS environment variables / your shell | `app.config.ts` plugin switches (§27.3); the Sentry build skips its source-map upload | — |
 
 Non-secret backend settings (`ENVIRONMENT`, `USGS_OGC_BASE`, `USGS_BBOX`, `NWS_UGC`, feature toggles, …) are listed in §20.12. There is **no** `SENTRY_AUTH_TOKEN` anywhere (§1.2 D1). `.gitignore` covers `.env*` (except `*.example`), `google-services.json`, `GoogleService-Info.plist`, `*.p8`, `*.p12`, `*.jks`, `*.keystore` and any service-account `*.json` key file (A §1.9, A §5.1).
 
@@ -3164,7 +3164,7 @@ The mobile job (typecheck, lint, Jest with the copy/parity/state/staleness/windo
 | Hand-typed-metric check (README, `submission/answers.md`, `mobile/src`) | `docs-guards` · "No hand-typed metrics" |
 | `make claims && git diff --exit-code` | `docs-guards` · "Claims are generated" |
 | `make app-data` idempotent; data manifest matches | `docs-guards` |
-| Cross-references and no unresolved review notes in `docs/MASTER_PROMPT.md` | `docs-guards` |
+| Cross-references and no unresolved review notes in `docs/master-prompt/` | `docs-guards` |
 | No `TODO(student)` in the four core files on a submission tag | `docs-guards` (tags only) |
 | Legacy USGS endpoints, committed secrets/tokens | `repo-guards` |
 
@@ -3260,8 +3260,8 @@ jobs:
         run: uv run --project tools python tools/data_manifest.py --verify
       - name: Cross-references resolve; no unresolved review notes
         run: |
-          uv run --project tools python tools/check_xrefs.py docs/MASTER_PROMPT.md
-          ! grep -nE "NOTE TO [R]EVIEWER" docs/MASTER_PROMPT.md
+          uv run --project tools python tools/check_xrefs.py docs/master-prompt
+          ! grep -rnE "NOTE TO [R]EVIEWER" docs/master-prompt/
       - name: No student TODOs on a submission tag
         if: startsWith(github.ref, 'refs/tags/')
         run: "! grep -n 'TODO(student)' backend/fordcast/linking/travel_time.py backend/fordcast/model/baseline_rule.py backend/fordcast/scoring/metrics.py backend/fordcast/sources/base.py"

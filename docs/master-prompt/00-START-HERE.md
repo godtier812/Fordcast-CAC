@@ -27,14 +27,14 @@
    For later sessions: *"Re-read 00-START-HERE.md, 01-A, and the parts for today's §6 tasks, then continue from §6 Day N."*
 3. **Don't cherry-pick sections.** The sections cross-reference each other (§ numbers), and the safety rules in §3 apply everywhere.
 4. **Work in order.** The agent builds **[MVP] → [Stretch] → [Roadmap]** following the §6 day-by-day plan. Every feature is listed once in §4 (F1–F128), and nothing is claimed until its test passes (§44 Claims Ledger).
-5. **Expect review checkpoints:** an end-of-day gate for every day in §6, and pauses at the four "student-owned" core files (§39).
+5. **Expect review checkpoints:** an end-of-day gate for every day in §6, and pauses at the four "student-owned" core files (§1.8, §39).
 
 ### What *you* (the student) must do — the agent can't do these
 Calendar: Day 0 = Wed Oct 14 · Day 10 = Sat Oct 24 · **submit Day 11 = Sun Oct 25** · deadline Mon Oct 26, 12:00 PM ET (buffer only). §6 owns the schedule; this table mirrors it.
 
 | When | Task | § |
 |---|---|---|
-| Day 0 | Answer the Step 0 questions (your devices, Mac, whether a parent can pay for Apple, optional modules); confirm your district at house.gov with your full address | §1.2, §38 |
+| Day 0 | Answer the Step 0 questions (your devices, Mac, whether a parent can pay for Apple, icon/splash approval). Object to any of the decided defaults D1–D10 (for example which optional native modules go in the first build) if you disagree; confirm your district at house.gov with your full address | §1.2, §38 |
 | Day 0 | Create accounts (a parent owns any that require 18+ or a card): **Expo**, **Supabase** (project + public bucket `fordcast-public`), **Render** (web service from the repo), **GitHub** (repo + Actions secrets), **USGS Water Data API key** (free, instant: `https://api.waterdata.usgs.gov/signup/`), **OpenRouteService**, **Firebase** (FCM V1 key + `google-services.json` → EAS), **healthchecks.io** (2 checks), **UptimeRobot**, **Sentry**, **YouTube** (video). Optional: Stadia Maps, Apple Developer ($99), Socrata app token | §1.9, §24.2, §26 |
 | Day 0 | Approve the app icon and splash concept | §15 |
 | Day 0–1 | Look at ATXfloods in browser devtools and write down what you see. Don't scrape it; ask permission first | §16.20 (S10) |
@@ -76,7 +76,7 @@ This prompt contains **every** feature, as you asked. Twelve days is enough for 
 | Forecast | Learned travel time (cross-correlation) + trigger-stage **baseline rule** (MVP) → calibrated gradient-boosted classifier (Stretch, only if it beats the rule) | Explainable, honest, testable | §18 |
 | Proof | **Storm Replay** of real historic storms (Halloween 2013, Memorial Day 2015, Halloween 2015, Oct 2018, July 2025) with a data-arrival latency model, modeled gauge outages, and no-lookahead tests. Timelines are bundled in the app (they work in airplane mode). The headline number comes from a pre-registered rule (median, never best case) | Real numbers for the video; demo can't break; no cherry-picking | §19, §33 |
 | Backend | **Python 3.13 + FastAPI on Render**; **Supabase** (Postgres + PostGIS + Realtime + Storage + pg_cron clock); static snapshot file as the primary read path | Free/cheap, stays alive through Dec 31 | §20–§22 |
-| Alerts | Expo push keyed only by **crossing IDs the user saved** (computed on the phone; no location or radius ever reaches the server). "Near me" alerts use on-phone geofences (iOS 20-region rotation) + local notifications | Privacy + iOS limits | §23, §30–§31 |
+| Alerts | Expo push keyed only by **crossing IDs the user saved** (computed on the phone; no location or radius ever reaches the server). "Near me" alerts use on-phone geofences (Stretch F70: iOS 19 crossings + 1 re-rank region, Android 60 by default) + local notifications; the MVP warns while the app is open and in Drive Mode | Privacy + iOS limits | §23, §30–§31 |
 | Routing | **OpenRouteService** avoid-polygons via the backend; hand-off to Google Maps / Apple Maps / Waze | Don't build a router; drivers keep their nav app | §32 |
 | Accessibility | WCAG 2.2 AA + Apple's 7 accessibility-label criteria; VoiceOver/TalkBack; Spanish (es-US, usted); Drive Mode follows NHTSA distraction limits | Required for a public-safety app; strong judging signal | §34–§35 |
 | Integrity | `AI_USE.md` disclosure; you write or co-write the 4 core files; explain-back docs; Claims Ledger | CAC judges score *your* coding; finalists get Q&A | §39, §44 |

@@ -1,6 +1,6 @@
 # PART B — Design System, Visual Specification & Screen Specs (§8–§15)
 
-> File 1 of 2: §8–§11 here; §12–§15 continue in `part-B.2.md`.
+> File 1 of 2: §8–§11 here; §12–§15 continue in `03-B2-templates-screens.md`.
 
 > **How to read Part B.** This part is the complete visual/UX contract for the FordCast phone app. You (the coding agent) MUST implement screens exactly as specified here unless a § in Part D proves a platform limit, in which case you implement the documented fallback and record it in `docs/design-deviations.md`. Every requirement carries a tier tag — **[MVP]** must ship by Oct 25, **[Stretch]** only after all MVP items pass §7, **[Roadmap]** is shown to users only as "Planned" (never faked). Anything marked **VERIFY BEFORE USE** must be checked in `node_modules/**/*.d.ts` or on a real device before you rely on it; the stated fallback is what you ship if verification fails.
 >
@@ -48,7 +48,7 @@
 ### 8.3 iOS 26/27 look: Liquid Glass on chrome only [Stretch F41; MVP = solid surfaces on both platforms; iOS = "compiles, untested" unless a paid account/Mac exists, §26]
 
 0. **[MVP] Solid chrome everywhere.** In MVP every floating chrome element (gear, legend, layers, locate, list, FreshnessPill, Replay scrubber chrome, and the JS replay mini-bar once it ships [Stretch]) renders the **solid tonal fallback** on both platforms: `theme.glassFallback` background + 1 pt `border.subtle` + the floating shadow (§10.7, §10.8). `GlassSurface`/`GlassIconButton` exist from Day 1 so call sites never change, but their gate below is hard-wired off by the flag `features.glassChrome = false` in `src/lib/flags.ts` (§28.10). The native tab bar and native `formSheet` chrome keep whatever the OS draws (on iOS 26 that is automatic system glass, which FordCast neither adds nor removes). Rules 1–4 below apply once **[Stretch F41]** flips `features.glassChrome` to `true` after an iOS 26 device test (Lane B, §26).
-1. **Glass is for controls and navigation; content is opaque.** Glass MAY be used only on: the NativeTabs tab bar (automatic), floating icon buttons (gear, legend, layers, locate, list), the freshness capsule, the Replay scrubber chrome, the bottom accessory mini-player, and native `formSheet` chrome at partial height (automatic). Status cards, sheet bodies, lists, alert rows and Drive Mode MUST be opaque `surface.1`/`surface.2`.
+1. **Glass is for controls and navigation; content is opaque.** Glass MAY be used only on: the NativeTabs tab bar (automatic), floating icon buttons (gear, legend, layers, locate, list), the FreshnessPill, the Replay scrubber chrome, the bottom accessory mini-player, and native `formSheet` chrome at partial height (automatic). Status cards, sheet bodies, lists, alert rows and Drive Mode MUST be opaque `surface.1`/`surface.2`.
 2. **Never glass on glass.** Adjacent glass buttons go inside one `GlassContainer spacing={8}`.
 3. **Gate every glass surface** (MVP ships this code with `features.glassChrome = false`):
    ```ts
@@ -359,7 +359,7 @@ C = dict(bg="#0B1320", res="#0F1A2B", park="#0F1F24", water="#0F2236", waterway=
          building="#121C2E", minor="#1A2638", major="#24344D", motorway="#31445F", casing="#0B1320",
          rail="#1A2436", boundary="#2A3A55", lroad="#8A97AB", lplace="#A9B4C4", lwater="#5F87A3")
 ```
-Palette authority: research/design.md §A.4 is canonical (`map.land #0B1320`, route `#5AA9FF`). Reuse research/maps.md §4.3's generator code, but **not** the research/maps.md §4.2 palette (do not use its `#0E1726` map background or `#7AA2FF` route).
+Palette authority: research/design.md §A.4 is canonical (`map.land #0B1320`, route `#5AA9FF`). Reuse research/maps.md section 4.3's generator code, but **not** the research/maps.md section 4.2 palette (do not use its `#0E1726` map background or `#7AA2FF` route).
 
 **FordCast overlay layers** (drawn above the basemap; §29 owns layer order and code):
 
@@ -778,7 +778,7 @@ Never use `adjustsFontSizeToFit` on status words. Crossing names MAY truncate to
 
 ### 10.6 Radii [MVP]
 
-`xs 6` tags/micro-labels · `sm 10` inputs, search field · `md 14` small cards, tiles · `lg 20` cards, banners · `xl 24` Map Home sheet top corners (iOS) and status cards · `sheet` = system concentric on iOS formSheets / **28** on Android sheets · `pill 999` buttons, chips, freshness capsule.
+`xs 6` tags/micro-labels · `sm 10` inputs, search field · `md 14` small cards, tiles · `lg 20` cards, banners · `xl 24` Map Home sheet top corners (iOS) and status cards · `sheet` = system concentric on iOS formSheets / **28** on Android sheets · `pill 999` buttons, chips, FreshnessPill.
 
 ### 10.7 Elevation & shadows [MVP]
 

@@ -7,7 +7,7 @@ import { GAUGES } from './data';
 // ---------- local notification plan (A §3.8 policy, demo-adapted) ----------
 export type PlannedNotification = {
   t: number; crossingId: string; kind: 'risk' | 'update'; state: Wire; window: [number, number] | null;
-  titleKey: string; bodyKey: string; interruptionLevel: 'active' | 'passive';
+  interruptionLevel: 'active' | 'passive';                    // copy is built by notify.ts buildContent()
 };
 export function planNotifications(cmp: Compiled): PlannedNotification[] {
   const { crossingIds, watchAlerts } = cmp.scenario.subscriptions;
@@ -26,10 +26,7 @@ export function planNotifications(cmp: Compiled): PlannedNotification[] {
     if (perHour.length >= 3) continue;                                                // ≤ 3 per device per hour (summary omitted in demo)
     perHour.push(e.t); lastByLevel.set(k, e.t);
     if (isRisk) escalated.add(e.crossingId); else escalated.delete(e.crossingId);
-    const now = e.state === 'avoid' && (!e.window || e.window[0] === 0);
     out.push({ t: e.t, crossingId: e.crossingId, kind: isRisk ? 'risk' : 'update', state: e.state, window: e.window,
-      titleKey: isRisk ? `demo.notify.${e.state}.title` : 'demo.notify.update.title',
-      bodyKey: isRisk ? (now ? 'demo.notify.avoid.body_now' : e.state === 'watch' && !e.window ? 'demo.notify.watch.body_nowindow' : `demo.notify.${e.state}.body`) : 'demo.notify.update.body',
       interruptionLevel: isRisk ? 'active' : 'passive' });
   }
   return out;

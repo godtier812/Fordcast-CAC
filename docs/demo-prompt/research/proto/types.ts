@@ -25,8 +25,12 @@ export type Link = {
 };
 
 export type Crossing = {
-  id: string; name: string; nameEs: string; lon: number; lat: number; tier: Tier;
-  creek: string | null; creekVerified: boolean;
+  id: string;
+  name: string;                       // VERBATIM from the source dataset, both languages (never translated, never invented)
+  address: string;                    // dataset humanAddress → peek subtitle
+  spoken?: { en: string; es: string }; // TTS/VoiceOver form when the name has symbols/abbreviations (A §3.10 rule 2)
+  lon: number; lat: number; tier: Tier;
+  creek: string | null; creekVerified: boolean;   // verified = the creek is named in the dataset record itself
   targetGaugeId?: string | null; overtopStageFt?: number | null;   // water-at-road sensor (rare in demo)
   source: { dataset: 'ctxfloods-legacyCrossings'; communityId: number; legacyId: number; address: string };
 };

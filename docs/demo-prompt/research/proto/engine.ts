@@ -138,7 +138,15 @@ function enter(tr: Tracker, raw: RawState, now: number): Tracker {
     triggerGaugeId: raw.triggerGaugeId ?? tr.triggerGaugeId, held: false,
     lastKnownState: known ? raw.state : tr.lastKnownState, lastKnownAt: known ? now : tr.lastKnownAt };
 }
+/** C §18.8 T7 note: CLOSURE_LIFTED stays on the next states until they reach no_rise. */
 export function step(tr: Tracker, raw: RawState, now: number, ctx: StepCtx): Tracker {
+  const next = stepCore(tr, raw, now, ctx);
+  const lifted = tr.reasons.find((r) => r.code === 'CLOSURE_LIFTED');
+  if (lifted && (next.state === 'watch' || next.state === 'avoid') && !next.reasons.some((r) => r.code === 'CLOSURE_LIFTED'))
+    return { ...next, reasons: [lifted, ...next.reasons] };
+  return next;
+}
+function stepCore(tr: Tracker, raw: RawState, now: number, ctx: StepCtx): Tracker {
   if (raw.state === 'unknown' || (tr.closedSource === 'official' && tr.state === 'closed' && !ctx.officialFresh)) {   // T1
     const wasKnown = tr.state !== 'unknown';
     return { ...tr, state: 'unknown', since: wasKnown ? now : tr.since, calmTicks: 0,

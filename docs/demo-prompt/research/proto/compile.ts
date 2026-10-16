@@ -17,7 +17,8 @@ export type DemoScenarioV1 = {
   truth: TruthSpec[];
   subscriptions: { crossingIds: string[]; watchAlerts: boolean };
   keyframes: Keyframe[];
-  drive?: { route: 'commute' | 'detour'; startSimMin: number; cruiseMps: number; accelS: number };
+  drive?: { route: 'commute' | 'detour'; startSimMin: number; cruiseMps: number; accelS: number; takeDetourAtBranch?: boolean };
+  subtitle?: { en: string; es: string };
 };
 export type Keyframe = { id: string; label: string; at:
   | { kind: 'min'; t: number }
@@ -66,14 +67,17 @@ export function compileScenario(s: DemoScenarioV1) {
   }
   // ---- results (truth used ONLY here; never fed back into states) ----
   const onsets = new Map(s.truth.map((tr) => [tr.crossingId, truthOnset(tr, fns, 0, s.durationMin)]));
-  const leads: { crossingId: string; onset: number; firstAlertAt: number; leadMin: number }[] = [];
+  const leads: { crossingId: string; onset: number; firstAlertAt: number; leadMin: number; firstWindow: [number, number] | null; inFirstWindow: boolean }[] = [];
   for (const [cid, onset] of onsets) {
     if (onset == null) continue;
+    if (CROSSINGS.find((c) => c.id === cid)?.tier !== 'A') continue;          // C §17.13: tier B never counts toward leads/hero
     const evs = [initial.get(cid)!, ...events.filter((e) => e.crossingId === cid)];
     let episodeStart: number | null = null;                                   // AVOID/CLOSED episode active at the onset
     for (const e of evs) { if (e.t > onset) break; const hot = e.state === 'avoid' || e.state === 'closed';
       if (hot && episodeStart == null) episodeStart = e.t; if (!hot && e.state !== 'unknown') episodeStart = null; }
-    if (episodeStart != null) leads.push({ crossingId: cid, onset, firstAlertAt: episodeStart, leadMin: Math.floor((onset - episodeStart) / 5) * 5 });
+    if (episodeStart != null) { const w = evs.find((e) => e.t === episodeStart)?.window ?? null;
+      leads.push({ crossingId: cid, onset, firstAlertAt: episodeStart, leadMin: Math.floor((onset - episodeStart) / 5) * 5, firstWindow: w,
+        inFirstWindow: !!w && onset - episodeStart >= w[0] && onset - episodeStart <= w[1] }); }
   }
   const sorted = [...leads].sort((a, b) => a.leadMin - b.leadMin);
   const median = sorted.length ? sorted[Math.floor((sorted.length - 1) / 2)]!.leadMin : null;   // lower median

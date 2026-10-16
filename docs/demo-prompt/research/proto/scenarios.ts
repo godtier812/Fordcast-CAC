@@ -3,12 +3,12 @@ import type { DemoScenarioV1 } from './compile';
 
 const calmCurves = (ids: string[]) => ids.map((gaugeId) => ({ gaugeId, diurnalFt: 0.03, noiseFt: 0.01 }));
 const ALL = ['08158922', '08158930', '08158970', '08158700', '08158800', '08158827', '08159000', '08158840', '08156800',
-  '08157000', '08154700', '08158200', '08155200'].map((s) => `USGS-${s}`);
+  '08157000', '08154700', '08158200', '08155200', '08155400'].map((s) => `USGS-${s}`);
 
 // (a) Calm evening — every monitored crossing "No rise detected"; tier C stays "Unknown · not monitored".
 export const calmEvening: DemoScenarioV1 = {
   schema: 'fordcast.demo-scenario.v1', id: 'calm-evening', seed: 11, kind: 'live',
-  title: { en: 'Calm evening', es: 'Tarde tranquila' },
+  title: { en: 'Calm evening', es: 'Noche tranquila' },
   clockStart: { h: 19, m: 30 }, durationMin: 120, playFromMin: 0,
   rain: [{ t: 0, inPerHr: 0, over: 'Austin' }],
   curves: calmCurves(ALL), outages: [], official: [], network: [{ t: 0, online: true }], truth: [],
@@ -20,7 +20,8 @@ export const calmEvening: DemoScenarioV1 = {
 export const flashFloodNight: DemoScenarioV1 = {
   schema: 'fordcast.demo-scenario.v1', id: 'flash-flood-night', seed: 26, kind: 'live',
   title: { en: 'Flash flood night', es: 'Noche de inundación repentina' },
-  clockStart: { h: 4, m: 50 }, durationMin: 300, playFromMin: 0,   // pre-dawn: AVOID lands at 6:00 AM, before the school run
+  subtitle: { en: 'Pre-dawn cloudburst over Oak Hill', es: 'Aguacero antes del amanecer sobre Oak Hill' },
+  clockStart: { h: 5, m: 50 }, durationMin: 300, playFromMin: 0,   // pre-dawn (sunrise ≈ 7:35): AVOID lands at 7:00 AM, before the school run
   rain: [{ t: 0, inPerHr: 0, over: 'Oak Hill' }, { t: 5, inPerHr: 0.4, over: 'Oak Hill' }, { t: 15, inPerHr: 2.2, over: 'Oak Hill' },
     { t: 35, inPerHr: 3.1, over: 'Oak Hill' }, { t: 55, inPerHr: 1.2, over: 'Oak Hill' }, { t: 80, inPerHr: 0.3, over: 'Oak Hill' },
     { t: 110, inPerHr: 0, over: 'Oak Hill' }],
@@ -32,16 +33,16 @@ export const flashFloodNight: DemoScenarioV1 = {
     { gaugeId: 'USGS-08158840', pulses: [{ peakMin: 95, riseMin: 60, fallMin: 60, ampFt: 3.0 }], noiseFt: 0.02 },
   ],
   outages: [],
-  // Simulated official closure (source label "Demo road crew (simulated)"), then lifted.
+  // Simulated official closure (source label demo.source.road_crew = "Simulated road crew"), lifted at 9:25 AM.
   official: [
     { crossingId: 'atx-37', source: 'demo_official', status: 'closed', setAt: 120, expiresAt: 120 + 240 },
     { crossingId: 'atx-37', source: 'demo_official', status: 'open', setAt: 215, expiresAt: 215 + 120 },
   ],
   network: [{ t: 0, online: true }],
   truth: [
-    { crossingId: 'atx-37', fromGaugeId: 'USGS-08158922', tauTrueMin: 41, overtopUpFt: 7.6 },
-    { crossingId: 'atx-680', fromGaugeId: 'USGS-08158922', tauTrueMin: 35, overtopUpFt: 9.4 },
-    { crossingId: 'atx-692', fromGaugeId: 'USGS-08158922', tauTrueMin: 46, overtopUpFt: 8.3 },
+    { crossingId: 'atx-37', fromGaugeId: 'USGS-08158922', tauTrueMin: 42, overtopUpFt: 6.8 },   // onset inside the first window
+    { crossingId: 'atx-680', fromGaugeId: 'USGS-08158922', tauTrueMin: 32, overtopUpFt: 9.4 },
+    { crossingId: 'atx-692', fromGaugeId: 'USGS-08158930', tauTrueMin: 0, overtopUpFt: 9.0 },   // C §18.2: target gauge ≥ overtop
   ],
   subscriptions: { crossingIds: ['atx-37'], watchAlerts: false },          // the one crossing on the saved Home→School route
   keyframes: [],                                     // filled from events by takes.ts (never hand-typed times)
@@ -69,7 +70,7 @@ export const onionCreekStorm: DemoScenarioV1 = {
   official: [], network: [{ t: 0, online: true }],
   truth: [
     { crossingId: 'hays-663', fromGaugeId: 'USGS-08158700', tauTrueMin: 12, overtopUpFt: 8.0 },
-    { crossingId: 'bud-1117', fromGaugeId: 'USGS-08158800', tauTrueMin: 16, overtopUpFt: 10.5 },
+    { crossingId: 'bud-1117', fromGaugeId: 'USGS-08158800', tauTrueMin: 16, overtopUpFt: 8.5 },
     { crossingId: 'tc-68', fromGaugeId: 'USGS-08158800', tauTrueMin: 47, overtopUpFt: 10.0 },
     { crossingId: 'tc-1626', fromGaugeId: 'USGS-08158827', tauTrueMin: 41, overtopUpFt: 11.0 },
   ],
@@ -77,10 +78,10 @@ export const onionCreekStorm: DemoScenarioV1 = {
   keyframes: [],
 };
 
-// (d) Drive — same storm, starts 1 min after the AVOID; a simulated car drives Home → School at 1× (Drive Mode demo).
+// (d) Drive — same storm; leaves Home at 6:58:54 AM while Jones Rd is WATCH, so AVOID arrives 66 s into the drive (1× clock).
 export const driveCommute: DemoScenarioV1 = {
   ...flashFloodNight, id: 'drive-commute', title: { en: 'Drive to school (simulated)', es: 'Camino a la escuela (simulado)' },
-  playFromMin: 71, drive: { route: 'commute', startSimMin: 71, cruiseMps: 13.4, accelS: 8 },
+  playFromMin: 68.9, drive: { route: 'commute', startSimMin: 68.9, cruiseMps: 8.9, accelS: 6, takeDetourAtBranch: true },   // 20 mph in heavy rain
 };
 
 export const SCENARIOS = [calmEvening, flashFloodNight, onionCreekStorm, driveCommute];

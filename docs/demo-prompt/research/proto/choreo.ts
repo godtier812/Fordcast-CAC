@@ -1,0 +1,74 @@
+// mobile/src/demo/scenario/{choreography,keyframes,storyboard}.ts — everything the director needs is DERIVED from the
+// compiled events (never hand-typed times), so retuning a hydrograph moves every notification/keyframe with it.
+import type { Compiled, Keyframe } from './compile';
+import { RANK, type DemoEvent, type Wire } from './types';
+import { GAUGES } from './data';
+
+// ---------- local notification plan (A §3.8 policy, demo-adapted) ----------
+export type PlannedNotification = {
+  t: number; crossingId: string; kind: 'risk' | 'update'; state: Wire; window: [number, number] | null;
+  titleKey: string; bodyKey: string; interruptionLevel: 'active' | 'passive';
+};
+export function planNotifications(cmp: Compiled): PlannedNotification[] {
+  const { crossingIds, watchAlerts } = cmp.scenario.subscriptions;
+  const out: PlannedNotification[] = []; const lastByLevel = new Map<string, number>(); const escalated = new Set<string>();
+  const perHour: number[] = [];
+  for (const e of cmp.events) {
+    if (!crossingIds.includes(e.crossingId)) continue;
+    const prev = prevEvent(cmp, e);
+    const up = RANK[e.state] > RANK[prev.state];
+    const isRisk = up && (e.state === 'avoid' || e.state === 'closed' || (e.state === 'watch' && watchAlerts));
+    const isUpdate = e.state === 'no_rise' && escalated.has(e.crossingId);
+    if (!isRisk && !isUpdate) continue;
+    const k = `${e.crossingId}|${e.state}`;
+    if (isRisk && (lastByLevel.get(k) ?? -Infinity) > e.t - 60) continue;            // ≤ 1 per crossing per level per 60 min
+    while (perHour.length && perHour[0]! <= e.t - 60) perHour.shift();
+    if (perHour.length >= 3) continue;                                                // ≤ 3 per device per hour (summary omitted in demo)
+    perHour.push(e.t); lastByLevel.set(k, e.t);
+    if (isRisk) escalated.add(e.crossingId); else escalated.delete(e.crossingId);
+    const now = e.state === 'avoid' && (!e.window || e.window[0] === 0);
+    out.push({ t: e.t, crossingId: e.crossingId, kind: isRisk ? 'risk' : 'update', state: e.state, window: e.window,
+      titleKey: isRisk ? `demo.notify.${e.state}.title` : 'demo.notify.update.title',
+      bodyKey: isRisk ? (now ? 'demo.notify.avoid.body_now' : e.state === 'watch' && !e.window ? 'demo.notify.watch.body_nowindow' : `demo.notify.${e.state}.body`) : 'demo.notify.update.body',
+      interruptionLevel: isRisk ? 'active' : 'passive' });
+  }
+  return out;
+}
+function prevEvent(cmp: Compiled, e: DemoEvent): DemoEvent {
+  const evs = cmp.events.filter((x) => x.crossingId === e.crossingId && x.t < e.t);
+  return evs.at(-1) ?? cmp.initial.get(e.crossingId)!;
+}
+
+// ---------- storyboard (≤ 8 lines; kinds from C §19.13; copy keys from A §3.7) ----------
+export type StoryLine = { t: number; kind: 'first_watch' | 'first_avoid' | 'gauge_silent' | 'official'; crossingId: string; gaugeId?: string };
+export function storyboard(cmp: Compiled): StoryLine[] {
+  const out: StoryLine[] = []; const seen = new Set<string>();
+  for (const e of cmp.events) {
+    const r0 = e.reasons[0];
+    const push = (kind: StoryLine['kind'], gaugeId?: string) => { const k = `${kind}|${gaugeId ?? e.crossingId}`; if (!seen.has(k)) { seen.add(k); out.push({ t: e.t, kind, crossingId: e.crossingId, gaugeId }); } };
+    if (e.state === 'watch' && r0?.code === 'UPSTREAM_RISING') push('first_watch', r0.gauge_id);
+    if (e.state === 'avoid' && r0?.code === 'UPSTREAM_ABOVE_TRIGGER') push('first_avoid', r0.gauge_id);
+    if (e.state === 'unknown' && r0?.code === 'DATA_STALE' && r0.gauge_id) push('gauge_silent', r0.gauge_id);
+    if (e.state === 'closed' && r0?.code === 'OFFICIAL_CLOSED') push('official');
+  }
+  return out.slice(0, 8);
+}
+
+// ---------- keyframes ("takes") resolved against events ----------
+export function resolveKeyframe(cmp: Compiled, k: Keyframe): number {
+  const a = k.at;
+  if (a.kind === 'min') return a.t;
+  if (a.kind === 'onset') return (cmp.onsets.get(a.crossingId) ?? 0) + (a.offsetMin ?? 0);
+  const hits = cmp.events.filter((e) => e.crossingId === a.crossingId && e.state === a.state && !e.held);
+  const e = hits[(a.nth ?? 1) - 1]; if (!e) throw new Error(`keyframe ${k.id}: no ${a.state} event for ${a.crossingId}`);
+  return e.t + (a.offsetMin ?? 0);
+}
+
+// ---------- gauge "No data" spans (for the hatched band + dashed gauge ring) ----------
+export function silentSpans(cmp: Compiled) {
+  return cmp.scenario.outages.map((o) => {
+    const g = GAUGES.find((x) => x.id === o.gaugeId)!;
+    const lastBefore = Math.floor((o.startMin - 1) / g.dtMin) * g.dtMin;     // last obs delivered before the outage
+    return { gaugeId: o.gaugeId, silentFrom: lastBefore + g.delayMin + g.dtMin, staleAt: lastBefore + g.staleAfterMin, until: o.endMin, mode: o.mode };
+  });
+}

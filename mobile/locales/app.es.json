@@ -1,0 +1,6 @@
+{
+  "ios": {
+    "CFBundleDisplayName": "FordCast",
+    "NSLocationWhenInUseUsageDescription": "FordCast usa su ubicación para mostrar los cruces cerca de usted y en su ruta. Su ubicación se queda en su teléfono."
+  }
+}

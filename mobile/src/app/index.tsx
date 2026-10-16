@@ -1,17 +1,6 @@
-import { Text, View, StyleSheet } from "react-native";
+import { Redirect } from 'expo-router';
 
+// Day 1 only (02 §9.10): open straight on the smoke test. Day 2's NativeTabs shell (04 §16.4) replaces this file.
 export default function Index() {
-  return (
-    <View style={styles.container}>
-      <Text>Edit src/app/index.tsx to edit this screen.</Text>
-    </View>
-  );
+  return <Redirect href="/smoke" />;
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-});

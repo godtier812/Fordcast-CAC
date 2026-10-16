@@ -139,7 +139,7 @@ git --version
 
 ### 9.1 Rules for the agent (🤖 MUST)
 
-1. **Stay on SDK 57.** `expo@latest` is now **58.0.x** (58.0.12 on 2026-10-16); the `sdk-57` dist-tag is **57.0.30**. [Verified: npm view expo dist-tags, 2026-10-16]
+1. **Stay on SDK 57.** `expo@latest` is now **58.0.x** (58.0.14 at the last check on 2026-10-16; it moves almost daily); the `sdk-57` dist-tag is **57.0.30**. [Verified: npm view expo dist-tags, 2026-10-16]
    - Scaffold only with `--template default@sdk-57`.
    - Add native modules only with `npx expo install` (it resolves SDK-57 versions).
    - Never run `npm install expo@latest`. Never upgrade to SDK 58 before the deadline.
@@ -164,10 +164,16 @@ echo y | npm run reset-project                                   # answers its "
 
 [Verified: expo-template-default@57.0.32 `scripts/reset-project.js` uses `readline` `rl.question(... (Y/n))`]
 
+After the reset (re-checked 2026-10-16 against the unpacked template):
+- `src/app/` holds only a placeholder `index.tsx` and a plain `<Stack />` `_layout.tsx`, so the Day-1 `smoke.tsx` (§9.10) is reachable before the real shell exists.
+- The starter (NativeTabs `app-tabs.tsx`, `animated-icon.tsx`, theme files) now lives in `mobile/example/`, which the template's `.gitignore` already ignores. It stays as **reading reference** for 04 §16.2/§16.4/§20.1 and is deleted at the end of Day 2.
+- **Until it is deleted, exclude it from tooling:** the template's `tsconfig.json` includes `**/*.ts(x)`, so add `"exclude": ["node_modules", "example"]` (otherwise `tsc` fails on the moved files' `@/` imports), and add `example/` to the ESLint ignores.
+- `assets/` is untouched by the reset; 04 §16.2 Step 1 removes the unused template images.
+
 What the template already contains [Verified: expo-template-default@57.0.32 package.json]:
 - expo ~57.0.30, react 19.2.3, react-native 0.86.3
 - expo-router ~57.0.28, react-native-screens ~4.26.0, reanimated 4.5.1, worklets 0.10.1, gesture-handler ~2.32.0
-- @expo/ui ~57.0.25, expo-glass-effect ~57.0.4, expo-symbols ~57.0.3, expo-image, expo-font, expo-splash-screen, expo-system-ui, expo-status-bar
+- @expo/ui ~57.0.25, expo-glass-effect ~57.0.4, expo-symbols ~57.0.3, expo-image, expo-font, expo-splash-screen, expo-system-ui, expo-status-bar, expo-constants ~57.0.22 (reads `extra.builtAt`, §24.6), expo-linking
 - TypeScript ~6.0.3, with the tsconfig alias `@/*` → `./src/*`
 - An `assets/expo.icon` Icon Composer file
 
@@ -448,7 +454,7 @@ Or press ⌘R in Xcode with the iPhone selected as the run destination.
 
 > free signing → MapLibre → local notification on the Lock Screen → speech audible → Release build launches unplugged
 
-1. 🤖 Create a temporary screen `mobile/src/app/smoke.tsx`. Delete it before the UI freeze.
+1. 🤖 Create a temporary screen `mobile/src/app/smoke.tsx`, and make the reset's placeholder `src/app/index.tsx` a `<Redirect href="/smoke" />` so the app opens on it. Day 2's real shell (04 §16.4) replaces the placeholder; delete `smoke.tsx` before the UI freeze.
 2. The screen has five buttons:
    1. **Map:** `import { Map as MapLibreMap, Camera } from '@maplibre/maplibre-react-native'` (alias it: a bare `Map` import shadows the JS `Map` class) → `<MapLibreMap style={{ flex: 1 }} mapStyle="https://tiles.openfreemap.org/styles/dark"><Camera initialViewState={{ center: [-97.79, 30.22], zoom: 11 }} /></MapLibreMap>` (Austin). [Verified: @maplibre/maplibre-react-native@11.5.0 `Map.d.ts` `mapStyle`, `Camera.d.ts` `initialViewState`] The final "FordCast Night" style comes later (§13).
    2. **Notify in 8 s:** schedule a local notification with `trigger: { type: SchedulableTriggerInputTypes.TIME_INTERVAL, seconds: 8 }`. Title "Smoke test", subtitle "Simulated storm · demo data".
@@ -584,7 +590,7 @@ Unplug the cable, then:
 - When it expires, the app won't open. **Fix:** plug in and re-run §11.2 (≈ 5 min). No prebuild is needed unless `app.config.ts` or a plugin changed.
 - App data usually survives a reinstall over the top, as long as you don't delete the app [Unverified]. The demo doesn't depend on it, because every launch starts at Calm evening (§22.10).
 
-**Signing calendar for this project** (Thu Oct 15 = Day 0; §6 owns the full plan):
+**Signing calendar for this project** (Thu Oct 15 = Day 1; §6 owns the full plan):
 
 | Date | Signing event | Note |
 |---|---|---|

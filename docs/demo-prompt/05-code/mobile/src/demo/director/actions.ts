@@ -28,9 +28,9 @@ export async function loadTake(take: Take, lang: Lang, navigate: (path: string) 
   navigate(TAKE_ROUTES[take.id] ?? '/');
   return at;
 }
-export const TAKE_ROUTES: Record<string, string> = {                 // expo-router paths (§18 route table)
-  'T01-calm': '/', 'T02-rising': '/crossing/atx-37', 'T03-player': '/storm/flash-flood-night', 'T04-results': '/storm/results',
-  'T05-one-clock': '/', 'T06-lockscreen': '/', 'T07-sheet': '/crossing/atx-37', 'T08-detour': '/drive/result',
+export const TAKE_ROUTES: Record<string, string> = {                 // expo-router paths (§18 route table): the first filmed frame
+  'T01-calm': '/', 'T02-rising': '/crossing/atx-37', 'T03-player': '/storms', 'T04-results': '/storm/results',
+  'T05-one-clock': '/storm/flash-flood-night', 'T06-lockscreen': '/', 'T07-sheet': '/crossing/atx-37', 'T08-detour': '/drive/result',
   'T09-drive-en': '/drive-mode', 'T10-drive-es': '/drive-mode', 'T11-unknown': '/storm/onion-creek-storm',
   'O1-closed': '/crossing/atx-37', 'O2-sensor': '/crossing/atx-692', 'O3-lockout': '/', 'O4-onion-result': '/storm/results',
 };

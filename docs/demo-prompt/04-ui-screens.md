@@ -16,7 +16,7 @@
 
 | # | Source | License | What we take | Lands in |
 |---|---|---|---|---|
-| T1 | **Expo default template, SDK 57** (`create-expo-app … --template default@sdk-57` → `expo-template-default@57.0.32` [Verified: npm dist-tag `sdk-57`]) | 0BSD | `src/app` + Expo Router 57 layout, the **NativeTabs** pattern (`src/components/app-tabs.tsx`), the **`AnimatedSplashOverlay`** pattern (`src/components/animated-icon.tsx`: Reanimated `Keyframe` + `scheduleOnRN` from `react-native-worklets`), `assets/expo.icon` wiring, `tsconfig.json` alias `@/*` → `src/*`, typed routes | `mobile/` (scaffolded in 02 §9.2) |
+| T1 | **Expo default template, SDK 57** (`create-expo-app … --template default@sdk-57` → `expo-template-default@57.0.32` [Verified: npm dist-tag `sdk-57`]) | 0BSD | `src/app` + Expo Router 57 layout, the **NativeTabs** pattern (`app-tabs.tsx`), the **`AnimatedSplashOverlay`** pattern (`animated-icon.tsx`: Reanimated `Keyframe` + `scheduleOnRN` from `react-native-worklets`) — both under `mobile/example/src/components/` after 02 §9.2's `reset-project` —, `assets/expo.icon` wiring, `tsconfig.json` aliases `@/*` → `src/*` and `@/assets/*` → `assets/*`, typed routes | `mobile/` (scaffolded in 02 §9.2) |
 | T2 | **React Native Reusables (NativeWind variant)** — registry files only | MIT | `components/ui/button.tsx`, `card.tsx`, `text.tsx` + `lib/utils.ts` (`cn`). **Not** `icon.tsx` (lucide) and **not** `toggle-group` by default (native segmented controls replace it, §16.3) | `mobile/src/components/ui/`, `mobile/src/lib/utils.ts` |
 | T3 | **`@expo/ui` SwiftUI** (already in the template, `@expo/ui ~57.0.25`) | MIT | `Host`, `Form`, `Section`, `Toggle`, `Picker` (`pickerStyle('segmented' \| 'menu')`), `Slider`, `Button`, `LabeledContent`, `ContentUnavailableView`, `Menu`, modifiers `tint`, `listRowBackground`, `scrollContentBackground` [Verified: pkg @expo/ui@57.0.25 `swift-ui/index.d.ts`, `modifiers/index.d.ts`] | Settings, segmented controls, empty states |
 | T4 | **expo-router 57 native APIs** | MIT | `NativeTabs` + `BottomAccessory`, `Stack.Protected`, `Link.Menu`/`Link.MenuAction`/`Link.Preview`/`Link.AppleZoom`, formSheet options [Verified: pkg expo-router@57.0.28 `native-tabs/*.d.ts`, `layouts/StackClient.d.ts`, `link/Link.d.ts`] | navigation, menus |
@@ -30,15 +30,15 @@
 
 ### 16.2 Import steps (exact; after 02 §9.2–§9.3 scaffold + installs)
 
-**Step 1 — Template clean-up** (keep the patterns, drop the demo content):
+**Step 1 — Template clean-up** (02 §9.2 already ran `reset-project` on Day 1, so the starter `src/` sits in the git-ignored `mobile/example/` as reading reference; keep the patterns, drop the demo content):
 ```bash
 cd mobile
-git rm -q src/app/explore.tsx src/components/{web-badge,external-link,hint-row,themed-text,themed-view,animated-icon.web,app-tabs.web}.tsx \
-  src/components/animated-icon.module.css src/components/ui/collapsible.tsx src/hooks/use-color-scheme.web.ts \
-  assets/images/{react-logo*,expo-logo.png,expo-badge*,logo-glow.png,tutorial-web.png,favicon.png} assets/images/tabIcons
-# keep src/components/app-tabs.tsx and animated-icon.tsx only as reading reference until §16.4/§20.1 replace them, then delete
+git rm -rq --ignore-unmatch assets/images/{react-logo*,expo-logo.png,expo-badge*,logo-glow.png,tutorial-web.png,favicon.png} \
+  assets/images/android-icon-*.png assets/images/tabIcons            # keep assets/images/icon.png + splash-icon.png
+# read example/src/components/app-tabs.tsx (NativeTabs) and animated-icon.tsx (AnimatedSplashOverlay) while writing
+# §16.4 and §20.1, then: rm -rf example && drop "example" from the tsconfig exclude / ESLint ignores (end of Day 2)
 ```
-(Do **not** run `npm run reset-project`: it moves the starter into `example/`, which we then have to delete anyway.) Replace `src/constants/theme.ts` and `src/hooks/use-theme.ts` with `src/lib/theme.ts` + `src/lib/useTheme.ts` (03 §13.11). Replace the template's `src/global.css` (web font variables) with the NativeWind file in Step 2.
+Never copy `example/src/constants/theme.ts`, `hooks/use-theme.ts` or `global.css` (web font variables): `src/lib/theme.ts` + `src/lib/useTheme.ts` (03 §13.11) and the NativeWind `src/global.css` (Step 2) are written fresh.
 
 **Step 2 — NativeWind 4.2.7 wiring** (packages installed by 02 §9.3 C):
 ```js
@@ -104,6 +104,7 @@ SplashScreen.preventAutoHideAsync();
 export default function RootLayout() {
   const [fontsReady] = useFonts({ Inter_400Regular, Inter_500Medium, Inter_600SemiBold, Inter_700Bold });
   const pledged = useSettings((s) => s.pledgeAcceptedAt != null);
+  const replayIntro = useSettings((s) => s.replayIntro);   // in-memory flag set by About → [Replay introduction] (§18.18.7)
   const touches = useDemo((s) => s.touches);
   const { bottom: safeBottom } = useSafeAreaInsets();
   return (
@@ -112,7 +113,7 @@ export default function RootLayout() {
         <ThemeProvider value={NAV_THEME}>
           <TouchOverlay enabled={touches}>
             <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: '#0E1726' } }}>
-              <Stack.Protected guard={!pledged}>
+              <Stack.Protected guard={!pledged || replayIntro}>
                 <Stack.Screen name="(onboarding)" />
               </Stack.Protected>
               <Stack.Protected guard={pledged}>
@@ -183,6 +184,7 @@ export default function TabsLayout() {
 - `labelVisibilityMode`, `indicatorColor`, `rippleColor`, `backgroundColor` are Android/old props → never set (the template's `backgroundColor`/`indicatorColor` lines go) [research-ui W1]. On iOS < 26, `ScenarioMiniBar` renders inside each tab screen instead (§17.2).
 - VERIFY BEFORE USE (Day 2): adding/removing the BottomAccessory conditionally animates cleanly [Unverified; research-ui §6 item 6]; if it doesn't, keep it mounted and render an empty `inline` placeholder when no scenario runs — **never** a blank pill: hide via the conditional first.
 - Badge = unread AVOID/CLOSED inbox entries (scenario alerts count in the Demo Edition; they are the only alerts).
+- **Hex literals in every sketch of this file are for reading only.** Real code passes `palette` / `theme` / `mapTokens` values (03 §13.11); the 03 §13.12 grep gate fails on any `#RRGGBB` in a `.tsx` file.
 
 ### 16.5 Skia patterns (use exactly these building blocks)
 
@@ -261,8 +263,11 @@ All components live in `mobile/src/components/fordcast/` (one file each; map pie
 ```
 demo      [┊DEMO┊ updated 2 min ago]     glass; DemoChip + label.lg #F2F5FA; short "┊DEMO┊ 2 min" / "┊DEMO┊ hace 2 min"
 scenario  [● SIMULATED · 7:00 AM storm time]  opaque violet; short "● SIMULATED · 7:00 AM" / "● SIMULADO · 7:00 a. m."
-aging     [┊DEMO┊ As of 6:58 AM]          slate text; appears when the simulated check age is 10–20 min
-offline   [◌ Data offline · 22 min]       dashed ring glyph; slate; never violet, never amber
+aging     [┊DEMO┊ As of 6:58 AM]          slate text; appears when the simulated check age is 10–20 min (01 §3.4). While a
+                                           scenario runs, the violet pill keeps its SIMULATED text and adds a slate dot +
+                                           "As of 6:58 AM" (short form) — the violet label never disappears mid-scenario
+offline   [◌ Data offline · 22 min]       dashed ring glyph; slate; never violet, never amber (in a running scenario the
+                                           violet map frame + accessory keep labeling it SIMULATED)
 ```
 - **Width rule:** long form only if `measured ≤ W − 2g − 104` (two 44 pt glass buttons + gaps); else the short form; never "…". Measured (03 Inter metrics): demo long EN 216 / ES 248 pt; scenario long EN 277 / ES 342 pt; short ≈ 162–200 pt → demo long fits every iPhone in EN and from iPhone 16 up in ES; scenario long fits only Plus/Pro Max in EN and nowhere in ES, so **the scenario pill uses the short form on every phone except Plus/Pro Max** (§19.5 B).
 - Tap → `settings/whats-real` (judges land on honesty). Long-press 0.8 s → `demo` Director (`uiHaptic('select')`; no visible affordance; works in clean mode). `accessibilityHint` "Shows what's real in this demo." (Director gesture not announced.)
@@ -285,7 +290,7 @@ offline   [◌ Data offline · 22 min]       dashed ring glyph; slate; never vio
 ```
 - **Measured button rule** (never shrink text): `fit(icons) = w(label1)+w(label2)+2×(17+6)+2×32+8 ≤ innerW` → icons + labels side by side; else without icons; else **stacked** full width (52 + 8 + 52). Labels measured with `onTextLayout` on first render (hidden measurer), cached per language + fontScale. Results at T0: SE/mini EN 311.5 > 311 → **no icons**; ES no icons; iPhone 16 and up EN 303.5 + 8 / ES 321.3 → icons ✓ (§19.5 A). At T1: stack on SE, 16 and 17 in ES; EN stacks on SE and 16.
 - Order: `[Check my drive]` (secondary, `point.topleft.down.to.point.bottomright.curvepath`) left, `[Drive Mode ▶]` (primary, `steeringwheel`) right — the primary is under the right thumb. Each `flexGrow: 1` with `flexBasis` = its measured width.
-- Storm form: counts row sorted by rank (`(◆ AVOID) 1 · (▲ WATCH) 3`); headline = the worst crossing's state headline (`state.avoid.headline`, window from `displayAt`); the supporting line names that crossing (`caption`, 1 line, `shortName` if needed; shown on every class in storm form); tap the chip row → `nearby` (Ranked).
+- Storm form: counts row sorted by rank (`(◆ AVOID) 1 · (▲ WATCH) 3`); headline = the worst crossing's state headline (`state.avoid.headline`, window from `displayAt`); the supporting line names that crossing (`caption`, 1 line, its `SHORT_NAMES` entry if needed; shown on every class in storm form); tap the chip row → `nearby` (Ranked).
 - Compact form (T2+ or above max height): chip row, 2-line headline, stacked buttons, footer; supporting line hidden.
 
 **`AlertBanner`** (opaque `surface1`, `rounded-lg`, 4 pt left bar in the state color, y = `topY + 44 + 8`, width `W − 2g`)
@@ -334,13 +339,13 @@ New keys `sheet.window_likely`, `sheet.window_possible` pass the countdown guard
 ┌───────────────────────────────┐
 │ ◆  AVOID                      │ StatusGlyph 44 + drive.primary 32/38 (state word)
 │ 15–30 min                     │ display.xl 56/60 + "min" drive.secondary
-│ Williamson Creek at Jones Road│ drive.secondary 24/30, ≤ 2 lines (shortName on ribbon only)
+│ Williamson Creek at Jones Road│ drive.secondary 24/30, ≤ 2 lines (short names on the ribbon only)
 └───────────────────────────────┘
 ```
 - Calm: `(○)` "No rise detected ahead" + "next crossing 1.0 km" (no window). Watch: amber triangle + "WATCH" + "water rising upstream". Closed: striped octagon + "CLOSED" + "Turn around". Unknown: dashed ring + "UNKNOWN" + "no recent data · watch for water".
 - Live region: `accessibilityLiveRegion` is Android-only → on iOS announce via 05 §27.2 (HUD changes are announced only on escalation).
 
-**`RouteRibbon`** — up to 3 nodes, 48 pt each: glyph 28 + distance `num.md` ("1.0 km") + name `headline` 1 line using `shortName` when the full name doesn't fit. `shortName` is an **optional UI field** on on-camera crossings in `demo-data.ts`, built only by **dropping words** (01 §1.5 rule 2), e.g. `atx-37` "Jones Road", `atx-692` "Manchaca Rd & Jones Rd"; a unit test asserts every `shortName` word appears in `name` in order.
+**`RouteRibbon`** — up to 3 nodes, 48 pt each: glyph 28 + distance `num.md` ("1.0 km") + name `headline` 1 line using the short name when the full name doesn't fit. Short names live in a **UI-side map** `src/lib/short-names.ts` (`SHORT_NAMES: Record<crossingId, string>`, on-camera crossings only), so the tested engine type `Crossing` (05 §22.2) stays unchanged. Each one is built only by **dropping words** (01 §1.5 rule 2), e.g. `atx-37` "Jones Road", `atx-692` "Manchaca Rd & Jones Rd"; a unit test asserts every short-name word appears in `name` in order.
 
 **`Scrubber`** (player; 48 pt hit, 6 pt track `#24344F`, fill `#B69CFF`, thumb 24 pt ice + 2 pt violet ring): ticks from `scrubberTicks()` (▲ ◆ ▧ ◌ ● ⌀, 03 §13.6) drawn 12 pt above the track with 2 pt colored stems; a tick scales 0 → 1 (`spring.pop`) the first time the playhead passes it. Drag pauses playback; `uiHaptic('select')` every 15 sim-min; `adjustable` ±5 sim-min with value "Storm time 7:02 AM. Avoid issued at 7:00 AM." (never minutes-until-flood).
 
@@ -407,7 +412,7 @@ A hidden copy (`opacity 0`, absolute, same width) measures lines with `onTextLay
       'icon-allow-overlap': true, 'symbol-sort-key': ['get', 'rank'],
       'text-field': ['step', ['zoom'], '', 13.5, ['get', 'name']], 'text-font': mapTokens.fontRegular, 'text-size': 12,
       'text-offset': [0, 1.6], 'text-anchor': 'top', 'text-optional': true }}
-      paint={{ 'text-color': '#C9D2DE', 'text-halo-color': '#0B1320', 'text-halo-width': 1.5 }} />
+      paint={{ 'text-color': mapTokens.label, 'text-halo-color': mapTokens.labelHalo, 'text-halo-width': 1.5 }} />
   </GeoJSONSource>
   <PulseMarkers risks={avoidInView} />      {/* RN <Marker> + PulseRing, ≤ 20, 3 pulses then static */}
   <CarPuck position={simFix} />             {/* Marker: 14 pt route-blue dot + ice ring + heading cone */}
@@ -492,7 +497,7 @@ P4 SAFETY PLEDGE (required)          P5 ALERTS PRIMER (optional)
 - **Pledge:** three 24 pt checkboxes (1.5 pt `#6B7890` box; checked = ice fill + navy `checkmark` 15 pt bold — never green), each row ≥ 48 pt; `[I understand]` disabled (40 %) with the hint visible until all three are checked, then crossfades enabled (200 ms) — `uiHaptic('select')` per check, `uiHaptic('light')` on accept. On accept: keep the acceptance in memory and push P5; P5's `[Continue]` or `[Not now]` **then** persists `pledgeAcceptedAt` + `pledgeVersion` (kv-store), which flips `Stack.Protected` to the tabs (persisting on P4 would flip the guard before P5 could show). If notifications were already granted, P4 commits directly. Re-openable from Settings → About → "Replay introduction".
 - **A11y:** one heading + body per page; `Next` labeled "Next, page 2 of 5"; checkboxes are real `checkbox` roles with `checked`; the disabled button exposes the hint.
 - **T2+:** illustrations hidden, page scrolls, buttons stay pinned. ES (+30 %) fits because body text is never fixed-height.
-- **Done when:** a fresh install can't reach the tabs without accepting the pledge; switching to Español on P1 changes every page; the 3 s pledge shot (06 §29) shows all three items checked and the button enabling.
+- **Done when:** a fresh install can't reach the tabs without accepting the pledge; switching to Español on P1 changes every page; the 3 s pledge shot (06 §29.3, 0:35–0:38; filmed via About → `[Replay introduction]`, 06 §29.4) shows all three items checked and the button enabling.
 
 ### 18.3 Permission primers (`permission/[kind]`, modal) [BUILD-ONLY]
 - `notifications`: same layout as P5; shown on the first **Notify me**, or Director "Enable alerts", if not yet asked. Grant it **before recording** so no system prompt appears in takes (06 §30.1).
@@ -555,7 +560,7 @@ P4 SAFETY PLEDGE (required)          P5 ALERTS PRIMER (optional)
 ```
 **C — One gauge silent (`onion-creek-storm` @ 5:50 AM):** pill unchanged; the Twin Creeks gauge turns `ic-gauge-silent`; Bluff Springs Rd becomes `ic-unknown-lastavoid`; card counts include "(◌ UNKNOWN) 1"; `safetyHaptic('unknown')`; no banner (UNKNOWN banner only for saved/on-route crossings, once).
 
-**D — Simulated offline (Director "Simulated offline", 05 §24.3):** 0–10 min: no change; 10–20 min: pill `[┊DEMO┊ As of 6:58 AM]` (slate); > 20 min: pill `[◌ Data offline · 22 min]`, **every** crossing `ic-unknown` (last-known badges for ≥ watch), card `(◌ UNKNOWN) Data offline` + `area.offline` "Data offline. Treat low-water crossings as if they could flood." / "Sin datos. Trate los cruces bajos como si pudieran inundarse." Map tiles keep loading (the switch only affects simulated gauge data).
+**D — Simulated offline (Director "Simulated offline", 05 §24.3):** 0–10 min: no change; 10–20 min: the pill adds a slate dot + "As of 6:58 AM" (`[┊DEMO┊ As of 6:58 AM]` at calm; the violet SIMULATED pill keeps its label in a scenario, §17.2); > 20 min: pill `[◌ Data offline · 22 min]`, **every** crossing `ic-unknown` (last-known badges for ≥ watch), card `(◌ UNKNOWN) Data offline` + `area.offline` "Data offline. Treat low-water crossings as if they could flood." / "Sin datos. Trate los cruces bajos como si pudieran inundarse." Map tiles keep loading (the switch only affects simulated gauge data).
 
 **E — Loading (first frames before the scenario compiles, ≤ 30 ms; or tiles not yet loaded):** basemap/land only, **no crossing markers drawn**, card shows "Loading crossings…" / "Cargando cruces…" with a slim spinner (`text.secondary`) — never a `(○ NO RISE)` chip.
 
@@ -632,12 +637,12 @@ One scroll. The **peek** answers "what and when", the **half** proves "why" (hyd
 **Full (1.0) adds:** native segmented `Upstream | History | About` (44 pt) →
 - **Upstream:** `LagPair` (upstream vs road, 120 pt, connector label = the travel range), linked gauges list (gauge rows: short name · stage `num.md` · trend · "Readings simulated for this demo"), watch level line on a 200 pt hydrograph, `[Show readings]`.
 - **History:** `UpdateLog` (newest first: "7:00 AM · Watch → Avoid · Upstream above trigger"), the official row when any (`OfficialSourceBadge`, e.g. "Simulated road crew: no closure reported · 6:30 AM" — quoted, never "open").
-- **About:** full name, address (dataset `address`), creek (only when `creekVerified`), `TierBadge`, source label "FordCast forecast (experimental)" / "Pronóstico de FordCast (experimental)", "Forecast rule: baseline v1 · runs on this phone" / "Regla de pronóstico: base v1 · se ejecuta en este teléfono", data credit "Crossing location: City of Austin open data" (allowed credit row, 01 §3.11), `DisclaimerFooter compact`.
+- **About:** full name, address (dataset `address`), creek (only when `creekVerified`), `TierBadge`, source label "FordCast forecast (experimental)" / "Pronóstico de FordCast (experimental)", "Forecast rule: baseline v1 · runs on this phone" / "Regla de pronóstico: base v1 · se ejecuta en este teléfono", data credit `sheet.credit` "Crossing location: City of Austin open data" / "Ubicación del cruce: datos abiertos de la Ciudad de Austin" (an allowed credit key, 01 §3.11 demo guards), `DisclaimerFooter compact`.
 
 **Actions**
 | Action | Shown when | Behavior |
 |---|---|---|
-| `[⤳ Detour +N min]` primary | the crossing is on the saved Home → School route (`crossingsOnRoute(commute)`, 05 §21.5) **and** its state ≥ watch | → `drive/result?avoid=<id>` with the detour drawn (§20.6). `N` = baked detour duration − commute duration, rounded up. Hidden otherwise (never a dead button); then `[Notify me]` takes the flex width. |
+| `[⤳ Detour +N min]` primary | the crossing is on the saved Home → School route (`crossingsOnRoute(commute)`, 05 §21.5) **and** its state ≥ watch | `router.dismiss()` (close the sheet) → `router.navigate('/drive/result?avoid=<id>')` (switches to the Drive tab and pushes the result) with the detour drawn (§20.6) [VERIFY BEFORE USE on Day 6 that the sheet is gone before the result animates; log it]. `N` = `round((detour.durationS − commute.durationS) / 60)` from `routes.json` (05 §21.5). Hidden otherwise (never a dead button); then `[Notify me]` takes the flex width. |
 | `[🔔 Notify me]` / `[🔔 Notifying]` | always | toggles the crossing in the saved set (§18.16); first use → notifications primer if not granted; `bell` → `bell.fill` + `bounce` + `uiHaptic('light')`. N width: icon-only 48 × 48 with the label as a11y label. |
 | `[⋯]` (`Link.Menu` / `@expo/ui` `Menu`) | always | *Show on map* · *Upstream gauge* (→ `gauge/[id]`) · *Why this alert?* (scrolls to reasons) · *Stop alerts* (if saved; not destructive red). No Share ([NEXT]). |
 | `[✕]` | always | dismiss (also swipe down, `onAccessibilityEscape`) |
@@ -741,7 +746,7 @@ One scroll. The **peek** answers "what and when", the **half** proves "why" (hyd
 │   Map    Drive   Storms  Alerts │
 └─────────────────────────────────┘
 ```
-- The demo has exactly two places (Home, School) plus "Demo location" (the simulated position). Editing places is [NEXT] (Planned row only). Route = the baked `commute` (05 §21.5).
+- The demo has exactly two places (Home, School) plus "Demo location" (the simulated position: `PLACES.home` from `drive.ts` while no drive runs, else the car's current `Fix`; the Map Home ◉, `[➤]` and the `nearby` 10 km radius all use it). Editing places is [NEXT] (Planned row only). Route = the baked `commute` (05 §21.5).
 - `[Check my drive]` → `drive/result` for From → To (only Home → School and School → Home have baked routes; other pairs show "Demo routes only: Home ↔ School." / "Solo rutas de demostración: Casa ↔ Escuela." and disable the button with that reason).
 - Lockout (simulated speed ≥ 4.5 m/s, Director Lockout Auto): the From/To menus are locked → `LockoutDialog`; `[Start Drive Mode]` always stays usable.
 - Copy: `drive.title` "Drive" / "Manejo" · `drive.from` "From" / "Desde" · `drive.to` "To" / "Hasta" · `place.home` "Home" / "Casa" · `place.school` "School" / "Escuela" · `place.demo_location` "Demo location" / "Ubicación de demostración" · `drive.demo_places` "Demo places, not real homes or schools." / "Lugares de demostración, no son casas ni escuelas reales." · `cta.startDrive` "Start Drive Mode" / "Iniciar Modo manejo" · `drive.shell_caption` "FordCast speaks warnings for crossings ahead." / "FordCast le avisa en voz alta sobre los cruces que tiene adelante." · `drive.your_route` "Your route" / "Su ruta" · `drive.route_meta` "{{c}} crossings · as of {{time}}" / "{{c}} cruces · a las {{time}}" · `drive.swap` (a11y) "Swap From and To" / "Intercambiar origen y destino".
@@ -792,7 +797,7 @@ One scroll. The **peek** answers "what and when", the **half** proves "why" (hyd
 ```
 ┌─────────────────────────────────┐
 │ ▒SIMULATED DRIVE             ▒  │ SimulatedBanner variant drive
-│ ▒demo drive · scripted position▒│
+│ ▒scripted position · demo     ▒ │ (`demo.drive_banner_sub`, 03 §12.5)
 │                                 │
 │        ⎈ (steeringwheel 56)     │
 │ Mount your phone. Don't touch it│ 01 §3.8 Drive Mode start (title.md)
@@ -839,7 +844,7 @@ One scroll. The **peek** answers "what and when", the **half** proves "why" (hyd
 | Detour taken (≈ 104 s) | calm HUD on the new route | silent |
 | Arrived (≈ 412 s) | "Arrived · School" + `[End Drive Mode]` 76 | silent |
 - **Layout algorithm (per class, §19.5 D):** fixed blocks = row A 76 · 12 · label 24 · 8 · HUD (212 two-line / 182 one-line) · 16 · Detour 76 (only when a detour exists and something ≥ WATCH is ahead) · 24 · Repeat/Mute 76 · 16. The remaining height is filled in priority order: (1) ribbon node 1 (48 + 16), (2) follow map if ≥ 120 pt (cap 220), (3) more ribbon nodes (48 each, max 3). **During the approach** the Detour grows +20 and the ribbon hides (the HUD already shows that crossing), so the map never disappears at the dramatic moment.
-- `RouteRibbon` nodes: glyph 28 + distance (`num.md`) + `shortName` (1 line).
+- `RouteRibbon` nodes: glyph 28 + distance (`num.md`) + short name (`SHORT_NAMES`, §17.2; 1 line).
 - **Buttons:** `[End]` → native `Alert` "End Drive Mode?" / "¿Terminar Modo manejo?" `[End]` `[Keep driving]` (no red); `[Repeat]` → `repeatLast()` (also VoiceOver magic tap), icon animates `variableColor` while speaking; `[Mute]` → `setMuted()` (chime + haptic still play), label toggles "Unmute" / "Activar voz". Large Content Viewer on all (cap 1.3).
 - **Lockout dialog** (outside Drive Mode only, e.g. O3: search during the simulated drive): RN `Modal` + scrim, card `surface2` r24 padding 24: `drive.lockout.title` (title.md) → `PassengerHoldButton` 76 → `[Cancel]` 52. Never offered inside Drive Mode; Director "Lockout: Off" disables it for takes.
 - **Simulated position** comes only from the scripted drive (05 §25.4); the follow map shows the car `◉` and the route; no user panning.
@@ -877,7 +882,7 @@ One scroll. The **peek** answers "what and when", the **half** proves "why" (hyd
 └─────────────────────────────────┘
 ```
 - Cards come from `SCENARIOS` where the scenario has storm results (`flash-flood-night` hero, `onion-creek-storm`); `calm-evening` and `drive-commute` aren't cards (drive = the hero card's second button). Numbers only from `storyResults()` (05 §26.2).
-- `[▶ Play]` → `selectScenario(id)` + `router.push('/storm/'+id)` (zoom transition `Link.AppleZoom` from the card [Unverified into `fullScreenModal` → fallback: 240 ms fade-through]); `[Drive this storm (simulated)]` → `drive-mode` with the `drive-commute` script (05 §25.4).
+- `[▶ Play]` → `if (useDemo.getState().scenarioId !== id) selectScenario(id)` (only a **different** scenario resets the clock to `playFromMin`; the active one keeps its clock — the one-clock rule, and what lets Director take T03 park the storm at 6:35 AM on this tab) → `router.push('/storm/'+id)` → `play()` (no autoplay when VoiceOver is on) (zoom transition `Link.AppleZoom` from the card [Unverified into `fullScreenModal` → fallback: 240 ms fade-through]); `[Drive this storm (simulated)]` → `drive-mode` with the `drive-commute` script (05 §25.4). testID `storm-play` on the hero card's `[▶ Play]` (05 §28.2).
 - Copy: `storms.title` "Storms" / "Tormentas" · `storms.subtitle` "Simulated storms over real Austin low-water crossings." / "Tormentas simuladas sobre cruces bajos reales de Austin." · `storms.card_median` "Median across {{n}} flooded crossings: {{m}} min." / "Mediana en {{n}} cruces inundados: {{m}} min." · `cta.play` "Play" / "Reproducir" · `demo.drive_cta` (01) · `storms.how_made` "How these storms are made" / "Cómo se hacen estas tormentas".
 - **Done when:** both cards render with engine numbers in EN/ES; buttons never truncate (stack instead); the banner is on every card.
 
@@ -901,7 +906,7 @@ One scroll. The **peek** answers "what and when", the **half** proves "why" (hyd
 │╰───────────────────────────────╯│
 └─────────────────────────────────┘
 ```
-- **Opening:** the scenario is selected and paused at `playFromMin`; if `simMin < firstWatch − 10`, a chip `[Skip to the action]` / `[Ir a la acción]` appears above the panel (seeks to first Watch − 10 min). Autoplay is off when VoiceOver is on.
+- **Opening never touches the clock:** the player screen never calls `selectScenario` or `seek` on mount. A Storms card's `[▶ Play]` (§18.13) has already selected the scenario if it wasn't active and starts playback; the accessory `[View]`, a Director take (T05 opens it paused at 7:02 AM; T11 at 5:50 AM) and a deep link show the clock exactly where it is. If `simMin < firstWatch − 10`, a chip `[Skip to the action]` / `[Ir a la acción]` appears above the panel (seeks to first Watch − 10 min). Autoplay is off when VoiceOver is on; the player's own ▶ has testID `player-play`.
 - **Speeds** (native `Menu` on `(60× ▾)`): 1× · 10× · 30× · 60× (default) · 120×; while auto-slow is active the label reads "10× auto" / "10× auto". **More `[⋯]`:** *Drive this storm (simulated)* · *Results* (after the hero onset) · *Auto-slow at key moments* (toggle).
 - **Story captions** (from `storyboard()` + the onset tick; one at a time, 240 ms crossfade, stay until the next): `player.story.first_watch` "Upstream gauge rising · Watch at {{short}}" / "Sube el medidor río arriba · Precaución en {{short}}" · `player.story.first_avoid` "Above the trigger upstream · Avoid at {{short}}" / "Sobre el nivel de alerta río arriba · Evite en {{short}}" · `player.story.water` "Water reached the road (simulated) · {{short}}" / "El agua llegó al camino (simulado) · {{short}}" · `player.story.official` "Simulated road crew closed {{short}}" / "La cuadrilla vial simulada cerró {{short}}" · `replay.gauge_silent` (01 §3.7). Rates in captions always say "over the last 30 min".
 - **Focus crossing:** the hero (`storyResults().crossingId`) by default; tapping another marker sets the focus (T11: Bluff Springs Rd). The FocusRow shows the crossing's chip + window or `LastKnownBadge`; the hydrograph/LagPair follow the focus crossing's primary gauge with the hatched gap band when silent.
@@ -976,8 +981,8 @@ INBOX                                    SAVED
 │ road.                           │
 └─────────────────────────────────┘
 ```
-- **Inbox store** (`mobile/src/lib/alerts-inbox.ts`, zustand, in memory — cleared by Director Reset and on relaunch, like the demo store): one entry per notification the plan fires (foreground or lock-screen, 05 §25.3) — `{ id, crossingId, state, window, simMin, scenarioId, read }`. Entries appear even when iOS notifications are off (the banner explains). Sections = one per scenario run ("FLASH FLOOD NIGHT · SIMULATED"), newest first; times are **storm times**. Badge = unread AVOID/CLOSED; viewing the Inbox marks visible rows read.
-- **Saved store** (`mobile/src/lib/saved.ts`, persisted in kv-store): seeded with the crossings on the Home → School route that the hero scenario subscribes (`atx-37`); `[Notify me]` adds/removes; "Also alert me at Watch" per crossing (off; disabled with a hint until Settings → Notifications → Watch alerts is on). The notification plan must use this set — **cross-file note for 05 §22.9/§25.1:** `planNotifications(cmp)` reads `scenario.subscriptions`; pass `savedIds` + `watchAlerts` from these stores instead (seeded identically, so every take is unchanged).
+- **Inbox store** (`mobile/src/lib/alerts-inbox.ts`, zustand, in memory — cleared by Director Reset and on relaunch, like the demo store; exports `useInbox` (`add`, `markRead`, `clear`) and `useUnreadUrgentCount()` for the tab badge, §16.4; written by the notify adapter, 05 §25.3): one entry per notification the plan fires (foreground or lock-screen, 05 §25.3) — `{ id, crossingId, state, window, simMin, scenarioId, read }`. Entries appear even when iOS notifications are off (the banner explains). Sections = one per scenario run ("FLASH FLOOD NIGHT · SIMULATED"), newest first; times are **storm times**. Badge = unread AVOID/CLOSED; viewing the Inbox marks visible rows read.
+- **Saved store** (`mobile/src/lib/saved.ts`, persisted in kv-store): seeded with the crossings on the Home → School route that the hero scenario subscribes (`atx-37`); `[Notify me]` adds/removes; "Also alert me at Watch" per crossing (off; disabled with a hint until Settings → Notifications → Watch alerts is on). The notification plan uses this set through the wrapper in 05 §25.1 (`planFor(cmp, savedIds, watchAlerts)`; the tested `planNotifications(cmp)` is unchanged and the seed equals `scenario.subscriptions`, so every take is unchanged).
 - Row tap → `crossing/[id]`. Swipe left / ⋯ / long-press menu → "Stop alerts" → native confirm "Stop alerts for {{name}}?" `[Stop alerts]` `[Cancel]` (never red).
 - **Empty Inbox:** `EmptyState` `bell` "No alerts yet" + `alerts.empty` (01 §3.7). **Empty Saved:** `bookmark` "No saved crossings yet" + "Save crossings you drive through to get warnings." + `[Find crossings]` (→ `nearby`).
 - `CapabilityBanner notificationsOff` (only when iOS permission is denied/not granted): "Notifications are off. Alerts still appear here." / "Las notificaciones están apagadas. Los avisos siguen apareciendo aquí." `[Turn on]` → primer or `Linking.openSettings()`.
@@ -1094,7 +1099,7 @@ Keys `howitworks.step1–5.title|body` (EN as above; ES: "Medidores río arriba 
 Rows = 06 §31.3 table (source `mobile/src/content/whats-real.ts`, each with `claimId`; test-checked against `docs/CLAIMS.md`). Badges are **never** status colors. Copy: `whatsreal.title` "What's real in this demo" / "Qué es real en esta demostración" · `whatsreal.intro` (above) / "El agua es simulada. El código de pronóstico es real y se ejecuta en este teléfono." · groups `whatsreal.real|simulated|planned` "Real" · "Simulated" · "Planned" / "Real" · "Simulado" · "Planeado" · badges `badge.built|demo|planned` "Built" · "Demo data" · "Planned" / "Hecho" · "Datos de demostración" · "Planeado".
 
 #### 18.18.7 About & credits (`settings/about`, RN) [BUILD-ONLY]
-App icon 64 (triple-tap → Director, 05 §24.1) · "FordCast" `display.md` · tagline · "Version 1.0.0 · built {{date}}" · "An independent student project for the 2026 Congressional App Challenge." · CREDITS (01 §3.8 attribution lines, one per row) · `[Replay introduction]` (re-opens onboarding; pledge state kept) · "Legal & disclaimer ›".
+App icon 64 (triple-tap → Director, 05 §24.1) · "FordCast" `display.md` · tagline · "Version 1.0.0 · built {{date}}" · "An independent student project for the 2026 Congressional App Challenge." · CREDITS (01 §3.8 attribution lines, one per row) · `[Replay introduction]` (sets the in-memory `replayIntro` flag, which opens the `(onboarding)` guard (§16.4), then `router.push('/welcome')`; the stored pledge is kept, the checkboxes start empty, and P4/P5 finishing clears the flag and returns to Map Home — this is how the 06 §29.3 pledge shot is filmed) · "Legal & disclaimer ›".
 
 #### 18.18.8 Legal & disclaimer (`settings/legal`, RN) [BUILD-ONLY]
 `legal.about` full text (01 §3.8) + `DisclaimerFooter full`. `body.lg`, reading width, scrolls.
@@ -1108,7 +1113,7 @@ Layout, controls and actions are owned by **05 §24.2–§24.6**; this is the vi
 - Take chips: 36 pt pills `surface2`, `label.lg`, wrap with 8 gaps; the last-loaded take = inverse pill; expected-state caption below in `num.sm` `#B4BFD0` (hidden in clean mode).
 - Transport: 76 pt buttons (`backward.fill`, `gobackward.5`, `play.fill`/`pause.fill`, `goforward.5`, `forward.fill`) + the same `Scrubber` as the player + speed segmented (1× · 10× · 30× · 60× · 120×).
 - Toggles: RN rows with native `Switch` (`trackColor={{ true: '#6CB4FF' }}`, never green) or SwiftUI `Toggle` with `tint`.
-- Status line `num.sm` tertiary: "events a1b2c3d4 · compile 9 ms · glass liquid · built Oct 21 · rebuild by Oct 28".
+- Status line `num.sm` tertiary: "events 471e80be · compile 9 ms · glass liquid · built Oct 22 · rebuild by Oct 29" (05 §24.6).
 - Header: "Demo Director" `title.md` + `[Reset]` secondary (never red).
 
 ### 18.20 Notifications: Lock Screen, banner, in-app [MUST-SHOW lock screen]
@@ -1128,12 +1133,12 @@ LOCK SCREEN (T06, phone locked, ≈ 8 s after arming)        LONG-PRESS / EXPAND
 ```
 - **Recording setup** (06 §30.1): Show Previews **Always**; a "Recording" Focus that allows only FordCast; Scheduled Summary off. The Lock Screen's big clock shows real time — frame the shot on the notification.
 - **Tap → Face ID → app:** the response handler seeks the clock to `data.simMin` and pushes `crossing/<id>` at peek over Map Home (05 §25.3) — the sheet shows exactly what the notification announced (T07).
-- **Foreground:** when the app is open, iOS shows its banner at the top. To avoid two banners for the same event, the handler returns `shouldShowBanner: false` (still `shouldShowList: true`) **when the in-app AlertBanner or that crossing's sheet is visible** — **cross-file note for 05 §25.3** (`setNotificationHandler` currently always shows the banner; add `isInAppAlertVisible(data.crossing_id)` from the UI store).
+- **Foreground:** when the app is open, iOS shows its banner at the top. To avoid two banners for the same event, the handler returns `shouldShowBanner: false` (still `shouldShowList: true`) **when the in-app AlertBanner or that crossing's sheet is visible** (05 §25.3 integration rule: `setInAppAlertVisible(crossingId | null)`, read by `handleNotification` from `data.crossing_id`).
 - **Optional attachment [SHOULD, cut first]:** `attachments` with a 600 × 400 PNG snapshot of the crossing on the night map (Skia/`makeImageSnapshotAsync` of a static map card); if the write fails, post without it [field Verified in expo-notifications 57 types; behavior Unverified].
 - No custom notification sound (system default); no "SIMULATED" title prefix (titles stay ≤ 50 chars; the subtitle carries the label).
 
 ### 18.21 Live Activity + Dynamic Island [NEXT — SHOULD-SHOW only if the 02 §10.3 spike signs and runs]
-Only if the spike passes on Wed Oct 21 (02 §10.3); otherwise this is a "Planned" row in What's real and nothing in the app references it.
+Only if the ≤ 90 min spike passes on Day 8, Thu Oct 22, before the evening Release build (02 §10.3; decided on Day 7); otherwise this is a "Planned" row in What's real and nothing in the app references it.
 ```
 compactLeading: [octagon glyph]   compactTrailing: "15–30m"   minimal: [octagon glyph]
 expanded:  [◆] AVOID                         15–30 min      banner (Lock Screen):
@@ -1182,7 +1187,7 @@ expanded:  [◆] AVOID                         15–30 min      banner (Lock Scr
 
 ### 19.2 `mobile/src/lib/layout.ts` (classes, gutters, zones, detents)
 ```ts
-// mobile/src/lib/layout.ts — the only place device geometry is interpreted (tests: __tests__/layout.test.ts)
+// mobile/src/lib/layout.ts — the only place device geometry is interpreted (tests: src/__tests__/layout-test.ts)
 import { useWindowDimensions } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 export type HeightClass = 'C' | 'R' | 'T'; export type WidthClass = 'N' | 'W'; export type TypeTier = 0 | 1 | 2 | 3;
@@ -1214,7 +1219,7 @@ export function useLayout() {
 // NativeTabs screen with the accessory hidden/shown. If the inset already includes the bar, tabZone = insets.bottom;
 // else fallback = 49 + deviceSafeBottom (+ 56 when the accessory/mini-bar shows) [Unverified constants; research-ui §2.2].
 ```
-`__tests__/layout.test.ts` asserts the §19.4 detent numbers for the seven devices and the class boundaries (699/700, 899/900, 389/390).
+`src/__tests__/layout-test.ts` asserts the §19.4 detent numbers for the seven devices and the class boundaries (699/700, 899/900, 389/390).
 
 ### 19.3 Measured text widths (Inter 4, tracking applied) [Verified: calc]
 Measured with `tools/measure-text.mjs` (opentype.js 1.3.4 over the `@expo-google-fonts/inter@0.4.2` TTFs; advance widths with kerning + tracking × characters). On-device text can differ by a few points (shaping, `tnum`), so every layout still **measures at runtime**; these numbers set the rules.
@@ -1254,7 +1259,7 @@ Measured with `tools/measure-text.mjs` (opentype.js 1.3.4 over the `@expo-google
 | Air | 0.38 (347) | 0.64 (584) | 1.0 |
 | 16 Plus | 0.37 (345) | 0.63 (587) | 1.0 |
 | Pro Max | 0.36 (344) | 0.61 (583) | 1.0 |
-These replace B2's fixed 0.32 peek (clipped the action row by 25 pt on iPhone 16 and 51 pt on SE [Verified: calc, research-ui §2.5 B]) and refine 01 §4.1's "0.62 (SE 0.70)" half so the **whole hydrograph and the travel line** fit at half. VERIFY BEFORE USE (Day 4): RNS numeric detents are fractions of the window height including the bottom safe area [Unverified] — render a 1 pt marker at the end of the peek stack and confirm it's visible above the home indicator on SE and iPhone 16; if not, add the measured difference to `PEEK_CONTENT`.
+These replace B2's fixed 0.32 peek (clipped the action row by 25 pt on iPhone 16 and 51 pt on SE [Verified: calc, research-ui §2.5 B]) and research-ui's fixed "0.62 (SE 0.70)" half, so the **whole hydrograph and the travel line** fit at half (01 §4.2 row 4 quotes these numbers). VERIFY BEFORE USE (Day 4): RNS numeric detents are fractions of the window height including the bottom safe area [Unverified] — render a 1 pt marker at the end of the peek stack and confirm it's visible above the home indicator on SE and iPhone 16; if not, add the measured difference to `PEEK_CONTENT`.
 
 | Screen | C (SE) | R (mini · 16 · 17) | T (Air · Plus · PM) | Never |
 |---|---|---|---|---|
@@ -1272,6 +1277,12 @@ These replace B2's fixed 0.32 peek (clipped the action row by 25 pt on iPhone 16
 | Results | count-up + honesty visible at 0.62 (≈ 383 of 413 pt) | same | number 56/60 | number wrapping |
 | Onboarding | illustration 140 | 200 | 240 | body > 40 words |
 | Settings | native Form rows ≥ 44 | same | same | green toggles |
+| Settings RN pages (How it works · What's real · About · Legal) | scroll; How-it-works diagram static at T2+; badges wrap under the title at T1+ | same | same | truncated row title or badge |
+| Scenario accessory / mini-bar | regular: line 1 (EN 167.5 / ES 170.4 pt) fits SE with `[❚❚]` + `[View]`; inline when the tab bar minimizes; mini-bar 52 pt at `tabZone + 8` | same | same | a running scenario without its violet label |
+| Alerts tab (Inbox · Saved) | inline title; rows auto height (SIMULATED chip + state chip may stack above the name at T1+); `CapabilityBanner` wraps | large title | large title | truncated status word, window or storm time |
+| Sheets: search · legend · gauge card | search 0.92; legend / gauge `fitToContents`, scroll when capped by the system (T2+) | same | same | clipped legend row or stage value |
+| Lockout dialog | card `W − 2g`, hold button 76, `[Cancel]` 52; scrolls at T2+ | same | same | clipped hold label |
+| Demo Director (presenter) | [0.5, 1.0]; take chips wrap (8 gap); transport 76; scrolls | same | same | a take chip or control out of reach |
 
 ### 19.5 Worked checks (the math behind the rules)
 - **A — Card buttons** (inner = `W − 2g − 32`: SE/mini 311 · 16 329 · 17 338 · Air 356 · Plus 358 · PM 368): with icons (17 + 6) and padding 2 × 16: EN 166.4 + 137.1 + 8 = **311.5**, ES 161.3 + 152.0 + 8 = **321.3**; without icons EN 265.5, ES 275.3. ⇒ SE/mini: no icons (both languages); 16 and up: icons. T1 (× 1.353, no icons): EN 333.8 ⇒ stacked on SE/mini and 16, side by side from 17; ES 347.0 ⇒ stacked on SE/mini/16/17, side by side on Air/Plus/Pro Max.
@@ -1295,7 +1306,7 @@ Capped elements (03 §13.9) always show the Large Content Viewer. At AX5 a 17 pt
 ### 19.7 Test protocol & Done when (§19)
 - **Matrix:** {SE, iPhone 16 or 17, Pro Max} × {EN, ES} × {T0, T1 (XXXL), T3 (AX3)} × the [MUST-SHOW] screens (Map Home calm + storm, crossing peek/half, drive/result, Drive Mode approach, Storms tab, player, results, pledge, What's real) — 9 screens × 18 combinations, captured on the Simulator with `xcrun simctl io booted screenshot` (Release build) into `docs/media/screens/<screen>-<lang>-<class>-<tier>.png`.
 - **Pass:** no clipped or truncated status word, window, button label, crossing name (except the documented 2-line ellipsis for 3 off-camera names at peek), honesty label or footer; nothing under the Dynamic Island, home indicator or tab bar; every custom target ≥ 44 pt (gallery overlay); the blur tier (iOS 18 Simulator) and solid tier (Reduce Transparency) both look finished.
-- **Done when:** the matrix is captured and reviewed on Day 8 (01 §6), failures fixed or logged in `docs/devlog.md` with the rule that was applied; `layout.test.ts` passes.
+- **Done when:** the matrix is captured and reviewed on Day 8 (01 §6), failures fixed or logged in `docs/devlog.md` with the rule that was applied; `layout-test.ts` passes.
 
 ---
 
@@ -1314,7 +1325,7 @@ All times below are the engine's verified outputs (05 §22.6, §24.4); wall time
 | 1,100 → 1,400 | overlay crossfades out **while** the map camera eases z 9.8 → 10.5 over 1,200 ms (decelerate) onto the calm map |
 | RM | static logo, 300 ms fade, no camera move |
 
-### 20.2 The calm map that is alive but never reassuring (T01, 0:28–0:38)
+### 20.2 The calm map that is alive but never reassuring (T01, 0:28–0:35; then the 3 s pledge insert, 0:35–0:38, §18.2 / 06 §29.3)
 DEMO pill steady; gauge ripples every 12 s (staggered per gauge by 1.5 s so they never pulse together); creeks at 50 %; slate rings; the card reads "No upstream rise detected near you". One slow pinch-out in the take shows the clusters resolve into crossings at z 13 with Noto labels. No green, no check marks, no "all clear".
 
 ### 20.3 "The warning arrives first" — storm player (T03, 0:50–1:20) [MUST-SHOW]

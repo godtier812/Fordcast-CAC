@@ -63,13 +63,13 @@ Ask these in **one message**, wait for the answers, then record them in `docs/de
 | DD9 | **One global scenario clock** drives every screen; speeds 1× · 10× · 30× · **60× (default)** · 120×; auto-slow to 10× around beats. | §22 |
 | DD10 | **Portrait only, dark only** (`userInterfaceStyle: "dark"`). | §9, §12 |
 | DD11 | **Simulated position by default.** A real "Use my location" toggle (foreground `expo-location` only) is optional [BUILD-ONLY]. No background location, no geofencing. | §25 |
-| DD12 | **Record from a Release build** (`npx expo run:ios --device --configuration Release`) with **QuickTime over cable** as the primary capture. | §11, §30 |
+| DD12 | **Record from a Release build** (`npx expo run:ios --device --configuration Release --no-bundler`) with **QuickTime over cable** as the primary capture. | §11, §30 |
 | DD13 | **The Demo Director ships in Release** (presenter-only, hidden entry points, clearly labeled), replacing the full build's `__DEV__` debug screen and DEMO_MODE build flag. | §24 |
 | DD14 | **Video visibility: Public** (the 2025 national rules say "The video must be set to 'public'" [Secondary: 2025 CAC rules PDFs on mfume.house.gov / morgangriffith.house.gov, via web search 2026-10-16]) unless the 2026 rules the student reads say Unlisted is allowed. | §29, §32 |
 
 ### 1.3 Version and dependency discipline
 
-1. **Expo SDK 57 is frozen through judging.** Today `npm view expo dist-tags` shows `latest` = **58.0.x** (58.0.13 on 2026-10-16; it moves almost daily) and `sdk-57` = **57.0.30** [Verified: npm, 2026-10-16]. So:
+1. **Expo SDK 57 is frozen through judging.** Today `npm view expo dist-tags` shows `latest` = **58.0.x** (58.0.14 at the last check on 2026-10-16; it moves almost daily) and `sdk-57` = **57.0.30** [Verified: npm, 2026-10-16]. So:
    - Scaffold **only** with `npx create-expo-app@latest mobile --template default@sdk-57` (the template's `sdk-57` tag is 57.0.32; it pins `expo ~57.0.30`, `expo-router ~57.0.28`, RN 0.86.3, React 19.2.3, Reanimated 4.5.1, worklets 0.10.1, `src/app` routes, an `app.json` that §9.4 replaces with `app.config.ts`, `ios.icon: ./assets/expo.icon` [Verified: pkg expo-template-default@57.0.32]).
    - Never run `npx expo install expo@latest`, never accept an SDK 58 prompt, never bump RN or React. `expo` must stay **≥ 57.0.23** (needed for the Xcode 27 scene fix; research-ios Δ2). The full prompt's `~57.0.28` pin is satisfied by 57.0.30.
 2. **Native packages only with `npx expo install <pkg>`** (it resolves the SDK 57 pin). Pure-JS packages with `npm install --save-exact <pkg>@<version>`.
@@ -109,7 +109,7 @@ Ask these in **one message**, wait for the answers, then record them in `docs/de
 ### 1.5 Honesty rules for a demo built on simulated data
 
 1. **Simulated data is labeled everywhere it appears** (§3.9 copy, §31.1 placement): the neutral dashed **DEMO** chip in the FreshnessPill at baseline; the violet **SIMULATED** pill + 2 pt violet map frame + scenario accessory while a scenario runs; **SIMULATED STORM · demo data · not live** on every player and results frame; **SIMULATED DRIVE** in Drive Mode; the notification subtitle **Simulated storm · demo data**; a violet **SIMULATED** chip on every Alerts inbox row.
-2. **Real things stay real and verbatim.** Crossing names, addresses and coordinates are copied verbatim from the City of Austin's open-source ATXfloods backend (`cityofaustin/ctxfloods-backend`, `populateDB/data/legacyCrossings.csv`, MIT) [Verified: research-data §1.1]. Gauge names come from USGS. Never invent, shorten into a new name, or translate a crossing, creek, road or gauge name (a `shortName` field may only drop words, e.g. "Bull Creek"). The only exception is the **TTS-only** `spoken.{en,es}` field (§3.10 rule 2): it may expand abbreviations ("Rd" → "Road") and say the connector ("at", "@", "&") in the voice's language ("Williamson Creek **en** Jones Road"); no visible text ever changes.
+2. **Real things stay real and verbatim.** Crossing names, addresses and coordinates are copied verbatim from the City of Austin's open-source ATXfloods backend (`cityofaustin/ctxfloods-backend`, `populateDB/data/legacyCrossings.csv`, MIT) [Verified: research-data §1.1]. Gauge names come from USGS. Never invent, shorten into a new name, or translate a crossing, creek, road or gauge name (a short name — the UI map `SHORT_NAMES`, 04 §17.2 — may only drop words, e.g. "Bull Creek"). The only exception is the **TTS-only** `spoken.{en,es}` field (§3.10 rule 2): it may expand abbreviations ("Rd" → "Road") and say the connector ("at", "@", "&") in the voice's language ("Williamson Creek **en** Jones Road"); no visible text ever changes.
 3. **No impersonation.** The official-closure source is always **"Simulated road crew"** (`demo.source.road_crew`). Never "City of Austin", "ATXfloods", "Travis County", "TxDOT", "NWS" or any real agency as the source of a simulated status. No agency logos anywhere. No NWS products, warnings or polygons, real or fake.
 4. **No fabricated metrics.** No POD, FAR, CSI, "accuracy", "% of floods caught" or confidence intervals from simulated storms. The only number is the **engine-computed lead time**, always worded "in this simulated storm" and always paired with that storm's median (`demo.result_honesty`). The featured example is chosen by the fixed rule (the flooded tier-A crossing whose lead is closest to the median, ties → earlier onset; research-data §2.3), never by hand.
 5. **No links to real gauge pages.** A USGS page would show real readings that contradict the simulated ones. Gauge cards show the USGS **station name** with the caption "Readings simulated for this demo"; **station numbers are not displayed in the UI** (they stay in data, code and the What's real credits). This reconciles research-ui §4 item 24 with research-data §1.2.
@@ -612,9 +612,9 @@ Store once in `mobile/src/locales/banned-words.json` (shape: `{ global: {en, es}
 - **Design consequences:** no "Clear"/"OK" buttons (use "Reset", "Done", "Got it" / "Restablecer", "Listo", "Entendido"); no "¿Está seguro?" (use "¿Desea…?"); no label starts with "Open"/"Abrir" (use "Show detour in {{app}}" / "Mostrar el desvío en {{app}}", "View …"/"Ver …").
 - **Countdown guard:** any value with `{{lo}}` must contain `{{hi}}`, `{{tau_lo}}` must have `{{tau_hi}}`; `{{eta}}`, `{{minutes}}`, `{{countdown}}`, bare `{{tau}}` are forbidden; in status scope the regex `\b(in|en|within|dentro de)\s+\d+\s*(min|minutes|minutos)\b` fails, as does any "now–", "ahora–" or "0–" range.
 - **Spoken guard:** spoken keys (`*_spoken*`, `*.spoken*`, `*.tts`, `drive.tts.*`, `drive.start_tts`) must not contain `–`, `—`, `\bmin\b`, `\bft\b`.
-- **Demo guards (new):** no key value contains "City of Austin", "ATXfloods", "Travis County", "TxDOT" or "NWS" except `legal.about`, `about.sources*` and `demo.whats_real.*` credit rows; notification content builders must set `subtitle` from `demo.notify.subtitle` (unit test on `notify/content.ts`).
+- **Demo guards (new):** no key value contains "City of Austin", "ATXfloods", "Travis County", "TxDOT" or "NWS" except `legal.about`, `about.sources*`, `sheet.credit` (crossing sheet About block, 04 §18.6) and `whatsreal.*` credit rows (04 §18.18.6); notification content builders must set `subtitle` from `demo.notify.subtitle` (unit test on `notify/content.ts`).
 - **Code guards** (static scans): no `NotificationFeedbackType.Success` in `mobile/src/**` outside tests; no green status token in `mobile/src/lib/theme.ts`; no `getExpoPushTokenAsync`/`getDevicePushTokenAsync` anywhere; no `waterdata.usgs.gov` or `api.openrouteservice.org` string in `mobile/src/**`. A test file that must contain a forbidden literal builds it by string concatenation.
-- Files: `mobile/src/__tests__/copy-banned.test.ts`, `i18n-parity.test.ts` (identical EN/ES key sets; plural keys `_one/_other` + ES `_many`), sketch in A §3.12 (Jest), adapted to the lists above.
+- Files: `mobile/src/__tests__/copy-banned-test.ts`, `i18n-parity-test.ts` (identical EN/ES key sets; plural keys `_one/_other` + ES `_many`), sketch in A §3.12 (Jest), adapted to the lists above. (Every Demo Edition test file is named `<name>-test.ts` and lives in `mobile/src/__tests__/`, like the `05-code/` suites.)
 
 ### 3.12 Semantic haptics and sound (summary; §15 owns timing)
 
@@ -653,52 +653,52 @@ Columns: **Entry** = taps from a cold Map Home. **Fit** = the space rule that ke
 | # | Feature (F-ID) | Home (route · component) | Entry | Tag | Demo implementation · fit | Spec |
 |---|---|---|---|---|---|---|
 | 1 | Area status (F30, F40) | `(tabs)/index` · `AreaStatusCard` | 0 | [MUST-SHOW] | Chip row, headline ≤ 2 lines, `[Check my drive] [Drive Mode ▶]`, footer. Card 204 pt on C (no supporting line), 226 pt on R/T with "Watching 12 upstream gauges for 17 crossings". Buttons: measure → drop leading icons → stack (2 × 52 + 8); never shrink text. Swipe up or tap the chip row → `nearby`. | §17, §18, §19 |
-| 2 | Night map: creeks, gauges, crossings, clusters (F28, F31, F32) | `MapSurface` | 0 | [MUST-SHOW] | "FordCast Night" style, cyan creek veins, gauge dots, 4-way crossing sprites, clusters keep the worst state; top/bottom edge fades behind chrome; `contentInset` from chrome + card heights. | §13, §18 |
-| 3 | Freshness + honesty pill (F35) | top band `FreshnessPill` | 0 | [MUST-SHOW] | `DEMO · updated 2 min ago` → violet `SIMULATED · 7:00 AM storm time` while a scenario runs; short forms when the measured width exceeds `W − 2g − 104`. Tap → `whats-real`; long-press 0.8 s → Director. | §3.4, §18 |
+| 2 | Night map: creeks, gauges, crossings, clusters (F28, F31, F32) | `MapSurface` | 0 | [MUST-SHOW] | "FordCast Night" style, cyan creek veins, gauge dots, 4-way crossing sprites, clusters keep the worst state; top/bottom edge fades behind chrome; `contentInset` from chrome + card heights. | §13, §18, §19.4 |
+| 3 | Freshness + honesty pill (F35) | top band `FreshnessPill` | 0 | [MUST-SHOW] | `DEMO · updated 2 min ago` → violet `SIMULATED · 7:00 AM storm time` while a scenario runs; short forms when the measured width exceeds `W − 2g − 104`. Tap → `whats-real`; long-press 0.8 s → Director. | §3.4, §18, §19.4 |
 | 4 | Crossing detail + "Why this alert?" + upstream hydrograph (F43, F14, F45) | `crossing/[id]` formSheet | 1 (marker, row, banner, notification) | [MUST-SHOW] | **One scroll:** peek = chip, name (≤ 2 lines), window line, meta "Gauge read 8 min ago · DEMO", actions `[⤳ Detour +N min] [🔔] [⋯]`; half = RiskRing + RiskWindow row, **Hydrograph** (C 120 · R 140 · T 160 pt) with dashed amber trigger line, Why (2 reasons + travel range); full = segmented Upstream · History · About + footer. Detents from `crossingDetents()`: peek = `ceil2(clamp((286 C / 306 R·T pt + safeBottom)/H, 0.30, 0.48))` (SE 0.43 … Pro Max 0.36); half sized so the whole hydrograph + travel line fit (SE 0.74 … Pro Max 0.61); T1 `[0.80, 1.0]`, T2+ full only. | §17, §18, §19.2, §19.4 |
 | 5 | Risk window "Next 90 min" (F31) | crossing half; `EtaRangePill` in peek, rows, Drive HUD | 1 | [MUST-SHOW] | Now·30·60·90 ticks; bracket moves once per tick; ranges only. | §17 |
-| 6 | Official closure override (F10) | crossing CLOSED · OFFICIAL variant | 1 | [SHOULD-SHOW] | Source "Simulated road crew" + shield + OFFICIAL chip (take O1-closed, 7:50 AM). | §3.6, §18 |
+| 6 | Official closure override (F10) | crossing CLOSED · OFFICIAL variant | 1 | [SHOULD-SHOW] | Source "Simulated road crew" + shield + OFFICIAL chip (take O1-closed, 7:50 AM). | §3.6, §18, §19.4 |
 | 7 | Unknown / stale → UNKNOWN (F11) | dashed sprites; crossing UNKNOWN variant; player | 1 | [MUST-SHOW] | `onion-creek-storm` 5:50 AM: Bluff Springs Rd ◌ "Last known: Avoid · 50 min ago" + `replay.gauge_silent` caption (take T11-unknown, ~5 s). | §21–§23, §26 |
 | 8 | Simulated offline → every crossing UNKNOWN after 20 min | Director switch; all screens | — | [BUILD-ONLY] | Proves the 20-min rule on demand; FreshnessPill "Data offline · 22 min". | §3.4, §24 |
 | 9 | Check My Drive + route verdict (F49) | Drive tab `drive/index` → `drive/result` | 1 (Drive tab or card button) | [MUST-SHOW] | Home → School via saved-place chips; verdict = worst state on the route (Avoid Jones Rd + Watch Manchaca & Jones at 7:01 AM). Route/detour lines follow **real streets** (baked). Result: map 38 % of H on C, 45 % on R/T; actions sticky at the bottom (52 + 8 + 76). | §18, §21 |
-| 10 | Detour (F50) | crossing peek `[Detour +N min]`; `drive/result` | 2 | [MUST-SHOW] | Baked `detour` route (no crossing within 40 m); "Detour adds N min" from the baked duration (draft ≈ 2; research-data §1.5); blocked segment dashed `#FF5470`, detour draws on. | §18, §20 |
-| 11 | Hand-off to a map app (F53) | `drive/result` native pull-down "Show detour in ▾ Apple Maps · Google Maps · Waze" | 2 (card `[Check my drive]` → `[Show detour in ▾]`; picking the app is the action that leaves FordCast) | [SHOULD-SHOW] | Native menu (`Link.Menu` or `@expo/ui` `Menu`), only installed apps listed; `state.avoid.handoff_warning` stays on the card. VERIFY BEFORE USE: `LSApplicationQueriesSchemes` for `comgooglemaps`, `waze` via `ios.infoPlist`. | §18 |
+| 10 | Detour (F50) | crossing peek `[Detour +N min]`; `drive/result` | 2 | [MUST-SHOW] | Baked `detour` route (no crossing within 40 m); "Detour adds N min" from the baked duration (draft ≈ 2; research-data §1.5); blocked segment dashed `#FF5470`, detour draws on. | §18, §20, §19.4 |
+| 11 | Hand-off to a map app (F53) | `drive/result` native pull-down "Show detour in ▾ Apple Maps · Google Maps · Waze" | 2 (card `[Check my drive]` → `[Show detour in ▾]`; picking the app is the action that leaves FordCast) | [SHOULD-SHOW] | Native menu (`Link.Menu` or `@expo/ui` `Menu`), only installed apps listed; `state.avoid.handoff_warning` stays on the card. VERIFY BEFORE USE: `LSApplicationQueriesSchemes` for `comgooglemaps`, `waze` via `ios.infoPlist`. | §18, §19.4 |
 | 12 | Drive Mode + voice EN/ES (F57, F58, F60, F61) | `drive-mode` fullScreenModal | 1 | [MUST-SHOW] | `#070D18`, ≤ 3 items per glance, buttons 76/96 pt; follow-map strip only if leftover ≥ 120 pt (17, Plus, Pro Max); SE: 2-node ribbon, hidden during the approach alert. Chime → TTS (+650 ms) → Error haptic + 8 pt red edge glow. SIMULATED DRIVE label in every frame. | §18, §19, §25 |
-| 13 | Simulated drive position | `demo/drive/sim-drive.ts` (`useSimulatedDrive`, 05 §25.4) → `CarPuck` + Drive HUD | — | [MUST-SHOW] | Scripted car along the baked commute; leaves Home 6:58:54 AM; 8.9 m/s; risk clock at 1× during a drive; turns at `BRANCH` automatically. | §25 |
+| 13 | Simulated drive position | `demo/drive/sim-drive.ts` (`useSimulatedDrive`, 05 §25.4) → `CarPuck` + Drive HUD | — | [MUST-SHOW] | Scripted car along the baked commute; leaves Home 6:58:54 AM; 8.9 m/s; risk clock at 1× during a drive; turns at `BRANCH` automatically. | §25, §19.4 |
 | 14 | Driver lockout + passenger hold (F59) | dialog over search/list (`LockoutDialog`, §18.12) | — | [SHOULD-SHOW] | Simulated speed ≥ 4.5 m/s for 5 s; Director "Lockout: Auto / Off" so the presenter is never trapped (take O3-lockout). Card `W − 2g`, hold button 76 pt, scrolls at T2+. | §18.12, §19.4, §24, §25 |
 | 15 | In-app AlertBanner (F36) | Map Home, Drive tab | event | [MUST-SHOW] | Slides in under the top band; on C collapses to a 44 pt pill after 8 s (AVOID/CLOSED persist as the pill). | §17, §19 |
 | 16 | Local notification + lock screen (F65, F66) | iOS system banner / Lock Screen → `crossing/[id]` | event | [MUST-SHOW] | Title "Avoid Williamson Creek at Jones Road", subtitle "Simulated storm · demo data", bank body; OS-scheduled `TIME_INTERVAL` 8 s for the lock-screen take; tap seeks the clock to the announced beat. | §25 |
-| 17 | Alerts inbox (F71) + test alert (F72) | `(tabs)/alerts` Inbox | 1 | [SHOULD-SHOW] | Scenario alerts count toward the badge (they are the only alerts); each row starts with the violet SIMULATED chip; empty state = `ContentUnavailableView` + `alerts.empty`. | §18.16, §19.4 |
-| 18 | Saved crossings + Notify me (F46) | Alerts → Saved segment; crossing `[🔔]` | 2 | [SHOULD-SHOW] | "Also alert me at Watch" switch (off by default). Hero `atx-37` is pre-saved via the Home → School route. | §18 |
-| 19 | Saved places (F51) | Drive tab chips Home · School | 1 | [SHOULD-SHOW] | Static generic pins; chips scroll horizontally, never wrap; "Edit places" = [NEXT] row. | §18 |
+| 17 | Alerts inbox (F71) + test alert (F72) | `(tabs)/alerts` Inbox; test alert in `settings/notifications` | 1 (inbox) · 2 (gear → Notifications → "Send a test alert") | [SHOULD-SHOW] | Scenario alerts count toward the badge (they are the only alerts); each row starts with the violet SIMULATED chip; empty state = `ContentUnavailableView` + `alerts.empty`; the test alert carries "TEST ·" in its title and the demo subtitle. | §18.16, §18.18.2, §19.4 |
+| 18 | Saved crossings + Notify me (F46) | Alerts → Saved segment; crossing `[🔔]` | 2 | [SHOULD-SHOW] | "Also alert me at Watch" switch (off by default). Hero `atx-37` is pre-saved via the Home → School route. | §18, §19.4 |
+| 19 | Saved places (F51) | Drive tab chips Home · School | 1 | [SHOULD-SHOW] | Static generic pins; chips scroll horizontally, never wrap; "Edit places" = [NEXT] row. | §18, §19.4 |
 | 20 | Storms library (scenario cards) | `(tabs)/storms` | 1 | [MUST-SHOW] | Hero card "Flash flood night" (220 pt C · 260 R · 300 T) with "30 min" from the engine + `[▶ Play]` + secondary `[Drive this storm (simulated)]`; second card "Big Onion Creek storm (simulated)" (35 min); every card carries the violet banner. | §18, §26 |
-| 21 | Storm player + "X min earlier" (F75–F80) | `storm/[id]` fullScreenModal → `storm/results` | 2 | [MUST-SHOW] **signature** | Map gets the remaining height; story caption pill; LagPair (96 pt R · 120 T · chip on C); transport card 148 pt (scrubber ticks ▲ ◆ ● ▮ ⌀, ±5, prev/next beat, play 56 pt, speed menu). Results: count-up `demo.result` + honesty line + rule line + closure gap + window check + `demo.accuracy_planned`; no POD/FAR/CSI tiles. Scrubber ticks ▲ ◆ ▧ ◌ ● ⌀ (03 §13.6). | §18.14, §18.15, §19.4, §20, §26 |
-| 22 | Drive this storm (F128) | Storms hero card button → `drive-mode` | 2 | [SHOULD-SHOW] | Same Drive Mode in scenario mode (`drive-commute`). | §25 |
-| 23 | Scenario transport ("one clock") (F78b, F41) | `NativeTabs.BottomAccessory` (iOS 26+) / `ScenarioMiniBar` (< 26) | visible while a scenario runs | [MUST-SHOW] | Regular: `[❚❚] ● SIMULATED · Flash flood night · 7:00 AM [View]`; inline: `[❚❚] 7:00 AM`. Map Home shows the violet frame. | §16, §18, §22 |
+| 21 | Storm player + "X min earlier" (F75–F80) | `storm/[id]` fullScreenModal → `storm/results` | 2 | [MUST-SHOW] **signature** | Map gets the remaining height; story caption pill; LagPair (96 pt R · 120 T · chip on C); transport card 148 pt (scrubber ticks ▲ ◆ ▧ ◌ ● ⌀ per 03 §13.6, ±5, prev/next beat, play 56 pt, speed menu). Results: count-up `demo.result` + honesty line + rule line + closure gap + window check + `demo.accuracy_planned`; no POD/FAR/CSI tiles. | §18.14, §18.15, §19.4, §20, §26 |
+| 22 | Drive this storm (F128) | Storms hero card button → `drive-mode` | 2 | [SHOULD-SHOW] | Same Drive Mode in scenario mode (`drive-commute`). | §25, §19.4 |
+| 23 | Scenario transport ("one clock") (F78b, F41) | `NativeTabs.BottomAccessory` (iOS 26+) / `ScenarioMiniBar` (< 26) | visible while a scenario runs | [MUST-SHOW] | Regular: `[❚❚] ● SIMULATED · Flash flood night · 7:00 AM [View]`; inline: `[❚❚] 7:00 AM`. Map Home shows the violet frame. | §16, §18, §22, §19.4 |
 | 24 | Nearby / Saved / Ranked list (F34) | `nearby` formSheet | 1 (swipe up or `[☰]`) | [SHOULD-SHOW] | Rows 72 pt (auto height at T1+); names ≤ 2 lines; status word and window never truncate. VoiceOver on → opens at 0.92 over the map. Ranked = "Likely to flood next" for crews (1 s pan in video at most). | §18, §27 |
 | 25 | Crew screen "Likely to flood next" (F100) + CSV | — | — | [NEXT] | VO mention only. | — |
 | 26 | Search (F37) | `search` formSheet from the glass `[⌕]` | 1 | [SHOULD-SHOW] | Lives in the right-edge glass control stack (frees card width on 375 pt phones); dropped from the stack if it would collide with the banner (search stays in the `nearby` header). | §18, §19 |
-| 27 | Legend (F33) | `legend` formSheet from `[?]` | 1 | [SHOULD-SHOW] | Five states + "SIMULATED (violet) = demo storm" row + `legend.never_safe`. | §14, §18 |
-| 28 | Gauge mini-card (F39) | `gauge/[id]` from a cyan gauge dot | 1 | [SHOULD-SHOW] | Stage (tabular), 48 pt sparkline, "Linked to 3 crossings", `demo.gauge_simulated`; **no USGS link, no station number**. | §18 |
-| 29 | Language EN/ES (F96, F97) | Settings SwiftUI `Picker` (menu); gear long-press menu | 2 (or 1 long-press) | [MUST-SHOW] | Switches UI, notifications, TTS voice; 3 s flip in the video. Spanish never truncates (buttons stack). | §18, §27 |
+| 27 | Legend (F33) | `legend` formSheet from `[?]` | 1 | [SHOULD-SHOW] | Five states + "SIMULATED (violet) = demo storm" row + `legend.never_safe`. | §14, §18, §19.4 |
+| 28 | Gauge mini-card (F39) | `gauge/[id]` from a cyan gauge dot | 1 | [SHOULD-SHOW] | Stage (tabular), 48 pt sparkline, "Linked to 3 crossings", `demo.gauge_simulated`; **no USGS link, no station number**. | §18, §19.4 |
+| 29 | Language EN/ES (F96, F97) | Settings SwiftUI `Picker` (menu); gear long-press menu | 2 (or 1 long-press) | [MUST-SHOW] | Switches UI, notifications, TTS voice; 3 s flip in the video. Spanish never truncates (buttons stack). | §18, §27, §19.4 |
 | 30 | Accessibility (F89–F93) | `settings/accessibility`; app-wide | 2 | [SHOULD-SHOW] | Dynamic Type tiers T0–T3, Large Content Viewer on capped controls, Bold Text, Increase Contrast, Reduce Transparency (solid chrome), Reduce Motion, VoiceOver rotor headings/actions. One 3 s VoiceOver beat if time. | §19, §27 |
-| 31 | Onboarding + safety pledge (F109) | `(onboarding)` | first run | [MUST-SHOW] (pledge ~3 s) | Skia illustrations (C 140 · R 200 · T 240 pt; hidden at T2+); P2 uses `onboarding.how.data`; tabs unreachable until the pledge is accepted. | §18, §20 |
-| 32 | Notification permission primer (F110) | `permission/notifications` | contextual (first Notify me, or Director "Enable alerts") | [BUILD-ONLY] | Grant **before** recording so no system prompt appears in takes. | §18, §30 |
-| 33 | Real location toggle (F110) | Settings → "Use my real location" + `permission/location` | 3 | [BUILD-ONLY] (optional, cut #4) | Foreground `expo-location` only; demo default is the simulated position. | §25 |
-| 34 | How it works (F104) | `settings/how-it-works` | 2 | [SHOULD-SHOW] | 5-step vertical diagram; an animated travel dot runs gauge → creek → crossing; usable as the video's "how" beat. | §18, §20 |
-| 35 | What's real in this demo (new) | `settings/whats-real` | 1 (tap FreshnessPill) / 2 | [MUST-SHOW] (end flash ~3 s) | Three groups Real · Simulated · Planned; neutral badges (never status colors); rows test-checked against `docs/CLAIMS.md`. | §18, §31 |
-| 36 | About, credits, legal (F104) | `settings/about`, `settings/legal` | 2 | [BUILD-ONLY] | Attribution (§3.8), `legal.about`, version row; triple-tap logo / long-press version = Director. | §18 |
-| 37 | Map attribution ⓘ | bottom-left, 8 pt above the card | 0 | [BUILD-ONLY] | `logo={false}`, `compass={false}`, attribution position derived from the card height so it is never covered. | §18 |
-| 38 | Disclaimer footer | crossing full, `drive/result`, `storm/results` | — | [BUILD-ONLY] | `disclaimer.footer` exact text. | §3.8 |
-| 39 | Demo Director (new; replaces F83 DEMO_MODE + debug) | `demo` formSheet | long-press pill 0.8 s / triple-tap About logo / long-press version | [BUILD-ONLY] (presenter) | Scenario radio list, takes T01–T11 + O1–O4, transport, Simulate (offline, fire notification now, lock-screen take), Recording (clean mode, show touches, haptics), status (events hash, compile ms, build date). Ships in Release; meets the full design spec because judges may open it. | §24 |
+| 31 | Onboarding + safety pledge (F109) | `(onboarding)` | first run | [MUST-SHOW] (pledge ~3 s) | Skia illustrations (C 140 · R 200 · T 240 pt; hidden at T2+); P2 uses `onboarding.how.data`; tabs unreachable until the pledge is accepted. | §18, §20, §19.4 |
+| 32 | Notification permission primer (F110) | `permission/notifications` | contextual (first Notify me, or Director "Enable alerts") | [BUILD-ONLY] | Grant **before** recording so no system prompt appears in takes. | §18, §30, §19.4 |
+| 33 | Real location toggle (F110) | Settings → Drive Mode → "Use my real location" + `permission/location` | 2 (gear → Drive Mode; flipping the toggle is the action) | [BUILD-ONLY] (optional, cut #4) | Foreground `expo-location` only; demo default is the simulated position. | §25, §19.4 |
+| 34 | How it works (F104) | `settings/how-it-works` | 2 | [SHOULD-SHOW] | 5-step vertical diagram; an animated travel dot runs gauge → creek → crossing; usable as the video's "how" beat. | §18, §20, §19.4 |
+| 35 | What's real in this demo (new) | `settings/whats-real` | 1 (tap FreshnessPill) / 2 | [MUST-SHOW] (end flash ~3 s) | Three groups Real · Simulated · Planned; neutral badges (never status colors); rows test-checked against `docs/CLAIMS.md`. | §18, §31, §19.4 |
+| 36 | About, credits, legal (F104) | `settings/about`, `settings/legal` | 2 | [BUILD-ONLY] | Attribution (§3.8), `legal.about`, version row; triple-tap the logo = Director (§24.1). | §18, §19.4 |
+| 37 | Map attribution ⓘ | bottom-left, 8 pt above the card | 0 | [BUILD-ONLY] | `logo={false}`, `compass={false}`, attribution position derived from the card height so it is never covered. | §18, §19.4 |
+| 38 | Disclaimer footer | crossing full, `drive/result`, `storm/results` | — | [BUILD-ONLY] | `disclaimer.footer` exact text. | §3.8, §19.4 |
+| 39 | Demo Director (new; replaces F83 DEMO_MODE + debug) | `demo` formSheet | long-press pill 0.8 s / triple-tap About logo / gear long-press menu → "Demo Director" (§24.1) | [BUILD-ONLY] (presenter) | Scenario radio list, takes T01–T11 + O1–O4, transport, Simulate (offline, fire notification now, lock-screen take), Recording (clean mode, show touches, haptics), status (events hash, compile ms, build date). Ships in Release; meets the full design spec because judges may open it. | §24, §19.4 |
 | 40 | Clean recording mode + touch overlay | Director → Recording | — | [BUILD-ONLY] | Hides Director toasts/captions; keeps the screen awake; translucent 44 pt touch circles. | §24, §30 |
 | 41 | Haptics + chimes + TTS choreography (§11) | everywhere | — | [MUST-SHOW] (audible) | Exact timing §15; pair every haptic with a visible pulse. | §15, §25 |
 | 42 | Live Activity + Dynamic Island (F112) | system UI from Drive Mode | event | [NEXT] (→ [SHOULD-SHOW] only if DD8 spike passes) | "FordCast · SIMULATED" first line; compactTrailing "15–30m"; no running timer. | §10, §25 |
 | 43 | Share (F48) | — | — | [NEXT] | Not built: a shared "Avoid …" text from a simulated storm could circulate out of context. No menu item. | — |
 | 44 | Widgets (F113), report water (F115), CarPlay / Critical Alerts / SMS / statewide (F116–F119) | `whats-real` Planned rows | — | [NEXT] | Never a button. | §31 |
-| 45 | App icon + splash (F108) | Home Screen, launch | — | [MUST-SHOW] (first frame of the app segment) | Icon Composer `.icon` (4 layers, no red/amber) + splash `#0E1726`; launch "arrival" animation. | §14, §20 |
+| 45 | App icon + splash (F108) | Home Screen, launch | — | [MUST-SHOW] (first frame of the app segment) | Icon Composer `.icon` (4 layers, no red/amber) + splash `#0E1726`; launch "arrival" animation. | §14, §20, §19.4 |
 
-**Orphan check.** Every phone-visible feature in A §4 has a row above. Backend-only features (F1–F27, push F67/F68, F74, F84–F88, F123–F127) have no UI home by design: they are replaced by the on-device scenario engine or appear as Planned rows in *What's real* ("Live USGS gauge ingest: Planned"). [Verified: research-ui §1.2 orphan check]
+**Orphan check.** Every phone-visible feature in A §4 has a row above. Backend-only features (F1–F27, push F67/F68, F74, F84–F88, F123–F127) have no UI home by design: they are replaced by the on-device scenario engine or appear as Planned rows in *What's real* ("Gauge readings straight from USGS every few minutes: Planned" — app copy never says "live", §3.11). [Verified: research-ui §1.2 orphan check]
 
 ### 4.3 Two-tap audit (from a cold Map Home)
 
@@ -714,6 +714,7 @@ Columns: **Entry** = taps from a cold Map Home. **Fit** = the space rule that ke
 | Legend / Search / Gauge card | `[?]` / `[⌕]` / gauge dot | 1 |
 | Spanish | long-press gear → Español (or gear → Language) | 1–2 |
 | How it works / What's real | gear → row (What's real also: tap the pill) | 2 / 1 |
+| Settings screens (Notifications · Accessibility · Drive Mode · About · Legal) | gear → row | 2 |
 | Ranked list | `[☰]` → Ranked | 2 |
 | Demo Director (presenter) | long-press the pill | 1 |
 
@@ -723,7 +724,7 @@ Columns: **Entry** = taps from a cold Map Home. **Fit** = the space rule that ke
 
 ## §5. Repo layout (mobile app + tools only)
 
-Create files when their feature starts (no empty placeholders). `★` = student-owned (§1.8). The `mobile/src/demo/` layout follows research-data §2.1 (prototype file → app module).
+Create files when their feature starts (no empty placeholders). `★` = student-owned (§1.8). The `mobile/src/demo/` layout is the tested tree of 05 §22.1 (`docs/demo-prompt/05-code/`), split per §23.6; research-data §2.1's finer names are superseded.
 
 ```
 Fordcast-CAC/
@@ -733,8 +734,9 @@ Fordcast-CAC/
 ├─ .gitignore                            # node_modules, .expo, mobile/ios/, .env*, *.p12, *.cer, *.mobileprovision, takes/, *.mov
 ├─ .github/workflows/ci.yml             # npm ci + tsc + eslint + jest in mobile/ on Ubuntu (§7.1); no iOS build in CI
 ├─ docs/
-│  ├─ demo-prompt/                       # THIS prompt: 00–06 + research/ (research-ios.md, research-ui.md, research-data.md,
-│  │                                     #   proto/ (TypeScript prototype), withFreeTeamSigning.js)
+│  ├─ demo-prompt/                       # THIS prompt: 00–06 + 03-tools/tools/ (Mac style/marker/measure tools, §13–§14) +
+│  │                                     #   05-code/ (tested reference tree, §21–§28) + research/ (research-ios.md, research-ui.md,
+│  │                                     #   research-data.md, proto/ (TypeScript prototype), withFreeTeamSigning.js)
 │  ├─ master-prompt/                     # full production prompt = roadmap; read-only reference
 │  ├─ CLAIMS.md                          # Demo Edition Claims Ledger (§31.4)
 │  ├─ devlog.md                          # daily log (§1.4)
@@ -742,15 +744,18 @@ Fordcast-CAC/
 │  ├─ explain/                           # baseline-rule.md ★ · state-machine.md ★ · travel-time.md ★ · overview.md ·
 │  │                                     #   scenario-engine.md · ios-free-team.md · map.md · drive-mode.md · i18n-a11y.md
 │  ├─ a11y/TESTING.md                    # device checks (§27)
-│  └─ media/                             # README images: hero.gif, state-ladder.png, screens/<screen>-<lang>-<class>.png
+│  └─ media/                             # README images: hero.gif, state-ladder.png, screens/<screen>-<lang>-<class>-<tier>.png (§19.7)
 ├─ submission/                           # RULES_NOTES.md · CHECKLIST.md · answers.md (student) · FINAL_ACCEPTANCE.md
 │  └─ video/                             # shotlist.md · script.md (student) · captions.en.srt · captions.es.srt ·
 │                                        #   music-license.md · LINK.md   (raw takes live in takes/, git-ignored)
 ├─ tools/                                # run on the Mac, once; NEVER imported by the app
-│  ├─ gen-golden.ts                      # runs docs/demo-prompt/research/proto → mobile/src/demo/__fixtures__/ (§1.8)
-│  ├─ bake-demo-routes.mjs               # ORS → mobile/src/demo/data/routes.json (research-data §1.5; or hand-traced)
-│  └─ bake-creeks.mjs                    # NLDI flowlines → mobile/src/demo/data/creeks.json (research-data §1.4; or hand-traced)
-│                                        # map style + marker sprite generators: named and specified in §13–§14
+│  ├─ gen-golden.ts                      # copy of 05-code/tools/gen-golden.ts: runs the reference engine in
+│  │                                     #   docs/demo-prompt/05-code/ (same events as research/proto/) → mobile/src/demo/__fixtures__/ (§1.8, §23.6)
+│  ├─ make-style.mjs · validate-style.mjs · make-markers.mjs · measure-text.mjs · package.json
+│  │                                     #   byte-identical copies of docs/demo-prompt/03-tools/tools/ (§13.8, §14.3, §19.3);
+│  │                                     #   vendor/positron.json (downloaded) and out/ (contact sheet) stay out of the app
+│  ├─ bake-demo-routes.mjs               # ORS → mobile/src/demo/data/routes.json (§21.5; or hand-traced)
+│  └─ bake-creeks.mjs                    # NLDI flowlines → mobile/src/demo/data/creeks.json (§21.5; or hand-traced)
 └─ mobile/                               # npx create-expo-app@latest mobile --template default@sdk-57
    ├─ AGENTS.md · .claude/settings.json  # generated; FordCast block appended (§1.11)
    ├─ app.config.ts                      # §9.4 (replaces the template's app.json): name FordCast, slug fordcast, scheme fordcast,
@@ -759,7 +764,7 @@ Fordcast-CAC/
    ├─ plugins/withFreeTeamSigning.js     # §9 (copy of docs/demo-prompt/research/withFreeTeamSigning.js) — FIRST in plugins
    ├─ package.json · tsconfig.json (strict, noUncheckedIndexedAccess, @/* → src/*) · babel.config.js · metro.config.js ·
    │  tailwind.config.js · src/global.css · eslint.config.js · jest config (jest-expo)        # §9, §16
-   ├─ .maestro/                          # iOS Simulator flows: onboarding · map-to-crossing · storm-player · drive-mode · language (§28)
+   ├─ .maestro/                          # iOS Simulator flows: demo-hero · demo-unknown · demo-drive (§28.2)
    ├─ ios/                               # GENERATED by `npx expo prebuild -p ios` — git-ignored, never hand-edited
    ├─ assets/
    │  ├─ expo.icon/                      # Icon Composer icon (§14) · images/splash-icon.png
@@ -769,39 +774,44 @@ Fordcast-CAC/
       ├─ app/                            # Expo Router routes = §4.1 tree (screen specs §18)
       │  ├─ _layout.tsx                  # providers (gesture root, i18n, a11y prefs, theme, demo store), fonts, Stack.Protected gate,
       │  │                               #   formSheet/fullScreenModal registrations (§16), TouchOverlay root wrapper (§24)
-      │  ├─ (onboarding)/ _layout · index · how · legend · pledge · notify
+      │  ├─ (onboarding)/ _layout · welcome · how · map-key · pledge · alerts-primer   (names per §16.4: no URL collisions)
       │  ├─ (tabs)/ _layout.tsx (NativeTabs + BottomAccessory) · index.tsx (Map Home) ·
       │  │          drive/{_layout,index,result}.tsx · storms/{_layout,index}.tsx · alerts/{_layout,index}.tsx
       │  ├─ nearby.tsx · crossing/[id].tsx · gauge/[id].tsx · search.tsx · legend.tsx
       │  ├─ storm/[id].tsx · storm/results.tsx · drive-mode.tsx · demo.tsx · permission/[kind].tsx
-      │  └─ settings/ _layout · index · notifications · accessibility · drive · how-it-works · whats-real · about · legal
-      ├─ components/ui/                  # React Native Reusables copy-ins, limited to button · card · text · toggle-group (§16)
+      │  ├─ settings/ _layout · index · notifications · accessibility · drive · how-it-works · whats-real · about · legal
+      │  └─ dev/gallery.tsx (`__DEV__` only, §17) · smoke.tsx (Day 1 only, 02 §9.10; deleted before the UI freeze)
+      ├─ components/ui/                  # React Native Reusables copy-ins: button · card · text (+ toggle-group only as the §16.3 fallback)
       ├─ components/fordcast/            # §17 library (AppText, StatusGlyph, StatusChip, GlassSurface, FreshnessPill,
       │                                  #   AreaStatusCard, CrossingRow, RiskRing, RiskWindow, EtaRangePill, Hydrograph, LagPair,
       │                                  #   AlertBanner, StormCard, ScenarioAccessory/MiniBar, Scrubber, DriveHUD, BigActionButton, …)
-      ├─ demo/                           # the scenario engine (§21–§26); research-data §2.1
-      │  ├─ engine/                      # PURE (no React, no Date.now(), no imports from sim/):
-      │  │                               #   types · features · windows · explain · combine · baseline-rule ★ · state-machine ★ · travel-time ★
-      │  ├─ sim/                         # rng · hydrograph · gauge-series · truth (truth imported ONLY by scenario/compile.ts results)
-      │  ├─ data/                        # gauges · crossings · links · places · routes.json · creeks.json
-      │  ├─ scenario/                    # schema · compile · source (golden → live switch, §1.8) · display · choreography ·
-      │  │                               #   keyframes · clock · takes · scenarios/{calm-evening,flash-flood-night,onion-creek-storm,drive-commute}.ts
-      │  ├─ drive/                       # geo (Turf 7.4.0) · routes · sim-location · lockout · speech-plan
-      │  ├─ notify/                      # content · lockscreen · adapter (expo-notifications, local only)
-      │  ├─ voice/                       # speak (expo-speech + expo-audio chimes) · haptics (expo-haptics, two gates)
-      │  ├─ store/                       # demo-store (zustand 5.0.15) · hooks (useSimMinute, useCrossingRisk, useScenarioBanner)
-      │  ├─ director/                    # DirectorSheet · TouchOverlay · useCleanMode
-      │  ├─ __fixtures__/                # <scenario>.compiled.json · golden-hashes.json (tests only after Day 6)
-      │  └─ __tests__/                   # baseline-rule ★ · state-machine ★ · travel-time ★ · engine · display · demo · takes · golden · clock · notify
+      ├─ demo/                           # the scenario engine (§21–§26) — the TESTED file names of 05 §22.1 / 05-code/ (canonical)
+      │  ├─ engine/                      # PURE (no React, no Date.now(), no imports from sim/): types · features · windows ·
+      │  │                               #   explain · combine · baseline-rule ★ · state-machine ★ · travel-time ★ · engine (barrel, §23.6)
+      │  ├─ sim/                         # sim.ts: PRNG · hydrographs · readings · hidden truth (truth used ONLY in compile.ts results)
+      │  ├─ data/                        # demo-data.ts (GAUGES · CROSSINGS · LINKS) · routes.json · creeks.json
+      │  ├─ scenario/                    # schema · scenarios · compile · source (golden → live switch, §1.8) · golden · display ·
+      │  │                               #   clock · choreography · player · takes
+      │  ├─ i18n/                        # tr.ts (pure translator over src/locales) · reasons.ts
+      │  ├─ drive/                       # drive.ts (geometry, routes, Fix stream, lockout, speech plan) · sim-drive.ts (runner hook)
+      │  ├─ notify/                      # content.ts (pure builders) · adapter.ts (expo-notifications, local only)
+      │  ├─ voice/                       # speak.ts (expo-speech + expo-audio chimes) · haptics.ts (expo-haptics, two gates)
+      │  ├─ store/                       # demo-store.ts (zustand 5.0.15) · hooks.ts (useSimMinute, useTick, useCrossingRisk, useAllRisks, useScenarioBanner)
+      │  ├─ director/                    # actions.ts (Reset, takes, clean mode) · TouchOverlay.tsx   (the Director screen is src/app/demo.tsx)
+      │  └─ __fixtures__/                # <scenario>.compiled.json · golden-hashes.json (tests only after Day 6)
       ├─ content/whats-real.ts           # Real / Simulated / Planned rows, each with a claimId (§31)
-      ├─ lib/                            # theme.ts (token mirror) · i18n.ts (imports intl-pluralrules first) · format.ts
-      │                                  #   (en-US / es-US, America/Chicago) · layout.ts (height/width classes, §19) · glass.ts (tier) ·
-      │                                  #   a11y/A11yPrefsProvider.tsx · motion.ts
+      ├─ lib/                            # theme.ts (token mirror) · useTheme.ts · navTheme.ts · i18n.ts (imports intl-pluralrules first) ·
+      │                                  #   format.ts (en-US / es-US, America/Chicago) · layout.ts (height/width classes, §19) · glass.ts (tier) ·
+      │                                  #   a11y/A11yPrefsProvider.tsx · motion.ts · settings.ts (kv-store) · alerts-inbox.ts · saved.ts ·
+      │                                  #   short-names.ts (§17.2) · utils.ts (RNR `cn`)
       ├─ locales/                        # en.json · es.json · banned-words.json · es-pending-review.json
-      └─ __tests__/                      # copy-banned · i18n-parity · claims-whats-real · layout (class math) · code-guards
+      └─ __tests__/                      # ALL tests, named <name>-test.ts: demo-{engine,display,scenarios,player,golden} (05-code) ·
+                                         #   baseline-rule ★ · state-machine ★ · travel-time ★ · copy-banned · i18n-parity · claims-whats-real ·
+                                         #   layout (class math) · code-guards · tokens-parity · contrast · no-green · glyph-geometry ·
+                                         #   no-hand-typed-numbers · no-success-haptic · labels (§31.1)
 ```
 
-**Import boundaries** (enforced by an ESLint `no-restricted-imports` rule or a test): `demo/engine/**` imports only `demo/engine/**`; only `demo/scenario/compile.ts` imports `demo/sim/truth`; nothing outside `__tests__/` imports `__fixtures__/`; `app/**` never imports `demo/sim/**`; nothing imports `docs/**` or `tools/**` at runtime.
+**Import boundaries** (enforced by an ESLint `no-restricted-imports` rule or a test): `demo/engine/**` imports only `demo/engine/**`; only `demo/scenario/compile.ts` (its results block) calls `truthOnset()` from `demo/sim/sim.ts`; nothing outside `__tests__/` (and the GOLDEN-form `source.ts` before the Day 6 gate) imports `__fixtures__/`; `app/**` never imports `demo/sim/**`; nothing imports `docs/**` or `tools/**` at runtime.
 
 ---
 ## §6. Day-by-day plan — Thu Oct 15 → Sun Oct 25, 2026 (UI-first)
@@ -852,7 +862,7 @@ Day 1 = Thu Oct 15. **If you start on Fri Oct 16, Day 1's tasks still come first
 
 **Day 9 · Fri Oct 23 — Record**
 - *Agent:* bug fixes only. Any code change after the Thursday Release install requires a new Release build and a re-check of every affected take. Keep the Director takes' expected-state captions handy for the student (Clean mode off between takes, on during takes).
-- *Student:* record T01–T11 (≥ 3 good takes each) with QuickTime (§30), then O1–O4 if time; backup capture with iOS Screen Recording; B-roll (dry crossing in daylight, parked car); copy all clips to two places.
+- *Student:* record T01–T11 (≥ 3 good takes each) with QuickTime (§30), plus the non-Director shots of §29.4 (launch, pledge, language flip, How it works, What's real), then O1–O4 if time; backup capture with iOS Screen Recording; B-roll (dry crossing in daylight, parked car); copy all clips to two places.
 - **Gate:** every MUST take has ≥ 1 clean clip with its labels visible and audio where needed.
 
 **Day 10 · Sat Oct 24 — Voice-over, edit, answers → CODE FREEZE 18:00 CT**
@@ -925,7 +935,7 @@ Layouts use `useWindowDimensions()` + `useSafeAreaInsets()` and the §19 classes
 Cold start to an interactive Map Home ≤ 2.5 s · scenario compile ≤ 30 ms each (prototype: 6–30 ms JIT-less [Verified: research-data §8]) · risk consumers re-render at most once per 5-minute tick (≤ every 2.5 s at 120×) · water pulse, scrubbing and sheet drags without visible stutter at 60 fps · map `contentInset` changes only on layout change, never per frame.
 
 ### 7.6 Release readiness (the build used for recording)
-Built from a clean checkout with `npx expo run:ios --device --configuration Release`; launches unplugged; no dev menu or LogBox; Demo Director reachable only through its hidden gestures; notification and location permissions granted beforehand; 15-minute exploratory session in EN and in ES with 0 crashes; every take rehearsed.
+Built from a clean checkout with `npx expo run:ios --device --configuration Release --no-bundler`; launches unplugged; no dev menu or LogBox; Demo Director reachable only through its hidden gestures; notification and location permissions granted beforehand; 15-minute exploratory session in EN and in ES with 0 crashes; every take rehearsed.
 
 ### 7.7 Docs and history
 `docs/devlog.md` has an entry for every day; `AI_USE.md` per-file authorship is current; `docs/explain/` has the three ★ docs with the student's answers and review Q&A plus the module docs listed in §5; small commits on every day; no squashes or force-pushes; no `TODO(student)` left at the tag.

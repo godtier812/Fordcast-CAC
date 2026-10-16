@@ -85,7 +85,7 @@ All of it was checked on 2026-10-16:
 
 **Reconciliation decisions (binding; they supersede the research notes):**
 
-1. **Real USGS gauge names are kept.** Only the readings are simulated. The gauge card shows "USGS site 08158922 · readings simulated" and has **no** "View on USGS" link, because a real page would contradict the simulated numbers.
+1. **Real USGS gauge names are kept.** Only the readings are simulated. The gauge card shows the USGS **station name** with `demo.gauge_simulated` "Readings simulated for this demo", **no station number** and **no** "View on USGS" link (01 §1.5 rule 5), because a real page would contradict the simulated numbers. Station numbers stay in data, code and the What's real credits.
 2. **The hero lead is 30 min** (computed by the engine), not the 38 min in early UI sketches.
 3. **The official-closure source label is "Simulated road crew".** It replaces "Simulated official closure (demo)".
 4. **Notification titles carry no "SIMULATED ·" prefix.** The label goes in the **subtitle**, which keeps titles ≤ 50 characters.
@@ -154,7 +154,7 @@ All of it was checked on 2026-10-16:
    - **Detour:** body `{ coordinates: [BRANCH, School], options: { avoid_polygons: <MultiPolygon of 150 m circles around atx-37 and atx-692> } }`. Prepend the commute prefix Home→BRANCH so the simulated car turns without jumping.
    - Output `mobile/src/demo/data/routes.json`: `{ commute: { line, durationS }, detour: { line, durationS } }`.
    - "Detour adds {{n}} min" = `round((detour.durationS − commute.durationS)/60)`. Never hand-typed.
-   - The key goes in `.env.local` at the repo root (git-ignored by `.env*`, §5), **only for the bake script**. The app never calls ORS.
+   - The key lives only in the Mac shell environment for that one run (`ORS_KEY=… node tools/bake-demo-routes.mjs`; 01 §1.9), never in a committed file. The app never calls ORS.
 2. **Creek lines for the water pulse** (`tools/bake-creeks.mjs` → `mobile/src/demo/data/creeks.json`, one entry per link `{ reach_id: "<crossing>__<gauge>", coords }`):
    - Fetch `https://api.water.usgs.gov/nldi/linked-data/nwissite/USGS-<site>/navigation/DM/flowlines?distance=25`.
    - Clip from the gauge to the point on the line nearest the crossing.
@@ -162,7 +162,7 @@ All of it was checked on 2026-10-16:
    - **Fallback** if NLDI is down: trace the creek over the map in geojson.io (≈ 2 min per reach). Only the Williamson reaches (atx-37/680/692) and Onion reaches (tc-68/tc-1626) are on camera.
    - Credit "USGS NHDPlus" in About.
 3. After baking, `drive.ts` reads `routes.json` instead of the draft arrays (keep the same `ROUTES` export shape). **Re-run the tests:** `crossingsOnRoute(commute)` MUST equal `[atx-37, atx-692]` and `crossingsOnRoute(detour)` MUST be empty (40 m tolerance). If the baked detour passes within 40 m of a crossing, move `BRANCH` or the avoid circles.
-4. **Optional Day-0:** run NLDI `navigation/UT/nwissite` from each tier-A crossing to confirm the linked gauge is really upstream. Then set `upstreamVerified: true` in a comment on that link. It stays [Unverified] until run.
+4. **Optional (Day 2–3, on the Mac, with the creek bake):** run NLDI `navigation/UT/nwissite` from each tier-A crossing to confirm the linked gauge is really upstream. Then set `upstreamVerified: true` in a comment on that link. It stays [Unverified] until run.
 
 ### 21.6 `mobile/src/demo/data/demo-data.ts` (API block)
 
@@ -228,7 +228,7 @@ tools/gen-golden.ts    (repo root; §23.6)
 
 ★ = **student-owned core** (§1.8). §23.1 has the explain-back questions.
 
-**Names vs 01 §5.** 01 §5 sketches a finer split (e.g. `sim/{rng,hydrograph,…}`, `data/{gauges,crossings,links,…}`, `drive/{geo,routes,lockout,…}`, `notify/lockscreen`, `director/DirectorSheet`, tests under `src/demo/__tests__/`). The file names in this tree are the **tested** ones and are canonical for the port. A finer split is optional, never required, and must keep every test green. Tests stay in `mobile/src/__tests__/`, because the truth-isolation and golden tests resolve `../demo/…` from there.
+**Names.** The file names in this tree are the **tested** ones and are canonical for the port; 01 §5 mirrors them (research-data §2.1's finer split, e.g. `sim/{rng,hydrograph,…}`, is superseded). A finer split is optional, never required, and must keep every test green. All tests stay in `mobile/src/__tests__/`, because the truth-isolation and golden tests resolve `../demo/…` from there.
 
 ### 22.2 Domain types — `engine/types.ts`
 
@@ -1396,6 +1396,7 @@ None of these has a visible affordance. All of them work in clean recording mode
 | Show touches | `setToggle('touches', v)` | The root layout wraps the app in `<TouchOverlay enabled={touches}>`. |
 
 `director/actions.ts` and `director/TouchOverlay.tsx` are in `05-code/` (type-checked).
+- **`TAKE_ROUTES`** (in `actions.ts`) sends each take to the screen its first frame is filmed on: T01/T06/O3 → `/` (Map Home), T02/T07/O1 → `/crossing/atx-37`, O2 → `/crossing/atx-692`, **T03 → `/storms`** (the shot starts with the hero card's `[▶ Play]`, which keeps the parked 6:35 AM clock, 04 §18.13), T04/O4 → `/storm/results`, **T05 → `/storm/flash-flood-night`** (the shot is the ✕ tap on the paused player), T08 → `/drive/result`, T09/T10 → `/drive-mode`, T11 → `/storm/onion-creek-storm`.
 - **TouchOverlay** observes touches in the responder **capture** phase and returns `false`, so every touch still reaches the app. It draws a 44 pt ring (2 pt `#F2F5FA` @ 0.9, fill @ 0.18), 80 ms in, 300 ms fade.
 - VERIFY BEFORE USE on the device: map pans, native tab bar and formSheets. Taps on system UI (notifications, Face ID) can't be shown. Add tap markers in the editor for those (§30).
 
@@ -1408,7 +1409,7 @@ Each take names:
 - a screen and a gesture
 - the states that **must** be on screen
 
-§28's take test re-checks every one, so a retuned storm can't break a shot silently.
+§28's take test re-checks every one, so a retuned storm can't break a shot silently. The `beat` strings in `takes.ts` ("1:25 lock screen", …) are informal labels from the first draft; **06 §29.3 owns the video times**.
 
 **Full file: `05-code/mobile/src/demo/scenario/takes.ts`** (6.5 KB). Types, plus two entries verbatim:
 
@@ -1505,6 +1506,13 @@ Take keyframes (`at`):
 - **Limits:** ≤ 1 per crossing per level per 60 min; ≤ 3 per hour.
 - **De-escalation:** one passive `update` when an escalated crossing reaches `no_rise`. Step-downs (CLOSED → AVOID → WATCH) send nothing.
 - **Hero output:** `7:00 AM avoid atx-37`, `7:50 AM closed atx-37`. [Verified: test]
+- **App integration with Saved / Notify me (04 §18.16).** `planNotifications(cmp)` (tested, unchanged) reads `cmp.scenario.subscriptions`. In the app, every caller (`postNow` playback, `fireCurrentNow`, `armLockScreenTake`, the Alerts inbox) goes through one tiny wrapper in `notify/adapter.ts` so the user's Saved set drives alerts:
+  ```ts
+  /** Plan for the CURRENT saved set; the stores are seeded from scenario.subscriptions, so takes are unchanged. */
+  export const planFor = (cmp: Compiled, savedIds: string[], watchAlerts: boolean) =>
+    planNotifications({ ...cmp, scenario: { ...cmp.scenario, subscriptions: { crossingIds: savedIds, watchAlerts } } });
+  ```
+  `savedIds` / `watchAlerts` come from `src/lib/saved.ts` and Settings → Notifications → "Watch alerts". A test asserts `planFor(cmp, seed.crossingIds, seed.watchAlerts)` deep-equals `planNotifications(cmp)` for all four scenarios. [Verified: the wrapper, that test and the §25.3 `setInAppAlertVisible` handler type-check (tsc 6.0.3 strict) and pass in a copy of the `05-code/` tree, 2026-10-16]
 
 ### 25.2 Content — `notify/content.ts`
 
@@ -1692,7 +1700,8 @@ Director "Lock-screen take" ─► seek 6:59 AM, pause ─► schedule TIME_INTE
 
 - **Mount points (root layout):** `setupDemoNotifications()` once; `useDemoNotificationResponses(router.push)`; `useNotificationPlayback(lang)`.
 - **Drive Mode screen:** `useFocusEffect(() => { setDriveModeActive(true); return () => setDriveModeActive(false); })`. While driving, the in-app banner and its sound are suppressed (the chime + TTS + HUD carry the alert, and a banner would cover the HUD); the notification still lands in Notification Center and the Alerts inbox.
-- **Inbox:** every posted demo notification also adds an Alerts-inbox row with the violet SIMULATED chip. In the Demo Edition these rows count toward the tab badge, because they're the only alerts (§18).
+- **Inbox:** every posted demo notification also adds an Alerts-inbox row with the violet SIMULATED chip: `postNow()` and `armLockScreenTake()` call `useInbox.getState().add({ id, crossingId, state, window, simMin, scenarioId })` (`src/lib/alerts-inbox.ts`, 04 §18.16) right after scheduling, so rows appear even when iOS notifications are off. In the Demo Edition these rows count toward the tab badge, because they're the only alerts (§18).
+- **No double banner (04 §18.20).** Add `let inAppAlertFor: string | null = null; export const setInAppAlertVisible = (id: string | null) => { inAppAlertFor = id; };` next to `setDriveModeActive`. The AlertBanner and the crossing sheet call it on show/hide, and `handleNotification: async (notification) => …` returns `shouldShowBanner: !driveModeActive && notification.request.content.data?.crossing_id !== inAppAlertFor` (list and sound rules unchanged). This is an app-side extension of the `05-code/` adapter; it doesn't change any tested function.
 - **Permission:** primed in context only (first "Notify me" or the onboarding notify page, §18). Before recording, grant it outside the take.
 
 ### 25.4 Simulated drive, lockout and the speech plan — `drive/drive.ts`
@@ -1755,6 +1764,8 @@ const lines = ready.length > 1 ? [{ key: 'drive.tts.multi_changed', count: ready
 
 **What is spoken on camera is exactly what the test asserted.** If the Director toggles "Simulated offline" mid-drive, the plan is recomputed and already-spoken lines are skipped.
 
+**Where the runner is mounted.** Drive Mode (`drive-mode`) mounts `useSimulatedDrive(script, lang)`. The driver lockout only matters **outside** Drive Mode (04 §18.8, §18.12), so take **O3-lockout** (Map Home while the simulated car moves) needs the runner without the HUD: the root layout renders a headless `<DriveRunner />` that calls `useSimulatedDrive(scenario.drive && armedDrive && !driveModeOpen ? script : null, lang)`. `armedDrive` is a small app-side flag (not in the tested `DemoState`): the Director sets it after `loadTake(O3)` returns and clears it on Reset. It drives `locked` in the demo store, and the `LockoutDialog` reads it. Its voice lines play as in Drive Mode, which is acceptable for this optional take.
+
 ### 25.5 Voice and haptics — `voice/speak.ts`, `voice/haptics.ts`
 
 All APIs below are [Verified: package `.d.ts`]:
@@ -1790,7 +1801,7 @@ export function uiHaptic(kind: 'select' | 'light' | 'medium', nowMs?: number): v
 **Assets:**
 - `mobile/assets/sounds/chime.wav`: 0.5 s, descending minor third, 10 ms attack, peak −3 dBFS.
 - `mobile/assets/sounds/chime_soft.wav`: 0.3 s, −9 dBFS.
-- 🧑 makes them in GarageBand or Audacity, or uses a CC0 sound with credit in About. **VERIFY BEFORE USE:** license text saved in `docs/credits.md`.
+- 🧑 makes them in GarageBand or Audacity, or uses a CC0 sound with credit in About. **VERIFY BEFORE USE:** source + license text recorded in `THIRD_PARTY_NOTICES.md` (03 §15.6).
 - Drive Mode mount: `await prepareVoice({ chime: require('@/assets/sounds/chime.wav'), chimeSoft: require('@/assets/sounds/chime_soft.wav') })`.
 
 **Moment choreography** (same frame = t 0; visual cue always paired):
@@ -2044,7 +2055,8 @@ test('truth isolation: nothing in demo/engine imports the simulator', () => {
 
 - Maestro supports iOS **Simulators**. Real-iPhone support is unofficial as of late 2025 [Secondary: devicelab.dev, requestly.com], so run the flows on the Simulator (Debug or Release build from §11.5).
 - **Install:** VERIFY BEFORE USE: the current command on maestro.mobile.dev (historically `curl -fsSL "https://get.maestro.mobile.dev" | bash`). Java is required.
-- **testIDs** (stable across languages): every Director control (`director-reset`, `director-scenario-<id>`, `director-take-<id>`, `director-play`, `director-speed-<n>`), `freshness-pill`, `crossing-marker-<id>` (or the nearby row `nearby-row-<id>`), `sheet-state-<state>`, `results-number`, `demo-banner`, `drive-hud-state-<state>`, `drive-simulated-label`.
+- **testIDs** (stable across languages): every Director control (`director-reset`, `director-scenario-<id>`, `director-take-<id>`, `director-play`, `director-speed-<n>`), `freshness-pill`, `crossing-marker-<id>` (or the nearby row `nearby-row-<id>`), `sheet-state-<state>` (crossing sheet chip **and** the player's FocusRow chip), `storm-play` (hero StormCard `[▶ Play]`), `player-play`, `results-number`, `demo-banner`, `drive-hud-state-<state>`, `drive-simulated-label`.
+- Take T03 lands on the **Storms tab** with `flash-flood-night` paused at 6:35 AM (`TAKE_ROUTES`, §24.3), so the flow taps `storm-play` exactly like the filmed shot (06 §29.3).
 
 ```yaml
 # mobile/.maestro/demo-hero.yaml  (appId = your §9.1 bundle id)
@@ -2087,7 +2099,7 @@ Also add `demo-drive.yaml`: T09 → wait for `drive-hud-state-avoid` (≤ 90 s) 
 | Scenario compile | ≤ 150 ms each on device (bun 4–13 ms; JIT-less 6–30 ms [Verified]) | Log `performance.now()` deltas once in a Debug build. In Release, show it in the Director status line. |
 | `drivePlan` | ≤ 600 ms on device (JIT-less 180 ms [Verified]) | Same. It runs behind the 400 ms Drive Mode entry fade. |
 | Re-renders | Labels ≤ 1/sim-minute; risk consumers ≤ 1 per 5-min tick | React DevTools profiler (Debug) at 120×. |
-| Map | 60 fps while panning, with ≤ 2 looping animations (calm: breathe + gauge ripple; storm: AVOID halo + water pulse) | Xcode Instruments → Core Animation FPS on the Release build. [Unverified tool naming on Xcode 27] |
+| Map | 60 fps while panning, with ≤ 2 looping animations (calm: gauge ripple only, 03 §12.6; storm: AVOID halo + water pulse) | Xcode Instruments → Core Animation FPS on the Release build. [Unverified tool naming on Xcode 27] |
 | Cold start → Map Home interactive | ≤ 2.5 s | Stopwatch on video, 3 runs. |
 | Memory | No growth over 3 full T03 plays | Xcode Debug navigator (memory gauge). |
 | JS thread during 120× playback | No dropped ticks: storm time advances 2 sim-min per wall-second | Director status line vs a stopwatch. |

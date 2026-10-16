@@ -294,7 +294,7 @@ Rules (CI-enforced where possible):
 1. A status is **never** carried by color alone: every status appears as a `StatusChip` or `StatusGlyph` next to its word. Colored status text is **≥ 18 pt semibold** (`status.word`) and always beside a chip/glyph.
 2. `no_rise` and `unknown` are both grey on purpose; they differ by the **dashed outline, the "?" glyph and the word**. Never drop any of the three.
 3. Status colors come only from `theme.status[...]` so the HC swap reaches everything (lint: no status hex outside `theme.ts`).
-4. Loading never looks like `no_rise`: crossings are **not drawn** until the scenario is compiled (≤ 30 ms, 05 §22.10); a loading list shows "Loading crossings…" text, never slate rings.
+4. Loading never looks like `no_rise`: crossings are **not drawn** until the scenario is compiled (≤ 30 ms JIT-less, 05 §22.5; precompile timing 05 §22.10); a loading list shows "Loading crossings…" text, never slate rings.
 5. The dashed outline on chips is an SVG `Rect strokeDasharray="3 3"` (RN `borderStyle: 'dashed'` with radii is unreliable).
 
 ### 13.6 Simulated & demo tokens (replace B1's "replay" set)
@@ -451,6 +451,7 @@ Create verbatim. You MAY add tokens; you MUST NOT change values without updating
 ```ts
 // mobile/src/lib/theme.ts — FordCast Demo Edition tokens (dark only, iOS only). Mirrors src/global.css. Parity-tested.
 import type { Wire } from '@/demo/engine/types';     // 'no_rise' | 'watch' | 'avoid' | 'closed' | 'unknown' (05 §22.2)
+export { RANK } from '@/demo/engine/types';          // the ONE rank table (05 §22.2); never redefine it here
 
 export const palette = {
   navy950: '#070D18', navy900: '#0B1320', navy850: '#0E1726', navy800: '#152033', navy750: '#1C2940', navy700: '#24344F',
@@ -458,7 +459,6 @@ export const palette = {
   white: '#FFFFFF', ice: '#F2F5FA', iceDim: '#E6EBF2', amber500: '#F5A623', red700: '#B71C1C', red600: '#C62828',
   red400: '#FF5470', red300: '#FF8095', cyan400: '#2BD9D9', blue400: '#5AA9FF', blue300: '#6CB4FF', violet300: '#B69CFF',
 } as const;
-export const RANK: Record<Wire, number> = { no_rise: 0, unknown: 1, watch: 2, avoid: 3, closed: 4 };
 export type StatusTokens = { fg: string; fill: string; ink: string; border: string; halo: string; dashed: boolean };
 const status: Record<Wire, StatusTokens> = {
   no_rise: { fg: palette.slate400, fill: 'transparent', ink: palette.slate400, border: palette.slate400, halo: 'transparent', dashed: false },
@@ -517,7 +517,7 @@ export const theme = dark;            // static default for non-React code; comp
 - `src/global.css` + `tailwind.config.js` colors: copy the dark block and the Tailwind color map **verbatim from `docs/master-prompt/02-B1-design-system.md` §9.12**, with these Demo Edition deltas: (1) rename `--replay` → `--sim` (same HSL `255.8 100.0% 80.6%`) and the Tailwind key `replay` → `sim`; (2) delete the commented LIGHT block and the `sheet: '28px'` radius; (3) `:root, .dark:root` both hold the dark values and the root layout calls NativeWind `colorScheme.set('dark')` once.
 
 ### 13.12 Token tests & Done when (§13)
-- `mobile/src/lib/__tests__/tokens-parity-test.ts`: B1 §9.13's test with `--replay` → `--sim` and the light/android keys removed; maps every CSS variable to its `theme.ts` value and compares hex.
+- `mobile/src/__tests__/tokens-parity-test.ts` (all tests live in `mobile/src/__tests__/`, 01 §5): B1 §9.13's test with `--replay` → `--sim` and the light/android keys removed; maps every CSS variable to its `theme.ts` value and compares hex.
 - `contrast-test.ts`: WCAG ratio for every row of §13.2/§13.3 with its minimum (4.5 text, 3.0 large/non-text).
 - `no-green-test.ts`: scans `theme.ts`, `global.css` triplets, `assets/**/*.svg` and `tools/make-markers.mjs` color constants; fails on hue 75°–165° with saturation > 25 %.
 - Grep gate: `grep -rnE "#[0-9A-Fa-f]{6}" mobile/src --include=*.tsx | grep -v -e theme.ts -e illustrations/` returns nothing.
@@ -652,7 +652,7 @@ Check the Default, Dark, Clear and Tinted appearances at 29 / 40 / 60 pt. **No r
 3. **Loops stop** after 3 cycles or 6 s (WCAG 2.2.2) and settle into a static form; they restart only on a new state change.
 4. **Nothing flashes** more than 3×/s (WCAG 2.3.1) — including the video.
 5. **Reduce Motion never removes meaning:** every meaningful animation has a dissolve/highlight fallback; ongoing motion stops.
-6. **States are step functions:** windows and states change once per 5-minute simulated tick (05 §22.7 `useTick`), never interpolated; only the storm clock, scrubber thumb and water pulse move continuously.
+6. **States are step functions:** windows and states change once per 5-minute simulated tick (05 §22.10 `useTick`), never interpolated; only the storm clock, scrubber thumb and water pulse move continuously.
 
 ### 15.2 Motion tokens — `mobile/src/lib/motion.ts`
 ```ts

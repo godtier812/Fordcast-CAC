@@ -37,18 +37,19 @@
 |---|---|---|---|---|---|---|---|
 | 0:00–0:08 | Hook | B-roll (own footage, §29.8): a **dry** low-water crossing with its depth-marker post, or rain on a windshield in a **parked** car | — | — | The most dangerous part of a Central Texas flood isn't the river — it's the road. | **TEXAS — #1 IN U.S. FLOOD DEATHS** · small "1959–2019 [S1]" | 0 |
 | 0:08–0:18 | Problem | Kinetic text over dark B-roll | — | — | Over half of flood drownings happen when someone drives into water; today's tools say a crossing is closed only after the water is already over it. | "570 vehicle-related deaths [S2]" → "Over half of flood drownings: driving into water [S3]" | 0 |
-| 0:18–0:28 | Who · purpose · audience · honesty | iPhone Home Screen → tap the FordCast icon → launch "arrival" (§20) | icon, splash, calm map appears | app icon; DEMO chip | I'm [NAME], a 9th grader at [SCHOOL] in [CITY]. FordCast warns drivers — especially at night and new drivers — which low-water crossing is likely to flood soon, before the water reaches the road. [D02] | **Title card (≥ 2.5 s):** "This demonstration uses simulated storms. The forecasting code is real and runs on the phone." | 4 |
-| 0:28–0:38 | Calm | **T01-calm** · `calm-evening` @ 8:00 PM · paused | Map Home; no touch, then one slow pinch-out | DEMO chip; 17 monitored crossings ○ No rise detected; tier-C ◌ not monitored; "Watching 12 upstream gauges for 17 crossings" | FordCast watches the stream gauges upstream of each low-water crossing. On a calm night it never says "safe" — just "no rise detected". [D10] | — | 10 |
+| 0:18–0:28 | Who · purpose · audience · honesty | **S1-launch** (§29.4): iPhone Home Screen → tap the FordCast icon → launch "arrival" (04 §20.1) | icon, splash, calm map appears | app icon; DEMO chip | I'm [NAME], a 9th grader at [SCHOOL] in [CITY]. FordCast warns drivers — especially at night and new drivers — which low-water crossing is likely to flood soon, before the water reaches the road. [D02] | **Title card (≥ 2.5 s):** "This demonstration uses simulated storms. The forecasting code is real and runs on the phone." | 4 |
+| 0:28–0:35 | Calm | **T01-calm** · `calm-evening` @ 8:00 PM · paused | Map Home; no touch, then one slow pinch-out | DEMO chip; 17 monitored crossings ○ No rise detected; tier-C ◌ not monitored; "Watching 12 upstream gauges for 17 crossings" | FordCast watches the stream gauges upstream of each low-water crossing. On a calm night it never says "safe" — just "no rise detected"… | — | 7 |
+| 0:35–0:38 | Pledge | **S2-pledge** (no scenario; §29.4) | onboarding P4: tick the three statements → `[I understand]` enables | the three pledge lines, the third ending "…it never tells me a road is safe." | …and every driver starts by promising never to drive into water. [D10] | — | 3 |
 | 0:38–0:50 | How it knows | **T02-rising** · `flash-flood-night` @ 6:48 AM (Watch + 3) · paused | tap the Jones Rd marker → drag the sheet to half | ▲ Watch "water rising upstream"; hydrograph climbing toward the dashed 6.0 ft trigger line; "Water usually takes 30–45 min to get here" | When rain hits upstream, the gauge rises first — and FordCast knows how long the water usually takes to reach this road: 30 to 45 minutes. [D06, D08] | — | 12 |
-| 0:50–1:20 | **Signature: simulated storm** | **T03-player** · `flash-flood-night` from 6:35 AM · 60× + auto-slow | Storms → `[▶ Play]` on the hero card (record from the card tap), then touch nothing | SIMULATED STORM banner every frame; 6:45 ▲; **7:00 ◆ "likely flooded within 15–30 min"**; cyan wave + wavefront dot reaching Jones Rd; 7:30 ● water on the road; storm clock visible | Here's a simulated storm. Watch the water travel down Williamson Creek. Jones Road turns Watch, then Avoid — likely flooded within 15 to 30 minutes — and half an hour later the water reaches the road. [D01, D02] | kinetic stamps synced to the ticks: "6:45 Watch" · "7:00 Avoid" · "7:30 water on the road" | 30 |
+| 0:50–1:20 | **Signature: simulated storm** | **T03-player** · `flash-flood-night` from 6:35 AM · 60× + auto-slow | the take parks the storm at 6:35 AM on the Storms tab; record from the hero card's `[▶ Play]` tap (it keeps that clock, 04 §18.13), then touch nothing | SIMULATED STORM banner every frame; 6:45 ▲; **7:00 ◆ "likely flooded within 15–30 min"**; cyan wave + wavefront dot reaching Jones Rd; 7:30 ● water on the road; storm clock visible | Here's a simulated storm. Watch the water travel down Williamson Creek. Jones Road turns Watch, then Avoid — likely flooded within 15 to 30 minutes — and half an hour later the water reaches the road. [D01, D02] | kinetic stamps synced to the ticks: "6:45 Watch" · "7:00 Avoid" · "7:30 water on the road" | 30 |
 | 1:20–1:30 | Result | **T04-results** · @ 7:55 AM · paused | `storm/results` auto-presents; one drag to full | count-up **30**; `demo.result`; honesty line (n = 3, m = 30); rule line; closure gap 50; window check "inside" | In this simulated storm, FordCast said Avoid 30 minutes before the water reached the road — and 50 minutes before the road crew closed it. A fixed rule picked this example: the one closest to the median. [D03, D04, D05] | **"30 MIN EARLIER · in this simulated storm"** | 10 |
-| 1:30–1:36 | One clock | **T05-one-clock** · @ 7:02 AM · paused | tap ✕ on the player | Map Home with violet frame + SIMULATED pill + accessory; Jones Rd ◆ 15–30; Westgate ▲, Manchaca & Jones ▲, Jimmy Clay ▲ | It's not just a replay screen: the same clock drives the whole app. [D01] | — | 6 |
+| 1:30–1:36 | One clock | **T05-one-clock** · @ 7:02 AM · paused | the take opens the player paused at 7:02 AM; tap ✕ | Map Home with violet frame + SIMULATED pill + accessory; Jones Rd ◆ 15–30; Westgate ▲, Manchaca & Jones ▲, Jimmy Clay ▲ | It's not just a replay screen: the same clock drives the whole app. [D01] | — | 6 |
 | 1:36–1:46 | Lock screen | **T06-lockscreen → T07-sheet** · arm @ 6:59 → 7:00 AM | Director "Lock-screen take" → side button → ≈ 8 s → banner → tap → Face ID → drag to half | Banner "Avoid Williamson Creek at Jones Road" / "Simulated storm · demo data" / "Likely flooded within 15–30 min…"; then the sheet ◆ Avoid 15–30 + reasons | If Jones Road is on your way to school, your phone warns you — even when it's locked. [D13] | — | 10 |
 | 1:46–1:57 | Detour | **T08-detour** · @ 7:01 AM · paused | `[Detour +N min]` → `drive/result` → `[Start Drive Mode]` | verdict Avoid (Jones Rd) + Watch (Manchaca & Jones); "Detour adds N min" (baked duration); detour drawn on real streets | One tap shows a way around it. [D15] | — | 11 |
-| 1:57–2:10 | Drive Mode EN → ES | **T09-drive-en** (drive 56 → 80 s, 1×) then **T10-drive-es** (60 → 76 s) · `drive-commute` | none (phone in a mount) | SIMULATED DRIVE label every frame; at drive 66 s: chime → "2 crossings ahead changed. Avoid Williamson Creek at Jones Road. Flooding likely soon. Take another route." + red edge glow; ES: "Cambiaron 2 cruces adelante. Evite Williamson Creek en Jones Road…" | While you drive, FordCast speaks — in English or Spanish — so your eyes stay on the road. [D14, D17] | EN caption under the Spanish audio | 13 |
+| 1:57–2:10 | Drive Mode EN → ES | **T09-drive-en** (drive 56 → 80 s, 1×) → **S3-language** insert (≈ 2 s: long-press ⚙ → Español, §29.4) → **T10-drive-es** (60 → 76 s) · `drive-commute` | none during the drives (phone in a mount) | SIMULATED DRIVE label every frame; at drive 66 s: chime → "2 crossings ahead changed. Avoid Williamson Creek at Jones Road. Flooding likely soon. Take another route." + red edge glow; ES: "Cambiaron 2 cruces adelante. Evite Williamson Creek en Jones Road…" | While you drive, FordCast speaks — in English or Spanish — so your eyes stay on the road. [D14, D17] | EN caption under the Spanish audio | 13 |
 | 2:10–2:15 | Unknown, never "safe" | **T11-unknown** · `onion-creek-storm` @ 5:50 AM · paused | player, Bluff Springs Rd selected | ◌ Unknown; "Last known: Avoid · 50 min ago"; caption "Onion Ck at Twin Creeks Rd went silent…" | If a gauge goes silent, FordCast says Unknown. It never pretends a road is fine. [D11] | — | 5 |
-| 2:15–2:24 | Tools · AI · next | `settings/how-it-works` (animated travel dot) | none | the 5-step diagram | I built it in TypeScript with React Native and Expo, MapLibre maps, and Xcode on my own iPhone, with help from an AI coding assistant. I wrote the forecast rule, the alert state machine and the travel-time code myself. Next: live USGS gauges and testing on real past storms. [D21, D25, D26, D27] | "Tools: TypeScript · React Native (Expo SDK 57) · MapLibre + OpenFreeMap · Xcode · AI assistant: Claude Code (disclosed in AI_USE.md)" | 5 |
-| 2:24–2:30 | Trust + end | `settings/whats-real` flash (≈ 3 s) → end card | none | Real / Simulated / Planned groups | The storms here are simulated; the code is real. In a flood, minutes matter — FordCast tries to win some of them back. Turn around, don't drown. | End card (§31.2) | 3 |
+| 2:15–2:24 | Tools · AI · next | **S4-how**: `settings/how-it-works` (animated travel dot) | none | the 5-step diagram | I built it in TypeScript with React Native and Expo, MapLibre maps, and Xcode on my own iPhone, with help from an AI coding assistant. I wrote the forecast rule, the alert state machine and the travel-time code myself. Next: live USGS gauges and testing on real past storms. [D21, D25, D26, D27] | "Tools: TypeScript · React Native (Expo SDK 57) · MapLibre + OpenFreeMap · Xcode · AI assistant: Claude Code (disclosed in AI_USE.md)" | 5 |
+| 2:24–2:30 | Trust + end | **S5-whats-real**: `settings/whats-real` flash (≈ 3 s) → end card | none | Real / Simulated / Planned groups | The storms here are simulated; the code is real. In a flood, minutes matter — FordCast tries to win some of them back. Turn around, don't drown. | End card (§31.2) | 3 |
 
 **App-footage share:** 119 s of 150 s ≈ 79 %. Recompute from the final edit (count only frames showing FordCast's UI or its notification); if it falls below 60 %, trim Hook/Problem, never app footage. If a [SHOULD-SHOW] cut (§6.3) removes a shot, replace its seconds with the crossing sheet or Map Home, never with new claims.
 
@@ -64,9 +65,9 @@ Tapping a take in the Director = load scenario → seek to its keyframe (resolve
 |---|---|---|---|---|
 | T01-calm | `calm-evening` min 30 (8:00 PM) | paused | — | 17 × NO_RISE, 8 × UNKNOWN (not monitored) |
 | T02-rising | `atx-37` → WATCH + 3 min (6:48 AM) | paused | — | atx-37 WATCH |
-| T03-player | `atx-37` → WATCH − 10 min (6:35 AM), run 60 sim-min | 60× | Auto-slow on | atx-37 WATCH at 6:45, AVOID [15,30] at 7:00 |
+| T03-player | `atx-37` → WATCH − 10 min (6:35 AM), run 60 sim-min | 60× | Auto-slow on; lands on the Storms tab, clock parked at 6:35 AM (05 §24.3 `TAKE_ROUTES`) | atx-37 WATCH at 6:45, AVOID [15,30] at 7:00 |
 | T04-results | `atx-37` → CLOSED + 5 min (7:55 AM) | paused | results sheet presented | hero lead 30, median 30, closure gap 50 |
-| T05-one-clock | `atx-37` → AVOID + 2 min (7:02 AM) | paused | player open, then ✕ | atx-37 AVOID [15,30]; atx-680, atx-692, atx-32 WATCH |
+| T05-one-clock | `atx-37` → AVOID + 2 min (7:02 AM) | paused | opens the player paused at 7:02 AM; film the ✕ | atx-37 AVOID [15,30]; atx-680, atx-692, atx-32 WATCH |
 | T06-lockscreen | `atx-37` → AVOID − 1 min (6:59 AM) | paused | "Lock-screen take (8 s)": schedules id `demo:flash-flood-night:atx-37:avoid:70` (`TIME_INTERVAL` 8 s) | notification content = AVOID [15,30] |
 | T07-sheet | `atx-37` → AVOID (7:00 AM) | paused | opened by the notification tap (`data.simMin` 70 → seek) | atx-37 AVOID [15,30] |
 | T08-detour | `atx-37` → AVOID + 1 min (7:01 AM) | paused | — | route verdict AVOID; detour has no crossing within 40 m |
@@ -75,7 +76,17 @@ Tapping a take in the Director = load scenario → seek to its keyframe (resolve
 | T11-unknown | `tc-1626` → UNKNOWN (5:50 AM) | paused | Bluff Springs selected | tc-1626 UNKNOWN, last known AVOID, "50 min ago" |
 | O1–O4 | per `takes.ts` | — | — | per `takes.ts` |
 
-**Done when (§29.4):** the `takes` test is green **and** every take was rehearsed on the device on Day 8 with its caption matching the screen.
+**Shots that aren't Director takes** (nothing time-dependent is on screen, so they're deterministic too; Director → Reset first, so the app is on `calm-evening`):
+
+| Shot | Setup | Must be on screen |
+|---|---|---|
+| S1-launch (0:18) | Pledge accepted earlier; Reset; force-quit FordCast; record from the Home Screen icon tap | icon → splash → arrival (04 §20.1) → calm Map Home with the DEMO chip |
+| S2-pledge (0:35) | Settings → About → `[Replay introduction]` → swipe to P4 (04 §18.18.7) | three statements ticked one by one; `[I understand]` enables |
+| S3-language (≈ 2:03) | Map Home (any state); long-press ⚙ → Español; then load T10 | the UI flips to Spanish (labels, pill, card) |
+| S4-how (2:15) | Settings → How FordCast works | the travel dot runs ① → ⑤; "30–45 min" read from data |
+| S5-whats-real (2:24) | tap the FreshnessPill | Real / Simulated / Planned groups |
+
+**Done when (§29.4):** the `takes` test is green **and** every take and S-shot was rehearsed on the device on Day 8 with its caption (or the table above) matching the screen.
 
 ### 29.5 Editing rules for honest pacing
 
@@ -137,8 +148,8 @@ Tapping a take in the Director = load scenario → seek to its keyframe (resolve
 
 ### 30.3 The lock-screen take (T06 → T07), step by step
 
-1. Director → take **T06-lockscreen** (seeks to 6:59 AM, paused) → Clean mode on.
-2. Start the QuickTime recording. Director → **Lock-screen take (8 s)** → close the Director sheet → press the **side button** to lock.
+1. Director → Clean mode on → start the QuickTime recording.
+2. Director → take **T06-lockscreen**. That one tap seeks to 6:59 AM, pauses **and already schedules the 8 s notification** (`loadTake` calls `armLockScreenTake`, 05 §24.3) → swipe the Director sheet down → press the **side button** to lock right away. Need more time? Tap **Lock-screen take (8 s)** instead of the chip: re-arming replaces the pending request (same identifier) and restarts the 8 s.
 3. ≈ 8 s later the banner lands on the Lock Screen: title "Avoid Williamson Creek at Jones Road", subtitle "Simulated storm · demo data", body "Likely flooded within 15–30 min. Use another route. Never drive into water." (OS-scheduled because JS doesn't run while locked; research-data §4.2.)
 4. Hold 2 s, tap the notification → Face ID → FordCast opens `crossing/atx-37` at the same beat (Avoid 15–30) → drag to half. Stop recording.
 5. If the banner shows only "FordCast — Notification": Show Previews isn't "Always" (30.1). If it never arrives: Focus is blocking FordCast, or notifications were denied; re-check and re-arm (re-arming replaces the request, same identifier).
@@ -195,7 +206,7 @@ Tapping a take in the Director = load scenario → seek to its keyframe (resolve
 | FreshnessPill | always, no scenario | `DEMO` chip + "updated {{age}}" (`demo.chip`, `demo.pill_idle`) | dashed 1 pt `#8A97AB` micro-chip, text `#B4BFD0` (neutral on purpose) | the words "Live" or "Checked" |
 | FreshnessPill + map viewport | scenario running | "SIMULATED · {{time}} storm time" (`demo.pill_running`) | violet pill (fill `#B69CFF`, ink `#0E1726`) + 2 pt violet inner frame on the map | hidden during a scenario |
 | Scenario accessory / mini-bar | scenario running, every tab | "● SIMULATED · {{storm}} · {{time}}" | 8 pt violet dot | — |
-| Storms cards, player, results | always | "SIMULATED STORM · demo data · not live" (`demo.banner`) | violet banner 32 pt with 4 pt stripe edge | any frame without it |
+| Storms cards, player, results | always | "SIMULATED STORM · demo data · not live" (`demo.banner_title` + `demo.banner_sub`; a11y `demo.banner_spoken`) | two-line violet `SimulatedBanner`, 44 pt, radius 14 (03 §12.5) | any frame without it |
 | Drive Mode | scenario drive | "SIMULATED DRIVE" (`replay.simulated_drive`) + violet banner | top of HUD | a drive shown without it |
 | Local notification | every alert | subtitle "Simulated storm · demo data" (`demo.notify.subtitle`) | system UI | a "SIMULATED" title prefix (titles stay ≤ 50 chars; research-data §9 item 4) |
 | Alerts inbox | every row | violet `SIMULATED` chip before the state chip | chip | — |
@@ -218,9 +229,9 @@ A component test renders each surface in each state in EN and ES and asserts the
 
 ### 31.3 *What's real in this demo* (screen `settings/whats-real`; source `mobile/src/content/whats-real.ts`)
 
-Each row: SF Symbol + title + one-line explanation + neutral badge (`Built` · `Demo data` (violet outline) · `Planned`) + `claimId`. A test (`claims-whats-real.test.ts`) parses `docs/CLAIMS.md` and fails if a **Real** row's claim isn't `Built`, or a **Planned** row's claim isn't `Next`.
+Each row: SF Symbol + title + one-line explanation + neutral badge (`Built` · `Demo data` (violet outline) · `Planned`) + `claimId`. A test (`mobile/src/__tests__/claims-whats-real-test.ts`) parses `docs/CLAIMS.md` and fails if a **Real** row's claim isn't `Built`, or a **Planned** row's claim isn't `Next`.
 
-| Group | Row (EN; ES via keys `demo.whats_real.*`) | claimId |
+| Group | Row (EN; ES via keys `whatsreal.rows.<claimId>.*`, 04 §18.18.6) | claimId |
 |---|---|---|
 | **Real** | The forecast logic runs on this phone: upstream rise + travel time → time range → safety states | D01 |
 | Real | It never calls a road safe, and shows Unknown when data is missing | D10, D11 |
@@ -252,7 +263,7 @@ Each row: SF Symbol + title + one-line explanation + neutral badge (`Built` · `
 | D04 | "A fixed rule picked this example: the one closest to the median." | Hero-selection test (closest to median, ties → earlier onset) | — (without it, D03 can't be used) |
 | D05 | "…and 50 minutes before the (simulated) road crew closed it." | Engine test: closure gap 50 | Omit |
 | D06 | "Water usually takes 30–45 min to get here." (range only) | `tauRange` test for the hero link | — |
-| D07 | "Crossing names and locations are real (City of Austin open data); gauge sites are real USGS gauges." | `data/crossings.ts` rows carry `source {communityId, legacyId, address}`; spot-check of 5 rows against the CSV logged; gauge names checked (research-data §1.2) | "Crossing names from City of Austin open data" only |
+| D07 | "Crossing names and locations are real (City of Austin open data); gauge sites are real USGS gauges." | `CROSSINGS` rows in `mobile/src/demo/data/demo-data.ts` carry `source {dataset, communityId, legacyId, address}`; spot-check of 5 rows against the CSV logged; gauge names checked (research-data §1.2) | "Crossing names from City of Austin open data" only |
 | D08 | "In the demo, each crossing is linked to a real gauge upstream on the same creek; the travel times are demo values." | Student map-check (Day 3, devlog); if NLDI was run: `upstreamVerified: true` → may say "checked with the USGS river network" | "Linked to a nearby upstream gauge (demo values)" |
 | D09 | "The travel-time learner works on simulated storms (prototype); learning from real storms is next." | ★ `travel-time.ts` tests green | Omit |
 | D10 | "FordCast never tells you a road is safe." | Banned-words tests green (EN+ES); optional hallway check logged | — (never-cut) |
@@ -429,7 +440,7 @@ Rules: every claim matches `docs/CLAIMS.md`; no metric that isn't engine-compute
 Run **Sat Oct 24** (pre-check) and **Sun Oct 25** (final) from a clean clone of the commit to be tagged. The agent ticks technical items with evidence links; the student ticks every **(S)** item personally. Save the completed copy as `submission/FINAL_ACCEPTANCE.md` in the tagged commit.
 
 **A. App on the iPhone (Release build)**
-- [ ] Built from a clean checkout: `npx expo prebuild -p ios --clean` → §9 greps (0 × `aps-environment`, pod floor, `MLRN.post_install`, scene manifest on Xcode 27) → `npx expo run:ios --device --configuration Release`; launches unplugged; no dev menu or LogBox.
+- [ ] Built from a clean checkout: `npx expo prebuild -p ios --clean` → §9 greps (0 × `aps-environment`, pod floor, `MLRN.post_install`, scene manifest on Xcode 27) → `npx expo run:ios --device --configuration Release --no-bundler`; launches unplugged; no dev menu or LogBox.
 - [ ] Onboarding → pledge (tabs unreachable until accepted) → notification primer.
 - [ ] Map Home calm: DEMO chip, "No upstream rise detected near you", "Watching 12 upstream gauges for 17 crossings", tier-C ◌ not monitored, attribution visible, no green, no reassurance.
 - [ ] Scenario running: violet pill + frame + accessory on every tab; crossing sheet peek/half/full fit on this phone; hydrograph with trigger line; reasons with travel range.

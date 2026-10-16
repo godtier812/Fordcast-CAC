@@ -1,0 +1,18 @@
+# FordCast — repo-wide ignores (docs/demo-prompt/01 §5, §1.9). mobile/.gitignore adds the Expo template's own list.
+node_modules/
+.expo/
+mobile/ios/
+mobile/example/
+
+# secrets and signing material: never committed (01 §1.9)
+.env*
+!.env*.example
+*.p12
+*.cer
+*.mobileprovision
+
+# raw video takes live off-repo (06 §30.2)
+takes/
+*.mov
+
+.DS_Store

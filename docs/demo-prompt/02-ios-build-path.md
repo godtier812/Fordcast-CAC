@@ -139,7 +139,7 @@ git --version
 
 ### 9.1 Rules for the agent (🤖 MUST)
 
-1. **Stay on SDK 57.** `expo@latest` is now **58.0.11** (2026-10-15); the `sdk-57` dist-tag is **57.0.30**. [Verified: npm view expo dist-tags]
+1. **Stay on SDK 57.** `expo@latest` is now **58.0.x** (58.0.12 on 2026-10-16); the `sdk-57` dist-tag is **57.0.30**. [Verified: npm view expo dist-tags, 2026-10-16]
    - Scaffold only with `--template default@sdk-57`.
    - Add native modules only with `npx expo install` (it resolves SDK-57 versions).
    - Never run `npm install expo@latest`. Never upgrade to SDK 58 before the deadline.
@@ -158,8 +158,11 @@ git --version
 npx create-expo-app@latest mobile --template default@sdk-57     # template expo-template-default@57.0.32 (sdk-57 tag)
 cd mobile
 [ -d .git ] && rm -rf .git                                       # never a nested repo inside the monorepo
-npm run reset-project                                            # starter moves to example/ (git-ignored by the template)
+echo y | npm run reset-project                                   # answers its "(Y/n)" prompt: Y = move starter src/ + scripts/ to example/
+                                                                 # (git-ignored by the template); a bare run waits for input
 ```
+
+[Verified: expo-template-default@57.0.32 `scripts/reset-project.js` uses `readline` `rl.question(... (Y/n))`]
 
 What the template already contains [Verified: expo-template-default@57.0.32 package.json]:
 - expo ~57.0.30, react 19.2.3, react-native 0.86.3
@@ -271,6 +274,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     // the signing plugin. Never add `sounds`, never add 'expo-widgets' unless §10.3's spike passed.
   ],
   experiments: { typedRoutes: true, reactCompiler: false },   // React Compiler OFF (template default is true)
+  extra: { builtAt: new Date().toISOString() },         // Director status line "built … · rebuild by …" (§24.6); read via expo-constants
 });
 ```
 
@@ -438,7 +442,7 @@ Or press ⌘R in Xcode with the iPhone selected as the run destination.
 - **JS-only changes:** keep `npx expo start` running. Changes appear on the phone with Fast Refresh.
 - **Changes to `app.config.ts`, plugins or a native module:** run `npx expo prebuild -p ios --clean`, then the §9.7 checks, then `npx expo run:ios --device`.
 
-### 9.10 Day-1 smoke test: the go/no-go gate (🤖 builds, 🧑 checks; ≤ 2 h, **Fri Oct 16**)
+### 9.10 Day-1 smoke test: the go/no-go gate (🤖 builds, 🧑 checks; ≤ 2 h; Day 1, **gate deadline end of Fri Oct 16**, §6)
 
 **Purpose:** prove the whole risky chain before any UI work. That chain is:
 
@@ -446,7 +450,7 @@ Or press ⌘R in Xcode with the iPhone selected as the run destination.
 
 1. 🤖 Create a temporary screen `mobile/src/app/smoke.tsx`. Delete it before the UI freeze.
 2. The screen has five buttons:
-   1. **Map:** `<Map mapStyle="https://tiles.openfreemap.org/styles/dark" />` centered on Austin (−97.79, 30.22, zoom 11). The final "FordCast Night" style comes later (§13).
+   1. **Map:** `import { Map as MapLibreMap, Camera } from '@maplibre/maplibre-react-native'` (alias it: a bare `Map` import shadows the JS `Map` class) → `<MapLibreMap style={{ flex: 1 }} mapStyle="https://tiles.openfreemap.org/styles/dark"><Camera initialViewState={{ center: [-97.79, 30.22], zoom: 11 }} /></MapLibreMap>` (Austin). [Verified: @maplibre/maplibre-react-native@11.5.0 `Map.d.ts` `mapStyle`, `Camera.d.ts` `initialViewState`] The final "FordCast Night" style comes later (§13).
    2. **Notify in 8 s:** schedule a local notification with `trigger: { type: SchedulableTriggerInputTypes.TIME_INTERVAL, seconds: 8 }`. Title "Smoke test", subtitle "Simulated storm · demo data".
    3. **Speak EN / Speak ES:** `Speech.speak('Avoid Williamson Creek at Jones Road. Flooding likely soon. Take another route.', { language: 'en-US', useApplicationAudioSession: true })` after `setAudioModeAsync({ playsInSilentMode: true, interruptionMode: 'duckOthers' })`. Plus the Spanish line from §25.
    4. **Haptic:** `Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error)`.
@@ -514,9 +518,9 @@ Or press ⌘R in Xcode with the iPhone selected as the run destination.
 3. **No feature may depend on push, background execution, App Groups or a second App ID**, except the optional §10.3 spike.
 4. **Never put a dead button on screen** for a [NEXT] capability. [NEXT] items appear only in Settings → What's real → "Planned" rows (§31).
 
-### 10.3 Optional spike: Live Activity (≤ 90 min, only after the UI freeze checks pass, not before Wed Oct 21) [NEXT unless it passes]
+### 10.3 Optional spike: Live Activity (≤ 90 min, Day 8 Thu Oct 22 only, after the Wed Oct 21 feature-freeze gate passed) [NEXT unless it passes]
 
-Skip this spike entirely if anything in §6's plan is behind. If you do it:
+Run it only if Step 0 Q5 = yes (DD8 in §1.2) and nothing in §6's plan is behind; revert it the same day if it doesn't sign and run, **before** the Thursday-evening Release build (§11.4). If you do it:
 1. `npx expo install expo-widgets`.
 2. Add `['expo-widgets', { groupIdentifier: 'group.<bundleId>' }]` **after** the signing plugin.
 3. Run `prebuild --clean`, then the §9.7 checks. Also run `grep -c aps-environment` on the widget's entitlements file, which must print 0.
@@ -584,11 +588,11 @@ Unplug the cable, then:
 
 | Date | Signing event | Note |
 |---|---|---|
-| **Fri Oct 16** | First install (smoke test, §9.10) | Profile expires ≈ **Fri Oct 23**. |
-| Oct 17–20 | Debug installs while building UI | A new install *may* re-issue the profile. Check the date. |
-| **Wed Oct 21** | UI freeze → **fresh Release install** | If the profile date is still Oct 23, that's fine: record Oct 22. |
-| **Thu Oct 22** (primary) – Fri Oct 23 (backup) | **Recording days** | **Rule:** on recording morning, if the profile expires within 24 h, rebuild Release first (5 min), then record. |
-| Sat Oct 24 | Editing (no device needed) | — |
+| **Thu Oct 15 – Fri Oct 16** | First install (smoke test, §9.10) | Profile expires ≈ **Thu Oct 22 – Fri Oct 23**, i.e. on recording day. That's why the Thursday build below is mandatory. |
+| Oct 17–21 | Debug installs while building UI; Wed Oct 21 18:00 CT feature freeze | A new install *may* re-issue the profile. Check the date. |
+| **Thu Oct 22, evening** | Copy freeze 18:00 CT → **fresh Release install for recording** | New profile ≈ through **Thu Oct 29**. Any code change after this needs a new Release build + re-check of affected takes. |
+| **Fri Oct 23** | **Recording day** (Sat Oct 24 morning = re-shoot buffer) | **Rule:** on recording morning, if the profile expires within 24 h, rebuild Release first (5 min), then record. |
+| Sat Oct 24 | Voice-over + editing (no device needed); code freeze 18:00 CT | — |
 | Sun Oct 25 | Submit | Keep the Mac set up. Any later live demo needs a same-day rebuild (§11.2). |
 
 ### 11.5 Simulator path (UI QA and backup recording; no signing, no 7-day limit)

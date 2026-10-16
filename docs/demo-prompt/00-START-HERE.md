@@ -7,7 +7,7 @@
 
 ## How to use this prompt *(for the human — read first)*
 
-1. **Where it lives.** `docs/demo-prompt/` holds seven files plus `research/`:
+1. **Where it lives.** `docs/demo-prompt/` holds seven files plus `03-tools/`, `05-code/` and `research/`:
 
    | File | Sections | Contents |
    |---|---|---|
@@ -18,7 +18,9 @@
    | `04-ui-screens.md` | §16–§20 | Template and component import plan, component library, every screen and state with wireframes, the iPhone fit matrix (SE → Pro Max, Dynamic Type), signature moments |
    | `05-demo-engine.md` | §21–§28 | Demo dataset, scenario engine and timeline format, on-device forecast rule, Demo Director, notifications + Drive Mode voice + simulated drive, the storm player, accessibility + Spanish, testing |
    | `06-video-and-submission.md` | §29–§33 | Video plan and shot list, recording on the iPhone, honesty labels + Claims Ledger, CAC answers + README, final checklist |
-   | `research/` | — | `research-ios.md` (free-team signing, recording), `research-ui.md` (UI audit, fit), `research-data.md` (dataset, scenarios, takes), `proto/` (engine prototype), `withFreeTeamSigning.js` |
+   | `03-tools/tools/` | (§13.8, §14.3, §19.3) | Byte-identical, already-run Mac tools: `make-style.mjs`, `validate-style.mjs`, `make-markers.mjs`, `measure-text.mjs`, `package.json` — copied into the repo's `tools/`, never retyped |
+   | `05-code/` | (§21–§28) | The type-checked, tested reference tree (35 files: `mobile/src/demo/**`, five `demo-*-test.ts`, starter `locales/{en,es}.json`, `tools/gen-golden.ts`). **MUST be committed with the prompt**; the ★ functions in it are never copied (§1.8, §23.6) |
+   | `research/` | — | `research-ios.md` (free-team signing, recording), `research-ui.md` (UI audit, fit), `research-data.md` (dataset, scenarios, takes), `proto/` (engine prototype), `withFreeTeamSigning.js`. Research is input only: where it disagrees with 00–06 (e.g. "Storm tonight", a "SIMULATED ·" title prefix, 38 min), **00–06 win** |
 
 2. **Run Claude Code on your Mac**, in a terminal at the repo root, so it can build to the Simulator and your iPhone itself. (A cloud session can write code and run tests, but then *you* run every device command and paste the output back.)
 
@@ -91,11 +93,12 @@ Eleven days is enough for a **beautiful, honest demo**, not for the live service
 |---|---|---|---|
 | Safety | **Never "safe."** Five states with **shape + glyph + word + color**; ranges, never countdowns; official closures override; stale → Unknown; no green, no `Success` haptic | False reassurance raises risk | §3 |
 | Honesty | Every simulated surface labeled (DEMO chip → violet SIMULATED pill/frame, SIMULATED STORM banner, SIMULATED DRIVE, notification subtitle "Simulated storm · demo data"); closure source "Simulated road crew"; no accuracy metrics; no real-agency names | Costs nothing; protects you at judging | §1.5, §31 |
-| Platform & build | **iOS only**, Expo SDK 57 (`--template default@sdk-57`; `expo@latest` is now 58 — never use it), local **Xcode** builds, free Personal Team; `plugins/withFreeTeamSigning.js` listed **first** strips the push entitlement | Free account, real iPhone, no EAS | §8–§11 |
+| Platform & build | **iOS only**, Expo SDK 57 (`--template default@sdk-57`; `expo@latest` is now 58 — never use it), local **Xcode** builds, free Personal Team; `plugins/withFreeTeamSigning.js` listed **first** strips the push (and any other paid) entitlement — check `grep -c aps-environment` = 0 after every prebuild; every take is recorded from a **Release** build installed ≤ 24 h before | Free account, real iPhone, no EAS | §8–§11 |
 | Xcode path | iPhone on iOS 26 → Xcode 26.6 (macOS Tahoe 26.2+); on iOS 27 → Xcode 27.1 (Tahoe 26.6+) + `enableSceneSupport` | Xcode 27 + iOS 27 crash fix; SDK 57 needs Xcode ≥ 26.4 | §8, §9 |
 | Data | Simulated readings over **25 real crossings** and **14 real USGS gauge sites**; 4 deterministic scenarios; hero **Williamson Creek at Jones Road**: Avoid 7:00 AM ("15–30 min"), water 7:30 → **30 min** (median 30), closed 50 min after Avoid | Every number computed by the engine | §21–§23 |
+| Network | **Only OpenFreeMap tiles/glyphs** at runtime (style JSON is bundled); no backend, no APIs. Offline → cached tiles, or the night background + FordCast's own layers with "Map details unavailable"; scenarios, alerts and voice need no network (smoke test S8, §11.3) | Fake data only; nothing to break on camera | §1.3 #9, §13.8, §31.4 D28 |
 | Engine | Pure TypeScript on the phone: baseline rule ★ → precedence → state machine ★; travel-time learner ★; one global clock (1–120×) | The code genuinely demonstrates the bridge | §22–§23 |
-| UI | Expo default template + NativeTabs (**Map · Drive · Storms · Alerts**) + Liquid Glass chrome + native formSheets + SwiftUI Settings; RNR limited to Button/Card/Text/ToggleGroup; Skia for charts and signature moments | Native, premium, fits every iPhone | §12–§20 |
+| UI | Expo default template + NativeTabs (**Map · Drive · Storms · Alerts**) + Liquid Glass chrome + native formSheets + SwiftUI Settings; RNR limited to Button/Card/Text (ToggleGroup only as the fallback if the native segmented control fails, §16.3); Skia for charts and signature moments | Native, premium, fits every iPhone | §12–§20 |
 | Fit | Every layout from window size + safe-area insets; classes SE (C·N) / regular / tall; Dynamic Type tiers T0–T3; tested on SE, iPhone 16/17, Pro Max | "Fits everything" | §19 |
 | Alerts | **Local notifications** (`active` level), lock-screen take via an 8 s OS-scheduled notification; Live Activity = Next unless a ≤ 90 min spike (§10.3) signs | Push is impossible on a free team | §10, §25 |
 | Demo control | **Demo Director** in Release (long-press the freshness pill): scenarios, one-tap takes T01–T11, transport, clean recording mode, touch overlay | Repeatable takes for the video | §24 |

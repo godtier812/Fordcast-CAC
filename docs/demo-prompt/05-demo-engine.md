@@ -13,15 +13,16 @@
 > That is what lets the video honestly say *"the water is simulated; the forecasting code is real and runs on this phone."*
 
 **Source of truth.** Code here comes in two forms:
-- **Full listings:** fenced files that start with their path comment. These are **byte-identical copies** of the checked files.
+- **Full listings:** fenced files that start with their path comment. These are **byte-identical copies** of the checked files in `05-code/`. Three §23.6 listings are app-side forms that `05-code/` doesn't hold: the `engine.ts` barrel, the `baseline-rule.ts` skeleton and the GOLDEN `source.ts`. They were type-checked and run in a separate golden-mode copy of the tree.
 - **API blocks:** summaries of files that live only in `05-code/`.
 
 All of it was checked on 2026-10-16:
 - **Type-checked:** TypeScript **6.0.3** (the SDK 57 template's version), `strict` + `noUncheckedIndexedAccess`, against the real package types: expo 57.0.30, expo-notifications 57.0.23, expo-audio 57.0.5, expo-speech 57.0.3, expo-haptics 57.0.3, expo-keep-awake 57.0.2, zustand 5.0.15, react-native 0.86.3, react-native-reanimated 4.5.1.
-- **Tested:** **28 tests / 976 assertions pass** under **jest-expo 57.0.6** (Jest 29.7.0, `@react-native/jest-preset` 0.86.3, babel-preset-expo 57.0.16), and also under bun 1.4.2.
-- **Where the files are:** the full tree (31 files) is in **`05-code/mobile/`**, next to this file. It includes every API-block file and every test.
-- **Copy, don't retype.** 🤖 MUST copy `05-code/mobile/src/demo/**`, `05-code/mobile/src/__tests__/demo-*-test.ts` and `05-code/mobile/src/locales/{en,es}.json` (starter keys) into the app.
+- **Tested:** **35 tests pass** under **jest-expo 57.0.6** (Jest 29.7.0, `@react-native/jest-preset` 0.86.3, babel-preset-expo 57.0.16) once `tools/gen-golden.ts` has written the fixtures (§23.6); tests type-check too (`types: ["jest","node"]`). The §23.6 golden mode was also run: with the ★ files as `TODO(student)` skeletons, every UI-facing suite stays green and only the ★-dependent tests are red.
+- **Where the files are:** the full **reference tree** (35 files) is in **`05-code/`** next to this file, i.e. `docs/demo-prompt/05-code/` (it MUST be committed with the prompt): `05-code/mobile/src/**` mirrors the app, `05-code/tools/gen-golden.ts` mirrors the repo's `tools/`. Its engine produces **exactly the same events** as `research/proto/` [Verified: ran; events JSON identical for all four scenarios; eventsHash calm-evening `741638a5` · flash-flood-night `471e80be` · onion-creek-storm `6ef288b0` · drive-commute `471e80be`].
+- **Copy, don't retype, except the ★ code (§1.8, binding).** 🤖 MUST copy `05-code/mobile/src/demo/**`, the five `05-code/mobile/src/__tests__/demo-*-test.ts`, `05-code/mobile/src/locales/{en,es}.json` (starter keys) and `05-code/tools/gen-golden.ts` into the repo, **except three pieces it MUST NOT copy, paraphrase or paste in chat**: `evaluate()` and `step()` (with `enter`/`stepCore`/`maxState`) in `engine/engine.ts`, and the bodies of `engine/travel-time.ts`. Those are the student's ★ files. §23.6 says exactly how `engine.ts` is split, what the skeletons contain, and how the UI runs on golden fixtures until the ★ files pass. For the student, opening the reference functions counts as hint level 3 (§1.8).
 - **If `05-code/` is missing:** STOP and ask the student to restore it from the repo. Rebuilding the API-block files from their summaries is the last resort, and then the §28 tests are the spec.
+- **Cross-references:** a bare "§N" is this Demo Edition. "A §3.4", "C §18.5", "D §30.5" etc. point into the full prompt per the legend at the top of `01-scope-rules-plan.md`; "D §25–§29" = `docs/master-prompt/05-D1-mobile-stack-architecture-map.md`, "D §30–§37" = `docs/master-prompt/06-D2-mobile-features-quality.md`, "C" = `docs/master-prompt/04-C-data-science-backend.md`, "A" = `docs/master-prompt/01-A-rules-product-plan.md`.
 
 **Evidence tags:**
 - `[Verified: …]`: read in package source or produced by running the code.
@@ -44,7 +45,8 @@ All of it was checked on 2026-10-16:
               series = readings with availMin ≤ t (no lookahead) → evaluate() ★ → crossingIsStale()
               → resolveRawState() (official > sensor > tier C > stale > rule) → step() (hysteresis) → events[]
             results (hidden truth used ONLY here): onsets → leads → hero (closest to median) → closure gap
-                                                   │  Compiled (pure, memoized, 4–30 ms)
+                                                   │  Compiled (pure, memoized, 4–30 ms) — served by source.ts compiledFor()
+                                                   │  (golden fixtures until the Day 6 gate, then this live pipeline; §23.6)
  clock.ts (ONE simMin = f(anchor, wall time)) ─────┤
                                                    ▼
  display.ts displayAt(t, network) ─► Map Home · crossing sheet · nearby list · AlertBanner · Storms player · results
@@ -55,7 +57,7 @@ All of it was checked on 2026-10-16:
 ### Engine rules (🤖 MUST, all sections)
 
 1. **Purity.**
-   - `demo/engine/**`, `demo/sim/**`, `demo/scenario/{compile,display,clock,choreography,player,takes,scenarios,schema}.ts`, `demo/drive/drive.ts`, `demo/notify/content.ts` and `demo/i18n/*` are **pure**: no React, no native modules, no `Date.now()`. They take wall time as a parameter.
+   - `demo/engine/**`, `demo/sim/**`, `demo/scenario/{compile,source,golden,display,clock,choreography,player,takes,scenarios,schema}.ts`, `demo/drive/drive.ts`, `demo/notify/content.ts` and `demo/i18n/*` are **pure**: no React, no native modules, no `Date.now()`. They take wall time as a parameter.
    - Side effects live only in `store/`, `notify/adapter.ts`, `voice/*`, `drive/sim-drive.ts` and `director/*`.
 2. **Truth isolation.** Only `compile.ts`'s results block calls `truthOnset`. `engine/` never imports `sim/`. A test enforces this (§28).
 3. **No hand-typed numbers on screen.** Every time, window, lead, median and count shown in the UI comes from `Compiled` or `displayAt()`. "30 min", "7:00 AM" and "50 min" are outputs, never literals. A grep test in §28 enforces this.
@@ -118,7 +120,7 @@ All of it was checked on 2026-10-16:
 **Coordinate status:**
 - [Verified: USGS/geoconnex records]: 08158930, 08158700, 08158800, 08158827, 08156800, 08157000, 08158200, 08155200, 08155400.
 - [Unverified]: **08158922, 08158970, 08159000, 08158840, 08154700**.
-- **Day-0 check (🧑, 5 min, on the Mac):** open `https://waterdata.usgs.gov/monitoring-location/<site>/` for each [Unverified] site and correct `lat/lon` in `demo-data.ts` if they're off by more than 200 m. The sandbox that wrote this file could not reach USGS.
+- **Day-2 check (🧑, Fri Oct 16, 5 min, on the Mac; 00 task table):** open `https://waterdata.usgs.gov/monitoring-location/<site>/` for each [Unverified] site and correct `lat/lon` in `demo-data.ts` if they're off by more than 200 m. The sandbox that wrote this file could not reach USGS.
 
 ### 21.4 Links (authored, plausible)
 
@@ -146,17 +148,17 @@ All of it was checked on 2026-10-16:
 
 [Verified: ran] Draft lines are straight segments, and the basemap would give that away. Replace them before recording:
 
-1. **🤖 + 🧑 Bake real road geometry** (one time, on the Mac, free OpenRouteService key). Write `mobile/tools/bake-demo-routes.mjs`:
+1. **🤖 + 🧑 Bake real road geometry** (one time, on the Mac, free OpenRouteService key). Write `tools/bake-demo-routes.mjs` (repo root, §5; never imported by the app):
    - It calls `POST https://api.openrouteservice.org/v2/directions/driving-car/geojson` (shape: master research/maps.md ORS section).
    - **Commute:** body `{ coordinates: [Home, atx-37, atx-692, School] }`.
    - **Detour:** body `{ coordinates: [BRANCH, School], options: { avoid_polygons: <MultiPolygon of 150 m circles around atx-37 and atx-692> } }`. Prepend the commute prefix Home→BRANCH so the simulated car turns without jumping.
    - Output `mobile/src/demo/data/routes.json`: `{ commute: { line, durationS }, detour: { line, durationS } }`.
    - "Detour adds {{n}} min" = `round((detour.durationS − commute.durationS)/60)`. Never hand-typed.
-   - The key goes in `mobile/.env.local` (git-ignored), **only for the bake script**. The app never calls ORS.
-2. **Creek lines for the water pulse** (`mobile/src/demo/data/creeks.json`, one entry per link `{ reach_id: "<crossing>__<gauge>", coords }`):
+   - The key goes in `.env.local` at the repo root (git-ignored by `.env*`, §5), **only for the bake script**. The app never calls ORS.
+2. **Creek lines for the water pulse** (`tools/bake-creeks.mjs` → `mobile/src/demo/data/creeks.json`, one entry per link `{ reach_id: "<crossing>__<gauge>", coords }`):
    - Fetch `https://api.water.usgs.gov/nldi/linked-data/nwissite/USGS-<site>/navigation/DM/flowlines?distance=25`.
    - Clip from the gauge to the point on the line nearest the crossing.
-   - Simplify to ≤ 40 vertices (`@turf/simplify`, tolerance ≈ 0.0001°; dev-only dependency).
+   - Simplify to ≤ 40 vertices (`@turf/simplify@7.4.0`, exact pin like the other Turf packages, tolerance ≈ 0.0001°; tools-only devDependency [Verified: npm registry]).
    - **Fallback** if NLDI is down: trace the creek over the map in geojson.io (≈ 2 min per reach). Only the Williamson reaches (atx-37/680/692) and Onion reaches (tc-68/tc-1626) are on camera.
    - Credit "USGS NHDPlus" in About.
 3. After baking, `drive.ts` reads `routes.json` instead of the draft arrays (keep the same `ROUTES` export shape). **Re-run the tests:** `crossingsOnRoute(commute)` MUST equal `[atx-37, atx-692]` and `crossingsOnRoute(detour)` MUST be empty (40 m tolerance). If the baked detour passes within 40 m of a crossing, move `BRANCH` or the avoid circles.
@@ -200,25 +202,33 @@ L('tc-1626', '08158827', true, 40, 33, 44, 5, 10.0, 3.2, 7.4),    // ONLY link �
 
 ## §22. Scenario engine & timeline format
 
-### 22.1 File layout (`mobile/src/demo/`; all paths exist in `05-code/`)
+### 22.1 File layout (`mobile/src/demo/`; every path exists in `05-code/` except the §23.6 engine split, which is one `engine.ts` there, and `__fixtures__/`, which gen-golden writes)
 
 ```
 mobile/src/demo/
-├─ engine/      types.ts · engine.ts ★ · travel-time.ts ★      PURE; never imports sim/ (truth isolation)
+├─ engine/      types.ts · features.ts · windows.ts · explain.ts · combine.ts          PURE; never imports sim/ (truth isolation)
+│               baseline-rule.ts ★ · state-machine.ts ★ · travel-time.ts ★ · engine.ts (barrel re-export; split in §23.6)
 ├─ sim/         sim.ts                                         PRNG · hydrograph · readings · hidden truth
 ├─ data/        demo-data.ts · routes.json · creeks.json        (§21)
-├─ scenario/    schema.ts · scenarios.ts · compile.ts · display.ts · clock.ts · choreography.ts · player.ts · takes.ts
+├─ scenario/    schema.ts · scenarios.ts · compile.ts · source.ts (golden → live, §23.6) · golden.ts · display.ts · clock.ts ·
+│               choreography.ts · player.ts · takes.ts
+├─ __fixtures__/ <scenario>.compiled.json · golden-hashes.json   written by tools/gen-golden.ts (§23.6); app code stops importing
+│                                                                them at the Day 6 gate (test-enforced)
 ├─ i18n/        tr.ts (pure translator over src/locales/*.json) · reasons.ts ("Why this alert" lines)
 ├─ notify/      content.ts (pure builders) · adapter.ts (expo-notifications; the ONLY caller)
 ├─ drive/       drive.ts (geometry, routes, Fix stream, lockout, speech plan) · sim-drive.ts (real-time runner hook)
 ├─ voice/       speak.ts (expo-audio chime + expo-speech) · haptics.ts (expo-haptics, two gates)
 ├─ store/       demo-store.ts (zustand: the ONE clock + Director state) · hooks.ts (useSimMinute/useTick/useCrossingRisk…)
 └─ director/    actions.ts (Reset, takes, clean mode) · TouchOverlay.tsx      ── screens live in src/app (§18)
-mobile/src/__tests__/  demo-engine-test.ts · demo-display-test.ts · demo-scenarios-test.ts · demo-player-test.ts
+mobile/src/__tests__/  demo-engine-test.ts · demo-display-test.ts · demo-scenarios-test.ts · demo-player-test.ts · demo-golden-test.ts
+                       + the ★ unit tests the agent writes at each pause point (§1.8)
 mobile/src/locales/    en.json · es.json  (05-code ships the keys the engine needs; 01 §3's bank adds the rest)
+tools/gen-golden.ts    (repo root; §23.6)
 ```
 
-★ = **student-owned core** (A §1.8). §23.1 has the explain-back questions.
+★ = **student-owned core** (§1.8). §23.1 has the explain-back questions.
+
+**Names vs 01 §5.** 01 §5 sketches a finer split (e.g. `sim/{rng,hydrograph,…}`, `data/{gauges,crossings,links,…}`, `drive/{geo,routes,lockout,…}`, `notify/lockscreen`, `director/DirectorSheet`, tests under `src/demo/__tests__/`). The file names in this tree are the **tested** ones and are canonical for the port. A finer split is optional, never required, and must keep every test green. Tests stay in `mobile/src/__tests__/`, because the truth-isolation and golden tests resolve `../demo/…` from there.
 
 ### 22.2 Domain types — `engine/types.ts`
 
@@ -327,7 +337,7 @@ export type Keyframe = { id: string; label: string; at: KeyframeAt };
 
 | Field | Rule |
 |---|---|
-| `seed` | Fixed per scenario. Noise = mulberry32(FNV-1a(seed, gaugeId)). Changing it changes every take, so never change it after T-freeze (Wed Oct 21). |
+| `seed` | Fixed per scenario. Noise = mulberry32(FNV-1a(seed, gaugeId)). Changing it changes every take and the golden hashes, so never change it after the feature freeze (Wed Oct 21 18:00 CT, §6); before that, only as a §1.7 stop-and-ask. |
 | `kind` | `'live'` drives Map Home (and every tab) through the one clock. `'storm'` is a Storms-tab card; when played it also drives the one clock (D1 "one clock"). |
 | `clockStart` | Storm-time label at `simMin = 0` (America/Chicago). Shown as "7:00 AM" / "7:00 a. m.", minute-floored, **never wall time**. |
 | `rain` | **Visual only** (rain chip / map tint). It never enters `evaluate()`. FordCast's rule reads gauges, not rain. |
@@ -804,16 +814,17 @@ while (perHour.length && perHour[0]! <= e.t - 60) perHour.shift(); if (perHour.l
 - The demo store is **never persisted**. Every launch starts at `calm-evening`, paused at `playFromMin`, with auto-slow on.
 - Settings (language, haptics, pledge) persist separately in `expo-sqlite/kv-store` (§18).
 - Compiled timelines live in a module-level memo, never in React state.
+- `getCompiled()` obtains every timeline from `scenario/source.ts` `compiledFor()` (§23.6), **never** by calling `compileScenario()` itself. That's what lets every screen run on golden fixtures before the ★ files exist.
 - `precompileAll()` runs inside `InteractionManager.runAfterInteractions` after the first frame.
 - **Background:** the root layout adds `AppState.addEventListener('change', s => s === 'background' && !useDemo.getState().armedTake && useDemo.getState().pause())`.
 
-**Full file: `05-code/mobile/src/demo/store/demo-store.ts`** (4.9 KB). API:
+**Full file: `05-code/mobile/src/demo/store/demo-store.ts`** (5.0 KB). API:
 
 ```ts
 export const DEFAULT_SCENARIO = 'calm-evening';
 export const scenarioById: (id: string) => DemoScenarioV1;                // throws on unknown id
 export const compileMs: Map<string, number>;                             // Director status line
-export function getCompiled(id: string): Compiled;                       // module-level memo (never React state)
+export function getCompiled(id: string): Compiled;                       // module-level memo over source.ts compiledFor() (never React state)
 export const precompileAll: () => void;                                  // after the first frame
 export type Toggles = { clean: boolean; touches: boolean; haptics: boolean; lockout: 'auto' | 'off'; voiceLang: 'app' | 'en' | 'es' };
 export type ArmedTake = { notificationId: string; seekToMin: number; route: string };
@@ -877,18 +888,21 @@ export function useScenarioBanner(lang: 'en' | 'es'): { active: boolean; playing
    - After UNKNOWN, it resumes one level below the last known state (`HOLDING`).
    - `CLOSURE_LIFTED` persists until No rise.
 
-**Student-owned (★, A §1.8 pause point):** `evaluate()` in `engine.ts` and `estimateLag()`/`combineStorms()` in `travel-time.ts`.
-- 🤖 copies them, then **stops** and asks the student to read them and answer the five explain-back questions below **in their own words** in `docs/explain/forecast-rule.md`.
-- 🧑 may rewrite either function. The tests in §28 must still pass.
+**Student-owned (★, §1.8 pause points; binding):** step 2 = `engine/baseline-rule.ts` ★ (`evaluate`, Day 3), step 6 = `engine/state-machine.ts` ★ (`step`, Day 4), and the learner `engine/travel-time.ts` ★ (`estimateLag`/`combineStorms`, Day 5).
+- 🤖 **never** copies or paraphrases the reference code of these three (§23.2 and §23.5 listings, `05-code/`, `research/proto/`). At each pause it follows §1.8 exactly: failing tests → skeleton (§23.6) → `docs/explain/<module>.md` → `AI_USE.md` row → hand-off message → **stop**.
+- 🧑 writes (or co-writes) each file. Done = its ★ unit tests, `demo-engine-test` and `demo-golden-test` pass (§28.1).
+- The UI never waits: until the Day 6 gate it runs on golden fixtures (§23.6).
 
-**Explain-back questions** (for the student; answers also serve Q&A):
+**Explain-back questions** (for the student; answers also serve Q&A). Put Q1–Q4 in `docs/explain/baseline-rule.md` and Q5 in `docs/explain/state-machine.md`, next to the three questions §1.8 asks per file:
 1. Why does the rule wait for the gauge reading to be *delivered* (`availMin ≤ t`) instead of using the reading's observation time?
 2. At 7:00 AM the window is 15–30 min. Walk through how 15.9 and 26.9 become "15–30".
 3. Why does FordCast show "30–45 min" for travel time instead of "40 min"?
 4. Why does a crossing with no upstream gauge show Unknown, not No rise?
 5. Why can't Avoid drop straight to No rise, even when the creek is falling?
 
-### 23.2 Listing: `engine/engine.ts`
+### 23.2 Reference listing: `05-code/…/engine/engine.ts` (port per §23.6; ★ parts are NOT copied)
+
+This is the tested **reference**. In the app it is split (§23.6). The sections marked "features", "windows", "explain", "staleness" and "combine" are ported as-is. The "baseline rule ★" section (`r1`, `evaluate`) and the "state machine" section's logic (`maxState`, `enter`, `step`, `stepCore`) are the student's to write. Only the state-machine **contract** (`DWELL`, `DOWN`, `initialTracker`, `StepCtx`) goes into the skeleton.
 
 ```ts
 // mobile/src/demo/engine/engine.ts — features (C §18.1), windows (§18.6), explain (§18.10 / A §3.5 r8), baseline rule ★ (§18.5),
@@ -1123,6 +1137,7 @@ export function reasonText(lang: Lang, r: Reason, c: ReasonCtx, spoken?: boolean
 
 - **Synthetic check:** on 6 simulated storms with true lags 34–46 min, it recovered every lag within ±0.4 min (r ≥ 0.988), giving τ 40.7 (P25 38.3, P75 43.5). [Verified: ran]
 - **Honest wording** for `settings/how-it-works`: "In the full app, travel time is learned from past storms by cross-correlation. In this demo, link values are set by hand; the learning code is included and tested on simulated storms."
+- **Reference only (★).** The listing below is what produced the synthetic check. In the app, `travel-time.ts` is the student's file (§1.8 #3): the agent writes the tests and the skeleton (§23.6), never this code. Nothing in `compile.ts` imports the learner, so the UI never waits on it.
 
 ```ts
 // mobile/src/demo/engine/travel-time.ts — TS port of C §18.3 estimate_lag + combine_storms (student-owned ★).
@@ -1147,9 +1162,170 @@ export function combineStorms(es: LagEstimate[]) {
 }
 ```
 
+### 23.6 The ★ split, skeletons and golden mode (Day 2; binding with §1.8)
+
+**Split table.** In the app, the reference `engine/engine.ts` becomes seven files plus a barrel:
+
+| App file | Symbols (from the §23.2 reference) | Written by |
+|---|---|---|
+| `engine/features.ts` | `latest`, `valueAt`, `rise`, `lastUpcrossingTime`, `isFresh` | 🤖 port as-is |
+| `engine/windows.ts` | `BUCKETS`, `HORIZON_MIN`, `bucketIndex` (private), `toWindow` | 🤖 port as-is |
+| `engine/explain.ts` | `tauRange` | 🤖 port as-is |
+| `engine/combine.ts` | `crossingIsStale`, `isFreshOfficial`, `resolveRawState` (imports `isFresh`, `latest` from `./features`) | 🤖 port as-is |
+| `engine/baseline-rule.ts` ★ | `evaluate` (+ any private helpers the student wants) | 🧑 (🤖 skeleton only) |
+| `engine/state-machine.ts` ★ | contract: `DWELL`, `DOWN`, `initialTracker`, `StepCtx` (🤖 puts these four in the skeleton, they are C §18.8's table); logic: `step` (+ private helpers) | 🧑 |
+| `engine/travel-time.ts` ★ | `LagEstimate` type (🤖); `estimateLag`, `combineStorms` | 🧑 |
+| `engine/engine.ts` | barrel (below), so `compile.ts`, `player.ts` and the tests keep importing `../engine/engine` unchanged | 🤖 |
+
+```ts
+// mobile/src/demo/engine/engine.ts — barrel only (§23.6): keeps every `from '../engine/engine'` import working after the split.
+export * from './features';
+export * from './windows';
+export * from './explain';
+export * from './combine';
+export * from './baseline-rule';
+export * from './state-machine';
+```
+
+**Skeleton shape** (§1.8 step 2 adds the JSDoc contract and one worked example; no logic):
+
+```ts
+// mobile/src/demo/engine/baseline-rule.ts ★ — student-owned (§1.8 #1). Contract: §23.1 step 2; worked example: §23.3.
+import type { Crossing, Gauge, Link, Reading, RuleResult } from './types';
+export function evaluate(c: Crossing, links: Link[], series: Map<string, Reading[]>, gauges: Map<string, Gauge>,
+  asOf: number): RuleResult {
+  throw new Error('TODO(student)');
+}
+```
+
+- `state-machine.ts`: the four contract exports, then `export function step(tr: Tracker, raw: RawState, now: number, ctx: StepCtx): Tracker { throw new Error('TODO(student)'); }`.
+- `travel-time.ts`: `export function estimateLag(up: number[], down: number[], stormId: string, stepMin = 5, maxLagMin = 240, minR = 0.5): LagEstimate | null` and `export function combineStorms(es: LagEstimate[]): { lagMin: number; lagP25Min: number; lagP75Min: number; nStorms: number } | null`, both `throw new Error('TODO(student)')`.
+- Unused skeleton parameters are fine for `tsc`: the template's `expo/tsconfig.base` has no `noUnused*` flags [Verified: expo@57.0.30]. ESLint may warn until the student fills them in.
+- [Verified: ran 2026-10-16. Split + skeletons + golden `source.ts`: `tsc` clean (strict, `noUncheckedIndexedAccess`, tests included). Split + the reference ★ code: 35/35 pass.]
+
+**Golden fixtures — `scenario/golden.ts`** (pure; permanent; full listing, identical to `05-code/`):
+
+```ts
+// mobile/src/demo/scenario/golden.ts — golden fixtures `fordcast.golden.v1` (01 §1.8, §23.6): one compiled timeline as plain
+// JSON (Maps → entry arrays; the stage functions are rebuilt from the scenario). Pure. toGolden() is used by
+// tools/gen-golden.ts and demo-golden-test; fromGolden() by source.ts while ENGINE_MODE is 'golden'.
+import { GAUGES } from '../data/demo-data';
+import type { DemoEvent, Reading } from '../engine/types';
+import { buildStageFns } from '../sim/sim';
+import { eventsHash } from './choreography';
+import type { Compiled } from './compile';
+import type { DemoScenarioV1 } from './schema';
+
+export type GoldenV1 = {
+  schema: 'fordcast.golden.v1'; scenarioId: string; eventsHash: string;
+  readings: [string, Reading[]][]; initial: [string, DemoEvent][]; events: DemoEvent[];
+  onsets: [string, number | null][]; leads: Compiled['leads']; hero: Compiled['hero']; medianLead: number | null;
+};
+export function toGolden(c: Compiled): GoldenV1 {
+  return { schema: 'fordcast.golden.v1', scenarioId: c.scenario.id, eventsHash: eventsHash(c),
+    readings: [...c.readings], initial: [...c.initial], events: c.events, onsets: [...c.onsets],
+    leads: c.leads, hero: c.hero, medianLead: c.medianLead };
+}
+export function fromGolden(s: DemoScenarioV1, g: GoldenV1): Compiled {
+  if (g.schema !== 'fordcast.golden.v1' || g.scenarioId !== s.id) throw new Error(`golden fixture mismatch for ${s.id}`);
+  return { scenario: s, readings: new Map(g.readings), fns: buildStageFns(GAUGES, s.curves), initial: new Map(g.initial),
+    events: g.events, onsets: new Map(g.onsets), leads: g.leads, hero: g.hero, medianLead: g.medianLead };
+}
+```
+
+**`scenario/source.ts`, GOLDEN form** (Day 2 → Day 6 gate). The JSON imports work because `expo/tsconfig.base` sets `resolveJsonModule` and Metro bundles JSON. [Verified: `tsc` + jest with the four fixtures]
+
+```ts
+// mobile/src/demo/scenario/source.ts — GOLDEN form (Day 2 → Day 6 gate; §23.6). The app gets every Compiled from here.
+// Serves the reference timelines written by tools/gen-golden.ts, so the UI never waits for the ★ files.
+// At the Day 6 gate: replace this whole file with the LIVE form (§23.6) and keep the fixtures for demo-golden-test only.
+import calmEvening from '../__fixtures__/calm-evening.compiled.json';
+import driveCommute from '../__fixtures__/drive-commute.compiled.json';
+import flashFloodNight from '../__fixtures__/flash-flood-night.compiled.json';
+import onionCreekStorm from '../__fixtures__/onion-creek-storm.compiled.json';
+import type { Compiled } from './compile';
+import { fromGolden, type GoldenV1 } from './golden';
+import type { DemoScenarioV1 } from './schema';
+
+export const ENGINE_MODE: 'golden' | 'live' = 'golden';
+const GOLDEN: Record<string, GoldenV1> = {
+  'calm-evening': calmEvening as unknown as GoldenV1, 'flash-flood-night': flashFloodNight as unknown as GoldenV1,
+  'onion-creek-storm': onionCreekStorm as unknown as GoldenV1, 'drive-commute': driveCommute as unknown as GoldenV1,
+};
+export function compiledFor(s: DemoScenarioV1): Compiled {
+  const g = GOLDEN[s.id]; if (!g) throw new Error(`no golden fixture for ${s.id}: run tools/gen-golden.ts`);
+  return fromGolden(s, g);
+}
+```
+
+**`scenario/source.ts`, LIVE form** (from the Day 6 gate; this is the file in `05-code/`):
+
+```ts
+// mobile/src/demo/scenario/source.ts — the ONLY place the app gets a Compiled from (01 §1.8, §23.6). This is the LIVE form
+// (from the Day 6 gate on): the student's on-device engine. Until the gate, use the GOLDEN form listed in §23.6.
+import { compileScenario, type Compiled } from './compile';
+import type { DemoScenarioV1 } from './schema';
+
+export const ENGINE_MODE: 'golden' | 'live' = 'live';
+export const compiledFor = (s: DemoScenarioV1): Compiled => compileScenario(s);
+```
+
+**`tools/gen-golden.ts`** (repo root; copy of `05-code/tools/gen-golden.ts`). `tsx` 4.23.15 was published 2026-09-20 [Verified: npm view tsx time]. It writes ≈ 220 KB of JSON in total. [Verified: ran from a repo-shaped layout; output hashes = the ones in this file's header]
+
+```ts
+// tools/gen-golden.ts — writes the golden fixtures (01 §1.8, §23.6). Run from the REPO ROOT on Day 2:
+//   npx --yes tsx@4.23.15 tools/gen-golden.ts             → reference engine (docs/demo-prompt/05-code; same events as research/proto/)
+//   npx --yes tsx@4.23.15 tools/gen-golden.ts --from=app  → the app's own engine; ONLY after the Day 6 gate, ONLY with a reason
+//                                                           written first in docs/decisions/golden-changes.md (stop-and-ask, 01 §1.7)
+// Output: mobile/src/demo/__fixtures__/<scenario>.compiled.json + golden-hashes.json. Never imported by the app.
+import { existsSync, mkdirSync, writeFileSync } from 'node:fs';
+import { join, resolve } from 'node:path';
+
+async function main() {
+  if (!existsSync('mobile/package.json')) throw new Error('run from the repo root');
+  const fromApp = process.argv.includes('--from=app');
+  const root = resolve(fromApp ? 'mobile/src/demo' : 'docs/demo-prompt/05-code/mobile/src/demo');
+  const { compileScenario } = await import(join(root, 'scenario/compile'));
+  const { SCENARIOS } = await import(join(root, 'scenario/scenarios'));
+  const { toGolden } = await import(join(root, 'scenario/golden'));
+  const out = resolve('mobile/src/demo/__fixtures__'); mkdirSync(out, { recursive: true });
+  const hashes: Record<string, string> = {};
+  for (const s of SCENARIOS) {
+    const g = toGolden(compileScenario(s)); hashes[s.id] = g.eventsHash;
+    writeFileSync(join(out, `${s.id}.compiled.json`), JSON.stringify(g) + '\n');
+  }
+  writeFileSync(join(out, 'golden-hashes.json'), JSON.stringify(hashes, null, 2) + '\n');
+  console.log(`golden (${fromApp ? 'app engine' : 'reference engine'}):`, hashes);
+}
+main().catch((e) => { console.error(e); process.exit(1); });
+```
+
+**Test status by phase** [Verified: ran both phases, 2026-10-16]:
+
+| Suite | Golden mode (Day 2 → gate), ★ files = skeletons | Live (gate →) |
+|---|---|---|
+| `demo-display`, `demo-player`, `demo-scenarios` (17 tests; they read `compiledFor()`) | **green**: `npm run test:ui` | green |
+| `demo-engine`: window, τ-range and truth-isolation tests (3) | green | green |
+| `demo-engine`: compile-based tests + compile budget (8) | red with `TODO(student)` | green |
+| `demo-golden`: fixtures exist, round trip, no-fixture-import (3) | green | green |
+| `demo-golden`: live engine = golden (4) | red with `TODO(student)` | green |
+| ★ unit tests (§1.8; the agent writes them at each pause) | red until that ★ file passes | green |
+
+- Add the script `"test:ui": "jest src/__tests__/demo-display src/__tests__/demo-player src/__tests__/demo-scenarios"`.
+- §6's "all Jest suites green" on Days 2–5 means: green **except** tests failing with `TODO(student)`.
+
+**Day 6 gate (Tue Oct 20; 🤖 MUST, in this order):**
+1. All ★ unit tests, `demo-engine-test` and `demo-golden-test` pass with the student's files.
+2. Replace `source.ts` with the LIVE form. Fixture imports are now gone from app code, and `demo-golden-test` enforces that from here on.
+3. Check the Director status line: `events …` equals `golden-hashes.json` for every scenario.
+4. If a golden test fails: show the student the first differing event (the deep-equality diff), explain it, and let the student decide whether their code or the reference is wrong.
+   - A regenerated golden needs a written reason in `docs/decisions/golden-changes.md` **first**, then `tools/gen-golden.ts --from=app`.
+   - It's a stop-and-ask (§1.7 #7, #12) whenever a video number or time would change.
+
 **Done when (§23):**
-- The engine listings are in the app unchanged, or rewritten by the student with all tests passing.
-- `docs/explain/forecast-rule.md` holds the student's five answers.
+- The non-★ engine is ported per §23.6; the three ★ files are the student's own work (with `AI_USE.md` rows), and their tests, `demo-engine-test` and `demo-golden-test` pass.
+- `source.ts` is in its LIVE form, and no app file imports `__fixtures__/` (Day 6 gate).
+- `docs/explain/{baseline-rule,state-machine,travel-time}.md` hold the student's answers (§1.8's three per file, plus the five above).
 - The hero crossing sheet at 7:00 AM shows exactly the §23.3 numbers: "+4.5 ft", "30–45 min", "15–30 min".
 - No screen, label or speech ever shows a single-number travel time.
 
@@ -1198,7 +1374,7 @@ None of these has a visible affordance. All of them work in clean recording mode
 │ Show touches                          [ off] │ → TouchOverlay
 │ Haptics                               [● on] │
 │ STATUS (hidden in clean mode)                │
-│ events a1b2c3d4 · compile 9 ms · built Oct 21 · rebuild by Oct 28 │
+│ events 471e80be · compile 9 ms · built Oct 22 · rebuild by Oct 29 │
 └──────────────────────────────────────────────┘
 ```
 
@@ -1309,7 +1485,7 @@ Take keyframes (`at`):
 |---|---|
 | `events a1b2c3d4` | `eventsHash(getCompiled(id))`. Identical on every take and device for a given build: determinism at a glance. |
 | `compile N ms` | `compileMs.get(id)`, measured once per scenario in `getCompiled()` (`store/demo-store.ts`). |
-| `built …` / `rebuild by …` | Add `extra: { builtAt: new Date().toISOString() }` to `app.config.ts` (evaluated at prebuild/build). The app reads it via `Constants.expoConfig?.extra?.builtAt`. "Rebuild by" = builtAt + 7 days. [Unverified that profile issuance equals build time; it's a reminder, not a guarantee (§11.4)] |
+| `built …` / `rebuild by …` | `extra: { builtAt: new Date().toISOString() }` in `app.config.ts` (already in the §9.4 listing; evaluated at prebuild/build). The app reads it via `Constants.expoConfig?.extra?.builtAt`. "Rebuild by" = builtAt + 7 days. [Unverified that profile issuance equals build time; it's a reminder, not a guarantee (§11.4)] |
 
 **Done when (§24):**
 - All three entry points open the Director in a Release build.
@@ -1416,10 +1592,15 @@ import { planNotifications, type PlannedNotification } from '../scenario/choreog
 import { buildContent, lockScreenTake, requestId, type DemoNotificationContent } from './content';
 import type { Lang } from '../i18n/tr';
 
-/** Call once at startup (root layout), before any permission prompt. Foreground banners stay visible (iOS). */
+let driveModeActive = false;
+/** Drive Mode screen calls this on focus/blur: while driving, the HUD + voice carry the alert, so no foreground banner. */
+export const setDriveModeActive = (v: boolean) => { driveModeActive = v; };
+/** Call once at startup (root layout), before any permission prompt. Foreground banners stay visible (iOS),
+ *  except in Drive Mode, where the alert still lands in Notification Center (shouldShowList) without covering the HUD. */
 export function setupDemoNotifications(): void {
   Notifications.setNotificationHandler({
-    handleNotification: async () => ({ shouldShowBanner: true, shouldShowList: true, shouldPlaySound: true, shouldSetBadge: false }),
+    handleNotification: async () => ({ shouldShowBanner: !driveModeActive, shouldShowList: true,
+      shouldPlaySound: !driveModeActive, shouldSetBadge: false }),
   });
 }
 /** Ask only in context (primer screen, §18 permission/notifications). Returns true when granted. */
@@ -1510,6 +1691,7 @@ Director "Lock-screen take" ─► seek 6:59 AM, pause ─► schedule TIME_INTE
 ```
 
 - **Mount points (root layout):** `setupDemoNotifications()` once; `useDemoNotificationResponses(router.push)`; `useNotificationPlayback(lang)`.
+- **Drive Mode screen:** `useFocusEffect(() => { setDriveModeActive(true); return () => setDriveModeActive(false); })`. While driving, the in-app banner and its sound are suppressed (the chime + TTS + HUD carry the alert, and a banner would cover the HUD); the notification still lands in Notification Center and the Alerts inbox.
 - **Inbox:** every posted demo notification also adds an Alerts-inbox row with the violet SIMULATED chip. In the Demo Edition these rows count toward the tab badge, because they're the only alerts (§18).
 - **Permission:** primed in context only (first "Notify me" or the onboarding notify page, §18). Before recording, grant it outside the take.
 
@@ -1793,7 +1975,7 @@ The 01 §3 bank owns every other key. `05-code/mobile/src/locales/{en,es}.json` 
 - **Storm time** is `stormTime()` (§22.7): "7:00 AM" / "7:00 a. m.". Never `Intl` relative time, and never wall time.
 - **Crossing and gauge names stay in English.** TTS uses `spoken.{en,es}` from `demo-data.ts` (for example "Westgate Boulevard en Williamson Creek").
 
-### 27.5 Spanish QA (🧑 + a fluent adult; before Wed Oct 21)
+### 27.5 Spanish QA (🧑 + a fluent adult; finished by the Thu Oct 22 copy freeze, §6)
 
 1. Flip the language: Settings, or long-press the gear → Español.
 2. Walk T01–T11 in Spanish on the **SE-size Simulator** and at **XXXL** text. Nothing may truncate; buttons stack instead (§19).
@@ -1816,22 +1998,25 @@ Configure `package.json`:
 
 ```json
 "jest": { "preset": "jest-expo" },
-"scripts": { "test": "jest", "test:demo": "jest src/__tests__/demo-" }
+"scripts": { "test": "jest", "test:demo": "jest src/__tests__/demo-",
+  "test:ui": "jest src/__tests__/demo-display src/__tests__/demo-player src/__tests__/demo-scenarios" }
 ```
 
 | File (in `05-code/`) | Asserts |
 |---|---|
-| `demo-engine-test.ts` (listing below) | C §18.6 windows; τ range; allowed windows only; one-level de-escalation; every non-No-rise state has a reason; determinism + hash; **truth isolation**; hero beats (Watch 6:45, Avoid 7:00 [15–30], Closed 7:50, onset 7:30, lead 30 = median, all inside first window); Onion (Unknown 5:50 with last known Avoid, hero tc-68 35, tier B excluded); calm = 0 events and tier C Unknown |
-| `demo-display-test.ts` | A §3.4: online state; offline 12 min → `aging`; 25 min → UNKNOWN + last known Avoid; calm + offline → UNKNOWN without badge; gauge-silent age = last observation (60 min at 6:00 AM) |
-| `demo-scenarios-test.ts` | **every take shows its promised states**; clock math (closed form, pause/seek/speed, auto-slow, "7:00 AM"/"7:00 a. m."); notification plan + content lengths + subtitle + `active`; long-name list; **EN/ES parity + banned words + countdown + spoken guards** over every locale key; reasons (`_peaked`, "Simulated road crew", every compiled reason renders in EN/ES, visual and spoken); drive (route membership, utterances `[0 s watch]`, `[66 s merged avoid]`, lockout ≤ 10 s, exact EN/ES sentences); storyboard gauge-silent line; compile budget |
-| `demo-player-test.ts` | no-lookahead hydrograph; beats `[55,70,85,100,115,120]` and auto-slow windows; results (30, n 3, median 30, gap 50, inside); pulse progress; ticks `watch@55, avoid@70, water@100, closed@120`; Twin Creeks no-data band |
+| `demo-engine-test.ts` (listing below) | C §18.6 windows; τ range; allowed windows only; one-level de-escalation; every non-No-rise state has a reason; determinism + hash; **truth isolation**; hero beats (Watch 6:45, Avoid 7:00 [15–30], Closed 7:50, onset 7:30, lead 30 = median, all inside first window); Onion (Unknown 5:50 with last known Avoid, hero tc-68 35, tier B excluded); calm = 0 events and tier C Unknown; compile budget. Calls `compileScenario` directly, so it is red until the ★ files pass (§23.6) |
+| `demo-display-test.ts` (reads `compiledFor()`) | A §3.4: online state; offline 12 min → `aging`; 25 min → UNKNOWN + last known Avoid; calm + offline → UNKNOWN without badge; gauge-silent age = last observation (60 min at 6:00 AM) |
+| `demo-scenarios-test.ts` (reads `compiledFor()`) | **every take shows its promised states**; clock math (closed form, pause/seek/speed, auto-slow, "7:00 AM"/"7:00 a. m."); notification plan + content lengths + subtitle + `active`; long-name list; **EN/ES parity + banned words + countdown + spoken guards** over every locale key; reasons (`_peaked`, "Simulated road crew", every compiled reason renders in EN/ES, visual and spoken); drive (route membership, utterances `[0 s watch]`, `[66 s merged avoid]`, lockout ≤ 10 s, exact EN/ES sentences); storyboard gauge-silent line |
+| `demo-player-test.ts` (reads `compiledFor()`) | no-lookahead hydrograph; beats `[55,70,85,100,115,120]` and auto-slow windows; results (30, n 3, median 30, gap 50, inside); pulse progress; ticks `watch@55, avoid@70, water@100, closed@120`; Twin Creeks no-data band |
+| `demo-golden-test.ts` (§23.6) | fixtures exist for all four scenarios; **live engine = golden** (events hash + deep equality, per scenario); `fromGolden`→`toGolden` round trip is lossless; in LIVE mode no app file imports `__fixtures__/` |
+| ★ unit tests (the agent writes them, §1.8) | `baseline-rule-test.ts`, `state-machine-test.ts`, `travel-time-test.ts`: the "Tests you write first" column of §1.8. The §23.3 worked example is a mandatory `baseline-rule` case: S 7.14, r30 +4.47, tCross 52.9 → etaLo 15.9, etaHi 26.9 (`toBeCloseTo(x, 1)`), window [15, 30] |
 
-[Verified: 28 pass under jest-expo 57.0.6 + `@react-native/jest-preset` 0.86.3, 2026-10-16]
+[Verified: 35 pass under jest-expo 57.0.6 + `@react-native/jest-preset` 0.86.3, 2026-10-16, after `tools/gen-golden.ts`; golden-mode split per §23.6]
 
 - `@react-native/jest-preset@0.86.3` is a **required** peer of jest-expo 57 (§9.3 batch E). Without it Jest stops with "The React Native Jest preset that jest-expo relies on has moved to a separate package."
 - The run used a plain `babel.config.js` with `presets: ['babel-preset-expo']`. The NativeWind config from §16 extends that file.
 
-**Full files: `05-code/mobile/src/__tests__/demo-{engine,display,scenarios,player}-test.ts`** (17 KB). The core hero assertion, verbatim:
+**Full files: `05-code/mobile/src/__tests__/demo-{engine,display,scenarios,player,golden}-test.ts`** (20 KB). The core hero assertion, verbatim:
 
 ```ts
 test('hero beats (flash-flood-night)', () => {
@@ -1916,15 +2101,17 @@ Also add `demo-drive.yaml`: T09 → wait for `drive-hud-state-avoid` (≤ 90 s) 
 
 | When | Check |
 |---|---|
-| Fri Oct 16 | §9.10 smoke test S1–S8 |
-| Sun Oct 18 | Engine in the app: `npm run test:demo` green; hero table (§22.6b) reproduced on the Simulator via the Director |
-| Tue Oct 20 | All takes T01–T11 load from the Director on the iPhone (Debug); T06 Lock Screen works; T09/T10 speak |
-| Wed Oct 21 | **T-freeze:** Release install; full take run-through with clean mode + touches; `eventsHash` written in `docs/decisions/verifications.md`; Spanish review done |
-| Thu Oct 22 | Recording (06 §30). Before the first take: Reset → `eventsHash` matches the Oct 21 value |
+| Thu Oct 15 – Fri Oct 16 (Day 1 gate) | §9.10 smoke test S1–S8 |
+| Fri Oct 16 (Day 2) | Non-★ engine ported; `tools/gen-golden.ts` run (hashes = this file's header); `source.ts` GOLDEN; `npm run test:ui` green; ★ #1 prep |
+| Sat Oct 17 – Mon Oct 19 (Days 3–5) | Hero table (§22.6b) reproduced via the Director on golden data; T01–T05 on the Simulator/device (Debug); ★ pauses #1–#3 |
+| Tue Oct 20 (Day 6 gate) | `source.ts` LIVE; `demo-golden-test` green; on the iPhone: T06 → T07 Lock Screen works, T08 detour |
+| Wed Oct 21 (Day 7, feature freeze 18:00 CT) | All takes T01–T11 load from the Director on the iPhone; T09/T10 speak; `npm run test:demo` green; `eventsHash` per scenario written in `docs/decisions/verifications.md` |
+| Thu Oct 22 (Day 8, copy freeze 18:00 CT) | Spanish review done; full take rehearsal with clean mode + touches; **evening: fresh Release install** (§11.4); Reset → `eventsHash` matches the Oct 21 values |
+| Fri Oct 23 (Day 9) | Recording (06 §30). Before the first take: Reset → `eventsHash` matches again |
 
 **Done when (§28):**
 - `npm run test:demo` is green under jest-expo.
 - The two extra guard tests exist and pass.
 - The Maestro flows pass on the Simulator, or are logged as skipped with a reason.
 - Every budget row is measured on the recording iPhone, with the numbers in `docs/decisions/verifications.md`.
-- `eventsHash` on recording day equals the T-freeze value.
+- `eventsHash` on recording day equals the value recorded at the feature freeze (and `golden-hashes.json`, unless a recorded golden change says otherwise).

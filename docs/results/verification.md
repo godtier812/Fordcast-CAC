@@ -10,6 +10,7 @@ This records executed checks, not full master-prompt acceptance.
 | Mobile contract/copy tests | 7 passed |
 | Expo Doctor after SDK patch update | 21/21 passed |
 | Production web export | Passed |
+| Android/iOS JavaScript and Hermes bundle exports | Passed; not native binary builds |
 | `tools/check.ps1` end-to-end | Passed |
 | Browser interaction and visual inspection | Not run: local browser use disabled in Work settings |
 | Android/iOS device builds and execution | Not run: no configured device/build account |

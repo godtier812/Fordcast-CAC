@@ -4,7 +4,7 @@ from collections.abc import Mapping
 from dataclasses import dataclass, field
 from datetime import datetime, timedelta
 
-from fordcast.domain import Crossing, Link, Tracker
+from fordcast.domain import Crossing, Link, Reason, Tracker
 from fordcast.features.compute import crossing_is_stale, is_fresh, rise, water_at_road
 from fordcast.model.baseline_rule import evaluate
 from fordcast.model.combine import resolve_raw_state
@@ -57,12 +57,42 @@ async def tick(
         record = records.get(crossing.id)
         fresh = is_fresh_official(record, now)
         rule = evaluate(crossing, links, series, now)
+        at_road = water_at_road(crossing, series, now)
+        is_stale = crossing_is_stale(links, series, now, rule)
+        water_reason = None
+        if at_road and crossing.target_gauge is not None:
+            t_rows = series.get(crossing.target_gauge.id, ())
+            if t_rows:
+                water_reason = Reason(
+                    "WATER_AT_ROAD",
+                    {
+                        "gauge_id": crossing.target_gauge.id,
+                        "value_ft": round(t_rows[-1].value, 1),
+                        "overtop_ft": crossing.overtop_stage_ft,
+                        "obs_at": t_rows[-1].obs_time.isoformat(),
+                    },
+                )
+        stale_reason = None
+        if is_stale:
+            upstream = [lnk for lnk in links if lnk.relation == "upstream"]
+            if upstream:
+                primary = next((lnk for lnk in upstream if lnk.is_primary), upstream[0])
+                p_rows = series.get(primary.gauge.id, ())
+                stale_reason = Reason(
+                    "DATA_STALE",
+                    {
+                        "gauge_id": primary.gauge.id,
+                        "last_obs_at": p_rows[-1].obs_time.isoformat() if p_rows else None,
+                    },
+                )
         raw = resolve_raw_state(
             record if fresh else None,
-            water_at_road(crossing, series, now),
-            crossing_is_stale(links, series, now, rule),
+            at_road,
+            is_stale,
             crossing.tier,
             rule,
+            water_reason=water_reason,
+            stale_reason=stale_reason,
         )
         prev = await state.get(crossing.id)
         extra = prev.state == "watch"

@@ -1,0 +1,21 @@
+id = "oct-2018"
+name_en = "October 2018 Highland Lakes Rain (Control)"
+name_es = "Lluvia de octubre de 2018 (Control)"
+tz = "America/Chicago"
+gauges = ["USGS-08154700", "USGS-08155200", "USGS-08155240", "USGS-08155300", "USGS-08155400", "USGS-08156675", "USGS-08156800", "USGS-08158200", "USGS-08158380", "USGS-08158600", "USGS-08158700", "USGS-08158810", "USGS-08158827", "USGS-08158840", "USGS-08158860", "USGS-08158920", "USGS-08158930", "USGS-08158970", "USGS-08159000"]
+official_status = "none"
+kind = "storm"
+bundle = true
+catalog_order = 4
+data_sha256 = "90e4f7a5e44bd16ef7e4928f20f7d69f46c5da52c4d0fa95127ff779eef50c29"
+notes = "Moderate basin rises remaining below road-overtopping thresholds on Austin creeks (control storm)"
+
+outages = []
+
+[window]
+start = "2018-10-16T00:00:00Z"
+end = "2018-10-17T12:00:00Z"
+
+[fetched]
+source = "api.waterdata.usgs.gov/ogcapi/v1 continuous"
+at = "2026-10-17T23:00:00Z"

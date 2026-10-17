@@ -1,0 +1,22 @@
+id = "july-2025"
+name_en = "July 2025 Urban Flash Rise"
+name_es = "Crecida rápida urbana de julio de 2025"
+tz = "America/Chicago"
+headline_event = "2025-07-05T10:00:00Z"
+gauges = ["USGS-08154700", "USGS-08155200", "USGS-08155240", "USGS-08155300", "USGS-08155400", "USGS-08156675", "USGS-08156800", "USGS-08158200", "USGS-08158380", "USGS-08158600", "USGS-08158700", "USGS-08158810", "USGS-08158827", "USGS-08158840", "USGS-08158860", "USGS-08158930", "USGS-08158970", "USGS-08159000"]
+official_status = "none"
+kind = "storm"
+bundle = true
+catalog_order = 5
+data_sha256 = "e10d37851b48f052ad0367dfc4469702b8bb3a84bd5b2401b5818e9db635bbe1"
+notes = "July 2025 flash rise on Shoal Creek and Walnut Creek"
+
+outages = []
+
+[window]
+start = "2025-07-04T12:00:00Z"
+end = "2025-07-06T00:00:00Z"
+
+[fetched]
+source = "api.waterdata.usgs.gov/ogcapi/v1 continuous"
+at = "2026-10-17T23:00:00Z"

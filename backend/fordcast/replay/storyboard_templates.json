@@ -1,0 +1,27 @@
+{
+  "first_watch": {
+    "key": "reason.UPSTREAM_RISING",
+    "en": "Water rising upstream at {{gauge}}",
+    "es": "El agua sube río arriba en {{gauge}}"
+  },
+  "first_avoid": {
+    "key": "reason.UPSTREAM_ABOVE_TRIGGER",
+    "en": "{{gauge}}: +{{rise}} ft over the last 30 min, upstream. Water usually takes {{tau_lo}}–{{tau_hi}} min to get here.",
+    "es": "{{gauge}}: +{{rise}} pies en los últimos 30 min, río arriba. El agua suele tardar {{tau_lo}}–{{tau_hi}} min en llegar aquí."
+  },
+  "gauge_silent": {
+    "key": "replay.gauge_silent",
+    "en": "{{gauge}} went silent. Its readings only arrived later, so FordCast shows Unknown here.",
+    "es": "{{gauge}} dejó de transmitir. Sus lecturas llegaron después, así que FordCast muestra Desconocido aquí."
+  },
+  "gauge_gap": {
+    "key": "reason.DATA_STALE_gauge",
+    "en": "No recent data from {{gauge}} (last {{age}})",
+    "es": "Sin datos recientes de {{gauge}} (últimos: {{age}})"
+  },
+  "official": {
+    "key": "reason.OFFICIAL_CLOSED",
+    "en": "Official: {{source}} reports it closed",
+    "es": "Oficial: {{source}} lo reporta cerrado"
+  }
+}

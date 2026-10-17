@@ -9,6 +9,9 @@ def resolve_raw_state(
     tier: str,
     rule: RuleResult,
     ml: RuleResult | None = None,
+    *,
+    water_reason: Reason | None = None,
+    stale_reason: Reason | None = None,
 ) -> RawState:
     if official is not None and official.status == "closed":
         return RawState(
@@ -17,11 +20,18 @@ def resolve_raw_state(
             closed_source="official",
         )
     if water_at_road:
-        return RawState("closed", reasons=(Reason("WATER_AT_ROAD"),), closed_source="sensor")
+        return RawState(
+            "closed",
+            reasons=(water_reason or Reason("WATER_AT_ROAD"),),
+            closed_source="sensor",
+        )
     if tier == "C":
         base = RawState("unknown", reasons=(Reason("NO_UPSTREAM_GAUGE"),))
     elif all_gauges_stale:
-        base = RawState("unknown", reasons=(Reason("DATA_STALE", {"source": "upstream"}),))
+        base = RawState(
+            "unknown",
+            reasons=(stale_reason or Reason("DATA_STALE", {"source": "upstream"}),),
+        )
     else:
         chosen = max((rule, ml or rule), key=lambda r: RANK[r.state])
         base = RawState(chosen.state, chosen.window, chosen.reasons, chosen.trigger_gauge_id)

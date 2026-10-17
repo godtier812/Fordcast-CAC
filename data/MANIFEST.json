@@ -3,18 +3,78 @@
   "files": [
     {
       "path": "seed/crossings.geojson",
-      "sha256": "14ae6e3f802e6f1df945c33f20571f26eb14498fa1050bd6d78e6d9e6fc234eb",
-      "bytes": 89745
+      "sha256": "fdab0eb8b8da9457a1469b74873cbc70e2b110eeff9afcfdf8c7dfa7cf8c0881",
+      "bytes": 132912
     },
     {
       "path": "seed/gauges.geojson",
-      "sha256": "658f3c942a9aeaf17b51c9d4e67360034eaa513efdcc9e004f7c46bdf0dc6bea",
-      "bytes": 9124
+      "sha256": "98db90ec7e85459376bdbb597e2559c7e16b46f15e0937afb7444a01752fd93e",
+      "bytes": 9103
+    },
+    {
+      "path": "creeks/creeks.geojson",
+      "sha256": "d19460b0cc0a1a06e71ea4bafa09f74027068243306759356c5e0803b045516b",
+      "bytes": 22687
     },
     {
       "path": "observations/halloween-2013.json",
       "sha256": "4848ef0f08055832259fd6aec534779111fc0f087e8f29a07fe00f08bd479232",
       "bytes": 7738
+    },
+    {
+      "path": "replays/index.json",
+      "sha256": "511da37ca8c0c31924dd536404b81656b7e42e661db667d40a63c49da7447d82",
+      "bytes": 4024
+    },
+    {
+      "path": "replays/halloween-2013.json.gz",
+      "sha256": "49fcb49b547e64564a0f97aff93fb43c95c2a87f76f153dd082db61622ef4740",
+      "bytes": 11986
+    },
+    {
+      "path": "replays/halloween-2013.json",
+      "sha256": "929c8bcab6515204bca4a044fd13818f95ba6b375612a0271f99eb8c89ac2fae",
+      "bytes": 122332
+    },
+    {
+      "path": "replays/memorial-day-2015.json.gz",
+      "sha256": "30bb784d5f45402000914acffd2a8ce91e0642edb32c54adfdfe51a01bb58ae1",
+      "bytes": 12993
+    },
+    {
+      "path": "replays/memorial-day-2015.json",
+      "sha256": "ee50b8c7cb0fb7a1be8abfd7dd598c5631cfc2d05f5ea6c9f83da07a8dfec912",
+      "bytes": 125403
+    },
+    {
+      "path": "replays/halloween-2015.json.gz",
+      "sha256": "99c6ad762107b1fca4b35407e5bca4d9a82cd4ad8e4ad6fd98b41b438f95d692",
+      "bytes": 13152
+    },
+    {
+      "path": "replays/halloween-2015.json",
+      "sha256": "662079eb7aac7496198900ac72f4d2fd04a1dd66b4e90d43721d6589be63aa93",
+      "bytes": 141292
+    },
+    {
+      "path": "replays/oct-2018.json.gz",
+      "sha256": "37900b4c52f43f4d512076cfe288200937877c9d51bdaf0ae0f8e65c1d5117fd",
+      "bytes": 10165
+    },
+    {
+      "path": "replays/oct-2018.json",
+      "sha256": "ec442fcce2d477e79bdc5b7d8f661e06949d89f15ada9d158b350466f16a6156",
+      "bytes": 91508
+    },
+    {
+      "path": "replays/july-2025.json.gz",
+      "sha256": "1eb2216259b7c956d602c28a172a31646ab629f8b8df8fd882b5c6eed36e57dc",
+      "bytes": 8626
+    },
+    {
+      "path": "replays/july-2025.json",
+      "sha256": "48bfbf9eb4cdb991173d5633e6ef8dd9277ec84d4451b49001832d47d20a057b",
+      "bytes": 60438
     }
   ]
 }

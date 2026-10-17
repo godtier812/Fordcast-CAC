@@ -1,10 +1,22 @@
 id = "halloween-2015"
-kind = "study"
-bundle = false
+name_en = "All Saints Flood 2015"
+name_es = "Inundación de Todos los Santos 2015"
+tz = "America/Chicago"
+headline_event = "2015-10-30T15:00:00Z"
+gauges = ["USGS-08154700", "USGS-08155200", "USGS-08155240", "USGS-08155300", "USGS-08155400", "USGS-08156675", "USGS-08156800", "USGS-08158200", "USGS-08158380", "USGS-08158600", "USGS-08158700", "USGS-08158810", "USGS-08158827", "USGS-08158840", "USGS-08158860", "USGS-08158920", "USGS-08158930", "USGS-08158970", "USGS-08159000"]
 official_status = "none"
-forecast_ready = false
+kind = "storm"
+bundle = true
+catalog_order = 3
+data_sha256 = "520324d1d6d8e98f4e3cddaff9135e3ab0a59d452a7a0af0d7d5a3e27407a073"
+notes = "October 2015 flood across Onion, Williamson, Barton, Slaughter, and Walnut creeks"
+
 outages = []
-notes = "Gauge-to-gauge training study only. Transmission outages not yet independently verified; not eligible for forecast replay."
+
 [window]
-start = "2015-10-28T00:00:00Z"
-end = "2015-11-02T00:00:00Z"
+start = "2015-10-30T00:00:00Z"
+end = "2015-10-31T12:00:00Z"
+
+[fetched]
+source = "api.waterdata.usgs.gov/ogcapi/v1 continuous"
+at = "2026-10-17T23:00:00Z"

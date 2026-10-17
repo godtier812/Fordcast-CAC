@@ -1,0 +1,1097 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -97.78473,
+            30.37215
+          ],
+          [
+            -97.77423,
+            30.37616
+          ],
+          [
+            -97.76774,
+            30.38317
+          ]
+        ]
+      },
+      "properties": {
+        "reach_id": "atx-10__USGS-08154700",
+        "crossing_id": "atx-10",
+        "gauge_id": "USGS-08154700",
+        "relation": "upstream"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -97.78473,
+            30.37215
+          ],
+          [
+            -97.776,
+            30.37627
+          ],
+          [
+            -97.77127,
+            30.38339
+          ]
+        ]
+      },
+      "properties": {
+        "reach_id": "atx-11__USGS-08154700",
+        "crossing_id": "atx-11",
+        "gauge_id": "USGS-08154700",
+        "relation": "upstream"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -97.66056,
+            30.37521
+          ],
+          [
+            -97.68333,
+            30.39376
+          ],
+          [
+            -97.71011,
+            30.41532
+          ]
+        ]
+      },
+      "properties": {
+        "reach_id": "atx-12__USGS-08158200",
+        "crossing_id": "atx-12",
+        "gauge_id": "USGS-08158200",
+        "relation": "upstream"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -97.69808,
+            30.35437
+          ],
+          [
+            -97.70209,
+            30.38334
+          ],
+          [
+            -97.71011,
+            30.41532
+          ]
+        ]
+      },
+      "properties": {
+        "reach_id": "atx-12__USGS-08158380",
+        "crossing_id": "atx-12",
+        "gauge_id": "USGS-08158380",
+        "relation": "upstream"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -97.66056,
+            30.37521
+          ],
+          [
+            -97.68352,
+            30.39563
+          ],
+          [
+            -97.71049,
+            30.41904
+          ]
+        ]
+      },
+      "properties": {
+        "reach_id": "atx-13__USGS-08158200",
+        "crossing_id": "atx-13",
+        "gauge_id": "USGS-08158200",
+        "relation": "upstream"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -97.69808,
+            30.35437
+          ],
+          [
+            -97.70228,
+            30.38521
+          ],
+          [
+            -97.71049,
+            30.41904
+          ]
+        ]
+      },
+      "properties": {
+        "reach_id": "atx-13__USGS-08158380",
+        "crossing_id": "atx-13",
+        "gauge_id": "USGS-08158380",
+        "relation": "upstream"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -97.69808,
+            30.35437
+          ],
+          [
+            -97.7026,
+            30.38529
+          ],
+          [
+            -97.71112,
+            30.41922
+          ]
+        ]
+      },
+      "properties": {
+        "reach_id": "atx-14__USGS-08158380",
+        "crossing_id": "atx-14",
+        "gauge_id": "USGS-08158380",
+        "relation": "upstream"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -97.86028,
+            30.23521
+          ],
+          [
+            -97.85707,
+            30.23343
+          ],
+          [
+            -97.85787,
+            30.23466
+          ]
+        ]
+      },
+      "properties": {
+        "reach_id": "atx-15__USGS-08158920",
+        "crossing_id": "atx-15",
+        "gauge_id": "USGS-08158920",
+        "relation": "upstream"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -97.86028,
+            30.23521
+          ],
+          [
+            -97.85698,
+            30.233
+          ],
+          [
+            -97.85768,
+            30.2338
+          ]
+        ]
+      },
+      "properties": {
+        "reach_id": "atx-16__USGS-08158920",
+        "crossing_id": "atx-16",
+        "gauge_id": "USGS-08158920",
+        "relation": "upstream"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -97.78473,
+            30.37215
+          ],
+          [
+            -97.78378,
+            30.36783
+          ],
+          [
+            -97.78684,
+            30.36652
+          ]
+        ]
+      },
+      "properties": {
+        "reach_id": "atx-17__USGS-08154700",
+        "crossing_id": "atx-17",
+        "gauge_id": "USGS-08154700",
+        "relation": "upstream"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -97.78473,
+            30.37215
+          ],
+          [
+            -97.78393,
+            30.36764
+          ],
+          [
+            -97.78713,
+            30.36613
+          ]
+        ]
+      },
+      "properties": {
+        "reach_id": "atx-18__USGS-08154700",
+        "crossing_id": "atx-18",
+        "gauge_id": "USGS-08154700",
+        "relation": "upstream"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -98.00779,
+            30.08299
+          ],
+          [
+            -97.87468,
+            30.12955
+          ],
+          [
+            -97.74557,
+            30.17911
+          ]
+        ]
+      },
+      "properties": {
+        "reach_id": "atx-19__USGS-08158700",
+        "crossing_id": "atx-19",
+        "gauge_id": "USGS-08158700",
+        "relation": "upstream"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -97.83223,
+            30.16216
+          ],
+          [
+            -97.7869,
+            30.16913
+          ],
+          [
+            -97.74557,
+            30.17911
+          ]
+        ]
+      },
+      "properties": {
+        "reach_id": "atx-19__USGS-08158860",
+        "crossing_id": "atx-19",
+        "gauge_id": "USGS-08158860",
+        "relation": "upstream"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -97.7325,
+            30.18938
+          ],
+          [
+            -97.73703,
+            30.18274
+          ],
+          [
+            -97.74557,
+            30.17911
+          ]
+        ]
+      },
+      "properties": {
+        "reach_id": "atx-19__USGS-08158970",
+        "crossing_id": "atx-19",
+        "gauge_id": "USGS-08158970",
+        "relation": "upstream"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -97.86028,
+            30.23521
+          ],
+          [
+            -97.86384,
+            30.23349
+          ],
+          [
+            -97.87141,
+            30.23478
+          ]
+        ]
+      },
+      "properties": {
+        "reach_id": "atx-1__USGS-08158920",
+        "crossing_id": "atx-1",
+        "gauge_id": "USGS-08158920",
+        "relation": "upstream"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -98.00779,
+            30.08299
+          ],
+          [
+            -97.87387,
+            30.12845
+          ],
+          [
+            -97.74396,
+            30.17691
+          ]
+        ]
+      },
+      "properties": {
+        "reach_id": "atx-20__USGS-08158700",
+        "crossing_id": "atx-20",
+        "gauge_id": "USGS-08158700",
+        "relation": "upstream"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -97.83223,
+            30.16216
+          ],
+          [
+            -97.78609,
+            30.16804
+          ],
+          [
+            -97.74396,
+            30.17691
+          ]
+        ]
+      },
+      "properties": {
+        "reach_id": "atx-20__USGS-08158860",
+        "crossing_id": "atx-20",
+        "gauge_id": "USGS-08158860",
+        "relation": "upstream"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -97.7325,
+            30.18938
+          ],
+          [
+            -97.73623,
+            30.18165
+          ],
+          [
+            -97.74396,
+            30.17691
+          ]
+        ]
+      },
+      "properties": {
+        "reach_id": "atx-20__USGS-08158970",
+        "crossing_id": "atx-20",
+        "gauge_id": "USGS-08158970",
+        "relation": "upstream"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -98.00779,
+            30.08299
+          ],
+          [
+            -97.8711,
+            30.12456
+          ],
+          [
+            -97.73841,
+            30.16912
+          ]
+        ]
+      },
+      "properties": {
+        "reach_id": "atx-21__USGS-08158700",
+        "crossing_id": "atx-21",
+        "gauge_id": "USGS-08158700",
+        "relation": "upstream"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -97.83223,
+            30.16216
+          ],
+          [
+            -97.78332,
+            30.16414
+          ],
+          [
+            -97.73841,
+            30.16912
+          ]
+        ]
+      },
+      "properties": {
+        "reach_id": "atx-21__USGS-08158860",
+        "crossing_id": "atx-21",
+        "gauge_id": "USGS-08158860",
+        "relation": "upstream"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -97.7325,
+            30.18938
+          ],
+          [
+            -97.73346,
+            30.17775
+          ],
+          [
+            -97.73841,
+            30.16912
+          ]
+        ]
+      },
+      "properties": {
+        "reach_id": "atx-21__USGS-08158970",
+        "crossing_id": "atx-21",
+        "gauge_id": "USGS-08158970",
+        "relation": "upstream"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -97.69808,
+            30.35437
+          ],
+          [
+            -97.70196,
+            30.38356
+          ],
+          [
+            -97.70984,
+            30.41576
+          ]
+        ]
+      },
+      "properties": {
+        "reach_id": "atx-22__USGS-08158380",
+        "crossing_id": "atx-22",
+        "gauge_id": "USGS-08158380",
+        "relation": "upstream"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -97.86028,
+            30.23521
+          ],
+          [
+            -97.86387,
+            30.23378
+          ],
+          [
+            -97.87147,
+            30.23535
+          ]
+        ]
+      },
+      "properties": {
+        "reach_id": "atx-2__USGS-08158920",
+        "crossing_id": "atx-2",
+        "gauge_id": "USGS-08158920",
+        "relation": "upstream"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -97.66056,
+            30.37521
+          ],
+          [
+            -97.68141,
+            30.39539
+          ],
+          [
+            -97.70626,
+            30.41858
+          ]
+        ]
+      },
+      "properties": {
+        "reach_id": "atx-3__USGS-08158200",
+        "crossing_id": "atx-3",
+        "gauge_id": "USGS-08158200",
+        "relation": "upstream"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -97.69808,
+            30.35437
+          ],
+          [
+            -97.70017,
+            30.38497
+          ],
+          [
+            -97.70626,
+            30.41858
+          ]
+        ]
+      },
+      "properties": {
+        "reach_id": "atx-3__USGS-08158380",
+        "crossing_id": "atx-3",
+        "gauge_id": "USGS-08158380",
+        "relation": "upstream"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -97.78473,
+            30.37215
+          ],
+          [
+            -97.78441,
+            30.38698
+          ],
+          [
+            -97.7881,
+            30.40481
+          ]
+        ]
+      },
+      "properties": {
+        "reach_id": "atx-4__USGS-08154700",
+        "crossing_id": "atx-4",
+        "gauge_id": "USGS-08154700",
+        "relation": "upstream"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -97.78473,
+            30.37215
+          ],
+          [
+            -97.77596,
+            30.37683
+          ],
+          [
+            -97.77119,
+            30.3845
+          ]
+        ]
+      },
+      "properties": {
+        "reach_id": "atx-5__USGS-08154700",
+        "crossing_id": "atx-5",
+        "gauge_id": "USGS-08154700",
+        "relation": "upstream"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -97.78473,
+            30.37215
+          ],
+          [
+            -97.78761,
+            30.39542
+          ],
+          [
+            -97.79449,
+            30.4217
+          ]
+        ]
+      },
+      "properties": {
+        "reach_id": "atx-6__USGS-08154700",
+        "crossing_id": "atx-6",
+        "gauge_id": "USGS-08154700",
+        "relation": "upstream"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -97.86028,
+            30.23521
+          ],
+          [
+            -97.81382,
+            30.22148
+          ],
+          [
+            -97.77136,
+            30.21075
+          ]
+        ]
+      },
+      "properties": {
+        "reach_id": "atx-7__USGS-08158920",
+        "crossing_id": "atx-7",
+        "gauge_id": "USGS-08158920",
+        "relation": "upstream"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -97.79364,
+            30.22132
+          ],
+          [
+            -97.7805,
+            30.21453
+          ],
+          [
+            -97.77136,
+            30.21075
+          ]
+        ]
+      },
+      "properties": {
+        "reach_id": "atx-7__USGS-08158930",
+        "crossing_id": "atx-7",
+        "gauge_id": "USGS-08158930",
+        "relation": "upstream"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -97.86028,
+            30.23521
+          ],
+          [
+            -97.81364,
+            30.22118
+          ],
+          [
+            -97.771,
+            30.21015
+          ]
+        ]
+      },
+      "properties": {
+        "reach_id": "atx-8__USGS-08158920",
+        "crossing_id": "atx-8",
+        "gauge_id": "USGS-08158920",
+        "relation": "upstream"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -97.79364,
+            30.22132
+          ],
+          [
+            -97.78032,
+            30.21423
+          ],
+          [
+            -97.771,
+            30.21015
+          ]
+        ]
+      },
+      "properties": {
+        "reach_id": "atx-8__USGS-08158930",
+        "crossing_id": "atx-8",
+        "gauge_id": "USGS-08158930",
+        "relation": "upstream"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -97.78473,
+            30.37215
+          ],
+          [
+            -97.77549,
+            30.37594
+          ],
+          [
+            -97.77025,
+            30.38273
+          ]
+        ]
+      },
+      "properties": {
+        "reach_id": "atx-9__USGS-08154700",
+        "crossing_id": "atx-9",
+        "gauge_id": "USGS-08154700",
+        "relation": "upstream"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -97.86028,
+            30.23521
+          ],
+          [
+            -97.88494,
+            30.23888
+          ],
+          [
+            -97.91361,
+            30.24554
+          ]
+        ]
+      },
+      "properties": {
+        "reach_id": "tc-121__USGS-08158920",
+        "crossing_id": "tc-121",
+        "gauge_id": "USGS-08158920",
+        "relation": "upstream"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -97.68861,
+            30.17799
+          ],
+          [
+            -97.6586,
+            30.17207
+          ],
+          [
+            -97.63259,
+            30.16914
+          ]
+        ]
+      },
+      "properties": {
+        "reach_id": "tc-128__USGS-08159000",
+        "crossing_id": "tc-128",
+        "gauge_id": "USGS-08159000",
+        "relation": "upstream"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -97.90336,
+            30.2091
+          ],
+          [
+            -97.86034,
+            30.18619
+          ],
+          [
+            -97.82132,
+            30.16628
+          ]
+        ]
+      },
+      "properties": {
+        "reach_id": "tc-133__USGS-08158840",
+        "crossing_id": "tc-133",
+        "gauge_id": "USGS-08158840",
+        "relation": "upstream"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -97.86028,
+            30.23521
+          ],
+          [
+            -97.88805,
+            30.23932
+          ],
+          [
+            -97.91982,
+            30.24643
+          ]
+        ]
+      },
+      "properties": {
+        "reach_id": "tc-155__USGS-08158920",
+        "crossing_id": "tc-155",
+        "gauge_id": "USGS-08158920",
+        "relation": "upstream"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -97.86028,
+            30.23521
+          ],
+          [
+            -97.88571,
+            30.23932
+          ],
+          [
+            -97.91513,
+            30.24644
+          ]
+        ]
+      },
+      "properties": {
+        "reach_id": "tc-157__USGS-08158920",
+        "crossing_id": "tc-157",
+        "gauge_id": "USGS-08158920",
+        "relation": "upstream"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -97.92556,
+            30.29632
+          ],
+          [
+            -97.90438,
+            30.28197
+          ],
+          [
+            -97.8872,
+            30.27062
+          ]
+        ]
+      },
+      "properties": {
+        "reach_id": "tc-167__USGS-08155200",
+        "crossing_id": "tc-167",
+        "gauge_id": "USGS-08155200",
+        "relation": "upstream"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -97.84475,
+            30.2741
+          ],
+          [
+            -97.86398,
+            30.27086
+          ],
+          [
+            -97.8872,
+            30.27062
+          ]
+        ]
+      },
+      "properties": {
+        "reach_id": "tc-167__USGS-08155240",
+        "crossing_id": "tc-167",
+        "gauge_id": "USGS-08155240",
+        "relation": "upstream"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -97.94001,
+            30.15549
+          ],
+          [
+            -97.92271,
+            30.26848
+          ],
+          [
+            -97.90942,
+            30.38448
+          ]
+        ]
+      },
+      "properties": {
+        "reach_id": "tc-58__USGS-08158810",
+        "crossing_id": "tc-58",
+        "gauge_id": "USGS-08158810",
+        "relation": "upstream"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -97.86028,
+            30.23521
+          ],
+          [
+            -97.88148,
+            30.23723
+          ],
+          [
+            -97.90669,
+            30.24224
+          ]
+        ]
+      },
+      "properties": {
+        "reach_id": "tc-99__USGS-08158920",
+        "crossing_id": "tc-99",
+        "gauge_id": "USGS-08158920",
+        "relation": "upstream"
+      }
+    }
+  ]
+}

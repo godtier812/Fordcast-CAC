@@ -39,7 +39,9 @@ def create_app(data_dir: Path = DATA) -> FastAPI:
             model={"kind": "rule", "version": "not-trained", "git_sha": None, "ml_enabled": False},
             counts={
                 "crossings": len(inventory["features"]),
-                "monitored": 0,
+                "monitored": sum(
+                    1 for f in inventory["features"] if f["properties"].get("tier") in {"A", "B"}
+                ),
                 "gauges_active": 0,
                 "gauges_stale": 0,
             },
@@ -47,8 +49,14 @@ def create_app(data_dir: Path = DATA) -> FastAPI:
                 CrossingRisk(
                     id=f["properties"]["id"],
                     state="unknown",
-                    tier="C",
-                    reasons=[{"code": "NO_UPSTREAM_GAUGE"}],
+                    tier=f["properties"].get("tier", "C"),
+                    reasons=[
+                        {
+                            "code": "DATA_STALE"
+                            if f["properties"].get("tier") in {"A", "B"}
+                            else "NO_UPSTREAM_GAUGE"
+                        }
+                    ],
                 )
                 for f in inventory["features"]
             ],
@@ -101,12 +109,28 @@ def create_app(data_dir: Path = DATA) -> FastAPI:
 
     @app.get("/v1/replays")
     def replays():
-        # An observation chart is not an evaluated forecast replay.
+        idx_path = data_dir / "replays/index.json"
+        if idx_path.exists():
+            return json.loads(idx_path.read_text(encoding="utf-8"))
         return {
             "schema": "fordcast.replay-index.v1",
             "storms": [],
             "reason": "No validated forecast timelines yet",
         }
+
+    @app.get("/v1/replays/{storm_id}")
+    def replay_storm(storm_id: str):
+        path = data_dir / f"replays/{storm_id}.json"
+        if not path.exists():
+            raise HTTPException(404, "Replay not found")
+        return json.loads(path.read_text(encoding="utf-8"))
+
+    @app.get("/v1/results")
+    def backtest_results():
+        path = ROOT / "docs/results/results.json"
+        if not path.exists():
+            raise HTTPException(404, "Results not generated")
+        return json.loads(path.read_text(encoding="utf-8"))
 
     @app.get("/v1/observations/halloween-2013")
     def observations():

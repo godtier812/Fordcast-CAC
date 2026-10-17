@@ -6,15 +6,22 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          -97.8288611,
-          30.2124722
+          -97.78473,
+          30.37215
         ]
       },
       "properties": {
-        "id": "USGS-08158927",
-        "name": "Kincheon Br at William Cannon Blvd, Austin, TX",
-        "source": "USGS NLDI",
-        "comid": 5781353
+        "id": "USGS-08154700",
+        "name": "Bull Ck at Loop 360 nr Austin, TX",
+        "nws_lid": "ABUT2",
+        "creek": "Bull Creek",
+        "datum_ft": 535.05,
+        "nws_categories": {
+          "action": 5.0,
+          "minor": 5.0,
+          "moderate": 5.0,
+          "major": 9.0
+        }
       }
     },
     {
@@ -22,15 +29,22 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          -97.862228,
-          30.1254896
+          -97.92556,
+          30.29632
         ]
       },
       "properties": {
-        "id": "USGS-08158825",
-        "name": "Little Bear Ck at FM 1626 nr Manchaca, TX",
-        "source": "USGS NLDI",
-        "comid": 5781429
+        "id": "USGS-08155200",
+        "name": "Barton Ck at SH 71 nr Oak Hill, TX",
+        "nws_lid": "OHBT2",
+        "creek": "Barton Creek",
+        "datum_ft": 736.98,
+        "nws_categories": {
+          "action": 12.0,
+          "minor": 12.0,
+          "moderate": 15.0,
+          "major": 18.0
+        }
       }
     },
     {
@@ -38,15 +52,17 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          -97.6886138,
-          30.17798987
+          -97.84475,
+          30.2741
         ]
       },
       "properties": {
-        "id": "USGS-08159000",
-        "name": "Onion Ck at US Hwy 183, Austin, TX",
-        "source": "USGS NLDI",
-        "comid": 5781369
+        "id": "USGS-08155240",
+        "name": "Barton Ck at Lost Ck Blvd nr Austin, TX",
+        "nws_lid": "LCKT2",
+        "creek": "Barton Creek",
+        "datum_ft": 590.5,
+        "nws_categories": null
       }
     },
     {
@@ -54,15 +70,22 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          -97.9057111,
-          30.1251
+          -97.80223,
+          30.24465
         ]
       },
       "properties": {
-        "id": "USGS-08158823",
-        "name": "Stoneledge Div of Little Bear Ck nr Manchaca, TX",
-        "source": "USGS NLDI",
-        "comid": 5781435
+        "id": "USGS-08155300",
+        "name": "Barton Ck at Loop 360, Austin, TX",
+        "nws_lid": "ABTT2",
+        "creek": "Barton Creek",
+        "datum_ft": 511.11,
+        "nws_categories": {
+          "action": 6.0,
+          "minor": 8.0,
+          "moderate": 11.0,
+          "major": 12.0
+        }
       }
     },
     {
@@ -70,15 +93,17 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          -97.8211161,
-          30.12632345
+          -97.77223,
+          30.26354
         ]
       },
       "properties": {
-        "id": "USGS-08158827",
-        "name": "Onion Ck at Twin Creeks Rd nr Manchaca, TX",
-        "source": "USGS NLDI",
-        "comid": 5781431
+        "id": "USGS-08155400",
+        "name": "Barton Ck abv Barton Spgs at Austin, TX",
+        "nws_lid": "BCCT2",
+        "creek": "Barton Creek",
+        "datum_ft": 430.73,
+        "nws_categories": null
       }
     },
     {
@@ -86,15 +111,17 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          -97.9038889,
-          30.12583333
+          -97.73889,
+          30.35417
         ]
       },
       "properties": {
-        "id": "USGS-08158824",
-        "name": "Little Bear Ck at Stoneledge Quarry nr Manchaca,TX",
-        "source": "USGS NLDI",
-        "comid": 5781435
+        "id": "USGS-08156675",
+        "name": "Shoal Ck at Silverway Dr, Austin, TX",
+        "nws_lid": "ASHT2",
+        "creek": "Shoal Creek",
+        "datum_ft": 672.72,
+        "nws_categories": null
       }
     },
     {
@@ -102,15 +129,22 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          -97.9033409,
-          30.2090972
+          -97.75031,
+          30.2766
         ]
       },
       "properties": {
-        "id": "USGS-08158840",
-        "name": "Slaughter Ck at FM 1826 nr Austin, TX",
-        "source": "USGS NLDI",
-        "comid": 5781373
+        "id": "USGS-08156800",
+        "name": "Shoal Ck at W 12th St, Austin, TX",
+        "nws_lid": "AHOT2",
+        "creek": "Shoal Creek",
+        "datum_ft": 455.45,
+        "nws_categories": {
+          "action": 5.0,
+          "minor": 7.0,
+          "moderate": 10.0,
+          "major": 12.0
+        }
       }
     },
     {
@@ -118,15 +152,17 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          -97.7822272,
-          30.1807666
+          -97.66056,
+          30.37521
         ]
       },
       "properties": {
-        "id": "USGS-08158880",
-        "name": "Boggy Ck (S) at Circle S Rd, Austin, TX",
-        "source": "USGS NLDI",
-        "comid": 5781393
+        "id": "USGS-08158200",
+        "name": "Walnut Ck at Dessau Rd, Austin, TX",
+        "nws_lid": "WADT2",
+        "creek": "Walnut Creek",
+        "datum_ft": 552.34,
+        "nws_categories": null
       }
     },
     {
@@ -134,15 +170,17 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          -97.8750073,
-          30.233819
+          -97.69808,
+          30.35437
         ]
       },
       "properties": {
-        "id": "USGS-08158900",
-        "name": "Fox Br nr Oak Hill, TX",
-        "source": "USGS NLDI",
-        "comid": 5781345
+        "id": "USGS-08158380",
+        "name": "Little Walnut Ck at Georgian Dr, Austin, TX",
+        "nws_lid": "LWGT2",
+        "creek": "Little Walnut Creek",
+        "datum_ft": 637.32,
+        "nws_categories": null
       }
     },
     {
@@ -150,15 +188,17 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          -97.8602848,
-          30.23520806
+          -97.655,
+          30.28326
         ]
       },
       "properties": {
-        "id": "USGS-08158920",
-        "name": "Williamson Ck at Oak Hill, TX",
-        "source": "USGS NLDI",
-        "comid": 5781345
+        "id": "USGS-08158600",
+        "name": "Walnut Ck at Webberville Rd, Austin, TX",
+        "nws_lid": "WWVT2",
+        "creek": "Walnut Creek",
+        "datum_ft": 426.23,
+        "nws_categories": null
       }
     },
     {
@@ -166,79 +206,22 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          -97.8322279,
-          30.1621554
-        ]
-      },
-      "properties": {
-        "id": "USGS-08158860",
-        "name": "Slaughter Ck at FM 2304 nr Austin, TX",
-        "source": "USGS NLDI",
-        "comid": 5781407
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          -97.8413955,
-          30.22631976
-        ]
-      },
-      "properties": {
-        "id": "USGS-08158922",
-        "name": "Williamson Ck at Brush Cntry Blvd, Oak Hill, TX",
-        "source": "USGS NLDI",
-        "comid": 5781345
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          -97.9697222,
-          30.17805556
-        ]
-      },
-      "properties": {
-        "id": "USGS-0815880510",
-        "name": "Bear Ck at Davis Pond nr Driftwood, TX",
-        "source": "USGS NLDI",
-        "comid": 5781933
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          -97.742630556,
-          30.173622222
-        ]
-      },
-      "properties": {
-        "id": "USGS-08158885",
-        "name": "Onion Ck @ Ped crsg E of Thornhill Dr Austin, TX",
-        "source": "USGS NLDI",
-        "comid": 5781733
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          -98.0077859,
-          30.08298924
+          -98.00779,
+          30.08299
         ]
       },
       "properties": {
         "id": "USGS-08158700",
         "name": "Onion Ck nr Driftwood, TX",
-        "source": "USGS NLDI",
-        "comid": 5780099
+        "nws_lid": "DRWT2",
+        "creek": "Onion Creek",
+        "datum_ft": 868.52,
+        "nws_categories": {
+          "action": 5.5,
+          "minor": 5.5,
+          "moderate": 7.0,
+          "major": 13.0
+        }
       }
     },
     {
@@ -246,79 +229,17 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          -97.8638889,
-          30.07666667
-        ]
-      },
-      "properties": {
-        "id": "USGS-300436097515001",
-        "name": "Antioch Cave on Onion Ck nr Buda, TX",
-        "source": "USGS NLDI",
-        "comid": 5781477
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          -97.8480606,
-          30.0860467
-        ]
-      },
-      "properties": {
-        "id": "USGS-08158800",
-        "name": "Onion Ck at Buda, TX",
-        "source": "USGS NLDI",
-        "comid": 5781477
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          -97.773555556,
-          30.137825
-        ]
-      },
-      "properties": {
-        "id": "USGS-08158875",
-        "name": "Rinard Ck at Bradshaw Rd nr Manchaca, TX",
-        "source": "USGS NLDI",
-        "comid": 5781433
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          -97.9552857,
-          30.1596538
-        ]
-      },
-      "properties": {
-        "id": "USGS-08158806",
-        "name": "Bear Ck at FM 1826 nr Driftwood, TX",
-        "source": "USGS NLDI",
-        "comid": 5781399
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          -97.9400076,
-          30.15548749
+          -97.94001,
+          30.15549
         ]
       },
       "properties": {
         "id": "USGS-08158810",
         "name": "Bear Ck bl FM 1826 nr Driftwood, TX",
-        "source": "USGS NLDI",
-        "comid": 5781401
+        "nws_lid": "BCFT2",
+        "creek": "Bear Creek",
+        "datum_ft": 859.91,
+        "nws_categories": null
       }
     },
     {
@@ -326,15 +247,17 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          -97.9070194,
-          30.1636611
+          -97.82112,
+          30.12632
         ]
       },
       "properties": {
-        "id": "USGS-08158813",
-        "name": "Bear Ck at Spillar Ranch Rd nr Manchaca, TX",
-        "source": "USGS NLDI",
-        "comid": 5781417
+        "id": "USGS-08158827",
+        "name": "Onion Ck at Twin Creeks Rd nr Manchaca, TX",
+        "nws_lid": "OTCT2",
+        "creek": "Onion Creek",
+        "datum_ft": 584.16,
+        "nws_categories": null
       }
     },
     {
@@ -342,15 +265,86 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          -97.7936168,
-          30.22132064
+          -97.90336,
+          30.2091
+        ]
+      },
+      "properties": {
+        "id": "USGS-08158840",
+        "name": "Slaughter Ck at FM 1826 nr Austin, TX",
+        "nws_lid": "SCAT2",
+        "creek": "Slaughter Creek",
+        "datum_ft": 876.25,
+        "nws_categories": {
+          "action": 8.0,
+          "minor": 8.0,
+          "moderate": 9.0,
+          "major": 15.0
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -97.83223,
+          30.16216
+        ]
+      },
+      "properties": {
+        "id": "USGS-08158860",
+        "name": "Slaughter Ck at FM 2304 nr Austin, TX",
+        "nws_lid": "SLHT2",
+        "creek": "Slaughter Creek",
+        "datum_ft": 656.16,
+        "nws_categories": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -97.86028,
+          30.23521
+        ]
+      },
+      "properties": {
+        "id": "USGS-08158920",
+        "name": "Williamson Ck at Oak Hill, TX",
+        "nws_lid": "WKLT2",
+        "creek": "Williamson Creek",
+        "datum_ft": 798.68,
+        "nws_categories": {
+          "action": 6.0,
+          "minor": 6.0,
+          "moderate": 7.0,
+          "major": 10.0
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -97.79364,
+          30.22132
         ]
       },
       "properties": {
         "id": "USGS-08158930",
         "name": "Williamson Ck at Manchaca Rd, Austin, TX",
-        "source": "USGS NLDI",
-        "comid": 5781731
+        "nws_lid": "AAIT2",
+        "creek": "Williamson Creek",
+        "datum_ft": 618.63,
+        "nws_categories": {
+          "action": 12.0,
+          "minor": 13.0,
+          "moderate": 14.0,
+          "major": 18.0
+        }
       }
     },
     {
@@ -358,31 +352,17 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          -97.8475057,
-          30.14048928
-        ]
-      },
-      "properties": {
-        "id": "USGS-08158820",
-        "name": "Bear Ck at FM 1626 nr Manchaca, TX",
-        "source": "USGS NLDI",
-        "comid": 5781417
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          -97.732504,
-          30.189378
+          -97.7325,
+          30.18938
         ]
       },
       "properties": {
         "id": "USGS-08158970",
         "name": "Williamson Ck at Jimmy Clay Rd, Austin, TX",
-        "source": "USGS NLDI",
-        "comid": 5781731
+        "nws_lid": "WJCT2",
+        "creek": "Williamson Creek",
+        "datum_ft": 494.3,
+        "nws_categories": null
       }
     },
     {
@@ -390,15 +370,22 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          -97.8611111,
-          30.14416667
+          -97.68861,
+          30.17799
         ]
       },
       "properties": {
-        "id": "USGS-08158819",
-        "name": "Bear Ck nr Brodie Lane nr Manchaca, TX",
-        "source": "USGS NLDI",
-        "comid": 5781417
+        "id": "USGS-08159000",
+        "name": "Onion Ck at US Hwy 183, Austin, TX",
+        "nws_lid": "ATIT2",
+        "creek": "Onion Creek",
+        "datum_ft": 443.28,
+        "nws_categories": {
+          "action": 15.0,
+          "minor": 17.0,
+          "moderate": 23.0,
+          "major": 27.0
+        }
       }
     }
   ]

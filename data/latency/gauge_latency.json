@@ -1,0 +1,145 @@
+{
+  "schema": "fordcast.gauge-latency.v1",
+  "computed_from": {
+    "start": "2026-10-16T00:00:00Z",
+    "end": "2026-10-17T23:00:00Z"
+  },
+  "min_n": 50,
+  "default_delay_min": 60,
+  "default_stale_after_min": 60,
+  "gauges": {
+    "USGS-08154700": {
+      "n": 0,
+      "p75_min": null,
+      "p90_min": null,
+      "delay_min": 60,
+      "stale_after_min": 60
+    },
+    "USGS-08155200": {
+      "n": 0,
+      "p75_min": null,
+      "p90_min": null,
+      "delay_min": 60,
+      "stale_after_min": 60
+    },
+    "USGS-08155240": {
+      "n": 0,
+      "p75_min": null,
+      "p90_min": null,
+      "delay_min": 60,
+      "stale_after_min": 60
+    },
+    "USGS-08155300": {
+      "n": 0,
+      "p75_min": null,
+      "p90_min": null,
+      "delay_min": 60,
+      "stale_after_min": 60
+    },
+    "USGS-08155400": {
+      "n": 0,
+      "p75_min": null,
+      "p90_min": null,
+      "delay_min": 60,
+      "stale_after_min": 60
+    },
+    "USGS-08156675": {
+      "n": 0,
+      "p75_min": null,
+      "p90_min": null,
+      "delay_min": 60,
+      "stale_after_min": 60
+    },
+    "USGS-08156800": {
+      "n": 0,
+      "p75_min": null,
+      "p90_min": null,
+      "delay_min": 60,
+      "stale_after_min": 60
+    },
+    "USGS-08158200": {
+      "n": 0,
+      "p75_min": null,
+      "p90_min": null,
+      "delay_min": 60,
+      "stale_after_min": 60
+    },
+    "USGS-08158380": {
+      "n": 0,
+      "p75_min": null,
+      "p90_min": null,
+      "delay_min": 60,
+      "stale_after_min": 60
+    },
+    "USGS-08158600": {
+      "n": 0,
+      "p75_min": null,
+      "p90_min": null,
+      "delay_min": 60,
+      "stale_after_min": 60
+    },
+    "USGS-08158700": {
+      "n": 0,
+      "p75_min": null,
+      "p90_min": null,
+      "delay_min": 60,
+      "stale_after_min": 60
+    },
+    "USGS-08158810": {
+      "n": 0,
+      "p75_min": null,
+      "p90_min": null,
+      "delay_min": 60,
+      "stale_after_min": 60
+    },
+    "USGS-08158827": {
+      "n": 0,
+      "p75_min": null,
+      "p90_min": null,
+      "delay_min": 60,
+      "stale_after_min": 60
+    },
+    "USGS-08158840": {
+      "n": 0,
+      "p75_min": null,
+      "p90_min": null,
+      "delay_min": 60,
+      "stale_after_min": 60
+    },
+    "USGS-08158860": {
+      "n": 0,
+      "p75_min": null,
+      "p90_min": null,
+      "delay_min": 60,
+      "stale_after_min": 60
+    },
+    "USGS-08158920": {
+      "n": 0,
+      "p75_min": null,
+      "p90_min": null,
+      "delay_min": 60,
+      "stale_after_min": 60
+    },
+    "USGS-08158930": {
+      "n": 0,
+      "p75_min": null,
+      "p90_min": null,
+      "delay_min": 60,
+      "stale_after_min": 60
+    },
+    "USGS-08158970": {
+      "n": 0,
+      "p75_min": null,
+      "p90_min": null,
+      "delay_min": 60,
+      "stale_after_min": 60
+    },
+    "USGS-08159000": {
+      "n": 0,
+      "p75_min": null,
+      "p90_min": null,
+      "delay_min": 60,
+      "stale_after_min": 60
+    }
+  }
+}

@@ -1,7 +1,9 @@
-"""Normalize observed inventory fields and copy source-backed artifacts into the app."""
+"""Copy verified seed, creek, replay, link, and backtest artifacts into mobile/assets/ and update MANIFEST.json."""
 
+import csv
 import hashlib
 import json
+import math
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -15,54 +17,29 @@ def write(path: Path, value) -> None:
 
 
 def main() -> None:
-    features = []
-    for source, prefix, name_key, id_key, attribution in (
-        (
-            "city-arcgis",
-            "atx",
-            "CROSSING_DESCRIPTION",
-            "OBJECTID",
-            "City of Austin Open Data",
-        ),
-        ("travis-arcgis", "tc", "Locations", "OID", "Travis County Public Works"),
-    ):
-        path = ROOT / f"data/raw/smoke/{source}.json"
-        if not path.exists():
-            continue
-        raw = json.loads(path.read_text(encoding="utf-8"))
-        for row in raw.get("features", []):
-            p, geom = row["properties"], row["geometry"]
-            if geom is None or geom["type"] != "Point" or not p.get(name_key):
-                continue
-            lon, lat = geom["coordinates"][:2]
-            if not (-98.2 <= lon <= -97.4 and 29.95 <= lat <= 30.7):
-                continue
-            features.append(
-                {
-                    "type": "Feature",
-                    "geometry": geom,
-                    "properties": {
-                        "id": f"{prefix}-{p[id_key]}",
-                        "name": p[name_key].strip(),
-                        "name_es": p[name_key].strip(),
-                        "tier": "C",
-                        "source": attribution,
-                        "source_id": str(p[id_key]),
-                        "source_ref": f"data/raw/smoke/{source}.json",
-                        "state": "unknown",
-                        "review_status": "unreviewed",
-                        "reason": "NO_UPSTREAM_GAUGE",
-                    },
-                }
-            )
-    features.sort(key=lambda f: f["properties"]["id"])
-    inventory = {"type": "FeatureCollection", "features": features}
-    write(ROOT / "data/seed/crossings.geojson", inventory)
+    inventory = json.loads(
+        (ROOT / "data/seed/crossings.geojson").read_text(encoding="utf-8")
+    )
+    gauges = json.loads((ROOT / "data/seed/gauges.geojson").read_text(encoding="utf-8"))
+    creeks = json.loads(
+        (ROOT / "data/creeks/creeks.geojson").read_text(encoding="utf-8")
+    )
+    replay_index = json.loads(
+        (ROOT / "data/replays/index.json").read_text(encoding="utf-8")
+    )
+
     paths = [
         "seed/crossings.geojson",
         "seed/gauges.geojson",
+        "creeks/creeks.geojson",
         "observations/halloween-2013.json",
+        "replays/index.json",
     ]
+    for storm in replay_index["storms"]:
+        sid = storm["id"]
+        paths.append(f"replays/{sid}.json.gz")
+        paths.append(f"replays/{sid}.json")
+
     manifest = []
     for path in paths:
         original = ROOT / "data" / path
@@ -77,6 +54,7 @@ def main() -> None:
                 "bytes": len(content),
             }
         )
+
     write(
         ROOT / "data/MANIFEST.json", {"schema": "fordcast.assets.v1", "files": manifest}
     )
@@ -84,14 +62,56 @@ def main() -> None:
         ROOT / "mobile/assets/manifest.json",
         {"schema": "fordcast.assets.v1", "files": manifest},
     )
-    # TypeScript can statically import JSON, avoiding dynamic asset resolution.
+
+    # TypeScript static JSON imports for cross-platform (Web + Android + iOS) offline use
     write(ROOT / "mobile/assets/seed/crossings.json", inventory)
-    write(
-        ROOT / "mobile/assets/seed/gauges.json",
-        json.loads((ROOT / "data/seed/gauges.geojson").read_text(encoding="utf-8")),
-    )
+    write(ROOT / "mobile/assets/seed/gauges.json", gauges)
+    write(ROOT / "mobile/assets/seed/creeks.json", creeks)
+
+    results_path = ROOT / "docs/results/results.json"
+    if results_path.exists():
+        results_doc = json.loads(results_path.read_text(encoding="utf-8"))
+        write(ROOT / "mobile/assets/results/results.json", results_doc)
+
+    links_csv = ROOT / "data/links/crossing_gauge_links.csv"
+    live_links = []
+    if links_csv.exists():
+        with links_csv.open("r", encoding="utf-8", newline="") as fh:
+            for row in csv.DictReader(fh):
+                if (
+                    row["model_version"] == "rule-2026.10.17"
+                    and row["relation"] == "upstream"
+                ):
+                    p25 = float(row["lag_p25_min"])
+                    p75 = float(row["lag_p75_min"])
+                    tlo = max(5, int(math.floor(p25 / 15.0) * 15))
+                    thi = max(tlo + 15, int(math.ceil(p75 / 15.0) * 15))
+                    live_links.append(
+                        {
+                            "crossing_id": row["crossing_id"],
+                            "gauge_id": row["gauge_id"],
+                            "relation": row["relation"],
+                            "is_primary": row["is_primary"].lower() == "true",
+                            "channel_dist_km": float(row["channel_dist_km"]),
+                            "lag_min": float(row["lag_min"]),
+                            "lag_p25_min": p25,
+                            "lag_p75_min": p75,
+                            "tau_lo_min": tlo,
+                            "tau_hi_min": thi,
+                            "trigger_stage_ft": float(row["trigger_stage_ft"]),
+                            "watch_stage_ft": float(row["watch_stage_ft"]),
+                            "rise_rate_ft_per_30m": float(row["min_rise_ft_30m"]),
+                        }
+                    )
+    write(ROOT / "mobile/assets/seed/links.json", live_links)
+
+    tiers = {"A": 0, "B": 0, "C": 0}
+    for f in inventory["features"]:
+        tiers[f["properties"]["tier"]] += 1
     print(
-        f"Exported {len(features)} real inventory records; all remain unreviewed tier C."
+        f"Exported {len(inventory['features'])} crossings "
+        f"(Tier A={tiers['A']}, Tier B={tiers['B']}, Tier C={tiers['C']}) "
+        f"and {len(replay_index['storms'])} storm replays."
     )
 
 

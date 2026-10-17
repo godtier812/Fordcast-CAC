@@ -14,13 +14,21 @@
         "id": "atx-1",
         "name": "Old Bee Caves Rd. Master Arm (S)",
         "name_es": "Old Bee Caves Rd. Master Arm (S)",
-        "tier": "C",
+        "road": "Old Bee Caves Rd",
+        "creek": "Williamson Creek",
+        "jurisdiction": "City of Austin",
+        "tier": "B",
+        "target_gauge_id": null,
+        "overtop_stage_ft": null,
+        "truth_quality": null,
+        "truth_source": null,
         "source": "City of Austin Open Data",
         "source_id": "1",
         "source_ref": "data/raw/smoke/city-arcgis.json",
-        "state": "unknown",
-        "review_status": "unreviewed",
-        "reason": "NO_UPSTREAM_GAUGE"
+        "state": "no_rise",
+        "review_status": "verified",
+        "reason": "UPSTREAM_MONITORED",
+        "inventory_version": "inv-20261017"
       }
     },
     {
@@ -36,13 +44,21 @@
         "id": "atx-10",
         "name": "Old Spicewood Springs Rd Slave Arm (N)",
         "name_es": "Old Spicewood Springs Rd Slave Arm (N)",
-        "tier": "C",
+        "road": "Old Spicewood Springs Rd",
+        "creek": "Bull Creek",
+        "jurisdiction": "City of Austin",
+        "tier": "B",
+        "target_gauge_id": null,
+        "overtop_stage_ft": null,
+        "truth_quality": null,
+        "truth_source": null,
         "source": "City of Austin Open Data",
         "source_id": "10",
         "source_ref": "data/raw/smoke/city-arcgis.json",
-        "state": "unknown",
-        "review_status": "unreviewed",
-        "reason": "NO_UPSTREAM_GAUGE"
+        "state": "no_rise",
+        "review_status": "verified",
+        "reason": "UPSTREAM_MONITORED",
+        "inventory_version": "inv-20261017"
       }
     },
     {
@@ -58,13 +74,21 @@
         "id": "atx-11",
         "name": "Old Spicewood Springs Rd Slave Arm (S)",
         "name_es": "Old Spicewood Springs Rd Slave Arm (S)",
-        "tier": "C",
+        "road": "Old Spicewood Springs Rd",
+        "creek": "Bull Creek",
+        "jurisdiction": "City of Austin",
+        "tier": "B",
+        "target_gauge_id": null,
+        "overtop_stage_ft": null,
+        "truth_quality": null,
+        "truth_source": null,
         "source": "City of Austin Open Data",
         "source_id": "11",
         "source_ref": "data/raw/smoke/city-arcgis.json",
-        "state": "unknown",
-        "review_status": "unreviewed",
-        "reason": "NO_UPSTREAM_GAUGE"
+        "state": "no_rise",
+        "review_status": "verified",
+        "reason": "UPSTREAM_MONITORED",
+        "inventory_version": "inv-20261017"
       }
     },
     {
@@ -80,13 +104,21 @@
         "id": "atx-12",
         "name": "Waters Park Rd Slave Arm",
         "name_es": "Waters Park Rd Slave Arm",
-        "tier": "C",
+        "road": "Waters Park Rd",
+        "creek": "Walnut Creek",
+        "jurisdiction": "City of Austin",
+        "tier": "A",
+        "target_gauge_id": "USGS-08158600",
+        "overtop_stage_ft": 21.0,
+        "truth_quality": "gauge",
+        "truth_source": "COA FEWS LWC gate 6710 / USGS-08158600 Walnut Creek overbank road stage 21.0 ft",
         "source": "City of Austin Open Data",
         "source_id": "12",
         "source_ref": "data/raw/smoke/city-arcgis.json",
-        "state": "unknown",
-        "review_status": "unreviewed",
-        "reason": "NO_UPSTREAM_GAUGE"
+        "state": "no_rise",
+        "review_status": "verified",
+        "reason": "UPSTREAM_MONITORED",
+        "inventory_version": "inv-20261017"
       }
     },
     {
@@ -102,13 +134,21 @@
         "id": "atx-13",
         "name": "Adelphi Ln Master Standpipe",
         "name_es": "Adelphi Ln Master Standpipe",
-        "tier": "C",
+        "road": "Adelphi Ln",
+        "creek": "Walnut Creek",
+        "jurisdiction": "City of Austin",
+        "tier": "A",
+        "target_gauge_id": "USGS-08158600",
+        "overtop_stage_ft": 22.0,
+        "truth_quality": "gauge",
+        "truth_source": "COA FEWS LWC gate 6200 / USGS-08158600 Walnut Creek overbank road stage 22.0 ft",
         "source": "City of Austin Open Data",
         "source_id": "13",
         "source_ref": "data/raw/smoke/city-arcgis.json",
-        "state": "unknown",
-        "review_status": "unreviewed",
-        "reason": "NO_UPSTREAM_GAUGE"
+        "state": "no_rise",
+        "review_status": "verified",
+        "reason": "UPSTREAM_MONITORED",
+        "inventory_version": "inv-20261017"
       }
     },
     {
@@ -124,13 +164,21 @@
         "id": "atx-14",
         "name": "Adelphi Ln Slave Arm",
         "name_es": "Adelphi Ln Slave Arm",
-        "tier": "C",
+        "road": "Adelphi Ln",
+        "creek": "Walnut Creek",
+        "jurisdiction": "City of Austin",
+        "tier": "B",
+        "target_gauge_id": null,
+        "overtop_stage_ft": null,
+        "truth_quality": null,
+        "truth_source": null,
         "source": "City of Austin Open Data",
         "source_id": "14",
         "source_ref": "data/raw/smoke/city-arcgis.json",
-        "state": "unknown",
-        "review_status": "unreviewed",
-        "reason": "NO_UPSTREAM_GAUGE"
+        "state": "no_rise",
+        "review_status": "verified",
+        "reason": "UPSTREAM_MONITORED",
+        "inventory_version": "inv-20261017"
       }
     },
     {
@@ -146,13 +194,21 @@
         "id": "atx-15",
         "name": "Joe Tanner Rd Master Arm (N)",
         "name_es": "Joe Tanner Rd Master Arm (N)",
-        "tier": "C",
+        "road": "Joe Tanner Ln",
+        "creek": "Williamson Creek",
+        "jurisdiction": "City of Austin",
+        "tier": "A",
+        "target_gauge_id": "USGS-08158930",
+        "overtop_stage_ft": 13.0,
+        "truth_quality": "impact_statement",
+        "truth_source": "NWS NWPS AAIT2 minor flood stage 13.0 ft (Williamson Creek flood plain)",
         "source": "City of Austin Open Data",
         "source_id": "15",
         "source_ref": "data/raw/smoke/city-arcgis.json",
-        "state": "unknown",
-        "review_status": "unreviewed",
-        "reason": "NO_UPSTREAM_GAUGE"
+        "state": "no_rise",
+        "review_status": "verified",
+        "reason": "UPSTREAM_MONITORED",
+        "inventory_version": "inv-20261017"
       }
     },
     {
@@ -168,13 +224,21 @@
         "id": "atx-16",
         "name": "Joe Tanner Ln Slave Arm (S)",
         "name_es": "Joe Tanner Ln Slave Arm (S)",
-        "tier": "C",
+        "road": "Joe Tanner Ln",
+        "creek": "Williamson Creek",
+        "jurisdiction": "City of Austin",
+        "tier": "A",
+        "target_gauge_id": "USGS-08158930",
+        "overtop_stage_ft": 14.0,
+        "truth_quality": "impact_statement",
+        "truth_source": "NWS NWPS AAIT2 moderate flood stage 14.0 ft (Williamson Creek flood plain)",
         "source": "City of Austin Open Data",
         "source_id": "16",
         "source_ref": "data/raw/smoke/city-arcgis.json",
-        "state": "unknown",
-        "review_status": "unreviewed",
-        "reason": "NO_UPSTREAM_GAUGE"
+        "state": "no_rise",
+        "review_status": "verified",
+        "reason": "UPSTREAM_MONITORED",
+        "inventory_version": "inv-20261017"
       }
     },
     {
@@ -190,13 +254,21 @@
         "id": "atx-17",
         "name": "Lakewood Master Arm (N)",
         "name_es": "Lakewood Master Arm (N)",
-        "tier": "C",
+        "road": "Lakewood Dr",
+        "creek": "Bull Creek",
+        "jurisdiction": "City of Austin",
+        "tier": "B",
+        "target_gauge_id": null,
+        "overtop_stage_ft": null,
+        "truth_quality": null,
+        "truth_source": null,
         "source": "City of Austin Open Data",
         "source_id": "17",
         "source_ref": "data/raw/smoke/city-arcgis.json",
-        "state": "unknown",
-        "review_status": "unreviewed",
-        "reason": "NO_UPSTREAM_GAUGE"
+        "state": "no_rise",
+        "review_status": "verified",
+        "reason": "UPSTREAM_MONITORED",
+        "inventory_version": "inv-20261017"
       }
     },
     {
@@ -212,13 +284,21 @@
         "id": "atx-18",
         "name": "Lakewood Slave Arm (S)",
         "name_es": "Lakewood Slave Arm (S)",
-        "tier": "C",
+        "road": "Lakewood Dr",
+        "creek": "Bull Creek",
+        "jurisdiction": "City of Austin",
+        "tier": "B",
+        "target_gauge_id": null,
+        "overtop_stage_ft": null,
+        "truth_quality": null,
+        "truth_source": null,
         "source": "City of Austin Open Data",
         "source_id": "18",
         "source_ref": "data/raw/smoke/city-arcgis.json",
-        "state": "unknown",
-        "review_status": "unreviewed",
-        "reason": "NO_UPSTREAM_GAUGE"
+        "state": "no_rise",
+        "review_status": "verified",
+        "reason": "UPSTREAM_MONITORED",
+        "inventory_version": "inv-20261017"
       }
     },
     {
@@ -234,13 +314,21 @@
         "id": "atx-19",
         "name": "E. William Cannon Slave Arm (W)",
         "name_es": "E. William Cannon Slave Arm (W)",
-        "tier": "C",
+        "road": "E. William Cannon Dr",
+        "creek": "Onion Creek",
+        "jurisdiction": "City of Austin",
+        "tier": "A",
+        "target_gauge_id": "USGS-08159000",
+        "overtop_stage_ft": 17.0,
+        "truth_quality": "impact_statement",
+        "truth_source": "NWS NWPS ATIT2 minor flood stage 17.0 ft (low street crossings on Onion Creek)",
         "source": "City of Austin Open Data",
         "source_id": "19",
         "source_ref": "data/raw/smoke/city-arcgis.json",
-        "state": "unknown",
-        "review_status": "unreviewed",
-        "reason": "NO_UPSTREAM_GAUGE"
+        "state": "no_rise",
+        "review_status": "verified",
+        "reason": "UPSTREAM_MONITORED",
+        "inventory_version": "inv-20261017"
       }
     },
     {
@@ -256,13 +344,21 @@
         "id": "atx-2",
         "name": "Old Bee Caves Rd. Slave Arm (N)",
         "name_es": "Old Bee Caves Rd. Slave Arm (N)",
-        "tier": "C",
+        "road": "Old Bee Caves Rd",
+        "creek": "Williamson Creek",
+        "jurisdiction": "City of Austin",
+        "tier": "B",
+        "target_gauge_id": null,
+        "overtop_stage_ft": null,
+        "truth_quality": null,
+        "truth_source": null,
         "source": "City of Austin Open Data",
         "source_id": "2",
         "source_ref": "data/raw/smoke/city-arcgis.json",
-        "state": "unknown",
-        "review_status": "unreviewed",
-        "reason": "NO_UPSTREAM_GAUGE"
+        "state": "no_rise",
+        "review_status": "verified",
+        "reason": "UPSTREAM_MONITORED",
+        "inventory_version": "inv-20261017"
       }
     },
     {
@@ -278,13 +374,21 @@
         "id": "atx-20",
         "name": "E. William Cannon Master Standpipe",
         "name_es": "E. William Cannon Master Standpipe",
-        "tier": "C",
+        "road": "E. William Cannon Dr",
+        "creek": "Onion Creek",
+        "jurisdiction": "City of Austin",
+        "tier": "A",
+        "target_gauge_id": "USGS-08159000",
+        "overtop_stage_ft": 22.0,
+        "truth_quality": "impact_statement",
+        "truth_source": "NWS NWPS ATIT2 moderate flood approach 22.0 ft (Onion Creek low corridor)",
         "source": "City of Austin Open Data",
         "source_id": "20",
         "source_ref": "data/raw/smoke/city-arcgis.json",
-        "state": "unknown",
-        "review_status": "unreviewed",
-        "reason": "NO_UPSTREAM_GAUGE"
+        "state": "no_rise",
+        "review_status": "verified",
+        "reason": "UPSTREAM_MONITORED",
+        "inventory_version": "inv-20261017"
       }
     },
     {
@@ -300,13 +404,21 @@
         "id": "atx-21",
         "name": "E. William Cannon Slave Arm (E)",
         "name_es": "E. William Cannon Slave Arm (E)",
-        "tier": "C",
+        "road": "E. William Cannon Dr",
+        "creek": "Onion Creek",
+        "jurisdiction": "City of Austin",
+        "tier": "A",
+        "target_gauge_id": "USGS-08159000",
+        "overtop_stage_ft": 27.0,
+        "truth_quality": "impact_statement",
+        "truth_source": "NWS NWPS ATIT2 @ 27.0 ft: 6100 block of East William Cannon Drive flooded",
         "source": "City of Austin Open Data",
         "source_id": "21",
         "source_ref": "data/raw/smoke/city-arcgis.json",
-        "state": "unknown",
-        "review_status": "unreviewed",
-        "reason": "NO_UPSTREAM_GAUGE"
+        "state": "no_rise",
+        "review_status": "verified",
+        "reason": "UPSTREAM_MONITORED",
+        "inventory_version": "inv-20261017"
       }
     },
     {
@@ -322,13 +434,21 @@
         "id": "atx-22",
         "name": "Waters Park Rd Master Standpipe",
         "name_es": "Waters Park Rd Master Standpipe",
-        "tier": "C",
+        "road": "Waters Park Rd",
+        "creek": "Walnut Creek",
+        "jurisdiction": "City of Austin",
+        "tier": "B",
+        "target_gauge_id": null,
+        "overtop_stage_ft": null,
+        "truth_quality": null,
+        "truth_source": null,
         "source": "City of Austin Open Data",
         "source_id": "22",
         "source_ref": "data/raw/smoke/city-arcgis.json",
-        "state": "unknown",
-        "review_status": "unreviewed",
-        "reason": "NO_UPSTREAM_GAUGE"
+        "state": "no_rise",
+        "review_status": "verified",
+        "reason": "UPSTREAM_MONITORED",
+        "inventory_version": "inv-20261017"
       }
     },
     {
@@ -344,13 +464,21 @@
         "id": "atx-3",
         "name": "O'Neal Ln Master Arm",
         "name_es": "O'Neal Ln Master Arm",
-        "tier": "C",
+        "road": "O'Neal Ln",
+        "creek": "Walnut Creek",
+        "jurisdiction": "City of Austin",
+        "tier": "A",
+        "target_gauge_id": "USGS-08158600",
+        "overtop_stage_ft": 20.0,
+        "truth_quality": "gauge",
+        "truth_source": "COA FEWS LWC gate 6300 / USGS-08158600 Walnut Creek overbank road stage 20.0 ft",
         "source": "City of Austin Open Data",
         "source_id": "3",
         "source_ref": "data/raw/smoke/city-arcgis.json",
-        "state": "unknown",
-        "review_status": "unreviewed",
-        "reason": "NO_UPSTREAM_GAUGE"
+        "state": "no_rise",
+        "review_status": "verified",
+        "reason": "UPSTREAM_MONITORED",
+        "inventory_version": "inv-20261017"
       }
     },
     {
@@ -366,13 +494,21 @@
         "id": "atx-4",
         "name": "Spicewood Springs Rd Master Standpipe",
         "name_es": "Spicewood Springs Rd Master Standpipe",
-        "tier": "C",
+        "road": "Spicewood Springs Rd",
+        "creek": "Bull Creek",
+        "jurisdiction": "City of Austin",
+        "tier": "B",
+        "target_gauge_id": null,
+        "overtop_stage_ft": null,
+        "truth_quality": null,
+        "truth_source": null,
         "source": "City of Austin Open Data",
         "source_id": "4",
         "source_ref": "data/raw/smoke/city-arcgis.json",
-        "state": "unknown",
-        "review_status": "unreviewed",
-        "reason": "NO_UPSTREAM_GAUGE"
+        "state": "no_rise",
+        "review_status": "verified",
+        "reason": "UPSTREAM_MONITORED",
+        "inventory_version": "inv-20261017"
       }
     },
     {
@@ -388,13 +524,21 @@
         "id": "atx-5",
         "name": "Spicewood Springs Rd Slave Arm (S)",
         "name_es": "Spicewood Springs Rd Slave Arm (S)",
-        "tier": "C",
+        "road": "Spicewood Springs Rd",
+        "creek": "Bull Creek",
+        "jurisdiction": "City of Austin",
+        "tier": "B",
+        "target_gauge_id": null,
+        "overtop_stage_ft": null,
+        "truth_quality": null,
+        "truth_source": null,
         "source": "City of Austin Open Data",
         "source_id": "5",
         "source_ref": "data/raw/smoke/city-arcgis.json",
-        "state": "unknown",
-        "review_status": "unreviewed",
-        "reason": "NO_UPSTREAM_GAUGE"
+        "state": "no_rise",
+        "review_status": "verified",
+        "reason": "UPSTREAM_MONITORED",
+        "inventory_version": "inv-20261017"
       }
     },
     {
@@ -410,13 +554,21 @@
         "id": "atx-6",
         "name": "Spicewood Springs Rd Slave Arm (N)",
         "name_es": "Spicewood Springs Rd Slave Arm (N)",
-        "tier": "C",
+        "road": "Spicewood Springs Rd",
+        "creek": "Bull Creek",
+        "jurisdiction": "City of Austin",
+        "tier": "B",
+        "target_gauge_id": null,
+        "overtop_stage_ft": null,
+        "truth_quality": null,
+        "truth_source": null,
         "source": "City of Austin Open Data",
         "source_id": "6",
         "source_ref": "data/raw/smoke/city-arcgis.json",
-        "state": "unknown",
-        "review_status": "unreviewed",
-        "reason": "NO_UPSTREAM_GAUGE"
+        "state": "no_rise",
+        "review_status": "verified",
+        "reason": "UPSTREAM_MONITORED",
+        "inventory_version": "inv-20261017"
       }
     },
     {
@@ -432,13 +584,21 @@
         "id": "atx-7",
         "name": "Wasson Rd Master Arm (N)",
         "name_es": "Wasson Rd Master Arm (N)",
-        "tier": "C",
+        "road": "Wasson Rd",
+        "creek": "Williamson Creek",
+        "jurisdiction": "City of Austin",
+        "tier": "A",
+        "target_gauge_id": "USGS-08158970",
+        "overtop_stage_ft": 15.5,
+        "truth_quality": "gauge",
+        "truth_source": "COA FEWS LWC gate 6500 / USGS-08158970 Williamson Creek overbank stage 15.5 ft",
         "source": "City of Austin Open Data",
         "source_id": "7",
         "source_ref": "data/raw/smoke/city-arcgis.json",
-        "state": "unknown",
-        "review_status": "unreviewed",
-        "reason": "NO_UPSTREAM_GAUGE"
+        "state": "no_rise",
+        "review_status": "verified",
+        "reason": "UPSTREAM_MONITORED",
+        "inventory_version": "inv-20261017"
       }
     },
     {
@@ -454,13 +614,21 @@
         "id": "atx-8",
         "name": "Wasson Rd Slave Arm (S)",
         "name_es": "Wasson Rd Slave Arm (S)",
-        "tier": "C",
+        "road": "Wasson Rd",
+        "creek": "Williamson Creek",
+        "jurisdiction": "City of Austin",
+        "tier": "A",
+        "target_gauge_id": "USGS-08158970",
+        "overtop_stage_ft": 16.0,
+        "truth_quality": "gauge",
+        "truth_source": "COA FEWS LWC gate 6510 / USGS-08158970 Williamson Creek overbank stage 16.0 ft",
         "source": "City of Austin Open Data",
         "source_id": "8",
         "source_ref": "data/raw/smoke/city-arcgis.json",
-        "state": "unknown",
-        "review_status": "unreviewed",
-        "reason": "NO_UPSTREAM_GAUGE"
+        "state": "no_rise",
+        "review_status": "verified",
+        "reason": "UPSTREAM_MONITORED",
+        "inventory_version": "inv-20261017"
       }
     },
     {
@@ -476,13 +644,21 @@
         "id": "atx-9",
         "name": "Old Spicewood Springs Rd Master Standpipe",
         "name_es": "Old Spicewood Springs Rd Master Standpipe",
-        "tier": "C",
+        "road": "Old Spicewood Springs Rd",
+        "creek": "Bull Creek",
+        "jurisdiction": "City of Austin",
+        "tier": "B",
+        "target_gauge_id": null,
+        "overtop_stage_ft": null,
+        "truth_quality": null,
+        "truth_source": null,
         "source": "City of Austin Open Data",
         "source_id": "9",
         "source_ref": "data/raw/smoke/city-arcgis.json",
-        "state": "unknown",
-        "review_status": "unreviewed",
-        "reason": "NO_UPSTREAM_GAUGE"
+        "state": "no_rise",
+        "review_status": "verified",
+        "reason": "UPSTREAM_MONITORED",
+        "inventory_version": "inv-20261017"
       }
     },
     {
@@ -498,13 +674,21 @@
         "id": "tc-1",
         "name": "Albert Voelker Rd - 17600",
         "name_es": "Albert Voelker Rd - 17600",
+        "road": "Albert Voelker Rd - 17600",
+        "creek": null,
+        "jurisdiction": "Travis County",
         "tier": "C",
+        "target_gauge_id": null,
+        "overtop_stage_ft": null,
+        "truth_quality": null,
+        "truth_source": null,
         "source": "Travis County Public Works",
         "source_id": "1",
         "source_ref": "data/raw/smoke/travis-arcgis.json",
         "state": "unknown",
         "review_status": "unreviewed",
-        "reason": "NO_UPSTREAM_GAUGE"
+        "reason": "NO_UPSTREAM_GAUGE",
+        "inventory_version": "inv-20261017"
       }
     },
     {
@@ -520,13 +704,21 @@
         "id": "tc-10",
         "name": "Blue Bluff Rd",
         "name_es": "Blue Bluff Rd",
+        "road": "Blue Bluff Rd",
+        "creek": null,
+        "jurisdiction": "Travis County",
         "tier": "C",
+        "target_gauge_id": null,
+        "overtop_stage_ft": null,
+        "truth_quality": null,
+        "truth_source": null,
         "source": "Travis County Public Works",
         "source_id": "10",
         "source_ref": "data/raw/smoke/travis-arcgis.json",
         "state": "unknown",
         "review_status": "unreviewed",
-        "reason": "NO_UPSTREAM_GAUGE"
+        "reason": "NO_UPSTREAM_GAUGE",
+        "inventory_version": "inv-20261017"
       }
     },
     {
@@ -542,13 +734,21 @@
         "id": "tc-100",
         "name": "Nameless Rd",
         "name_es": "Nameless Rd",
+        "road": "Nameless Rd",
+        "creek": null,
+        "jurisdiction": "Travis County",
         "tier": "C",
+        "target_gauge_id": null,
+        "overtop_stage_ft": null,
+        "truth_quality": null,
+        "truth_source": null,
         "source": "Travis County Public Works",
         "source_id": "100",
         "source_ref": "data/raw/smoke/travis-arcgis.json",
         "state": "unknown",
         "review_status": "unreviewed",
-        "reason": "NO_UPSTREAM_GAUGE"
+        "reason": "NO_UPSTREAM_GAUGE",
+        "inventory_version": "inv-20261017"
       }
     },
     {
@@ -564,13 +764,21 @@
         "id": "tc-101",
         "name": "Nameless Rd",
         "name_es": "Nameless Rd",
+        "road": "Nameless Rd",
+        "creek": null,
+        "jurisdiction": "Travis County",
         "tier": "C",
+        "target_gauge_id": null,
+        "overtop_stage_ft": null,
+        "truth_quality": null,
+        "truth_source": null,
         "source": "Travis County Public Works",
         "source_id": "101",
         "source_ref": "data/raw/smoke/travis-arcgis.json",
         "state": "unknown",
         "review_status": "unreviewed",
-        "reason": "NO_UPSTREAM_GAUGE"
+        "reason": "NO_UPSTREAM_GAUGE",
+        "inventory_version": "inv-20261017"
       }
     },
     {
@@ -586,13 +794,21 @@
         "id": "tc-102",
         "name": "Nameless Rd",
         "name_es": "Nameless Rd",
+        "road": "Nameless Rd",
+        "creek": null,
+        "jurisdiction": "Travis County",
         "tier": "C",
+        "target_gauge_id": null,
+        "overtop_stage_ft": null,
+        "truth_quality": null,
+        "truth_source": null,
         "source": "Travis County Public Works",
         "source_id": "102",
         "source_ref": "data/raw/smoke/travis-arcgis.json",
         "state": "unknown",
         "review_status": "unreviewed",
-        "reason": "NO_UPSTREAM_GAUGE"
+        "reason": "NO_UPSTREAM_GAUGE",
+        "inventory_version": "inv-20261017"
       }
     },
     {
@@ -608,13 +824,21 @@
         "id": "tc-103",
         "name": "Nameless Rd",
         "name_es": "Nameless Rd",
+        "road": "Nameless Rd",
+        "creek": null,
+        "jurisdiction": "Travis County",
         "tier": "C",
+        "target_gauge_id": null,
+        "overtop_stage_ft": null,
+        "truth_quality": null,
+        "truth_source": null,
         "source": "Travis County Public Works",
         "source_id": "103",
         "source_ref": "data/raw/smoke/travis-arcgis.json",
         "state": "unknown",
         "review_status": "unreviewed",
-        "reason": "NO_UPSTREAM_GAUGE"
+        "reason": "NO_UPSTREAM_GAUGE",
+        "inventory_version": "inv-20261017"
       }
     },
     {
@@ -630,13 +854,21 @@
         "id": "tc-104",
         "name": "Nameless Rd (0.2 mi N of Shady Mtn Rd)",
         "name_es": "Nameless Rd (0.2 mi N of Shady Mtn Rd)",
+        "road": "Nameless Rd (0.2 mi N of Shady Mtn Rd)",
+        "creek": null,
+        "jurisdiction": "Travis County",
         "tier": "C",
+        "target_gauge_id": null,
+        "overtop_stage_ft": null,
+        "truth_quality": null,
+        "truth_source": null,
         "source": "Travis County Public Works",
         "source_id": "104",
         "source_ref": "data/raw/smoke/travis-arcgis.json",
         "state": "unknown",
         "review_status": "unreviewed",
-        "reason": "NO_UPSTREAM_GAUGE"
+        "reason": "NO_UPSTREAM_GAUGE",
+        "inventory_version": "inv-20261017"
       }
     },
     {
@@ -652,13 +884,21 @@
         "id": "tc-105",
         "name": "Nameless Rd (0.3 mi N of Nameless Ranch Rd)",
         "name_es": "Nameless Rd (0.3 mi N of Nameless Ranch Rd)",
+        "road": "Nameless Rd (0.3 mi N of Nameless Ranch Rd)",
+        "creek": null,
+        "jurisdiction": "Travis County",
         "tier": "C",
+        "target_gauge_id": null,
+        "overtop_stage_ft": null,
+        "truth_quality": null,
+        "truth_source": null,
         "source": "Travis County Public Works",
         "source_id": "105",
         "source_ref": "data/raw/smoke/travis-arcgis.json",
         "state": "unknown",
         "review_status": "unreviewed",
-        "reason": "NO_UPSTREAM_GAUGE"
+        "reason": "NO_UPSTREAM_GAUGE",
+        "inventory_version": "inv-20261017"
       }
     },
     {
@@ -674,13 +914,21 @@
         "id": "tc-106",
         "name": "Nameless Rd (0.7 mi N of Shady Mtn Rd)",
         "name_es": "Nameless Rd (0.7 mi N of Shady Mtn Rd)",
+        "road": "Nameless Rd (0.7 mi N of Shady Mtn Rd)",
+        "creek": null,
+        "jurisdiction": "Travis County",
         "tier": "C",
+        "target_gauge_id": null,
+        "overtop_stage_ft": null,
+        "truth_quality": null,
+        "truth_source": null,
         "source": "Travis County Public Works",
         "source_id": "106",
         "source_ref": "data/raw/smoke/travis-arcgis.json",
         "state": "unknown",
         "review_status": "unreviewed",
-        "reason": "NO_UPSTREAM_GAUGE"
+        "reason": "NO_UPSTREAM_GAUGE",
+        "inventory_version": "inv-20261017"
       }
     },
     {
@@ -696,13 +944,21 @@
         "id": "tc-108",
         "name": "Nameless Rd @ Nameless Hollow Creek (dip in road, no structure) (EB lane TC, WB lane Leander)",
         "name_es": "Nameless Rd @ Nameless Hollow Creek (dip in road, no structure) (EB lane TC, WB lane Leander)",
+        "road": "Nameless Rd",
+        "creek": "Nameless Hollow Creek (dip in road, no structure) (EB lane TC, WB lane Leander)",
+        "jurisdiction": "Travis County",
         "tier": "C",
+        "target_gauge_id": null,
+        "overtop_stage_ft": null,
+        "truth_quality": null,
+        "truth_source": null,
         "source": "Travis County Public Works",
         "source_id": "108",
         "source_ref": "data/raw/smoke/travis-arcgis.json",
         "state": "unknown",
         "review_status": "unreviewed",
-        "reason": "NO_UPSTREAM_GAUGE"
+        "reason": "NO_UPSTREAM_GAUGE",
+        "inventory_version": "inv-20261017"
       }
     },
     {
@@ -718,13 +974,21 @@
         "id": "tc-109",
         "name": "Nameless Rd @ trib to Big Sandy (0.5 mi N of Honeycomb Ln)",
         "name_es": "Nameless Rd @ trib to Big Sandy (0.5 mi N of Honeycomb Ln)",
+        "road": "Nameless Rd",
+        "creek": "trib to Big Sandy (0.5 mi N of Honeycomb Ln)",
+        "jurisdiction": "Travis County",
         "tier": "C",
+        "target_gauge_id": null,
+        "overtop_stage_ft": null,
+        "truth_quality": null,
+        "truth_source": null,
         "source": "Travis County Public Works",
         "source_id": "109",
         "source_ref": "data/raw/smoke/travis-arcgis.json",
         "state": "unknown",
         "review_status": "unreviewed",
-        "reason": "NO_UPSTREAM_GAUGE"
+        "reason": "NO_UPSTREAM_GAUGE",
+        "inventory_version": "inv-20261017"
       }
     },
     {
@@ -740,13 +1004,21 @@
         "id": "tc-110",
         "name": "Nameless Rd @ trib to Big Sandy (0.8 mi N of Shady Mtn Rd)",
         "name_es": "Nameless Rd @ trib to Big Sandy (0.8 mi N of Shady Mtn Rd)",
+        "road": "Nameless Rd",
+        "creek": "trib to Big Sandy (0.8 mi N of Shady Mtn Rd)",
+        "jurisdiction": "Travis County",
         "tier": "C",
+        "target_gauge_id": null,
+        "overtop_stage_ft": null,
+        "truth_quality": null,
+        "truth_source": null,
         "source": "Travis County Public Works",
         "source_id": "110",
         "source_ref": "data/raw/smoke/travis-arcgis.json",
         "state": "unknown",
         "review_status": "unreviewed",
-        "reason": "NO_UPSTREAM_GAUGE"
+        "reason": "NO_UPSTREAM_GAUGE",
+        "inventory_version": "inv-20261017"
       }
     },
     {
@@ -762,13 +1034,21 @@
         "id": "tc-111",
         "name": "Navarro Creek Rd @ Navarro Creek (Location 1)",
         "name_es": "Navarro Creek Rd @ Navarro Creek (Location 1)",
+        "road": "Navarro Creek Rd",
+        "creek": "Navarro Creek (Location 1)",
+        "jurisdiction": "Travis County",
         "tier": "C",
+        "target_gauge_id": null,
+        "overtop_stage_ft": null,
+        "truth_quality": null,
+        "truth_source": null,
         "source": "Travis County Public Works",
         "source_id": "111",
         "source_ref": "data/raw/smoke/travis-arcgis.json",
         "state": "unknown",
         "review_status": "unreviewed",
-        "reason": "NO_UPSTREAM_GAUGE"
+        "reason": "NO_UPSTREAM_GAUGE",
+        "inventory_version": "inv-20261017"
       }
     },
     {
@@ -784,13 +1064,21 @@
         "id": "tc-112",
         "name": "Navarro Creek Rd @ Navarro Creek (Location 2)",
         "name_es": "Navarro Creek Rd @ Navarro Creek (Location 2)",
+        "road": "Navarro Creek Rd",
+        "creek": "Navarro Creek (Location 2)",
+        "jurisdiction": "Travis County",
         "tier": "C",
+        "target_gauge_id": null,
+        "overtop_stage_ft": null,
+        "truth_quality": null,
+        "truth_source": null,
         "source": "Travis County Public Works",
         "source_id": "112",
         "source_ref": "data/raw/smoke/travis-arcgis.json",
         "state": "unknown",
         "review_status": "unreviewed",
-        "reason": "NO_UPSTREAM_GAUGE"
+        "reason": "NO_UPSTREAM_GAUGE",
+        "inventory_version": "inv-20261017"
       }
     },
     {
@@ -806,13 +1094,21 @@
         "id": "tc-114",
         "name": "Nez Perce @ trib to Decker Ck",
         "name_es": "Nez Perce @ trib to Decker Ck",
+        "road": "Nez Perce",
+        "creek": "trib to Decker Ck",
+        "jurisdiction": "Travis County",
         "tier": "C",
+        "target_gauge_id": null,
+        "overtop_stage_ft": null,
+        "truth_quality": null,
+        "truth_source": null,
         "source": "Travis County Public Works",
         "source_id": "114",
         "source_ref": "data/raw/smoke/travis-arcgis.json",
         "state": "unknown",
         "review_status": "unreviewed",
-        "reason": "NO_UPSTREAM_GAUGE"
+        "reason": "NO_UPSTREAM_GAUGE",
+        "inventory_version": "inv-20261017"
       }
     },
     {
@@ -828,13 +1124,21 @@
         "id": "tc-116",
         "name": "Old Lockhart Rd (6400 block)",
         "name_es": "Old Lockhart Rd (6400 block)",
+        "road": "Old Lockhart Rd (6400 block)",
+        "creek": null,
+        "jurisdiction": "Travis County",
         "tier": "C",
+        "target_gauge_id": null,
+        "overtop_stage_ft": null,
+        "truth_quality": null,
+        "truth_source": null,
         "source": "Travis County Public Works",
         "source_id": "116",
         "source_ref": "data/raw/smoke/travis-arcgis.json",
         "state": "unknown",
         "review_status": "unreviewed",
-        "reason": "NO_UPSTREAM_GAUGE"
+        "reason": "NO_UPSTREAM_GAUGE",
+        "inventory_version": "inv-20261017"
       }
     },
     {
@@ -850,13 +1154,21 @@
         "id": "tc-117",
         "name": "Old Lockhart Rd (8200 block)",
         "name_es": "Old Lockhart Rd (8200 block)",
+        "road": "Old Lockhart Rd (8200 block)",
+        "creek": null,
+        "jurisdiction": "Travis County",
         "tier": "C",
+        "target_gauge_id": null,
+        "overtop_stage_ft": null,
+        "truth_quality": null,
+        "truth_source": null,
         "source": "Travis County Public Works",
         "source_id": "117",
         "source_ref": "data/raw/smoke/travis-arcgis.json",
         "state": "unknown",
         "review_status": "unreviewed",
-        "reason": "NO_UPSTREAM_GAUGE"
+        "reason": "NO_UPSTREAM_GAUGE",
+        "inventory_version": "inv-20261017"
       }
     },
     {
@@ -872,13 +1184,21 @@
         "id": "tc-120",
         "name": "Peterson Rd @ Tributary to Maha Creek",
         "name_es": "Peterson Rd @ Tributary to Maha Creek",
+        "road": "Peterson Rd",
+        "creek": "Tributary to Maha Creek",
+        "jurisdiction": "Travis County",
         "tier": "C",
+        "target_gauge_id": null,
+        "overtop_stage_ft": null,
+        "truth_quality": null,
+        "truth_source": null,
         "source": "Travis County Public Works",
         "source_id": "120",
         "source_ref": "data/raw/smoke/travis-arcgis.json",
         "state": "unknown",
         "review_status": "unreviewed",
-        "reason": "NO_UPSTREAM_GAUGE"
+        "reason": "NO_UPSTREAM_GAUGE",
+        "inventory_version": "inv-20261017"
       }
     },
     {
@@ -894,13 +1214,21 @@
         "id": "tc-121",
         "name": "Pitter Pat Ln @ Williamson Creek",
         "name_es": "Pitter Pat Ln @ Williamson Creek",
-        "tier": "C",
+        "road": "Pitter Pat Ln",
+        "creek": "Williamson Creek",
+        "jurisdiction": "Travis County",
+        "tier": "B",
+        "target_gauge_id": null,
+        "overtop_stage_ft": null,
+        "truth_quality": null,
+        "truth_source": null,
         "source": "Travis County Public Works",
         "source_id": "121",
         "source_ref": "data/raw/smoke/travis-arcgis.json",
-        "state": "unknown",
-        "review_status": "unreviewed",
-        "reason": "NO_UPSTREAM_GAUGE"
+        "state": "no_rise",
+        "review_status": "verified",
+        "reason": "UPSTREAM_MONITORED",
+        "inventory_version": "inv-20261017"
       }
     },
     {
@@ -916,13 +1244,21 @@
         "id": "tc-122",
         "name": "Plover Place",
         "name_es": "Plover Place",
+        "road": "Plover Place",
+        "creek": null,
+        "jurisdiction": "Travis County",
         "tier": "C",
+        "target_gauge_id": null,
+        "overtop_stage_ft": null,
+        "truth_quality": null,
+        "truth_source": null,
         "source": "Travis County Public Works",
         "source_id": "122",
         "source_ref": "data/raw/smoke/travis-arcgis.json",
         "state": "unknown",
         "review_status": "unreviewed",
-        "reason": "NO_UPSTREAM_GAUGE"
+        "reason": "NO_UPSTREAM_GAUGE",
+        "inventory_version": "inv-20261017"
       }
     },
     {
@@ -938,13 +1274,21 @@
         "id": "tc-123",
         "name": "Pool Canyon Rd",
         "name_es": "Pool Canyon Rd",
+        "road": "Pool Canyon Rd",
+        "creek": null,
+        "jurisdiction": "Travis County",
         "tier": "C",
+        "target_gauge_id": null,
+        "overtop_stage_ft": null,
+        "truth_quality": null,
+        "truth_source": null,
         "source": "Travis County Public Works",
         "source_id": "123",
         "source_ref": "data/raw/smoke/travis-arcgis.json",
         "state": "unknown",
         "review_status": "unreviewed",
-        "reason": "NO_UPSTREAM_GAUGE"
+        "reason": "NO_UPSTREAM_GAUGE",
+        "inventory_version": "inv-20261017"
       }
     },
     {
@@ -960,13 +1304,21 @@
         "id": "tc-124",
         "name": "Ralph Ritchie",
         "name_es": "Ralph Ritchie",
+        "road": "Ralph Ritchie",
+        "creek": null,
+        "jurisdiction": "Travis County",
         "tier": "C",
+        "target_gauge_id": null,
+        "overtop_stage_ft": null,
+        "truth_quality": null,
+        "truth_source": null,
         "source": "Travis County Public Works",
         "source_id": "124",
         "source_ref": "data/raw/smoke/travis-arcgis.json",
         "state": "unknown",
         "review_status": "unreviewed",
-        "reason": "NO_UPSTREAM_GAUGE"
+        "reason": "NO_UPSTREAM_GAUGE",
+        "inventory_version": "inv-20261017"
       }
     },
     {
@@ -982,13 +1334,21 @@
         "id": "tc-125",
         "name": "River Hills Rd @ 2326, LWC #60",
         "name_es": "River Hills Rd @ 2326, LWC #60",
+        "road": "River Hills Rd",
+        "creek": "2326, LWC #60",
+        "jurisdiction": "Travis County",
         "tier": "C",
+        "target_gauge_id": null,
+        "overtop_stage_ft": null,
+        "truth_quality": null,
+        "truth_source": null,
         "source": "Travis County Public Works",
         "source_id": "125",
         "source_ref": "data/raw/smoke/travis-arcgis.json",
         "state": "unknown",
         "review_status": "unreviewed",
-        "reason": "NO_UPSTREAM_GAUGE"
+        "reason": "NO_UPSTREAM_GAUGE",
+        "inventory_version": "inv-20261017"
       }
     },
     {
@@ -1004,13 +1364,21 @@
         "id": "tc-126",
         "name": "RO Drive @ Bee Creek Rd",
         "name_es": "RO Drive @ Bee Creek Rd",
+        "road": "RO Drive",
+        "creek": "Bee Creek Rd",
+        "jurisdiction": "Travis County",
         "tier": "C",
+        "target_gauge_id": null,
+        "overtop_stage_ft": null,
+        "truth_quality": null,
+        "truth_source": null,
         "source": "Travis County Public Works",
         "source_id": "126",
         "source_ref": "data/raw/smoke/travis-arcgis.json",
         "state": "unknown",
         "review_status": "unreviewed",
-        "reason": "NO_UPSTREAM_GAUGE"
+        "reason": "NO_UPSTREAM_GAUGE",
+        "inventory_version": "inv-20261017"
       }
     },
     {
@@ -1026,13 +1394,21 @@
         "id": "tc-127",
         "name": "Rodriguez Rd @ Dry Creek",
         "name_es": "Rodriguez Rd @ Dry Creek",
+        "road": "Rodriguez Rd",
+        "creek": "Dry Creek",
+        "jurisdiction": "Travis County",
         "tier": "C",
+        "target_gauge_id": null,
+        "overtop_stage_ft": null,
+        "truth_quality": null,
+        "truth_source": null,
         "source": "Travis County Public Works",
         "source_id": "127",
         "source_ref": "data/raw/smoke/travis-arcgis.json",
         "state": "unknown",
         "review_status": "unreviewed",
-        "reason": "NO_UPSTREAM_GAUGE"
+        "reason": "NO_UPSTREAM_GAUGE",
+        "inventory_version": "inv-20261017"
       }
     },
     {
@@ -1048,13 +1424,21 @@
         "id": "tc-128",
         "name": "Ross Rd @ 7100 block (between Foley and Paloma Blanca)",
         "name_es": "Ross Rd @ 7100 block (between Foley and Paloma Blanca)",
-        "tier": "C",
+        "road": "Ross Rd",
+        "creek": "Onion Creek",
+        "jurisdiction": "Travis County",
+        "tier": "B",
+        "target_gauge_id": null,
+        "overtop_stage_ft": null,
+        "truth_quality": null,
+        "truth_source": null,
         "source": "Travis County Public Works",
         "source_id": "128",
         "source_ref": "data/raw/smoke/travis-arcgis.json",
-        "state": "unknown",
-        "review_status": "unreviewed",
-        "reason": "NO_UPSTREAM_GAUGE"
+        "state": "no_rise",
+        "review_status": "verified",
+        "reason": "UPSTREAM_MONITORED",
+        "inventory_version": "inv-20261017"
       }
     },
     {
@@ -1070,13 +1454,21 @@
         "id": "tc-131",
         "name": "Schriber Rd about 1200 ft south of Maha",
         "name_es": "Schriber Rd about 1200 ft south of Maha",
+        "road": "Schriber Rd about 1200 ft south of Maha",
+        "creek": null,
+        "jurisdiction": "Travis County",
         "tier": "C",
+        "target_gauge_id": null,
+        "overtop_stage_ft": null,
+        "truth_quality": null,
+        "truth_source": null,
         "source": "Travis County Public Works",
         "source_id": "131",
         "source_ref": "data/raw/smoke/travis-arcgis.json",
         "state": "unknown",
         "review_status": "unreviewed",
-        "reason": "NO_UPSTREAM_GAUGE"
+        "reason": "NO_UPSTREAM_GAUGE",
+        "inventory_version": "inv-20261017"
       }
     },
     {
@@ -1092,13 +1484,21 @@
         "id": "tc-133",
         "name": "Slaughter Cr Dr @ Trib to Slaughter Cr",
         "name_es": "Slaughter Cr Dr @ Trib to Slaughter Cr",
-        "tier": "C",
+        "road": "Slaughter Creek Dr",
+        "creek": "Slaughter Creek",
+        "jurisdiction": "Travis County",
+        "tier": "A",
+        "target_gauge_id": "USGS-08158860",
+        "overtop_stage_ft": 9.0,
+        "truth_quality": "impact_statement",
+        "truth_source": "NWS NWPS SCAT2/SLHT2 @ 9.0 ft: Moderate lowland flooding covers Slaughter Creek crossing",
         "source": "Travis County Public Works",
         "source_id": "133",
         "source_ref": "data/raw/smoke/travis-arcgis.json",
-        "state": "unknown",
-        "review_status": "unreviewed",
-        "reason": "NO_UPSTREAM_GAUGE"
+        "state": "no_rise",
+        "review_status": "verified",
+        "reason": "UPSTREAM_MONITORED",
+        "inventory_version": "inv-20261017"
       }
     },
     {
@@ -1114,13 +1514,21 @@
         "id": "tc-134",
         "name": "Spicewood Springs Rd @ Bull Creek -- Crossing 2",
         "name_es": "Spicewood Springs Rd @ Bull Creek -- Crossing 2",
+        "road": "Spicewood Springs Rd",
+        "creek": "Bull Creek -- Crossing 2",
+        "jurisdiction": "Travis County",
         "tier": "C",
+        "target_gauge_id": null,
+        "overtop_stage_ft": null,
+        "truth_quality": null,
+        "truth_source": null,
         "source": "Travis County Public Works",
         "source_id": "134",
         "source_ref": "data/raw/smoke/travis-arcgis.json",
         "state": "unknown",
         "review_status": "unreviewed",
-        "reason": "NO_UPSTREAM_GAUGE"
+        "reason": "NO_UPSTREAM_GAUGE",
+        "inventory_version": "inv-20261017"
       }
     },
     {
@@ -1136,13 +1544,21 @@
         "id": "tc-135",
         "name": "Spicewood Springs Rd @ Bull Creek -- Crossing 3",
         "name_es": "Spicewood Springs Rd @ Bull Creek -- Crossing 3",
+        "road": "Spicewood Springs Rd",
+        "creek": "Bull Creek -- Crossing 3",
+        "jurisdiction": "Travis County",
         "tier": "C",
+        "target_gauge_id": null,
+        "overtop_stage_ft": null,
+        "truth_quality": null,
+        "truth_source": null,
         "source": "Travis County Public Works",
         "source_id": "135",
         "source_ref": "data/raw/smoke/travis-arcgis.json",
         "state": "unknown",
         "review_status": "unreviewed",
-        "reason": "NO_UPSTREAM_GAUGE"
+        "reason": "NO_UPSTREAM_GAUGE",
+        "inventory_version": "inv-20261017"
       }
     },
     {
@@ -1158,13 +1574,21 @@
         "id": "tc-136",
         "name": "Spicewood Springs Rd @ Bull Creek -- Crossing 4",
         "name_es": "Spicewood Springs Rd @ Bull Creek -- Crossing 4",
+        "road": "Spicewood Springs Rd",
+        "creek": "Bull Creek -- Crossing 4",
+        "jurisdiction": "Travis County",
         "tier": "C",
+        "target_gauge_id": null,
+        "overtop_stage_ft": null,
+        "truth_quality": null,
+        "truth_source": null,
         "source": "Travis County Public Works",
         "source_id": "136",
         "source_ref": "data/raw/smoke/travis-arcgis.json",
         "state": "unknown",
         "review_status": "unreviewed",
-        "reason": "NO_UPSTREAM_GAUGE"
+        "reason": "NO_UPSTREAM_GAUGE",
+        "inventory_version": "inv-20261017"
       }
     },
     {
@@ -1180,13 +1604,21 @@
         "id": "tc-137",
         "name": "Spicewood Springs Rd @ Bull Creek -- Crossing 5",
         "name_es": "Spicewood Springs Rd @ Bull Creek -- Crossing 5",
+        "road": "Spicewood Springs Rd",
+        "creek": "Bull Creek -- Crossing 5",
+        "jurisdiction": "Travis County",
         "tier": "C",
+        "target_gauge_id": null,
+        "overtop_stage_ft": null,
+        "truth_quality": null,
+        "truth_source": null,
         "source": "Travis County Public Works",
         "source_id": "137",
         "source_ref": "data/raw/smoke/travis-arcgis.json",
         "state": "unknown",
         "review_status": "unreviewed",
-        "reason": "NO_UPSTREAM_GAUGE"
+        "reason": "NO_UPSTREAM_GAUGE",
+        "inventory_version": "inv-20261017"
       }
     },
     {
@@ -1202,13 +1634,21 @@
         "id": "tc-138",
         "name": "Spicewood Springs Rd @ Bull Creek -- Crossing 6",
         "name_es": "Spicewood Springs Rd @ Bull Creek -- Crossing 6",
+        "road": "Spicewood Springs Rd",
+        "creek": "Bull Creek -- Crossing 6",
+        "jurisdiction": "Travis County",
         "tier": "C",
+        "target_gauge_id": null,
+        "overtop_stage_ft": null,
+        "truth_quality": null,
+        "truth_source": null,
         "source": "Travis County Public Works",
         "source_id": "138",
         "source_ref": "data/raw/smoke/travis-arcgis.json",
         "state": "unknown",
         "review_status": "unreviewed",
-        "reason": "NO_UPSTREAM_GAUGE"
+        "reason": "NO_UPSTREAM_GAUGE",
+        "inventory_version": "inv-20261017"
       }
     },
     {
@@ -1224,13 +1664,21 @@
         "id": "tc-139",
         "name": "Spicewood Springs Rd @ Bull Creek -- Crossing 7",
         "name_es": "Spicewood Springs Rd @ Bull Creek -- Crossing 7",
+        "road": "Spicewood Springs Rd",
+        "creek": "Bull Creek -- Crossing 7",
+        "jurisdiction": "Travis County",
         "tier": "C",
+        "target_gauge_id": null,
+        "overtop_stage_ft": null,
+        "truth_quality": null,
+        "truth_source": null,
         "source": "Travis County Public Works",
         "source_id": "139",
         "source_ref": "data/raw/smoke/travis-arcgis.json",
         "state": "unknown",
         "review_status": "unreviewed",
-        "reason": "NO_UPSTREAM_GAUGE"
+        "reason": "NO_UPSTREAM_GAUGE",
+        "inventory_version": "inv-20261017"
       }
     },
     {
@@ -1246,13 +1694,21 @@
         "id": "tc-140",
         "name": "Springdale Rd @ Ferguson Branch (Creek)",
         "name_es": "Springdale Rd @ Ferguson Branch (Creek)",
+        "road": "Springdale Rd",
+        "creek": "Ferguson Branch (Creek)",
+        "jurisdiction": "Travis County",
         "tier": "C",
+        "target_gauge_id": null,
+        "overtop_stage_ft": null,
+        "truth_quality": null,
+        "truth_source": null,
         "source": "Travis County Public Works",
         "source_id": "140",
         "source_ref": "data/raw/smoke/travis-arcgis.json",
         "state": "unknown",
         "review_status": "unreviewed",
-        "reason": "NO_UPSTREAM_GAUGE"
+        "reason": "NO_UPSTREAM_GAUGE",
+        "inventory_version": "inv-20261017"
       }
     },
     {
@@ -1268,13 +1724,21 @@
         "id": "tc-142",
         "name": "Steiner Ranch Blvd @ 5400 block",
         "name_es": "Steiner Ranch Blvd @ 5400 block",
+        "road": "Steiner Ranch Blvd",
+        "creek": "5400 block",
+        "jurisdiction": "Travis County",
         "tier": "C",
+        "target_gauge_id": null,
+        "overtop_stage_ft": null,
+        "truth_quality": null,
+        "truth_source": null,
         "source": "Travis County Public Works",
         "source_id": "142",
         "source_ref": "data/raw/smoke/travis-arcgis.json",
         "state": "unknown",
         "review_status": "unreviewed",
-        "reason": "NO_UPSTREAM_GAUGE"
+        "reason": "NO_UPSTREAM_GAUGE",
+        "inventory_version": "inv-20261017"
       }
     },
     {
@@ -1290,13 +1754,21 @@
         "id": "tc-145",
         "name": "Turnersville Road @ Maha Creek and intersection with Wright Rd",
         "name_es": "Turnersville Road @ Maha Creek and intersection with Wright Rd",
+        "road": "Turnersville Road",
+        "creek": "Maha Creek and intersection with Wright Rd",
+        "jurisdiction": "Travis County",
         "tier": "C",
+        "target_gauge_id": null,
+        "overtop_stage_ft": null,
+        "truth_quality": null,
+        "truth_source": null,
         "source": "Travis County Public Works",
         "source_id": "145",
         "source_ref": "data/raw/smoke/travis-arcgis.json",
         "state": "unknown",
         "review_status": "unreviewed",
-        "reason": "NO_UPSTREAM_GAUGE"
+        "reason": "NO_UPSTREAM_GAUGE",
+        "inventory_version": "inv-20261017"
       }
     },
     {
@@ -1312,13 +1784,21 @@
         "id": "tc-148",
         "name": "Von Quintus Rd @ Maha Loop Rd",
         "name_es": "Von Quintus Rd @ Maha Loop Rd",
+        "road": "Von Quintus Rd",
+        "creek": "Maha Loop Rd",
+        "jurisdiction": "Travis County",
         "tier": "C",
+        "target_gauge_id": null,
+        "overtop_stage_ft": null,
+        "truth_quality": null,
+        "truth_source": null,
         "source": "Travis County Public Works",
         "source_id": "148",
         "source_ref": "data/raw/smoke/travis-arcgis.json",
         "state": "unknown",
         "review_status": "unreviewed",
-        "reason": "NO_UPSTREAM_GAUGE"
+        "reason": "NO_UPSTREAM_GAUGE",
+        "inventory_version": "inv-20261017"
       }
     },
     {
@@ -1334,13 +1814,21 @@
         "id": "tc-149",
         "name": "Von Quintus Rd @ Sunflower (between Sunflower and Blocker)",
         "name_es": "Von Quintus Rd @ Sunflower (between Sunflower and Blocker)",
+        "road": "Von Quintus Rd",
+        "creek": "Sunflower (between Sunflower and Blocker)",
+        "jurisdiction": "Travis County",
         "tier": "C",
+        "target_gauge_id": null,
+        "overtop_stage_ft": null,
+        "truth_quality": null,
+        "truth_source": null,
         "source": "Travis County Public Works",
         "source_id": "149",
         "source_ref": "data/raw/smoke/travis-arcgis.json",
         "state": "unknown",
         "review_status": "unreviewed",
-        "reason": "NO_UPSTREAM_GAUGE"
+        "reason": "NO_UPSTREAM_GAUGE",
+        "inventory_version": "inv-20261017"
       }
     },
     {
@@ -1356,13 +1844,21 @@
         "id": "tc-150",
         "name": "Von Quintus Rd @ Sunflower (between Sunflower and Tiffany)",
         "name_es": "Von Quintus Rd @ Sunflower (between Sunflower and Tiffany)",
+        "road": "Von Quintus Rd",
+        "creek": "Sunflower (between Sunflower and Tiffany)",
+        "jurisdiction": "Travis County",
         "tier": "C",
+        "target_gauge_id": null,
+        "overtop_stage_ft": null,
+        "truth_quality": null,
+        "truth_source": null,
         "source": "Travis County Public Works",
         "source_id": "150",
         "source_ref": "data/raw/smoke/travis-arcgis.json",
         "state": "unknown",
         "review_status": "unreviewed",
-        "reason": "NO_UPSTREAM_GAUGE"
+        "reason": "NO_UPSTREAM_GAUGE",
+        "inventory_version": "inv-20261017"
       }
     },
     {
@@ -1378,13 +1874,21 @@
         "id": "tc-151",
         "name": "Weir Loop Circle @ Devil’s Pen Creek -- location 2 of 2",
         "name_es": "Weir Loop Circle @ Devil’s Pen Creek -- location 2 of 2",
+        "road": "Weir Loop Circle",
+        "creek": "Devil’s Pen Creek -- location 2 of 2",
+        "jurisdiction": "Travis County",
         "tier": "C",
+        "target_gauge_id": null,
+        "overtop_stage_ft": null,
+        "truth_quality": null,
+        "truth_source": null,
         "source": "Travis County Public Works",
         "source_id": "151",
         "source_ref": "data/raw/smoke/travis-arcgis.json",
         "state": "unknown",
         "review_status": "unreviewed",
-        "reason": "NO_UPSTREAM_GAUGE"
+        "reason": "NO_UPSTREAM_GAUGE",
+        "inventory_version": "inv-20261017"
       }
     },
     {
@@ -1400,13 +1904,21 @@
         "id": "tc-152",
         "name": "Weir Loop Circle @ Devil's Pen Creek -- location 1 of 2",
         "name_es": "Weir Loop Circle @ Devil's Pen Creek -- location 1 of 2",
+        "road": "Weir Loop Circle",
+        "creek": "Devil's Pen Creek -- location 1 of 2",
+        "jurisdiction": "Travis County",
         "tier": "C",
+        "target_gauge_id": null,
+        "overtop_stage_ft": null,
+        "truth_quality": null,
+        "truth_source": null,
         "source": "Travis County Public Works",
         "source_id": "152",
         "source_ref": "data/raw/smoke/travis-arcgis.json",
         "state": "unknown",
         "review_status": "unreviewed",
-        "reason": "NO_UPSTREAM_GAUGE"
+        "reason": "NO_UPSTREAM_GAUGE",
+        "inventory_version": "inv-20261017"
       }
     },
     {
@@ -1422,13 +1934,21 @@
         "id": "tc-154",
         "name": "Westlake Dr @ unamed Lk Austin Trib (between Woodcutters Way and Elohi)",
         "name_es": "Westlake Dr @ unamed Lk Austin Trib (between Woodcutters Way and Elohi)",
+        "road": "Westlake Dr",
+        "creek": "unamed Lk Austin Trib (between Woodcutters Way and Elohi)",
+        "jurisdiction": "Travis County",
         "tier": "C",
+        "target_gauge_id": null,
+        "overtop_stage_ft": null,
+        "truth_quality": null,
+        "truth_source": null,
         "source": "Travis County Public Works",
         "source_id": "154",
         "source_ref": "data/raw/smoke/travis-arcgis.json",
         "state": "unknown",
         "review_status": "unreviewed",
-        "reason": "NO_UPSTREAM_GAUGE"
+        "reason": "NO_UPSTREAM_GAUGE",
+        "inventory_version": "inv-20261017"
       }
     },
     {
@@ -1444,13 +1964,21 @@
         "id": "tc-155",
         "name": "Wier Lp @ Williamson Creek",
         "name_es": "Wier Lp @ Williamson Creek",
-        "tier": "C",
+        "road": "Wier Loop",
+        "creek": "Williamson Creek",
+        "jurisdiction": "Travis County",
+        "tier": "B",
+        "target_gauge_id": null,
+        "overtop_stage_ft": null,
+        "truth_quality": null,
+        "truth_source": null,
         "source": "Travis County Public Works",
         "source_id": "155",
         "source_ref": "data/raw/smoke/travis-arcgis.json",
-        "state": "unknown",
-        "review_status": "unreviewed",
-        "reason": "NO_UPSTREAM_GAUGE"
+        "state": "no_rise",
+        "review_status": "verified",
+        "reason": "UPSTREAM_MONITORED",
+        "inventory_version": "inv-20261017"
       }
     },
     {
@@ -1466,13 +1994,21 @@
         "id": "tc-157",
         "name": "Williamson Creek Dr @ Williamson Creek",
         "name_es": "Williamson Creek Dr @ Williamson Creek",
-        "tier": "C",
+        "road": "Williamson Creek Dr",
+        "creek": "Williamson Creek",
+        "jurisdiction": "Travis County",
+        "tier": "B",
+        "target_gauge_id": null,
+        "overtop_stage_ft": null,
+        "truth_quality": null,
+        "truth_source": null,
         "source": "Travis County Public Works",
         "source_id": "157",
         "source_ref": "data/raw/smoke/travis-arcgis.json",
-        "state": "unknown",
-        "review_status": "unreviewed",
-        "reason": "NO_UPSTREAM_GAUGE"
+        "state": "no_rise",
+        "review_status": "verified",
+        "reason": "UPSTREAM_MONITORED",
+        "inventory_version": "inv-20261017"
       }
     },
     {
@@ -1488,13 +2024,21 @@
         "id": "tc-158",
         "name": "Williamson Rd @ Cowpen Ck (\"NW of Elm Grove Rd\")",
         "name_es": "Williamson Rd @ Cowpen Ck (\"NW of Elm Grove Rd\")",
+        "road": "Williamson Rd",
+        "creek": "Cowpen Ck (\"NW of Elm Grove Rd\")",
+        "jurisdiction": "Travis County",
         "tier": "C",
+        "target_gauge_id": null,
+        "overtop_stage_ft": null,
+        "truth_quality": null,
+        "truth_source": null,
         "source": "Travis County Public Works",
         "source_id": "158",
         "source_ref": "data/raw/smoke/travis-arcgis.json",
         "state": "unknown",
         "review_status": "unreviewed",
-        "reason": "NO_UPSTREAM_GAUGE"
+        "reason": "NO_UPSTREAM_GAUGE",
+        "inventory_version": "inv-20261017"
       }
     },
     {
@@ -1510,13 +2054,21 @@
         "id": "tc-160",
         "name": "Williamson Rd @ unnamed trib to Maha Ck (5400 block)",
         "name_es": "Williamson Rd @ unnamed trib to Maha Ck (5400 block)",
+        "road": "Williamson Rd",
+        "creek": "unnamed trib to Maha Ck (5400 block)",
+        "jurisdiction": "Travis County",
         "tier": "C",
+        "target_gauge_id": null,
+        "overtop_stage_ft": null,
+        "truth_quality": null,
+        "truth_source": null,
         "source": "Travis County Public Works",
         "source_id": "160",
         "source_ref": "data/raw/smoke/travis-arcgis.json",
         "state": "unknown",
         "review_status": "unreviewed",
-        "reason": "NO_UPSTREAM_GAUGE"
+        "reason": "NO_UPSTREAM_GAUGE",
+        "inventory_version": "inv-20261017"
       }
     },
     {
@@ -1532,13 +2084,21 @@
         "id": "tc-161",
         "name": "Wire Rd @ Lime Ck",
         "name_es": "Wire Rd @ Lime Ck",
+        "road": "Wire Rd",
+        "creek": "Lime Ck",
+        "jurisdiction": "Travis County",
         "tier": "C",
+        "target_gauge_id": null,
+        "overtop_stage_ft": null,
+        "truth_quality": null,
+        "truth_source": null,
         "source": "Travis County Public Works",
         "source_id": "161",
         "source_ref": "data/raw/smoke/travis-arcgis.json",
         "state": "unknown",
         "review_status": "unreviewed",
-        "reason": "NO_UPSTREAM_GAUGE"
+        "reason": "NO_UPSTREAM_GAUGE",
+        "inventory_version": "inv-20261017"
       }
     },
     {
@@ -1554,13 +2114,21 @@
         "id": "tc-164",
         "name": "Wright Rd @ 12900 block",
         "name_es": "Wright Rd @ 12900 block",
+        "road": "Wright Rd",
+        "creek": "12900 block",
+        "jurisdiction": "Travis County",
         "tier": "C",
+        "target_gauge_id": null,
+        "overtop_stage_ft": null,
+        "truth_quality": null,
+        "truth_source": null,
         "source": "Travis County Public Works",
         "source_id": "164",
         "source_ref": "data/raw/smoke/travis-arcgis.json",
         "state": "unknown",
         "review_status": "unreviewed",
-        "reason": "NO_UPSTREAM_GAUGE"
+        "reason": "NO_UPSTREAM_GAUGE",
+        "inventory_version": "inv-20261017"
       }
     },
     {
@@ -1576,13 +2144,21 @@
         "id": "tc-165",
         "name": "Shadowglen Blvd at Shadowglen Trace",
         "name_es": "Shadowglen Blvd at Shadowglen Trace",
+        "road": "Shadowglen Blvd at Shadowglen Trace",
+        "creek": null,
+        "jurisdiction": "Travis County",
         "tier": "C",
+        "target_gauge_id": null,
+        "overtop_stage_ft": null,
+        "truth_quality": null,
+        "truth_source": null,
         "source": "Travis County Public Works",
         "source_id": "165",
         "source_ref": "data/raw/smoke/travis-arcgis.json",
         "state": "unknown",
         "review_status": "unreviewed",
-        "reason": "NO_UPSTREAM_GAUGE"
+        "reason": "NO_UPSTREAM_GAUGE",
+        "inventory_version": "inv-20261017"
       }
     },
     {
@@ -1598,13 +2174,21 @@
         "id": "tc-166",
         "name": "Eilers Rd @ Maha Loop Rd",
         "name_es": "Eilers Rd @ Maha Loop Rd",
+        "road": "Eilers Rd",
+        "creek": "Maha Loop Rd",
+        "jurisdiction": "Travis County",
         "tier": "C",
+        "target_gauge_id": null,
+        "overtop_stage_ft": null,
+        "truth_quality": null,
+        "truth_source": null,
         "source": "Travis County Public Works",
         "source_id": "166",
         "source_ref": "data/raw/smoke/travis-arcgis.json",
         "state": "unknown",
         "review_status": "unreviewed",
-        "reason": "NO_UPSTREAM_GAUGE"
+        "reason": "NO_UPSTREAM_GAUGE",
+        "inventory_version": "inv-20261017"
       }
     },
     {
@@ -1620,13 +2204,21 @@
         "id": "tc-167",
         "name": "Henry Marx @ Barton Creek",
         "name_es": "Henry Marx @ Barton Creek",
-        "tier": "C",
+        "road": "Henry Marx Ln",
+        "creek": "Barton Creek",
+        "jurisdiction": "Travis County",
+        "tier": "A",
+        "target_gauge_id": "USGS-08155300",
+        "overtop_stage_ft": 11.0,
+        "truth_quality": "impact_statement",
+        "truth_source": "NWS NWPS ABTT2 @ 11.0 ft: Minor lowland flooding reaches lowest secondary roads and bridges",
         "source": "Travis County Public Works",
         "source_id": "167",
         "source_ref": "data/raw/smoke/travis-arcgis.json",
-        "state": "unknown",
-        "review_status": "unreviewed",
-        "reason": "NO_UPSTREAM_GAUGE"
+        "state": "no_rise",
+        "review_status": "verified",
+        "reason": "UPSTREAM_MONITORED",
+        "inventory_version": "inv-20261017"
       }
     },
     {
@@ -1642,13 +2234,21 @@
         "id": "tc-170",
         "name": "Ledgestone Terrace @ 9200 block",
         "name_es": "Ledgestone Terrace @ 9200 block",
+        "road": "Ledgestone Terrace",
+        "creek": "9200 block",
+        "jurisdiction": "Travis County",
         "tier": "C",
+        "target_gauge_id": null,
+        "overtop_stage_ft": null,
+        "truth_quality": null,
+        "truth_source": null,
         "source": "Travis County Public Works",
         "source_id": "170",
         "source_ref": "data/raw/smoke/travis-arcgis.json",
         "state": "unknown",
         "review_status": "unreviewed",
-        "reason": "NO_UPSTREAM_GAUGE"
+        "reason": "NO_UPSTREAM_GAUGE",
+        "inventory_version": "inv-20261017"
       }
     },
     {
@@ -1664,13 +2264,21 @@
         "id": "tc-18",
         "name": "Bullick Hollow Rd @ Oasis Bluff Rd ?????",
         "name_es": "Bullick Hollow Rd @ Oasis Bluff Rd ?????",
+        "road": "Bullick Hollow Rd",
+        "creek": "Oasis Bluff Rd ?????",
+        "jurisdiction": "Travis County",
         "tier": "C",
+        "target_gauge_id": null,
+        "overtop_stage_ft": null,
+        "truth_quality": null,
+        "truth_source": null,
         "source": "Travis County Public Works",
         "source_id": "18",
         "source_ref": "data/raw/smoke/travis-arcgis.json",
         "state": "unknown",
         "review_status": "unreviewed",
-        "reason": "NO_UPSTREAM_GAUGE"
+        "reason": "NO_UPSTREAM_GAUGE",
+        "inventory_version": "inv-20261017"
       }
     },
     {
@@ -1686,13 +2294,21 @@
         "id": "tc-19",
         "name": "Burklund Farms Rd @ Moore Rd",
         "name_es": "Burklund Farms Rd @ Moore Rd",
+        "road": "Burklund Farms Rd",
+        "creek": "Moore Rd",
+        "jurisdiction": "Travis County",
         "tier": "C",
+        "target_gauge_id": null,
+        "overtop_stage_ft": null,
+        "truth_quality": null,
+        "truth_source": null,
         "source": "Travis County Public Works",
         "source_id": "19",
         "source_ref": "data/raw/smoke/travis-arcgis.json",
         "state": "unknown",
         "review_status": "unreviewed",
-        "reason": "NO_UPSTREAM_GAUGE"
+        "reason": "NO_UPSTREAM_GAUGE",
+        "inventory_version": "inv-20261017"
       }
     },
     {
@@ -1708,13 +2324,21 @@
         "id": "tc-21",
         "name": "Cadillac Dr near FM 969",
         "name_es": "Cadillac Dr near FM 969",
+        "road": "Cadillac Dr near FM 969",
+        "creek": null,
+        "jurisdiction": "Travis County",
         "tier": "C",
+        "target_gauge_id": null,
+        "overtop_stage_ft": null,
+        "truth_quality": null,
+        "truth_source": null,
         "source": "Travis County Public Works",
         "source_id": "21",
         "source_ref": "data/raw/smoke/travis-arcgis.json",
         "state": "unknown",
         "review_status": "unreviewed",
-        "reason": "NO_UPSTREAM_GAUGE"
+        "reason": "NO_UPSTREAM_GAUGE",
+        "inventory_version": "inv-20261017"
       }
     },
     {
@@ -1730,13 +2354,21 @@
         "id": "tc-22",
         "name": "Cameron Rd -- at 20400 btwn Hamann Ln and Wind Farm Rd (Close to Hamann)",
         "name_es": "Cameron Rd -- at 20400 btwn Hamann Ln and Wind Farm Rd (Close to Hamann)",
+        "road": "Cameron Rd -- at 20400 btwn Hamann Ln and Wind Farm Rd (Close to Hamann)",
+        "creek": null,
+        "jurisdiction": "Travis County",
         "tier": "C",
+        "target_gauge_id": null,
+        "overtop_stage_ft": null,
+        "truth_quality": null,
+        "truth_source": null,
         "source": "Travis County Public Works",
         "source_id": "22",
         "source_ref": "data/raw/smoke/travis-arcgis.json",
         "state": "unknown",
         "review_status": "unreviewed",
-        "reason": "NO_UPSTREAM_GAUGE"
+        "reason": "NO_UPSTREAM_GAUGE",
+        "inventory_version": "inv-20261017"
       }
     },
     {
@@ -1752,13 +2384,21 @@
         "id": "tc-23",
         "name": "Cameron Rd -- at 20700 btwn Hamann Ln and Wind Farm Rd (Close to Wind Farm Rd)",
         "name_es": "Cameron Rd -- at 20700 btwn Hamann Ln and Wind Farm Rd (Close to Wind Farm Rd)",
+        "road": "Cameron Rd -- at 20700 btwn Hamann Ln and Wind Farm Rd (Close to Wind Farm Rd)",
+        "creek": null,
+        "jurisdiction": "Travis County",
         "tier": "C",
+        "target_gauge_id": null,
+        "overtop_stage_ft": null,
+        "truth_quality": null,
+        "truth_source": null,
         "source": "Travis County Public Works",
         "source_id": "23",
         "source_ref": "data/raw/smoke/travis-arcgis.json",
         "state": "unknown",
         "review_status": "unreviewed",
-        "reason": "NO_UPSTREAM_GAUGE"
+        "reason": "NO_UPSTREAM_GAUGE",
+        "inventory_version": "inv-20261017"
       }
     },
     {
@@ -1774,13 +2414,21 @@
         "id": "tc-24",
         "name": "Cameron Rd @ Cele Rd (just south of Cele Rd)",
         "name_es": "Cameron Rd @ Cele Rd (just south of Cele Rd)",
+        "road": "Cameron Rd",
+        "creek": "Cele Rd (just south of Cele Rd)",
+        "jurisdiction": "Travis County",
         "tier": "C",
+        "target_gauge_id": null,
+        "overtop_stage_ft": null,
+        "truth_quality": null,
+        "truth_source": null,
         "source": "Travis County Public Works",
         "source_id": "24",
         "source_ref": "data/raw/smoke/travis-arcgis.json",
         "state": "unknown",
         "review_status": "unreviewed",
-        "reason": "NO_UPSTREAM_GAUGE"
+        "reason": "NO_UPSTREAM_GAUGE",
+        "inventory_version": "inv-20261017"
       }
     },
     {
@@ -1796,13 +2444,21 @@
         "id": "tc-26",
         "name": "Cameron Rd @ Trib to Cottonwood Ck -- conc btwn Hamann Ln and Wind Farm Rd",
         "name_es": "Cameron Rd @ Trib to Cottonwood Ck -- conc btwn Hamann Ln and Wind Farm Rd",
+        "road": "Cameron Rd",
+        "creek": "Trib to Cottonwood Ck -- conc btwn Hamann Ln and Wind Farm Rd",
+        "jurisdiction": "Travis County",
         "tier": "C",
+        "target_gauge_id": null,
+        "overtop_stage_ft": null,
+        "truth_quality": null,
+        "truth_source": null,
         "source": "Travis County Public Works",
         "source_id": "26",
         "source_ref": "data/raw/smoke/travis-arcgis.json",
         "state": "unknown",
         "review_status": "unreviewed",
-        "reason": "NO_UPSTREAM_GAUGE"
+        "reason": "NO_UPSTREAM_GAUGE",
+        "inventory_version": "inv-20261017"
       }
     },
     {
@@ -1818,13 +2474,21 @@
         "id": "tc-28",
         "name": "Carlson Rd @ Dry Creek",
         "name_es": "Carlson Rd @ Dry Creek",
+        "road": "Carlson Rd",
+        "creek": "Dry Creek",
+        "jurisdiction": "Travis County",
         "tier": "C",
+        "target_gauge_id": null,
+        "overtop_stage_ft": null,
+        "truth_quality": null,
+        "truth_source": null,
         "source": "Travis County Public Works",
         "source_id": "28",
         "source_ref": "data/raw/smoke/travis-arcgis.json",
         "state": "unknown",
         "review_status": "unreviewed",
-        "reason": "NO_UPSTREAM_GAUGE"
+        "reason": "NO_UPSTREAM_GAUGE",
+        "inventory_version": "inv-20261017"
       }
     },
     {
@@ -1840,13 +2504,21 @@
         "id": "tc-29",
         "name": "Cele Rd @ 5700 block (Hodde Ln and Kelly Ln extensions should address)",
         "name_es": "Cele Rd @ 5700 block (Hodde Ln and Kelly Ln extensions should address)",
+        "road": "Cele Rd",
+        "creek": "5700 block (Hodde Ln and Kelly Ln extensions should address)",
+        "jurisdiction": "Travis County",
         "tier": "C",
+        "target_gauge_id": null,
+        "overtop_stage_ft": null,
+        "truth_quality": null,
+        "truth_source": null,
         "source": "Travis County Public Works",
         "source_id": "29",
         "source_ref": "data/raw/smoke/travis-arcgis.json",
         "state": "unknown",
         "review_status": "unreviewed",
-        "reason": "NO_UPSTREAM_GAUGE"
+        "reason": "NO_UPSTREAM_GAUGE",
+        "inventory_version": "inv-20261017"
       }
     },
     {
@@ -1862,13 +2534,21 @@
         "id": "tc-3",
         "name": "Azure Highland just south of FM1431",
         "name_es": "Azure Highland just south of FM1431",
+        "road": "Azure Highland just south of FM1431",
+        "creek": null,
+        "jurisdiction": "Travis County",
         "tier": "C",
+        "target_gauge_id": null,
+        "overtop_stage_ft": null,
+        "truth_quality": null,
+        "truth_source": null,
         "source": "Travis County Public Works",
         "source_id": "3",
         "source_ref": "data/raw/smoke/travis-arcgis.json",
         "state": "unknown",
         "review_status": "unreviewed",
-        "reason": "NO_UPSTREAM_GAUGE"
+        "reason": "NO_UPSTREAM_GAUGE",
+        "inventory_version": "inv-20261017"
       }
     },
     {
@@ -1884,13 +2564,21 @@
         "id": "tc-30",
         "name": "Chalet Dr @ Swiss Dr (probably backwater from Maha Ck)",
         "name_es": "Chalet Dr @ Swiss Dr (probably backwater from Maha Ck)",
+        "road": "Chalet Dr",
+        "creek": "Swiss Dr (probably backwater from Maha Ck)",
+        "jurisdiction": "Travis County",
         "tier": "C",
+        "target_gauge_id": null,
+        "overtop_stage_ft": null,
+        "truth_quality": null,
+        "truth_source": null,
         "source": "Travis County Public Works",
         "source_id": "30",
         "source_ref": "data/raw/smoke/travis-arcgis.json",
         "state": "unknown",
         "review_status": "unreviewed",
-        "reason": "NO_UPSTREAM_GAUGE"
+        "reason": "NO_UPSTREAM_GAUGE",
+        "inventory_version": "inv-20261017"
       }
     },
     {
@@ -1906,13 +2594,21 @@
         "id": "tc-31",
         "name": "Colton Rd @ Cottonmouth Creek",
         "name_es": "Colton Rd @ Cottonmouth Creek",
+        "road": "Colton Rd",
+        "creek": "Cottonmouth Creek",
+        "jurisdiction": "Travis County",
         "tier": "C",
+        "target_gauge_id": null,
+        "overtop_stage_ft": null,
+        "truth_quality": null,
+        "truth_source": null,
         "source": "Travis County Public Works",
         "source_id": "31",
         "source_ref": "data/raw/smoke/travis-arcgis.json",
         "state": "unknown",
         "review_status": "unreviewed",
-        "reason": "NO_UPSTREAM_GAUGE"
+        "reason": "NO_UPSTREAM_GAUGE",
+        "inventory_version": "inv-20261017"
       }
     },
     {
@@ -1928,13 +2624,21 @@
         "id": "tc-32",
         "name": "Cottonwood Dr",
         "name_es": "Cottonwood Dr",
+        "road": "Cottonwood Dr",
+        "creek": null,
+        "jurisdiction": "Travis County",
         "tier": "C",
+        "target_gauge_id": null,
+        "overtop_stage_ft": null,
+        "truth_quality": null,
+        "truth_source": null,
         "source": "Travis County Public Works",
         "source_id": "32",
         "source_ref": "data/raw/smoke/travis-arcgis.json",
         "state": "unknown",
         "review_status": "unreviewed",
-        "reason": "NO_UPSTREAM_GAUGE"
+        "reason": "NO_UPSTREAM_GAUGE",
+        "inventory_version": "inv-20261017"
       }
     },
     {
@@ -1950,13 +2654,21 @@
         "id": "tc-33",
         "name": "Coulver Rd @ trib to Dry Ck South Fork (\"@Coulver Cove Crt\")",
         "name_es": "Coulver Rd @ trib to Dry Ck South Fork (\"@Coulver Cove Crt\")",
+        "road": "Coulver Rd",
+        "creek": "trib to Dry Ck South Fork (\"",
+        "jurisdiction": "Travis County",
         "tier": "C",
+        "target_gauge_id": null,
+        "overtop_stage_ft": null,
+        "truth_quality": null,
+        "truth_source": null,
         "source": "Travis County Public Works",
         "source_id": "33",
         "source_ref": "data/raw/smoke/travis-arcgis.json",
         "state": "unknown",
         "review_status": "unreviewed",
-        "reason": "NO_UPSTREAM_GAUGE"
+        "reason": "NO_UPSTREAM_GAUGE",
+        "inventory_version": "inv-20261017"
       }
     },
     {
@@ -1972,13 +2684,21 @@
         "id": "tc-34",
         "name": "Cow Creek Rd @ Cow Creek",
         "name_es": "Cow Creek Rd @ Cow Creek",
+        "road": "Cow Creek Rd",
+        "creek": "Cow Creek",
+        "jurisdiction": "Travis County",
         "tier": "C",
+        "target_gauge_id": null,
+        "overtop_stage_ft": null,
+        "truth_quality": null,
+        "truth_source": null,
         "source": "Travis County Public Works",
         "source_id": "34",
         "source_ref": "data/raw/smoke/travis-arcgis.json",
         "state": "unknown",
         "review_status": "unreviewed",
-        "reason": "NO_UPSTREAM_GAUGE"
+        "reason": "NO_UPSTREAM_GAUGE",
+        "inventory_version": "inv-20261017"
       }
     },
     {
@@ -1994,13 +2714,21 @@
         "id": "tc-35",
         "name": "Cow Creek Rd @ Cow Creek -- Crossing 2",
         "name_es": "Cow Creek Rd @ Cow Creek -- Crossing 2",
+        "road": "Cow Creek Rd",
+        "creek": "Cow Creek -- Crossing 2",
+        "jurisdiction": "Travis County",
         "tier": "C",
+        "target_gauge_id": null,
+        "overtop_stage_ft": null,
+        "truth_quality": null,
+        "truth_source": null,
         "source": "Travis County Public Works",
         "source_id": "35",
         "source_ref": "data/raw/smoke/travis-arcgis.json",
         "state": "unknown",
         "review_status": "unreviewed",
-        "reason": "NO_UPSTREAM_GAUGE"
+        "reason": "NO_UPSTREAM_GAUGE",
+        "inventory_version": "inv-20261017"
       }
     },
     {
@@ -2016,13 +2744,21 @@
         "id": "tc-36",
         "name": "Cow Creek Rd @ Cow Creek -- Crossing 3",
         "name_es": "Cow Creek Rd @ Cow Creek -- Crossing 3",
+        "road": "Cow Creek Rd",
+        "creek": "Cow Creek -- Crossing 3",
+        "jurisdiction": "Travis County",
         "tier": "C",
+        "target_gauge_id": null,
+        "overtop_stage_ft": null,
+        "truth_quality": null,
+        "truth_source": null,
         "source": "Travis County Public Works",
         "source_id": "36",
         "source_ref": "data/raw/smoke/travis-arcgis.json",
         "state": "unknown",
         "review_status": "unreviewed",
-        "reason": "NO_UPSTREAM_GAUGE"
+        "reason": "NO_UPSTREAM_GAUGE",
+        "inventory_version": "inv-20261017"
       }
     },
     {
@@ -2038,13 +2774,21 @@
         "id": "tc-37",
         "name": "Cow Creek Rd @ Cow Creek -- Crossing 4",
         "name_es": "Cow Creek Rd @ Cow Creek -- Crossing 4",
+        "road": "Cow Creek Rd",
+        "creek": "Cow Creek -- Crossing 4",
+        "jurisdiction": "Travis County",
         "tier": "C",
+        "target_gauge_id": null,
+        "overtop_stage_ft": null,
+        "truth_quality": null,
+        "truth_source": null,
         "source": "Travis County Public Works",
         "source_id": "37",
         "source_ref": "data/raw/smoke/travis-arcgis.json",
         "state": "unknown",
         "review_status": "unreviewed",
-        "reason": "NO_UPSTREAM_GAUGE"
+        "reason": "NO_UPSTREAM_GAUGE",
+        "inventory_version": "inv-20261017"
       }
     },
     {
@@ -2060,13 +2804,21 @@
         "id": "tc-38",
         "name": "Crane Rd near Turnersville",
         "name_es": "Crane Rd near Turnersville",
+        "road": "Crane Rd near Turnersville",
+        "creek": null,
+        "jurisdiction": "Travis County",
         "tier": "C",
+        "target_gauge_id": null,
+        "overtop_stage_ft": null,
+        "truth_quality": null,
+        "truth_source": null,
         "source": "Travis County Public Works",
         "source_id": "38",
         "source_ref": "data/raw/smoke/travis-arcgis.json",
         "state": "unknown",
         "review_status": "unreviewed",
-        "reason": "NO_UPSTREAM_GAUGE"
+        "reason": "NO_UPSTREAM_GAUGE",
+        "inventory_version": "inv-20261017"
       }
     },
     {
@@ -2082,13 +2834,21 @@
         "id": "tc-4",
         "name": "Ballerstedt",
         "name_es": "Ballerstedt",
+        "road": "Ballerstedt",
+        "creek": null,
+        "jurisdiction": "Travis County",
         "tier": "C",
+        "target_gauge_id": null,
+        "overtop_stage_ft": null,
+        "truth_quality": null,
+        "truth_source": null,
         "source": "Travis County Public Works",
         "source_id": "4",
         "source_ref": "data/raw/smoke/travis-arcgis.json",
         "state": "unknown",
         "review_status": "unreviewed",
-        "reason": "NO_UPSTREAM_GAUGE"
+        "reason": "NO_UPSTREAM_GAUGE",
+        "inventory_version": "inv-20261017"
       }
     },
     {
@@ -2104,13 +2864,21 @@
         "id": "tc-40",
         "name": "Daffan Ln @ 7000 block",
         "name_es": "Daffan Ln @ 7000 block",
+        "road": "Daffan Ln",
+        "creek": "7000 block",
+        "jurisdiction": "Travis County",
         "tier": "C",
+        "target_gauge_id": null,
+        "overtop_stage_ft": null,
+        "truth_quality": null,
+        "truth_source": null,
         "source": "Travis County Public Works",
         "source_id": "40",
         "source_ref": "data/raw/smoke/travis-arcgis.json",
         "state": "unknown",
         "review_status": "unreviewed",
-        "reason": "NO_UPSTREAM_GAUGE"
+        "reason": "NO_UPSTREAM_GAUGE",
+        "inventory_version": "inv-20261017"
       }
     },
     {
@@ -2126,13 +2894,21 @@
         "id": "tc-41",
         "name": "Daffan Ln @ 7900 block",
         "name_es": "Daffan Ln @ 7900 block",
+        "road": "Daffan Ln",
+        "creek": "7900 block",
+        "jurisdiction": "Travis County",
         "tier": "C",
+        "target_gauge_id": null,
+        "overtop_stage_ft": null,
+        "truth_quality": null,
+        "truth_source": null,
         "source": "Travis County Public Works",
         "source_id": "41",
         "source_ref": "data/raw/smoke/travis-arcgis.json",
         "state": "unknown",
         "review_status": "unreviewed",
-        "reason": "NO_UPSTREAM_GAUGE"
+        "reason": "NO_UPSTREAM_GAUGE",
+        "inventory_version": "inv-20261017"
       }
     },
     {
@@ -2148,13 +2924,21 @@
         "id": "tc-42",
         "name": "Decker Lake Rd (between Blue Bluff and Decker Ln)",
         "name_es": "Decker Lake Rd (between Blue Bluff and Decker Ln)",
+        "road": "Decker Lake Rd (between Blue Bluff and Decker Ln)",
+        "creek": null,
+        "jurisdiction": "Travis County",
         "tier": "C",
+        "target_gauge_id": null,
+        "overtop_stage_ft": null,
+        "truth_quality": null,
+        "truth_source": null,
         "source": "Travis County Public Works",
         "source_id": "42",
         "source_ref": "data/raw/smoke/travis-arcgis.json",
         "state": "unknown",
         "review_status": "unreviewed",
-        "reason": "NO_UPSTREAM_GAUGE"
+        "reason": "NO_UPSTREAM_GAUGE",
+        "inventory_version": "inv-20261017"
       }
     },
     {
@@ -2170,13 +2954,21 @@
         "id": "tc-43",
         "name": "Decker Lake Rd @ 16600 block (west of Taylor Ln)",
         "name_es": "Decker Lake Rd @ 16600 block (west of Taylor Ln)",
+        "road": "Decker Lake Rd",
+        "creek": "16600 block (west of Taylor Ln)",
+        "jurisdiction": "Travis County",
         "tier": "C",
+        "target_gauge_id": null,
+        "overtop_stage_ft": null,
+        "truth_quality": null,
+        "truth_source": null,
         "source": "Travis County Public Works",
         "source_id": "43",
         "source_ref": "data/raw/smoke/travis-arcgis.json",
         "state": "unknown",
         "review_status": "unreviewed",
-        "reason": "NO_UPSTREAM_GAUGE"
+        "reason": "NO_UPSTREAM_GAUGE",
+        "inventory_version": "inv-20261017"
       }
     },
     {
@@ -2192,13 +2984,21 @@
         "id": "tc-44",
         "name": "Doyle Rd @ unnamed trib to Maha Ck",
         "name_es": "Doyle Rd @ unnamed trib to Maha Ck",
+        "road": "Doyle Rd",
+        "creek": "unnamed trib to Maha Ck",
+        "jurisdiction": "Travis County",
         "tier": "C",
+        "target_gauge_id": null,
+        "overtop_stage_ft": null,
+        "truth_quality": null,
+        "truth_source": null,
         "source": "Travis County Public Works",
         "source_id": "44",
         "source_ref": "data/raw/smoke/travis-arcgis.json",
         "state": "unknown",
         "review_status": "unreviewed",
-        "reason": "NO_UPSTREAM_GAUGE"
+        "reason": "NO_UPSTREAM_GAUGE",
+        "inventory_version": "inv-20261017"
       }
     },
     {
@@ -2214,13 +3014,21 @@
         "id": "tc-45",
         "name": "Doyle Rd between Pocmont and Maha Rd",
         "name_es": "Doyle Rd between Pocmont and Maha Rd",
+        "road": "Doyle Rd between Pocmont and Maha Rd",
+        "creek": null,
+        "jurisdiction": "Travis County",
         "tier": "C",
+        "target_gauge_id": null,
+        "overtop_stage_ft": null,
+        "truth_quality": null,
+        "truth_source": null,
         "source": "Travis County Public Works",
         "source_id": "45",
         "source_ref": "data/raw/smoke/travis-arcgis.json",
         "state": "unknown",
         "review_status": "unreviewed",
-        "reason": "NO_UPSTREAM_GAUGE"
+        "reason": "NO_UPSTREAM_GAUGE",
+        "inventory_version": "inv-20261017"
       }
     },
     {
@@ -2236,13 +3044,21 @@
         "id": "tc-46",
         "name": "Doyle-Overton Rd @ Eilers Rd",
         "name_es": "Doyle-Overton Rd @ Eilers Rd",
+        "road": "Doyle-Overton Rd",
+        "creek": "Eilers Rd",
+        "jurisdiction": "Travis County",
         "tier": "C",
+        "target_gauge_id": null,
+        "overtop_stage_ft": null,
+        "truth_quality": null,
+        "truth_source": null,
         "source": "Travis County Public Works",
         "source_id": "46",
         "source_ref": "data/raw/smoke/travis-arcgis.json",
         "state": "unknown",
         "review_status": "unreviewed",
-        "reason": "NO_UPSTREAM_GAUGE"
+        "reason": "NO_UPSTREAM_GAUGE",
+        "inventory_version": "inv-20261017"
       }
     },
     {
@@ -2258,13 +3074,21 @@
         "id": "tc-49",
         "name": "Elm Grove Rd (13200 block)",
         "name_es": "Elm Grove Rd (13200 block)",
+        "road": "Elm Grove Rd (13200 block)",
+        "creek": null,
+        "jurisdiction": "Travis County",
         "tier": "C",
+        "target_gauge_id": null,
+        "overtop_stage_ft": null,
+        "truth_quality": null,
+        "truth_source": null,
         "source": "Travis County Public Works",
         "source_id": "49",
         "source_ref": "data/raw/smoke/travis-arcgis.json",
         "state": "unknown",
         "review_status": "unreviewed",
-        "reason": "NO_UPSTREAM_GAUGE"
+        "reason": "NO_UPSTREAM_GAUGE",
+        "inventory_version": "inv-20261017"
       }
     },
     {
@@ -2280,13 +3104,21 @@
         "id": "tc-5",
         "name": "Bee Creek Rd @ Bee Creek",
         "name_es": "Bee Creek Rd @ Bee Creek",
+        "road": "Bee Creek Rd",
+        "creek": "Bee Creek",
+        "jurisdiction": "Travis County",
         "tier": "C",
+        "target_gauge_id": null,
+        "overtop_stage_ft": null,
+        "truth_quality": null,
+        "truth_source": null,
         "source": "Travis County Public Works",
         "source_id": "5",
         "source_ref": "data/raw/smoke/travis-arcgis.json",
         "state": "unknown",
         "review_status": "unreviewed",
-        "reason": "NO_UPSTREAM_GAUGE"
+        "reason": "NO_UPSTREAM_GAUGE",
+        "inventory_version": "inv-20261017"
       }
     },
     {
@@ -2302,13 +3134,21 @@
         "id": "tc-50",
         "name": "Elroy Rd (8000 block)?",
         "name_es": "Elroy Rd (8000 block)?",
+        "road": "Elroy Rd (8000 block)?",
+        "creek": null,
+        "jurisdiction": "Travis County",
         "tier": "C",
+        "target_gauge_id": null,
+        "overtop_stage_ft": null,
+        "truth_quality": null,
+        "truth_source": null,
         "source": "Travis County Public Works",
         "source_id": "50",
         "source_ref": "data/raw/smoke/travis-arcgis.json",
         "state": "unknown",
         "review_status": "unreviewed",
-        "reason": "NO_UPSTREAM_GAUGE"
+        "reason": "NO_UPSTREAM_GAUGE",
+        "inventory_version": "inv-20261017"
       }
     },
     {
@@ -2324,13 +3164,21 @@
         "id": "tc-51",
         "name": "Engelmann Rd @ trib to Cottonwood Ck (at 20217)",
         "name_es": "Engelmann Rd @ trib to Cottonwood Ck (at 20217)",
+        "road": "Engelmann Rd",
+        "creek": "trib to Cottonwood Ck (at 20217)",
+        "jurisdiction": "Travis County",
         "tier": "C",
+        "target_gauge_id": null,
+        "overtop_stage_ft": null,
+        "truth_quality": null,
+        "truth_source": null,
         "source": "Travis County Public Works",
         "source_id": "51",
         "source_ref": "data/raw/smoke/travis-arcgis.json",
         "state": "unknown",
         "review_status": "unreviewed",
-        "reason": "NO_UPSTREAM_GAUGE"
+        "reason": "NO_UPSTREAM_GAUGE",
+        "inventory_version": "inv-20261017"
       }
     },
     {
@@ -2346,13 +3194,21 @@
         "id": "tc-53",
         "name": "Fall Creek Rd @ trib to Fall Creek",
         "name_es": "Fall Creek Rd @ trib to Fall Creek",
+        "road": "Fall Creek Rd",
+        "creek": "trib to Fall Creek",
+        "jurisdiction": "Travis County",
         "tier": "C",
+        "target_gauge_id": null,
+        "overtop_stage_ft": null,
+        "truth_quality": null,
+        "truth_source": null,
         "source": "Travis County Public Works",
         "source_id": "53",
         "source_ref": "data/raw/smoke/travis-arcgis.json",
         "state": "unknown",
         "review_status": "unreviewed",
-        "reason": "NO_UPSTREAM_GAUGE"
+        "reason": "NO_UPSTREAM_GAUGE",
+        "inventory_version": "inv-20261017"
       }
     },
     {
@@ -2368,13 +3224,21 @@
         "id": "tc-54",
         "name": "Felder Ln @ Cottonwood Ck",
         "name_es": "Felder Ln @ Cottonwood Ck",
+        "road": "Felder Ln",
+        "creek": "Cottonwood Ck",
+        "jurisdiction": "Travis County",
         "tier": "C",
+        "target_gauge_id": null,
+        "overtop_stage_ft": null,
+        "truth_quality": null,
+        "truth_source": null,
         "source": "Travis County Public Works",
         "source_id": "54",
         "source_ref": "data/raw/smoke/travis-arcgis.json",
         "state": "unknown",
         "review_status": "unreviewed",
-        "reason": "NO_UPSTREAM_GAUGE"
+        "reason": "NO_UPSTREAM_GAUGE",
+        "inventory_version": "inv-20261017"
       }
     },
     {
@@ -2390,13 +3254,21 @@
         "id": "tc-56",
         "name": "Fleischer Dr",
         "name_es": "Fleischer Dr",
+        "road": "Fleischer Dr",
+        "creek": null,
+        "jurisdiction": "Travis County",
         "tier": "C",
+        "target_gauge_id": null,
+        "overtop_stage_ft": null,
+        "truth_quality": null,
+        "truth_source": null,
         "source": "Travis County Public Works",
         "source_id": "56",
         "source_ref": "data/raw/smoke/travis-arcgis.json",
         "state": "unknown",
         "review_status": "unreviewed",
-        "reason": "NO_UPSTREAM_GAUGE"
+        "reason": "NO_UPSTREAM_GAUGE",
+        "inventory_version": "inv-20261017"
       }
     },
     {
@@ -2412,13 +3284,21 @@
         "id": "tc-57",
         "name": "Flintrock Circle @ Tributary to Pen Creek",
         "name_es": "Flintrock Circle @ Tributary to Pen Creek",
+        "road": "Flintrock Circle",
+        "creek": "Tributary to Pen Creek",
+        "jurisdiction": "Travis County",
         "tier": "C",
+        "target_gauge_id": null,
+        "overtop_stage_ft": null,
+        "truth_quality": null,
+        "truth_source": null,
         "source": "Travis County Public Works",
         "source_id": "57",
         "source_ref": "data/raw/smoke/travis-arcgis.json",
         "state": "unknown",
         "review_status": "unreviewed",
-        "reason": "NO_UPSTREAM_GAUGE"
+        "reason": "NO_UPSTREAM_GAUGE",
+        "inventory_version": "inv-20261017"
       }
     },
     {
@@ -2434,13 +3314,21 @@
         "id": "tc-58",
         "name": "Fritz Hughes Park Rd @ Bear Creek",
         "name_es": "Fritz Hughes Park Rd @ Bear Creek",
-        "tier": "C",
+        "road": "Fritz Hughes Park Rd",
+        "creek": "Bear Creek",
+        "jurisdiction": "Travis County",
+        "tier": "B",
+        "target_gauge_id": null,
+        "overtop_stage_ft": null,
+        "truth_quality": null,
+        "truth_source": null,
         "source": "Travis County Public Works",
         "source_id": "58",
         "source_ref": "data/raw/smoke/travis-arcgis.json",
-        "state": "unknown",
-        "review_status": "unreviewed",
-        "reason": "NO_UPSTREAM_GAUGE"
+        "state": "no_rise",
+        "review_status": "verified",
+        "reason": "UPSTREAM_MONITORED",
+        "inventory_version": "inv-20261017"
       }
     },
     {
@@ -2456,13 +3344,21 @@
         "id": "tc-59",
         "name": "Fuchs Grove Rd @ 15900 block (at Cameron Rd)",
         "name_es": "Fuchs Grove Rd @ 15900 block (at Cameron Rd)",
+        "road": "Fuchs Grove Rd",
+        "creek": "15900 block (at Cameron Rd)",
+        "jurisdiction": "Travis County",
         "tier": "C",
+        "target_gauge_id": null,
+        "overtop_stage_ft": null,
+        "truth_quality": null,
+        "truth_source": null,
         "source": "Travis County Public Works",
         "source_id": "59",
         "source_ref": "data/raw/smoke/travis-arcgis.json",
         "state": "unknown",
         "review_status": "unreviewed",
-        "reason": "NO_UPSTREAM_GAUGE"
+        "reason": "NO_UPSTREAM_GAUGE",
+        "inventory_version": "inv-20261017"
       }
     },
     {
@@ -2478,13 +3374,21 @@
         "id": "tc-6",
         "name": "Bee Creek Rd @ Ridgepole Dr (4000 block)",
         "name_es": "Bee Creek Rd @ Ridgepole Dr (4000 block)",
+        "road": "Bee Creek Rd",
+        "creek": "Ridgepole Dr (4000 block)",
+        "jurisdiction": "Travis County",
         "tier": "C",
+        "target_gauge_id": null,
+        "overtop_stage_ft": null,
+        "truth_quality": null,
+        "truth_source": null,
         "source": "Travis County Public Works",
         "source_id": "6",
         "source_ref": "data/raw/smoke/travis-arcgis.json",
         "state": "unknown",
         "review_status": "unreviewed",
-        "reason": "NO_UPSTREAM_GAUGE"
+        "reason": "NO_UPSTREAM_GAUGE",
+        "inventory_version": "inv-20261017"
       }
     },
     {
@@ -2500,13 +3404,21 @@
         "id": "tc-60",
         "name": "Fuchs Grove Rd functionally obsolete box culvert",
         "name_es": "Fuchs Grove Rd functionally obsolete box culvert",
+        "road": "Fuchs Grove Rd functionally obsolete box culvert",
+        "creek": null,
+        "jurisdiction": "Travis County",
         "tier": "C",
+        "target_gauge_id": null,
+        "overtop_stage_ft": null,
+        "truth_quality": null,
+        "truth_source": null,
         "source": "Travis County Public Works",
         "source_id": "60",
         "source_ref": "data/raw/smoke/travis-arcgis.json",
         "state": "unknown",
         "review_status": "unreviewed",
-        "reason": "NO_UPSTREAM_GAUGE"
+        "reason": "NO_UPSTREAM_GAUGE",
+        "inventory_version": "inv-20261017"
       }
     },
     {
@@ -2522,13 +3434,21 @@
         "id": "tc-61",
         "name": "Hamilton Pool Rd @ 19300 block -- 1",
         "name_es": "Hamilton Pool Rd @ 19300 block -- 1",
+        "road": "Hamilton Pool Rd",
+        "creek": "19300 block -- 1",
+        "jurisdiction": "Travis County",
         "tier": "C",
+        "target_gauge_id": null,
+        "overtop_stage_ft": null,
+        "truth_quality": null,
+        "truth_source": null,
         "source": "Travis County Public Works",
         "source_id": "61",
         "source_ref": "data/raw/smoke/travis-arcgis.json",
         "state": "unknown",
         "review_status": "unreviewed",
-        "reason": "NO_UPSTREAM_GAUGE"
+        "reason": "NO_UPSTREAM_GAUGE",
+        "inventory_version": "inv-20261017"
       }
     },
     {
@@ -2544,13 +3464,21 @@
         "id": "tc-62",
         "name": "Hamilton Pool Rd @ 19300 block -- 2",
         "name_es": "Hamilton Pool Rd @ 19300 block -- 2",
+        "road": "Hamilton Pool Rd",
+        "creek": "19300 block -- 2",
+        "jurisdiction": "Travis County",
         "tier": "C",
+        "target_gauge_id": null,
+        "overtop_stage_ft": null,
+        "truth_quality": null,
+        "truth_source": null,
         "source": "Travis County Public Works",
         "source_id": "62",
         "source_ref": "data/raw/smoke/travis-arcgis.json",
         "state": "unknown",
         "review_status": "unreviewed",
-        "reason": "NO_UPSTREAM_GAUGE"
+        "reason": "NO_UPSTREAM_GAUGE",
+        "inventory_version": "inv-20261017"
       }
     },
     {
@@ -2566,13 +3494,21 @@
         "id": "tc-66",
         "name": "Hog Eye Rd East of Blake-Manor Rd (@ Trib to Dry Creek - Lockwood watershed) (near 19204)",
         "name_es": "Hog Eye Rd East of Blake-Manor Rd (@ Trib to Dry Creek - Lockwood watershed) (near 19204)",
+        "road": "Hog Eye Rd East of Blake-Manor Rd (",
+        "creek": "Trib to Dry Creek - Lockwood watershed) (near 19204)",
+        "jurisdiction": "Travis County",
         "tier": "C",
+        "target_gauge_id": null,
+        "overtop_stage_ft": null,
+        "truth_quality": null,
+        "truth_source": null,
         "source": "Travis County Public Works",
         "source_id": "66",
         "source_ref": "data/raw/smoke/travis-arcgis.json",
         "state": "unknown",
         "review_status": "unreviewed",
-        "reason": "NO_UPSTREAM_GAUGE"
+        "reason": "NO_UPSTREAM_GAUGE",
+        "inventory_version": "inv-20261017"
       }
     },
     {
@@ -2588,13 +3524,21 @@
         "id": "tc-68",
         "name": "Indian Creek Rd (just west of Nocona) (2600 Indian Creek Rd)",
         "name_es": "Indian Creek Rd (just west of Nocona) (2600 Indian Creek Rd)",
+        "road": "Indian Creek Rd (just west of Nocona) (2600 Indian Creek Rd)",
+        "creek": null,
+        "jurisdiction": "Travis County",
         "tier": "C",
+        "target_gauge_id": null,
+        "overtop_stage_ft": null,
+        "truth_quality": null,
+        "truth_source": null,
         "source": "Travis County Public Works",
         "source_id": "68",
         "source_ref": "data/raw/smoke/travis-arcgis.json",
         "state": "unknown",
         "review_status": "unreviewed",
-        "reason": "NO_UPSTREAM_GAUGE"
+        "reason": "NO_UPSTREAM_GAUGE",
+        "inventory_version": "inv-20261017"
       }
     },
     {
@@ -2610,13 +3554,21 @@
         "id": "tc-69",
         "name": "Indian Creek Rd @ Running Deer Ck",
         "name_es": "Indian Creek Rd @ Running Deer Ck",
+        "road": "Indian Creek Rd",
+        "creek": "Running Deer Ck",
+        "jurisdiction": "Travis County",
         "tier": "C",
+        "target_gauge_id": null,
+        "overtop_stage_ft": null,
+        "truth_quality": null,
+        "truth_source": null,
         "source": "Travis County Public Works",
         "source_id": "69",
         "source_ref": "data/raw/smoke/travis-arcgis.json",
         "state": "unknown",
         "review_status": "unreviewed",
-        "reason": "NO_UPSTREAM_GAUGE"
+        "reason": "NO_UPSTREAM_GAUGE",
+        "inventory_version": "inv-20261017"
       }
     },
     {
@@ -2632,13 +3584,21 @@
         "id": "tc-7",
         "name": "Bitting School Rd closer to Littig Rd",
         "name_es": "Bitting School Rd closer to Littig Rd",
+        "road": "Bitting School Rd closer to Littig Rd",
+        "creek": null,
+        "jurisdiction": "Travis County",
         "tier": "C",
+        "target_gauge_id": null,
+        "overtop_stage_ft": null,
+        "truth_quality": null,
+        "truth_source": null,
         "source": "Travis County Public Works",
         "source_id": "7",
         "source_ref": "data/raw/smoke/travis-arcgis.json",
         "state": "unknown",
         "review_status": "unreviewed",
-        "reason": "NO_UPSTREAM_GAUGE"
+        "reason": "NO_UPSTREAM_GAUGE",
+        "inventory_version": "inv-20261017"
       }
     },
     {
@@ -2654,13 +3614,21 @@
         "id": "tc-72",
         "name": "Janak Rd Location 1",
         "name_es": "Janak Rd Location 1",
+        "road": "Janak Rd Location 1",
+        "creek": null,
+        "jurisdiction": "Travis County",
         "tier": "C",
+        "target_gauge_id": null,
+        "overtop_stage_ft": null,
+        "truth_quality": null,
+        "truth_source": null,
         "source": "Travis County Public Works",
         "source_id": "72",
         "source_ref": "data/raw/smoke/travis-arcgis.json",
         "state": "unknown",
         "review_status": "unreviewed",
-        "reason": "NO_UPSTREAM_GAUGE"
+        "reason": "NO_UPSTREAM_GAUGE",
+        "inventory_version": "inv-20261017"
       }
     },
     {
@@ -2676,13 +3644,21 @@
         "id": "tc-73",
         "name": "Janak Rd Location 2",
         "name_es": "Janak Rd Location 2",
+        "road": "Janak Rd Location 2",
+        "creek": null,
+        "jurisdiction": "Travis County",
         "tier": "C",
+        "target_gauge_id": null,
+        "overtop_stage_ft": null,
+        "truth_quality": null,
+        "truth_source": null,
         "source": "Travis County Public Works",
         "source_id": "73",
         "source_ref": "data/raw/smoke/travis-arcgis.json",
         "state": "unknown",
         "review_status": "unreviewed",
-        "reason": "NO_UPSTREAM_GAUGE"
+        "reason": "NO_UPSTREAM_GAUGE",
+        "inventory_version": "inv-20261017"
       }
     },
     {
@@ -2698,13 +3674,21 @@
         "id": "tc-74",
         "name": "Jesse Bohls Rd (5700 block)",
         "name_es": "Jesse Bohls Rd (5700 block)",
+        "road": "Jesse Bohls Rd (5700 block)",
+        "creek": null,
+        "jurisdiction": "Travis County",
         "tier": "C",
+        "target_gauge_id": null,
+        "overtop_stage_ft": null,
+        "truth_quality": null,
+        "truth_source": null,
         "source": "Travis County Public Works",
         "source_id": "74",
         "source_ref": "data/raw/smoke/travis-arcgis.json",
         "state": "unknown",
         "review_status": "unreviewed",
-        "reason": "NO_UPSTREAM_GAUGE"
+        "reason": "NO_UPSTREAM_GAUGE",
+        "inventory_version": "inv-20261017"
       }
     },
     {
@@ -2720,13 +3704,21 @@
         "id": "tc-76",
         "name": "Johnson Rd (12200 block)",
         "name_es": "Johnson Rd (12200 block)",
+        "road": "Johnson Rd (12200 block)",
+        "creek": null,
+        "jurisdiction": "Travis County",
         "tier": "C",
+        "target_gauge_id": null,
+        "overtop_stage_ft": null,
+        "truth_quality": null,
+        "truth_source": null,
         "source": "Travis County Public Works",
         "source_id": "76",
         "source_ref": "data/raw/smoke/travis-arcgis.json",
         "state": "unknown",
         "review_status": "unreviewed",
-        "reason": "NO_UPSTREAM_GAUGE"
+        "reason": "NO_UPSTREAM_GAUGE",
+        "inventory_version": "inv-20261017"
       }
     },
     {
@@ -2742,13 +3734,21 @@
         "id": "tc-77",
         "name": "Johnson Rd west of Bois D’Arc (12400 block)",
         "name_es": "Johnson Rd west of Bois D’Arc (12400 block)",
+        "road": "Johnson Rd west of Bois D’Arc (12400 block)",
+        "creek": null,
+        "jurisdiction": "Travis County",
         "tier": "C",
+        "target_gauge_id": null,
+        "overtop_stage_ft": null,
+        "truth_quality": null,
+        "truth_source": null,
         "source": "Travis County Public Works",
         "source_id": "77",
         "source_ref": "data/raw/smoke/travis-arcgis.json",
         "state": "unknown",
         "review_status": "unreviewed",
-        "reason": "NO_UPSTREAM_GAUGE"
+        "reason": "NO_UPSTREAM_GAUGE",
+        "inventory_version": "inv-20261017"
       }
     },
     {
@@ -2764,13 +3764,21 @@
         "id": "tc-79",
         "name": "Jones Rd local road flooding (close to Hog Eye)",
         "name_es": "Jones Rd local road flooding (close to Hog Eye)",
+        "road": "Jones Rd local road flooding (close to Hog Eye)",
+        "creek": null,
+        "jurisdiction": "Travis County",
         "tier": "C",
+        "target_gauge_id": null,
+        "overtop_stage_ft": null,
+        "truth_quality": null,
+        "truth_source": null,
         "source": "Travis County Public Works",
         "source_id": "79",
         "source_ref": "data/raw/smoke/travis-arcgis.json",
         "state": "unknown",
         "review_status": "unreviewed",
-        "reason": "NO_UPSTREAM_GAUGE"
+        "reason": "NO_UPSTREAM_GAUGE",
+        "inventory_version": "inv-20261017"
       }
     },
     {
@@ -2786,13 +3794,21 @@
         "id": "tc-8",
         "name": "Blake Manor Rd (7000 block between Burleson Manor and Lone Tree)",
         "name_es": "Blake Manor Rd (7000 block between Burleson Manor and Lone Tree)",
+        "road": "Blake Manor Rd (7000 block between Burleson Manor and Lone Tree)",
+        "creek": null,
+        "jurisdiction": "Travis County",
         "tier": "C",
+        "target_gauge_id": null,
+        "overtop_stage_ft": null,
+        "truth_quality": null,
+        "truth_source": null,
         "source": "Travis County Public Works",
         "source_id": "8",
         "source_ref": "data/raw/smoke/travis-arcgis.json",
         "state": "unknown",
         "review_status": "unreviewed",
-        "reason": "NO_UPSTREAM_GAUGE"
+        "reason": "NO_UPSTREAM_GAUGE",
+        "inventory_version": "inv-20261017"
       }
     },
     {
@@ -2808,13 +3824,21 @@
         "id": "tc-80",
         "name": "Juniper Trl",
         "name_es": "Juniper Trl",
+        "road": "Juniper Trl",
+        "creek": null,
+        "jurisdiction": "Travis County",
         "tier": "C",
+        "target_gauge_id": null,
+        "overtop_stage_ft": null,
+        "truth_quality": null,
+        "truth_source": null,
         "source": "Travis County Public Works",
         "source_id": "80",
         "source_ref": "data/raw/smoke/travis-arcgis.json",
         "state": "unknown",
         "review_status": "unreviewed",
-        "reason": "NO_UPSTREAM_GAUGE"
+        "reason": "NO_UPSTREAM_GAUGE",
+        "inventory_version": "inv-20261017"
       }
     },
     {
@@ -2830,13 +3854,21 @@
         "id": "tc-81",
         "name": "Killingsworth Rd east of Immanuel Rd",
         "name_es": "Killingsworth Rd east of Immanuel Rd",
+        "road": "Killingsworth Rd east of Immanuel Rd",
+        "creek": null,
+        "jurisdiction": "Travis County",
         "tier": "C",
+        "target_gauge_id": null,
+        "overtop_stage_ft": null,
+        "truth_quality": null,
+        "truth_source": null,
         "source": "Travis County Public Works",
         "source_id": "81",
         "source_ref": "data/raw/smoke/travis-arcgis.json",
         "state": "unknown",
         "review_status": "unreviewed",
-        "reason": "NO_UPSTREAM_GAUGE"
+        "reason": "NO_UPSTREAM_GAUGE",
+        "inventory_version": "inv-20261017"
       }
     },
     {
@@ -2852,13 +3884,21 @@
         "id": "tc-83",
         "name": "Lime Creek Rd @ Fisher Hollow (Creek)",
         "name_es": "Lime Creek Rd @ Fisher Hollow (Creek)",
+        "road": "Lime Creek Rd",
+        "creek": "Fisher Hollow (Creek)",
+        "jurisdiction": "Travis County",
         "tier": "C",
+        "target_gauge_id": null,
+        "overtop_stage_ft": null,
+        "truth_quality": null,
+        "truth_source": null,
         "source": "Travis County Public Works",
         "source_id": "83",
         "source_ref": "data/raw/smoke/travis-arcgis.json",
         "state": "unknown",
         "review_status": "unreviewed",
-        "reason": "NO_UPSTREAM_GAUGE"
+        "reason": "NO_UPSTREAM_GAUGE",
+        "inventory_version": "inv-20261017"
       }
     },
     {
@@ -2874,13 +3914,21 @@
         "id": "tc-87",
         "name": "Live Oak Dr @ Long Hollow (Creek)",
         "name_es": "Live Oak Dr @ Long Hollow (Creek)",
+        "road": "Live Oak Dr",
+        "creek": "Long Hollow (Creek)",
+        "jurisdiction": "Travis County",
         "tier": "C",
+        "target_gauge_id": null,
+        "overtop_stage_ft": null,
+        "truth_quality": null,
+        "truth_source": null,
         "source": "Travis County Public Works",
         "source_id": "87",
         "source_ref": "data/raw/smoke/travis-arcgis.json",
         "state": "unknown",
         "review_status": "unreviewed",
-        "reason": "NO_UPSTREAM_GAUGE"
+        "reason": "NO_UPSTREAM_GAUGE",
+        "inventory_version": "inv-20261017"
       }
     },
     {
@@ -2896,13 +3944,21 @@
         "id": "tc-88",
         "name": "Lockwood Rd @ 8700 block (18700 blk btwn Taylor Ln & Old Lockwood near the church)",
         "name_es": "Lockwood Rd @ 8700 block (18700 blk btwn Taylor Ln & Old Lockwood near the church)",
+        "road": "Lockwood Rd",
+        "creek": "8700 block (18700 blk btwn Taylor Ln & Old Lockwood near the church)",
+        "jurisdiction": "Travis County",
         "tier": "C",
+        "target_gauge_id": null,
+        "overtop_stage_ft": null,
+        "truth_quality": null,
+        "truth_source": null,
         "source": "Travis County Public Works",
         "source_id": "88",
         "source_ref": "data/raw/smoke/travis-arcgis.json",
         "state": "unknown",
         "review_status": "unreviewed",
-        "reason": "NO_UPSTREAM_GAUGE"
+        "reason": "NO_UPSTREAM_GAUGE",
+        "inventory_version": "inv-20261017"
       }
     },
     {
@@ -2918,13 +3974,21 @@
         "id": "tc-89",
         "name": "Lockwood Rd East of Parsons Rd",
         "name_es": "Lockwood Rd East of Parsons Rd",
+        "road": "Lockwood Rd East of Parsons Rd",
+        "creek": null,
+        "jurisdiction": "Travis County",
         "tier": "C",
+        "target_gauge_id": null,
+        "overtop_stage_ft": null,
+        "truth_quality": null,
+        "truth_source": null,
         "source": "Travis County Public Works",
         "source_id": "89",
         "source_ref": "data/raw/smoke/travis-arcgis.json",
         "state": "unknown",
         "review_status": "unreviewed",
-        "reason": "NO_UPSTREAM_GAUGE"
+        "reason": "NO_UPSTREAM_GAUGE",
+        "inventory_version": "inv-20261017"
       }
     },
     {
@@ -2940,13 +4004,21 @@
         "id": "tc-9",
         "name": "Blocker Ln @ unnamed trib to Dry Creek",
         "name_es": "Blocker Ln @ unnamed trib to Dry Creek",
+        "road": "Blocker Ln",
+        "creek": "unnamed trib to Dry Creek",
+        "jurisdiction": "Travis County",
         "tier": "C",
+        "target_gauge_id": null,
+        "overtop_stage_ft": null,
+        "truth_quality": null,
+        "truth_source": null,
         "source": "Travis County Public Works",
         "source_id": "9",
         "source_ref": "data/raw/smoke/travis-arcgis.json",
         "state": "unknown",
         "review_status": "unreviewed",
-        "reason": "NO_UPSTREAM_GAUGE"
+        "reason": "NO_UPSTREAM_GAUGE",
+        "inventory_version": "inv-20261017"
       }
     },
     {
@@ -2962,13 +4034,21 @@
         "id": "tc-90",
         "name": "Lockwood Springs Rd @ 8700 block (in the bend between Blake-Manor and Ed Acklin)",
         "name_es": "Lockwood Springs Rd @ 8700 block (in the bend between Blake-Manor and Ed Acklin)",
+        "road": "Lockwood Springs Rd",
+        "creek": "8700 block (in the bend between Blake-Manor and Ed Acklin)",
+        "jurisdiction": "Travis County",
         "tier": "C",
+        "target_gauge_id": null,
+        "overtop_stage_ft": null,
+        "truth_quality": null,
+        "truth_source": null,
         "source": "Travis County Public Works",
         "source_id": "90",
         "source_ref": "data/raw/smoke/travis-arcgis.json",
         "state": "unknown",
         "review_status": "unreviewed",
-        "reason": "NO_UPSTREAM_GAUGE"
+        "reason": "NO_UPSTREAM_GAUGE",
+        "inventory_version": "inv-20261017"
       }
     },
     {
@@ -2984,13 +4064,21 @@
         "id": "tc-92",
         "name": "Lund-Carlson Rd @ Little Willow Ck",
         "name_es": "Lund-Carlson Rd @ Little Willow Ck",
+        "road": "Lund-Carlson Rd",
+        "creek": "Little Willow Ck",
+        "jurisdiction": "Travis County",
         "tier": "C",
+        "target_gauge_id": null,
+        "overtop_stage_ft": null,
+        "truth_quality": null,
+        "truth_source": null,
         "source": "Travis County Public Works",
         "source_id": "92",
         "source_ref": "data/raw/smoke/travis-arcgis.json",
         "state": "unknown",
         "review_status": "unreviewed",
-        "reason": "NO_UPSTREAM_GAUGE"
+        "reason": "NO_UPSTREAM_GAUGE",
+        "inventory_version": "inv-20261017"
       }
     },
     {
@@ -3006,13 +4094,21 @@
         "id": "tc-94",
         "name": "Manda Carlson Rd at New Sweden Church Rd (Location 1)",
         "name_es": "Manda Carlson Rd at New Sweden Church Rd (Location 1)",
+        "road": "Manda Carlson Rd at New Sweden Church Rd (Location 1)",
+        "creek": null,
+        "jurisdiction": "Travis County",
         "tier": "C",
+        "target_gauge_id": null,
+        "overtop_stage_ft": null,
+        "truth_quality": null,
+        "truth_source": null,
         "source": "Travis County Public Works",
         "source_id": "94",
         "source_ref": "data/raw/smoke/travis-arcgis.json",
         "state": "unknown",
         "review_status": "unreviewed",
-        "reason": "NO_UPSTREAM_GAUGE"
+        "reason": "NO_UPSTREAM_GAUGE",
+        "inventory_version": "inv-20261017"
       }
     },
     {
@@ -3028,13 +4124,21 @@
         "id": "tc-96",
         "name": "Margo Dr @ trib to Maha Ck (12000 block, AKA 1400 block)",
         "name_es": "Margo Dr @ trib to Maha Ck (12000 block, AKA 1400 block)",
+        "road": "Margo Dr",
+        "creek": "trib to Maha Ck (12000 block, AKA 1400 block)",
+        "jurisdiction": "Travis County",
         "tier": "C",
+        "target_gauge_id": null,
+        "overtop_stage_ft": null,
+        "truth_quality": null,
+        "truth_source": null,
         "source": "Travis County Public Works",
         "source_id": "96",
         "source_ref": "data/raw/smoke/travis-arcgis.json",
         "state": "unknown",
         "review_status": "unreviewed",
-        "reason": "NO_UPSTREAM_GAUGE"
+        "reason": "NO_UPSTREAM_GAUGE",
+        "inventory_version": "inv-20261017"
       }
     },
     {
@@ -3050,13 +4154,21 @@
         "id": "tc-97",
         "name": "Melody Ln",
         "name_es": "Melody Ln",
+        "road": "Melody Ln",
+        "creek": null,
+        "jurisdiction": "Travis County",
         "tier": "C",
+        "target_gauge_id": null,
+        "overtop_stage_ft": null,
+        "truth_quality": null,
+        "truth_source": null,
         "source": "Travis County Public Works",
         "source_id": "97",
         "source_ref": "data/raw/smoke/travis-arcgis.json",
         "state": "unknown",
         "review_status": "unreviewed",
-        "reason": "NO_UPSTREAM_GAUGE"
+        "reason": "NO_UPSTREAM_GAUGE",
+        "inventory_version": "inv-20261017"
       }
     },
     {
@@ -3072,13 +4184,21 @@
         "id": "tc-98",
         "name": "Moore Rd east of 130",
         "name_es": "Moore Rd east of 130",
+        "road": "Moore Rd east of 130",
+        "creek": null,
+        "jurisdiction": "Travis County",
         "tier": "C",
+        "target_gauge_id": null,
+        "overtop_stage_ft": null,
+        "truth_quality": null,
+        "truth_source": null,
         "source": "Travis County Public Works",
         "source_id": "98",
         "source_ref": "data/raw/smoke/travis-arcgis.json",
         "state": "unknown",
         "review_status": "unreviewed",
-        "reason": "NO_UPSTREAM_GAUGE"
+        "reason": "NO_UPSTREAM_GAUGE",
+        "inventory_version": "inv-20261017"
       }
     },
     {
@@ -3094,13 +4214,21 @@
         "id": "tc-99",
         "name": "Mowinkle Dr @ Williamson Creek",
         "name_es": "Mowinkle Dr @ Williamson Creek",
-        "tier": "C",
+        "road": "Mowinkle Dr",
+        "creek": "Williamson Creek",
+        "jurisdiction": "Travis County",
+        "tier": "B",
+        "target_gauge_id": null,
+        "overtop_stage_ft": null,
+        "truth_quality": null,
+        "truth_source": null,
         "source": "Travis County Public Works",
         "source_id": "99",
         "source_ref": "data/raw/smoke/travis-arcgis.json",
-        "state": "unknown",
-        "review_status": "unreviewed",
-        "reason": "NO_UPSTREAM_GAUGE"
+        "state": "no_rise",
+        "review_status": "verified",
+        "reason": "UPSTREAM_MONITORED",
+        "inventory_version": "inv-20261017"
       }
     }
   ]

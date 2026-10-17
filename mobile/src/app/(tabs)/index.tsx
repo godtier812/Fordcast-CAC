@@ -18,17 +18,35 @@ import { usePreferences } from '@/lib/preferences';
 import { theme as c } from '@/lib/theme';
 import MapSurface from '@/features/map/MapSurface';
 import CrossingRow from '@/features/map/CrossingRow';
+
+type FilterMode = 'all' | 'monitored' | 'tier_a' | 'tier_b' | 'saved';
+
 export default function MapHome() {
-  const { t } = usePreferences();
+  const { t, saved } = usePreferences();
   const [query, setQuery] = useState('');
   const [map, setMap] = useState(true);
-  const filtered = useMemo(
-    () =>
-      crossings.filter((f) =>
-        f.properties.name.toLocaleLowerCase().includes(query.toLocaleLowerCase()),
-      ),
-    [query],
-  );
+  const [filterMode, setFilterMode] = useState<FilterMode>('monitored');
+
+  const filtered = useMemo(() => {
+    const q = query.trim().toLocaleLowerCase();
+    return crossings
+      .filter((f) => {
+        const p = f.properties;
+        if (filterMode === 'monitored' && p.tier !== 'A' && p.tier !== 'B') return false;
+        if (filterMode === 'tier_a' && p.tier !== 'A') return false;
+        if (filterMode === 'tier_b' && p.tier !== 'B') return false;
+        if (filterMode === 'saved' && !saved.includes(p.id)) return false;
+        if (!q) return true;
+        const hay = `${p.name} ${p.road ?? ''} ${p.creek ?? ''}`.toLocaleLowerCase();
+        return hay.includes(q);
+      })
+      .sort((a, b) => {
+        const rankTier = { A: 0, B: 1, C: 2 } as Record<string, number>;
+        const diff = (rankTier[a.properties.tier] ?? 2) - (rankTier[b.properties.tier] ?? 2);
+        return diff !== 0 ? diff : a.properties.name.localeCompare(b.properties.name);
+      });
+  }, [query, filterMode, saved]);
+
   return (
     <Page>
       <View style={[styles.row, { justifyContent: 'space-between' }]}>
@@ -61,7 +79,7 @@ export default function MapHome() {
       )}
       <Card>
         <View style={styles.row}>
-          <StatusGlyph state="unknown" />
+          <StatusGlyph state="watch" />
           <AppText style={{ fontFamily: 'Inter_600SemiBold', flex: 1 }}>
             {t('map.coverage')}
           </AppText>
@@ -70,6 +88,16 @@ export default function MapHome() {
           {t('map.coverage_body')}
         </AppText>
       </Card>
+      <View style={[styles.row, { flexWrap: 'wrap', gap: 8 }]}>
+        {(['monitored', 'tier_a', 'tier_b', 'saved', 'all'] as const).map((mode) => (
+          <Button
+            key={mode}
+            secondary={filterMode !== mode}
+            title={t(`map.filter.${mode}`)}
+            onPress={() => setFilterMode(mode)}
+          />
+        ))}
+      </View>
       <TextInput
         value={query}
         onChangeText={setQuery}

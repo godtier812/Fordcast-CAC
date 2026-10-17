@@ -1,10 +1,24 @@
 id = "halloween-2013"
-kind = "study"
-bundle = false
+name_en = "Halloween Flood 2013"
+name_es = "Inundación de Halloween 2013"
+tz = "America/Chicago"
+headline_event = "2013-10-31T11:15:00Z"
+gauges = ["USGS-08154700", "USGS-08155200", "USGS-08155240", "USGS-08155300", "USGS-08155400", "USGS-08156675", "USGS-08156800", "USGS-08158200", "USGS-08158380", "USGS-08158600", "USGS-08158700", "USGS-08158810", "USGS-08158827", "USGS-08158840", "USGS-08158860", "USGS-08158920", "USGS-08158930", "USGS-08158970", "USGS-08159000"]
 official_status = "none"
-forecast_ready = false
-outages = []
-notes = "Gauge-to-gauge training study only. Transmission outages not yet independently verified; not eligible for forecast replay."
+kind = "storm"
+bundle = true
+catalog_order = 1
+data_sha256 = "09303369428e661dc20fc4dc522f1bb7ba0f435e500be543144c794ac38a132b"
+notes = "US 183 gauge silent after 2013-10-31T04:45:00Z; values are approved USGS OGC API v1 data"
+
+outages = [
+  { site = "USGS-08159000", start = "2013-10-31T11:15:00Z", end = "2013-10-31T13:45:00Z", source = "USGS alert 2013-10-31; Statesman 2013-11-10" },
+]
+
 [window]
-start = "2013-10-29T00:00:00Z"
-end = "2013-11-02T00:00:00Z"
+start = "2013-10-30T12:00:00Z"
+end = "2013-11-01T00:00:00Z"
+
+[fetched]
+source = "api.waterdata.usgs.gov/ogcapi/v1 continuous"
+at = "2026-10-17T23:00:00Z"

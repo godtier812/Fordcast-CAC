@@ -1,0 +1,20 @@
+{
+  "schema": "fordcast.assets.v1",
+  "files": [
+    {
+      "path": "seed/crossings.geojson",
+      "sha256": "14ae6e3f802e6f1df945c33f20571f26eb14498fa1050bd6d78e6d9e6fc234eb",
+      "bytes": 89745
+    },
+    {
+      "path": "seed/gauges.geojson",
+      "sha256": "658f3c942a9aeaf17b51c9d4e67360034eaa513efdcc9e004f7c46bdf0dc6bea",
+      "bytes": 9124
+    },
+    {
+      "path": "observations/halloween-2013.json",
+      "sha256": "4848ef0f08055832259fd6aec534779111fc0f087e8f29a07fe00f08bd479232",
+      "bytes": 7738
+    }
+  ]
+}

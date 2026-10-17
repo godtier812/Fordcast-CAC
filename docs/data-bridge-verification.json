@@ -1,0 +1,188 @@
+{
+  "checked_at": "2026-10-16T06:14:13.658320+00:00",
+  "scope": "Partial bootstrap checks; not full S1\u2013S12 acceptance",
+  "usgs_keyed": false,
+  "checks": [
+    {
+      "id": "S1",
+      "source": "usgs-collections",
+      "url": "https://api.waterdata.usgs.gov/ogcapi/v1/collections?f=json",
+      "scope": "partial contract probe",
+      "http_status": 200,
+      "status": "PASS",
+      "sha256": "8b121d71583c2e2e4c2c783e8b87d9e305804c66a5123c7aad493ffb128b228a",
+      "bytes": 170644,
+      "keys": [
+        "collections",
+        "links"
+      ]
+    },
+    {
+      "id": "S2",
+      "source": "usgs-latest",
+      "url": "https://api.waterdata.usgs.gov/ogcapi/v1/collections/latest-continuous/items?f=json&bbox=-98.20,29.95,-97.40,30.70&parameter_code=00065&limit=10000",
+      "scope": "partial contract probe",
+      "http_status": 200,
+      "status": "PASS",
+      "sha256": "bf489ecb6711ce07d132fb9d774416872ffb8b95ab7d654dc314264cc9b94abc",
+      "bytes": 46126,
+      "keys": [
+        "type",
+        "features",
+        "numberReturned",
+        "links",
+        "timeStamp"
+      ],
+      "features": 66,
+      "property_keys": [
+        "time_series_id",
+        "monitoring_location_id",
+        "parameter_code",
+        "statistic_id",
+        "time",
+        "value",
+        "unit_of_measure",
+        "approval_status",
+        "qualifier",
+        "last_modified"
+      ]
+    },
+    {
+      "id": "S3",
+      "source": "usgs-2013-us183",
+      "url": "https://api.waterdata.usgs.gov/ogcapi/v1/collections/continuous/items?f=json&monitoring_location_id=USGS-08159000&parameter_code=00065&time=2013-10-30T00:00:00Z/2013-11-01T00:00:00Z&limit=10000",
+      "scope": "partial contract probe",
+      "http_status": 200,
+      "status": "PASS",
+      "sha256": "b807d17e60c0413d2224e2d36ac904824701bd9977b4d6dd053e412d697105dd",
+      "bytes": 83805,
+      "keys": [
+        "type",
+        "features",
+        "numberReturned",
+        "links",
+        "timeStamp"
+      ],
+      "features": 116,
+      "property_keys": [
+        "time_series_id",
+        "monitoring_location_id",
+        "parameter_code",
+        "statistic_id",
+        "time",
+        "value",
+        "unit_of_measure",
+        "approval_status",
+        "qualifier",
+        "last_modified",
+        "method_category"
+      ]
+    },
+    {
+      "id": "S4",
+      "source": "nldi-onion",
+      "url": "https://api.water.usgs.gov/nldi/linked-data/nwissite/USGS-08159000/navigation/UT/nwissite?distance=100",
+      "scope": "partial contract probe",
+      "http_status": 200,
+      "status": "PASS",
+      "sha256": "85cc29e121e74548b3f6a97b8b703262edc8ce704c6401f61b4ba7916dbe482f",
+      "bytes": 19345,
+      "keys": [
+        "type",
+        "features"
+      ],
+      "features": 25,
+      "property_keys": [
+        "identifier",
+        "navigation",
+        "name",
+        "source",
+        "sourceName",
+        "comid",
+        "type",
+        "uri",
+        "reachcode",
+        "measure",
+        "mainstem"
+      ]
+    },
+    {
+      "id": "S5",
+      "source": "nwps-us183",
+      "url": "https://api.water.noaa.gov/nwps/v1/gauges/08159000",
+      "scope": "partial contract probe",
+      "http_status": 200,
+      "status": "PASS",
+      "sha256": "9b3be9364ccdd8847182860eebc8f55e4ad01c375e411dcfc4569f33ce9406d5",
+      "bytes": 19134,
+      "keys": [
+        "lid",
+        "usgsId",
+        "reachId",
+        "name",
+        "description",
+        "rfc",
+        "wfo",
+        "state",
+        "county",
+        "timeZone",
+        "latitude",
+        "longitude",
+        "pedts",
+        "status",
+        "flood"
+      ]
+    },
+    {
+      "id": "S7",
+      "source": "austin-crossings",
+      "url": "https://data.austintexas.gov/api/v3/views/q6kt-v2zm/export.geojson",
+      "scope": "partial contract probe",
+      "http_status": 406,
+      "status": "FAIL",
+      "error": "HTTPStatusError"
+    },
+    {
+      "id": "S8",
+      "source": "ofm-style",
+      "url": "https://tiles.openfreemap.org/styles/positron",
+      "scope": "partial contract probe",
+      "http_status": 200,
+      "status": "PASS",
+      "sha256": "afaaca366424d55d294b6a4d8a0820a07e8b674b34077e7dc4460b1b14c28aaa",
+      "bytes": 60213,
+      "keys": [
+        "version",
+        "sources",
+        "sprite",
+        "glyphs",
+        "layers"
+      ]
+    },
+    {
+      "id": "S6",
+      "status": "BLOCKED",
+      "reason": "Project contact email not supplied; NWS User-Agent contract not exercised."
+    },
+    {
+      "id": "S9",
+      "status": "BLOCKED",
+      "reason": "Stretch rainfall integration not enabled."
+    },
+    {
+      "id": "S10",
+      "status": "BLOCKED",
+      "reason": "ATXfloods permission absent; no endpoint accessed."
+    },
+    {
+      "id": "S11",
+      "status": "BLOCKED",
+      "reason": "Routing keys absent; Stretch integration not enabled."
+    },
+    {
+      "id": "S12",
+      "status": "BLOCKED",
+      "reason": "Expo access token absent; push receipt authentication not exercised."
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+[project]
+name = "fordcast-tools"
+version = "0.1.0"
+requires-python = ">=3.13,<3.14"
+dependencies = [
+  "colorspacious==1.1.2",   # CVD simulation (Machado 2009): cvd_screens.py, contrast.py
+  "numpy>=2.5,<2.6",        # colorspacious + image math
+  "pillow>=12.3,<12.4",     # make_markers.py, cvd_screens.py
+  "shapely>=2.1,<2.2",      # export_app_data.py geometry checks (creek direction gauge → crossing, service area)
+  "pyproj>=3.8,<3.9",       # geodesic distances (export_app_data.py, road_elevation.py)
+  "httpx>=0.28.1",          # data_manifest.py (Supabase Storage upload/download)
+]
+
+[dependency-groups]
+dem = ["py3dep==0.19.0"]    # road_elevation.py only: `uv run --project tools --group dem python tools/road_elevation.py`
+
+[tool.uv]
+package = false
+exclude-newer = "2026-09-30T00:00:00Z"

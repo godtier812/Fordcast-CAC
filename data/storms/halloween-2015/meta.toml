@@ -1,0 +1,10 @@
+id = "halloween-2015"
+kind = "study"
+bundle = false
+official_status = "none"
+forecast_ready = false
+outages = []
+notes = "Gauge-to-gauge training study only. Transmission outages not yet independently verified; not eligible for forecast replay."
+[window]
+start = "2015-10-28T00:00:00Z"
+end = "2015-11-02T00:00:00Z"

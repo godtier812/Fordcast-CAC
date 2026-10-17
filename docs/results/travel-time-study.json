@@ -1,0 +1,61 @@
+{
+  "schema": "fordcast.travel-time-study.v1",
+  "kind": "training-study",
+  "forecast_skill_claim": false,
+  "upstream_gauge": "USGS-08158700",
+  "downstream_gauge": "USGS-08159000",
+  "upstream_evidence": "USGS NLDI upstream navigation",
+  "storms": [
+    {
+      "storm_id": "halloween-2013",
+      "rows": {
+        "USGS-08158700": 1153,
+        "USGS-08159000": 289
+      },
+      "estimate": null,
+      "archive_sha256": "34aa62215cf1bb8efa9586818fc3c901bc581c351ce9bce578e3fc52e0462918"
+    },
+    {
+      "storm_id": "memorial-day-2015",
+      "rows": {
+        "USGS-08158700": 1729,
+        "USGS-08159000": 1729
+      },
+      "estimate": null,
+      "archive_sha256": "bf23ac9c7f19feef51031fc0c2c069ebc65b90109a48666654966b2babf9ae3a"
+    },
+    {
+      "storm_id": "halloween-2015",
+      "rows": {
+        "USGS-08158700": 1441,
+        "USGS-08159000": 1440
+      },
+      "estimate": {
+        "lag_min": 0,
+        "r": 0.8759757447154547,
+        "storm_id": "halloween-2015"
+      },
+      "archive_sha256": "8690d2e4aa3b0fd60f6e9634467b45f7ce1da686b65916c027ae35da57247bbd"
+    }
+  ],
+  "combined": {
+    "lag_min": 0.0,
+    "lag_p25_min": 0.0,
+    "lag_p75_min": 0.0,
+    "n_storms": 1,
+    "xcorr_r": 0.8759757447154547,
+    "celerity_ms": null,
+    "needs_review": true,
+    "notes": [
+      "Fewer than two independent storm estimates",
+      "No positive propagation lag established",
+      "Channel distance and physical celerity are unverified"
+    ]
+  },
+  "limitations": [
+    "Gauge-to-gauge lag is not crossing-specific warning lead time.",
+    "Channel distance and physical celerity are not verified.",
+    "No road-overtopping ground truth or out-of-sample forecast evaluation.",
+    "Archived approved values can differ from original provisional values."
+  ]
+}

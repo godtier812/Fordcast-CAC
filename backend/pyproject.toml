@@ -1,0 +1,35 @@
+[project]
+name = "fordcast-backend"
+version = "0.1.0"
+requires-python = ">=3.13,<3.14"
+dependencies = [
+  "fastapi>=0.142,<0.143", "uvicorn[standard]>=0.54", "pydantic>=2.13,<2.14", "pydantic-settings>=2.15",
+  "httpx>=0.28.1", "tenacity>=9.1", "psycopg[binary,pool]>=3.3.6", "orjson>=3.12",
+  "numpy>=2.5,<2.6", "pandas>=3.0,<3.1", "pyarrow>=25", "scikit-learn>=1.9,<1.10", "joblib>=1.6",
+  "dataretrieval>=1.4", "structlog>=26.1", "sentry-sdk[fastapi]>=2.71", "slowapi>=0.1.10",
+  "shapely>=2.1", "pyproj>=3.8",
+]
+
+[project.optional-dependencies]
+analysis = ["matplotlib>=3.11"]                       # backtest figures (offline, CI)
+ml       = ["shap>=0.52", "xgboost>=3.4", "lightgbm>=4.7"]
+geo      = ["pynhd>=0.20", "geopandas>=1.2"]           # offline linking (+ folium after VERIFY, §17.11)
+# rain   = ["cfgrib==0.9.15.1", "eccodes==2.49.0", "xarray==2026.9.0"]   # Stretch; enable after VERIFY (§16.8)
+
+[dependency-groups]
+dev = ["pytest>=9.1", "pytest-asyncio>=1.4", "respx>=0.23", "pytest-recording>=0.13", "vcrpy>=8.3",
+       "hypothesis>=6.168", "ruff>=0.16", "mypy>=2.3"]
+
+[tool.uv]
+package = false                                        # flat layout: run from backend/ (python -m fordcast)
+exclude-newer = "2026-09-30T00:00:00Z"
+exclude-newer-package = { dataretrieval = "2026-10-03T00:00:00Z" }
+
+[tool.ruff]
+line-length = 100
+target-version = "py313"
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+asyncio_mode = "auto"
+markers = ["live: hits real external APIs (nightly only)"]

@@ -1,18 +1,33 @@
 {
+  "alerts": {
+    "empty": "Todavía no hay alertas. Aquí verá avisos sobre sus cruces guardados y sus trayectos.",
+    "why_late": "Las alertas pueden llegar con minutos de retraso, y FordCast no cubre todos los caminos."
+  },
   "demo": {
+    "accuracy_planned": "Cómo se medirá la precisión (planeado): tormentas reales pasadas de Austin, sin ver datos futuros, y cada tormenta evaluada con reglas aprendidas de las demás.",
     "badge": "SIMULADO",
     "banner": "TORMENTA SIMULADA · datos de demostración · no es en vivo",
     "banner_spoken": "Tormenta simulada. Datos de demostración. No es en vivo.",
+    "banner_sub": "datos de demostración · no es en vivo",
+    "banner_title": "TORMENTA SIMULADA",
     "chip": "DEMO",
     "chip_spoken": "Datos de demostración",
     "closure_gap": "La cuadrilla vial simulada lo cerró {{x}} min después del primer Evite de FordCast.",
+    "drive_banner_sub": "posición programada · demo",
+    "drive_cta": "Manejar esta tormenta (simulado)",
+    "gauge_simulated": "Lecturas simuladas para esta demostración",
+    "location": "Ubicación de demostración: {{place}}",
     "notify": {
       "subtitle": "Tormenta simulada · datos de demostración"
     },
+    "pill_idle": "actualizado {{age}}",
+    "pill_idle_short": "{{age_short}}",
     "pill_running": "SIMULADO · {{time}} hora de la tormenta",
+    "pill_running_short": "SIMULADO · {{time}}",
     "pill_running_spoken": "Tormenta simulada. Hora de la tormenta {{time}}.",
     "result": "En esta tormenta simulada, FordCast avisó {{x}} min antes de que el agua llegara al camino",
     "result_honesty": "Datos de medidores simulados; el código de pronóstico es real y se ejecutó en este teléfono. Aviso mediano en los {{n}} cruces que se inundaron en esta tormenta: {{m}} min.",
+    "result_rule": "Ejemplo elegido con una regla fija: el cruce cuyo aviso estuvo más cerca de la mediana.",
     "source": {
       "road_crew": "Cuadrilla vial simulada"
     },
@@ -25,13 +40,52 @@
     "take_hint": "Carga esta toma del video.",
     "title": "Director de demostración"
   },
+  "disclaimer": {
+    "footer": "FordCast es una herramienta complementaria. Respete las barricadas y las alertas oficiales. Nunca maneje en el agua."
+  },
   "drive": {
+    "lockout": {
+      "title": "Escribir está bloqueado mientras el carro está en movimiento. ¿Es usted pasajero?"
+    },
+    "silent_tip": "Desactive el modo silencio para escuchar las alertas habladas.",
+    "start_tts": "Modo manejo activado. FordCast le hablará.",
     "tts": {
       "multi_changed_many": "Cambiaron {{count}} cruces adelante.",
       "multi_changed_one": "Cambió {{count}} cruce adelante.",
       "multi_changed_other": "Cambiaron {{count}} cruces adelante.",
       "offline": "FordCast está sin conexión. Esté atento al agua y a las barricadas.",
       "unknown_ahead": "No hay datos recientes de {{name}}. Esté atento al agua y a las barricadas."
+    }
+  },
+  "fresh": {
+    "as_of": "A las {{time}}",
+    "offline": "Sin datos · {{age}}"
+  },
+  "legal": {
+    "about": "FordCast es un proyecto estudiantil independiente creado para el Congressional App Challenge 2026. Esta demostración usa lecturas de medidores simuladas y tormentas simuladas; ninguna alerta en ella es real. No es un servicio oficial de alertas y no está afiliado ni respaldado por el Servicio Nacional de Meteorología (NWS), el USGS, la Ciudad de Austin, el Condado de Travis ni la Cámara de Representantes de EE. UU. FordCast nunca indica que un cruce sea seguro. Siempre respete las barricadas, los cierres de caminos y las alertas oficiales. En una emergencia, llame al 911. Se ofrece \"tal cual\", sin garantía de ningún tipo."
+  },
+  "official": {
+    "no_closure": "{{source}}: no hay cierre reportado"
+  },
+  "onboarding": {
+    "how": {
+      "data": "Esta demostración usa lecturas simuladas. La lógica del pronóstico es real y funciona en su teléfono.",
+      "title": "Cómo funciona"
+    },
+    "legend": {
+      "never_safe": "FordCast nunca dice que un camino es seguro.",
+      "title": "Lo que muestra el mapa"
+    },
+    "pledge": {
+      "accept": "Entiendo",
+      "hint": "Marque las tres frases para continuar",
+      "item1": "Nunca manejaré en el agua.",
+      "item2": "Respetaré las barricadas y las alertas oficiales.",
+      "item3": "FordCast es un pronóstico creado por un estudiante. Puede equivocarse o llegar tarde, y nunca me dice que un camino es seguro.",
+      "title": "Antes de empezar"
+    },
+    "welcome": {
+      "title": "Sepa antes de que el agua cruce."
     }
   },
   "reason": {
@@ -62,46 +116,89 @@
     "gauge_silent": "{{gauge}} dejó de transmitir. Sus lecturas llegaron después, así que FordCast muestra Desconocido aquí.",
     "simulated_drive": "MANEJO SIMULADO"
   },
+  "route": {
+    "unknown_count_many": "{{count}} cruces en esta ruta no tienen datos recientes",
+    "unknown_count_one": "{{count}} cruce en esta ruta no tiene datos recientes",
+    "unknown_count_other": "{{count}} cruces en esta ruta no tienen datos recientes"
+  },
   "state": {
     "avoid": {
+      "body": "El agua de río arriba va hacia este cruce. Puede llegar al camino antes de que pongan barricadas. Use otra ruta.",
+      "detour_line": "El desvío agrega {{n}} min",
+      "handoff_warning": "Su app de mapas no conoce este pronóstico. Si lo lleva de vuelta hacia {{name}}, no la siga.",
       "headline": "Evite · probablemente inundado en {{lo}}–{{hi}} min",
       "headline_now": "Evite · puede que ya haya agua en el camino",
       "label": "Evite",
       "push_body": "Probablemente inundado en {{lo}}–{{hi}} min. Use otra ruta. Nunca maneje en el agua.",
       "push_body_now": "Puede que ya haya agua en el camino. Use otra ruta. Nunca maneje en el agua.",
       "push_title": "Evite {{name}}",
+      "short": "EVITE",
+      "spoken": "Evite. {{name}}. Probablemente inundado en {{lo}} a {{hi}} minutos. Use otra ruta.",
+      "spoken_now": "Evite. {{name}}. Puede que ya haya agua en el camino. Use otra ruta.",
       "tts": "Evite {{name}}. Inundación probable pronto. Tome otra ruta."
     },
     "closed": {
+      "body": "{{source}} reporta este cruce cerrado. No pase alrededor de las barricadas. ¡Dé la vuelta, no se ahogue!",
       "body_sensor": "El sensor de este cruce muestra agua sobre el camino. ¡Dé la vuelta, no se ahogue!",
+      "closure_lifted": "{{source}}: cierre levantado a las {{time}}. Puede quedar agua. Tenga cuidado.",
       "headline": "Cerrado · {{source}}",
+      "headline_sensor": "Agua sobre el camino · reportada a las {{time}}",
       "label": "Inundado – Cerrado",
       "official": "OFICIAL",
       "push_body": "{{source}} lo reporta cerrado. ¡Dé la vuelta, no se ahogue!",
       "push_title": "Cerrado: {{name}}",
+      "short": "CERRADO",
+      "spoken": "Cerrado. {{name}}. Reportado por {{source}}. Dé la vuelta, no se ahogue.",
       "tts": "{{name}} está cerrado. Dé la vuelta. No se ahogue."
     },
     "no_rise": {
-      "label": "Sin crecida detectada"
+      "area_headline": "No se detecta crecida río arriba cerca de usted",
+      "area_sub": "Vigilando {{g}} medidores río arriba para {{c}} cruces · actualizado {{age}}",
+      "body": "FordCast no detecta agua subiendo en los medidores río arriba de este cruce en este momento. Eso no significa que el camino esté despejado: la lluvia cercana o un arroyo sin medidor todavía pueden inundarlo.",
+      "footer": "El agua puede cubrir el camino sin previo aviso. ¡Dé la vuelta, no se ahogue!",
+      "headline": "No se detecta crecida río arriba",
+      "label": "Sin crecida detectada",
+      "route_verdict": "No se detecta crecida en {{c}} cruces monitoreados en esta ruta",
+      "short": "SIN CRECIDA",
+      "spoken": "{{name}}. No se detecta crecida río arriba. Actualizado {{age}}."
     },
     "unknown": {
+      "body": "No podemos obtener datos de los medidores de este cruce (últimos datos: {{age}}). Trátelo como si pudiera inundarse y consulte fuentes oficiales.",
+      "body_not_monitored": "FordCast no tiene un medidor río arriba para este cruce. Esté atento al agua y a las barricadas, y consulte fuentes oficiales.",
       "headline": "Desconocido · sin datos",
       "headline_not_monitored": "Desconocido · FordCast no lo monitorea",
       "label": "Desconocido – sin datos",
-      "last_known": "Último estado conocido: {{state}} · {{age}}"
+      "last_known": "Último estado conocido: {{state}} · {{age}}",
+      "short": "DESCONOCIDO",
+      "spoken": "Desconocido. {{name}}. Sin datos desde {{age}}. Podría inundarse."
     },
     "watch": {
+      "body": "{{gauge}} subió {{rise}} pies en los últimos 30 min. Si sigue subiendo, este cruce podría inundarse en unos {{lo}}–{{hi}} min. Planee otra ruta.",
+      "body_nowindow": "El agua está subiendo río arriba. Este cruce podría inundarse si sigue subiendo. Planee otra ruta.",
+      "headline": "Precaución · el agua sube río arriba",
       "label": "Precaución",
       "push_body": "El agua sube río arriba. Posible inundación en {{lo}}–{{hi}} min. Planee otra ruta.",
       "push_body_nowindow": "El agua sube río arriba. Planee otra ruta.",
       "push_title": "Precaución: {{name}}",
+      "short": "PRECAUCIÓN",
+      "spoken": "Precaución. {{name}}. El agua está subiendo río arriba. Posible inundación en {{lo}} a {{hi}} minutos.",
       "tts": "Atención. El agua está subiendo río arriba de {{name}}. Planee otra ruta."
     }
+  },
+  "tabs": {
+    "alerts": "Alertas",
+    "drive": "Manejo",
+    "map": "Mapa",
+    "storms": "Tormentas"
   },
   "time": {
     "min_ago_many": "hace {{count}} min",
     "min_ago_one": "hace {{count}} min",
     "min_ago_other": "hace {{count}} min"
+  },
+  "travel": {
+    "range": "El agua suele tardar {{tau_lo}}–{{tau_hi}} min en llegar aquí",
+    "range_spoken": "El agua suele tardar de {{tau_lo}} a {{tau_hi}} minutos en llegar aquí"
   },
   "update": {
     "deescalate": {

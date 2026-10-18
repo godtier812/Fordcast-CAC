@@ -1,0 +1,19 @@
+{
+  "global": {
+    "en": ["safe", "safer", "safely", "all clear", "all-clear", "clear", "cleared", "passable", "good to go", "no risk", "low risk",
+      "no danger", "you can cross", "can cross", "reopened", "all good", "nothing to worry", "live", "real-time"],
+    "es": ["seguro", "segura", "seguros", "seguras", "todo despejado", "despejado", "despejada", "transitable", "puede cruzar",
+      "puede pasar", "listo para pasar", "sin riesgo", "bajo riesgo", "riesgo bajo", "sin peligro", "reabierto", "todo bien",
+      "en tiempo real"]
+  },
+  "status": {
+    "en": ["ok", "okay", "normal", "open", "opened"],
+    "es": ["normal", "abierto", "abierta"]
+  },
+  "chromeNamespaces": ["settings.", "common.", "search.", "permissions.", "director."],
+  "allowKeys": ["state.no_rise.body", "legend.never_safe", "onboarding.pledge.*", "onboarding.legend.*", "legal.about", "disclaimer.*",
+    "demo.banner", "demo.banner_sub", "demo.banner_spoken", "howitworks.step4.body", "safety.never_safe"],
+  "negationTokens": ["never", "not", "n't", "no ", "nunca"],
+  "agencyNames": ["City of Austin", "ATXfloods", "Travis County", "TxDOT", "NWS"],
+  "agencyAllowKeys": ["legal.about", "about.sources*", "sheet.credit", "whatsreal.*"]
+}

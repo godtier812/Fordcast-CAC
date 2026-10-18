@@ -1,18 +1,33 @@
 {
+  "alerts": {
+    "empty": "No alerts yet. You'll see warnings here for your saved crossings and drives.",
+    "why_late": "Alerts can arrive minutes late, and FordCast doesn't cover every road."
+  },
   "demo": {
+    "accuracy_planned": "How accuracy will be measured (planned): real past Austin storms, no peeking at future data, each storm tested with rules learned from the others.",
     "badge": "SIMULATED",
     "banner": "SIMULATED STORM · demo data · not live",
     "banner_spoken": "Simulated storm. Demo data. Not live.",
+    "banner_sub": "demo data · not live",
+    "banner_title": "SIMULATED STORM",
     "chip": "DEMO",
     "chip_spoken": "Demo data",
     "closure_gap": "The simulated road crew closed it {{x}} min after FordCast first said Avoid.",
+    "drive_banner_sub": "scripted position · demo",
+    "drive_cta": "Drive this storm (simulated)",
+    "gauge_simulated": "Readings simulated for this demo",
+    "location": "Demo location: {{place}}",
     "notify": {
       "subtitle": "Simulated storm · demo data"
     },
+    "pill_idle": "updated {{age}}",
+    "pill_idle_short": "{{age_short}}",
     "pill_running": "SIMULATED · {{time}} storm time",
+    "pill_running_short": "SIMULATED · {{time}}",
     "pill_running_spoken": "Simulated storm. Storm time {{time}}.",
     "result": "In this simulated storm, FordCast warned {{x}} min before water reached the road",
     "result_honesty": "Simulated gauge data; the forecasting code is real and ran on this phone. Median warning across the {{n}} crossings that flooded in this storm: {{m}} min.",
+    "result_rule": "Example picked by a fixed rule: the crossing whose warning was closest to the median.",
     "source": {
       "road_crew": "Simulated road crew"
     },
@@ -25,12 +40,51 @@
     "take_hint": "Loads this video take.",
     "title": "Demo Director"
   },
+  "disclaimer": {
+    "footer": "FordCast is a supplementary tool. Obey barricades and official warnings. Never drive into water."
+  },
   "drive": {
+    "lockout": {
+      "title": "Typing is locked while the car is moving. Are you a passenger?"
+    },
+    "silent_tip": "Turn off silent mode for spoken alerts.",
+    "start_tts": "Drive Mode on. FordCast will speak.",
     "tts": {
       "multi_changed_one": "{{count}} crossing ahead changed.",
       "multi_changed_other": "{{count}} crossings ahead changed.",
       "offline": "FordCast is offline. Watch for water and barricades.",
       "unknown_ahead": "No recent data for {{name}}. Watch for water and barricades."
+    }
+  },
+  "fresh": {
+    "as_of": "As of {{time}}",
+    "offline": "Data offline · {{age}}"
+  },
+  "legal": {
+    "about": "FordCast is an independent student project made for the 2026 Congressional App Challenge. This demonstration uses simulated gauge readings and simulated storms; no alert in it is real. It is not an official warning service and is not affiliated with or endorsed by the National Weather Service, USGS, the City of Austin, Travis County, or the U.S. House of Representatives. FordCast never indicates that a crossing is safe. Always obey barricades, road closures, and official warnings. In an emergency, call 911. Provided \"as is,\" without warranty of any kind."
+  },
+  "official": {
+    "no_closure": "{{source}}: no closure reported"
+  },
+  "onboarding": {
+    "how": {
+      "data": "This demo uses simulated gauge readings. The forecast logic is real and runs on your phone.",
+      "title": "How it works"
+    },
+    "legend": {
+      "never_safe": "FordCast never says a road is safe.",
+      "title": "What the map shows"
+    },
+    "pledge": {
+      "accept": "I understand",
+      "hint": "Check all three statements to continue",
+      "item1": "I will never drive into water.",
+      "item2": "I will obey barricades and official warnings.",
+      "item3": "FordCast is a student-built forecast. It can be wrong or late, and it never tells me a road is safe.",
+      "title": "Before you start"
+    },
+    "welcome": {
+      "title": "Know before it crosses."
     }
   },
   "reason": {
@@ -61,45 +115,87 @@
     "gauge_silent": "{{gauge}} went silent. Its readings only arrived later, so FordCast shows Unknown here.",
     "simulated_drive": "SIMULATED DRIVE"
   },
+  "route": {
+    "unknown_count_one": "{{count}} crossing on this route has no recent data",
+    "unknown_count_other": "{{count}} crossings on this route have no recent data"
+  },
   "state": {
     "avoid": {
+      "body": "Water from upstream is heading to this crossing. It may reach the road before any barricade goes up. Use another route.",
+      "detour_line": "Detour adds {{n}} min",
+      "handoff_warning": "Your map app doesn't know about this forecast. If it routes you back toward {{name}}, don't follow it.",
       "headline": "Avoid · likely flooded within {{lo}}–{{hi}} min",
       "headline_now": "Avoid · water may already be on the road",
       "label": "Avoid",
       "push_body": "Likely flooded within {{lo}}–{{hi}} min. Use another route. Never drive into water.",
       "push_body_now": "Water may already be on the road. Use another route. Never drive into water.",
       "push_title": "Avoid {{name}}",
+      "short": "AVOID",
+      "spoken": "Avoid. {{name}}. Likely flooded within {{lo}} to {{hi}} minutes. Use another route.",
+      "spoken_now": "Avoid. {{name}}. Water may already be on the road. Use another route.",
       "tts": "Avoid {{name}}. Flooding likely soon. Take another route."
     },
     "closed": {
+      "body": "{{source}} reports this crossing closed. Do not drive around barricades. Turn around, don't drown.",
       "body_sensor": "The sensor at this crossing shows water over the road. Turn around, don't drown.",
+      "closure_lifted": "{{source}}: closure lifted at {{time}}. Water may remain. Use caution.",
       "headline": "Closed · {{source}}",
+      "headline_sensor": "Water over road · reported {{time}}",
       "label": "Flooded – Closed",
       "official": "OFFICIAL",
       "push_body": "{{source}} reports it closed. Turn around, don't drown.",
       "push_title": "Closed: {{name}}",
+      "short": "CLOSED",
+      "spoken": "Closed. {{name}}. Reported by {{source}}. Turn around, don't drown.",
       "tts": "{{name}} is closed. Turn around. Don't drown."
     },
     "no_rise": {
-      "label": "No rise detected"
+      "area_headline": "No upstream rise detected near you",
+      "area_sub": "Watching {{g}} upstream gauges for {{c}} crossings · updated {{age}}",
+      "body": "FordCast isn't seeing rising water at the gauges upstream of this crossing right now. That doesn't mean the road is clear — nearby rain or an ungauged creek can still flood it.",
+      "footer": "Water can cover a road without warning. Turn around, don't drown.",
+      "headline": "No upstream rise detected",
+      "label": "No rise detected",
+      "route_verdict": "No rise detected at {{c}} monitored crossings on this route",
+      "short": "NO RISE",
+      "spoken": "{{name}}. No upstream rise detected. Updated {{age}}."
     },
     "unknown": {
+      "body": "We can't reach the gauges for this crossing (last data {{age}}). Treat it as if it could flood, and check official sources.",
+      "body_not_monitored": "FordCast has no upstream gauge for this crossing. Look out for water and barricades, and check official sources.",
       "headline": "Unknown · data offline",
       "headline_not_monitored": "Unknown · not monitored by FordCast",
       "label": "Unknown – data offline",
-      "last_known": "Last known: {{state}} · {{age}}"
+      "last_known": "Last known: {{state}} · {{age}}",
+      "short": "UNKNOWN",
+      "spoken": "Unknown. {{name}}. No data since {{age}}. It could flood."
     },
     "watch": {
+      "body": "{{gauge}} rose {{rise}} ft in the last 30 min. If it keeps rising, this crossing could flood in about {{lo}}–{{hi}} min. Plan another route.",
+      "body_nowindow": "Water is rising upstream. This crossing could flood if it keeps rising. Plan another route.",
+      "headline": "Watch · water rising upstream",
       "label": "Watch",
       "push_body": "Water rising upstream. Possible flooding in {{lo}}–{{hi}} min. Plan another route.",
       "push_body_nowindow": "Water rising upstream. Plan another route.",
       "push_title": "Watch: {{name}}",
+      "short": "WATCH",
+      "spoken": "Watch. {{name}}. Water is rising upstream. Possible flooding in {{lo}} to {{hi}} minutes.",
       "tts": "Heads up. Water is rising upstream of {{name}}. Plan another route."
     }
+  },
+  "tabs": {
+    "alerts": "Alerts",
+    "drive": "Drive",
+    "map": "Map",
+    "storms": "Storms"
   },
   "time": {
     "min_ago_one": "{{count}} min ago",
     "min_ago_other": "{{count}} min ago"
+  },
+  "travel": {
+    "range": "Water usually takes {{tau_lo}}–{{tau_hi}} min to get here",
+    "range_spoken": "Water usually takes {{tau_lo}} to {{tau_hi}} minutes to get here"
   },
   "update": {
     "deescalate": {

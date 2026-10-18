@@ -74,7 +74,13 @@
   "scripts": {
     "start": "expo start",
     "ios": "expo run:ios",
-    "lint": "expo lint"
+    "lint": "expo lint",
+    "test": "jest",
+    "test:demo": "jest src/__tests__/demo-",
+    "test:ui": "jest src/__tests__/demo-display src/__tests__/demo-player src/__tests__/demo-scenarios"
   },
-  "private": true
+  "private": true,
+  "jest": {
+    "preset": "jest-expo"
+  }
 }

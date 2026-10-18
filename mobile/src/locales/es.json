@@ -169,5 +169,11 @@
   "legend.closed": "Agua en el camino o cierre oficial reportado.",
   "legend.unknown": "Datos ausentes, retrasados o sin verificar.",
   "disclaimer": "FordCast es una herramienta complementaria. Obedezca las barricadas y las alertas oficiales. Nunca maneje en el agua.",
-  "error.storage": "El almacenamiento no está disponible. Las preferencias durarán solo esta sesión."
+  "error.storage": "El almacenamiento no está disponible. Las preferencias durarán solo esta sesión.",
+  "demo.eyebrow": "MUESTRAS INTERACTIVAS DE DEMOSTRACIÓN",
+  "demo.title": "Pruebe un escenario guiado",
+  "demo.body": "Accesos directos para explorar las alertas fuera de muestra, fallas de transmisión y pantalla de conducción.",
+  "demo.sample1": "Muestra 1 · Reproducción Halloween 2013 (70 min de anticipación)",
+  "demo.sample2": "Muestra 2 · Pantalla de Conducción (Voz + bloqueo >15 mph)",
+  "demo.sample3": "Muestra 3 · Cruce Nivel A Validado (Wasson Rd · 15.5 pies)"
 }

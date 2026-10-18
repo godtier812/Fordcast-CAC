@@ -22,7 +22,7 @@ import CrossingRow from '@/features/map/CrossingRow';
 type FilterMode = 'all' | 'monitored' | 'tier_a' | 'tier_b' | 'saved';
 
 export default function MapHome() {
-  const { t, saved } = usePreferences();
+  const { t, saved, setActiveStormId, setSimDriveActive } = usePreferences();
   const [query, setQuery] = useState('');
   const [map, setMap] = useState(true);
   const [filterMode, setFilterMode] = useState<FilterMode>('monitored');
@@ -61,6 +61,32 @@ export default function MapHome() {
         <Title>{t('map.title')}</Title>
         <AppText style={styles.muted}>{t('map.body')}</AppText>
       </View>
+      <Card style={{ borderColor: c.replay }}>
+        <Eyebrow color={c.replay}>{t('demo.eyebrow')}</Eyebrow>
+        <AppText style={styles.heading}>{t('demo.title')}</AppText>
+        <AppText style={[styles.muted, { fontSize: 14, lineHeight: 22 }]}>{t('demo.body')}</AppText>
+        <Button
+          title={t('demo.sample1')}
+          onPress={() => {
+            setActiveStormId('halloween-2013');
+            router.push('/replay');
+          }}
+        />
+        <Button
+          secondary
+          title={t('demo.sample2')}
+          onPress={() => {
+            setActiveStormId('halloween-2013');
+            setSimDriveActive(true);
+            router.push('/drive');
+          }}
+        />
+        <Button
+          secondary
+          title={t('demo.sample3')}
+          onPress={() => router.push({ pathname: '/crossing/[id]', params: { id: 'atx-7' } })}
+        />
+      </Card>
       <View style={styles.row}>
         <View style={{ flex: 1 }}>
           <Button

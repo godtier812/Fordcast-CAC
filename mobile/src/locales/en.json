@@ -169,5 +169,11 @@
   "legend.closed": "Water at the road or a reported official closure.",
   "legend.unknown": "Missing, delayed or unverified data.",
   "disclaimer": "FordCast is a supplementary tool. Obey barricades and official warnings. Never drive into water.",
-  "error.storage": "Device storage is unavailable. Preferences will last only for this session."
+  "error.storage": "Device storage is unavailable. Preferences will last only for this session.",
+  "demo.eyebrow": "INTERACTIVE WEBSITE DEMO SAMPLES",
+  "demo.title": "Try a guided scenario",
+  "demo.body": "One-tap presets to inspect FordCast's out-of-sample flood warnings, outage handling, and hands-free HUD.",
+  "demo.sample1": "Sample 1 · Halloween 2013 Hero Replay (70-min lead)",
+  "demo.sample2": "Sample 2 · Hands-Free Storm Drive HUD (Voice + >15 mph Lockout)",
+  "demo.sample3": "Sample 3 · Tier A Validated Crossing (Wasson Rd · 15.5 ft)"
 }

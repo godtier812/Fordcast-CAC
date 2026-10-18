@@ -14,6 +14,10 @@ of each section. "Cloud" = the agent's Linux container (no Xcode); "Mac" / "iPho
 | 2026-10-16 | Cloud | `npx expo install --check` (offline) | "Dependencies are up to date" |
 | 2026-10-16 | Cloud | `npx expo-doctor@latest` | 19/21 pass. The 2 failures (config schema, React Native Directory) need the denied hosts → **re-run on the Mac** |
 | 2026-10-16 | Cloud | `research/withFreeTeamSigning.js` vs 02 §9.5 listing | differs only in a comment ("app.json" vs "app.config.ts") and the path header; the §9.5 listing is the one committed |
+| 2026-10-17 | Cloud | `npx --yes tsx@4.23.15 tools/gen-golden.ts` (reference engine) | calm-evening `741638a5` · flash-flood-night `471e80be` · onion-creek-storm `6ef288b0` · drive-commute `471e80be` — equal to the 05 header |
+| 2026-10-17 | Cloud | TypeScript 6.0.3 and Jest types | TS 6 defaults `types` to `[]`, so `tsconfig.json` sets `"types": ["jest", "node"]` (05: tests type-check with these types) |
+| 2026-10-17 | Cloud | 05-code adjustments (deviations from byte-identical) | (1) `demo-scenarios-test.ts` banned-word loop skips 01 §3.11 `allowKeys` (it predates the full bank; `copy-banned-test.ts` checks those keys negate). (2) `voice/haptics.ts` comment reworded so §15.8's plain grep for the Success haptic literal finds nothing |
+| 2026-10-17 | Cloud | ★ #1 tests vs the 05 reference `evaluate` (throwaway Jest config outside the repo, `moduleNameMapper`) | 18/18 pass on the reference; 18/18 fail with `TODO(student)` on the skeleton |
 
 ## Config plugins and APIs (checked in the installed `.d.ts`)
 

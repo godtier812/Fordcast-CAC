@@ -18,7 +18,7 @@ Mac/Xcode/iPhone step (§8–§11) and pastes the output back.
 | 8 | Name / school / city / email | Placeholders | `[NAME]`, `[SCHOOL]`, `[CITY]`, `[EMAIL]` |
 | 9 | Repo public at submission | Yes | Flipping it stays a stop-and-ask (§1.7 #4) |
 | 10 | Spanish reviewer | A Spanish teacher (asking today) | Review done by the Thu Oct 22 copy freeze (§27.5) |
-| 11 | ★ files | Student writes them; default schedule | `student-written` mode with the hint ladder (§1.8): #1 Sat Oct 17, #2 Sun Oct 18, #3 Mon Oct 19, ~1.5 h each |
+| 11 | ★ files | Student writes them; default schedule | `student-written` mode with the hint ladder (§1.8), ~1.5 h each. Re-planned Oct 17 (`schedule.md`): #1 Sun Oct 18, #2 Mon Oct 19, #3 Tue Oct 20 |
 | 12 | Commits | (a) small commits straight to `claude/tender-mayer-nm9xab` | Conventional Commits (§1.4); never squash, rebase published history or force-push |
 | 13 | Icon / splash | Agent drafts on Day 2; student approves before Saturday's device build | 03 §14.5 |
 | 14 | Home/School pins | Generic pins in 78745, never real addresses | research-data §1.5 pins (05 `drive.ts` `PLACES`) |

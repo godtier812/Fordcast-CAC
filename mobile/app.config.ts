@@ -1,13 +1,6 @@
 // mobile/app.config.ts — FordCast Demo Edition (iOS only, free Personal Team)
 import type { ConfigContext, ExpoConfig } from 'expo/config';
 
-// §9.1 rule 2 — set ONCE on Day 1 (com.<lastname>2026.fordcast, lowercase), then never change it: a free team gets
-// 10 App IDs per 7 days. Until it is set, every expo command stops here, so no placeholder ID can reach Xcode.
-// (The cloud agent sets FORDCAST_ALLOW_PLACEHOLDER_ID=1 only to run prebuild checks; nothing is signed there.)
-const BUNDLE_ID = 'com.yourlastname2026.fordcast';
-if (BUNDLE_ID.includes('yourlastname') && process.env.FORDCAST_ALLOW_PLACEHOLDER_ID !== '1')
-  throw new Error('Set BUNDLE_ID in mobile/app.config.ts to com.<lastname>2026.fordcast before any build (02 §9.1 rule 2).');
-
 // Path B (Xcode 27 + iOS 27) needs UIScene support; Path A (Xcode 26) may leave it off. Set once from §8.3.
 const XCODE_27 = process.env.FORDCAST_XCODE27 !== '0';            // default ON (safe on both paths after the smoke test)
 const INTER = ['400Regular', '500Medium', '600SemiBold', '700Bold']
@@ -24,7 +17,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   backgroundColor: '#0E1726',
   icon: './assets/images/icon.png',
   ios: {
-    bundleIdentifier: BUNDLE_ID,                        // §9.1 rule 2 — never change after the first build
+    bundleIdentifier: 'com.godtier812.fordcast',        // §9.1 rule 2 — set Day 1 (Step 0 Q4); never change it
     supportsTablet: false,
     icon: './assets/expo.icon',                         // template's Icon Composer file (§14 replaces its layers)
     infoPlist: {

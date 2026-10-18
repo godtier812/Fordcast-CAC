@@ -1,5 +1,5 @@
 // mobile/src/demo/voice/haptics.ts — semantic haptics (A §3.13). Two gates: safety cues ≤ 1 per 1.5 s; UI micro-haptics
-// ≤ 1 per 60 ms and muted for 400 ms after a safety cue. NEVER NotificationFeedbackType.Success (copy/code guard, A §3.12).
+// ≤ 1 per 60 ms and muted for 400 ms after a safety cue. NEVER the Success notification type (copy/code guard, A §3.12).
 import * as Haptics from 'expo-haptics';
 import { useDemo } from '../store/demo-store';
 

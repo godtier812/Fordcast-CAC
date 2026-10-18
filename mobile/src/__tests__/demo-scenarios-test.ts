@@ -11,6 +11,7 @@ import { compiledFor } from '../demo/scenario/source';   // golden or live (§23
 import { displayAt } from '../demo/scenario/display';
 import { SCENARIOS } from '../demo/scenario/scenarios';
 import { TAKES } from '../demo/scenario/takes';
+import banned from '../locales/banned-words.json';
 
 const cache = new Map<string, Compiled>();
 const cmpOf = (id: string) => { let c = cache.get(id); if (!c) { c = compiledFor(SCENARIOS.find((s) => s.id === id)!); cache.set(id, c); } return c; };
@@ -67,7 +68,8 @@ test('EN/ES key parity + A §3.12 guards (banned words, countdown, spoken) on ev
   expect(new Set(Object.keys(DICT.en).map(strip))).toEqual(new Set(Object.keys(DICT.es).map(strip)));
   const word = (w: string) => new RegExp(`(?<![\\p{L}\\p{N}])${w.replace(/[-\s]/g, '[-\\s]')}(?![\\p{L}\\p{N}])`, 'iu');
   for (const lang of ['en', 'es'] as const) for (const [k, v] of Object.entries(DICT[lang])) {
-    expect({ k, hits: BANNED[lang].filter((w) => word(w).test(v.toLowerCase())) }).toEqual({ k, hits: [] });
+    const allowListed = banned.allowKeys.some((p) => (p.endsWith('*') ? k.startsWith(p.slice(0, -1)) : k === p));   // 01 §3.11 negations;
+    if (!allowListed) expect({ k, hits: BANNED[lang].filter((w) => word(w).test(v.toLowerCase())) }).toEqual({ k, hits: [] });   // copy-banned-test checks them
     if (v.includes('{{lo}}')) expect(v).toContain('{{hi}}');
     if (v.includes('{{tau_lo}}')) expect(v).toContain('{{tau_hi}}');
     expect(/\b(in|en|within|dentro de)\s+\d+\s*(min|minutes|minutos)\b/i.test(v)).toBe(false);

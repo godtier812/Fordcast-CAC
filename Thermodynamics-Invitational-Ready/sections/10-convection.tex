@@ -1,0 +1,65 @@
+% ===================================================================
+\section{Convection}\label{sec:convection}
+% ===================================================================
+\begin{multicols}{2}
+\subsection{Newton's cooling model and what sets \texorpdfstring{$h$}{h}}\label{sec:newton}
+\CORE{}
+\begin{formulabox}
+\begin{equation}
+q''=h\,(T_s-T_\infty),\qquad \dot Q=hA_s\,(T_s-T_\infty) \label{F:transfer:newton}
+\end{equation}
+\end{formulabox}
+$h$ (\si{W/(m^2.K)}) is \textbf{not a material property}: it depends on geometry and size, flow speed and regime, fluid properties, surface orientation, position (local $h_x$ vs average $\bar h=\frac1L\int_0^Lh_x\,\dd x$), and---for natural convection---on $\Delta T$ itself. Compute it from a correlation whenever geometry is known; avoid ``typical $h$'' lists.
+
+\textbf{Natural (free)} convection: flow driven by buoyancy from density differences (governed by $Gr$, $Ra$). \textbf{Forced}: flow imposed by a fan, pump, or wind (governed by $Re$). Both matter when $Gr/Re^2\sim1$.\src{EK}
+
+\textbf{Property evaluation.} External flows: at the \emph{film temperature} $T_f=(T_s+T_\infty)/2$. Internal flows: at the bulk mean temperature (average of inlet and outlet mean temperatures). Ideal-gas $\beta=1/T_f$ (kelvin). Air properties: \tref{T:air}; water: \tref{T:waterliq}.
+
+\textbf{Characteristic length.} Plate in parallel flow: length along the flow $L$. Cylinder or sphere in crossflow: diameter $D$. Vertical plate or tall cylinder (natural): height $L$. Duct: hydraulic diameter $D_h=4A_c/P$. Horizontal plate (natural): use the convention of the chosen correlation's source (often $A_s/P$).\src{EK}
+
+\subsection{Dimensionless groups}\label{sec:dimless}
+\begin{formulabox}
+\vspace{-6pt}
+\begin{align}
+Re &= \frac{\rho VL}{\mu}=\frac{VL}{\nu},\qquad Pr=\frac{\nu}{\alpha}=\frac{c_p\mu}{k} \label{F:conv:ReP}\\
+Nu &= \frac{hL}{k_{\text{fluid}}},\qquad Bi=\frac{hL_c}{k_{\text{solid}}} \label{F:conv:NuBi}\\
+Gr &= \frac{g\beta\,(T_s-T_\infty)L^3}{\nu^2},\qquad Ra=Gr\,Pr=\frac{g\beta\Delta T L^3}{\nu\alpha} \label{F:conv:GrRa}
+\end{align}
+\end{formulabox}
+Meanings: $Re$ inertia/viscous; $Pr$ momentum/thermal diffusivity ($\approx0.7$ gases, $\approx7$ water at \SI{20}{\celsius}); $Nu$ convective enhancement over pure conduction in the fluid; $Gr$ buoyancy/viscous; $Bi$ internal conduction resistance/external convection resistance.
+
+\begin{trapbox}$Nu$ uses the \textbf{fluid's} $k$ and the correlation's length; $Bi$ uses the \textbf{solid's} $k$ and $L_c=V/A_s$ (lumped analysis, \eqp{F:transfer:lumped}). They look alike and are not interchangeable.\end{trapbox}
+
+\textbf{Regime markers (conventions, disturbance-dependent):} flat plate $Re_{x,c}\approx5\times10^5$; pipe $Re_D\approx2300$; vertical plate (natural) $Ra_L\approx10^9$.\src{EK}
+
+\subsection{Choosing a correlation}\label{sec:corrchoice}
+\begin{keybox}(1) Natural or forced? (2) External or internal? (3) Geometry and orientation $\to$ length scale. (4) Boundary condition (isothermal vs uniform flux). (5) Compute $Re$ or $Ra$ with properties at the right temperature. (6) Check every validity limit (regime, $Pr$, $Re$/$Ra$ range, entrance length). (7) $h=Nu\,k/L$. (8) Add radiation in parallel when $h$ is small (natural convection in gases). Correlations: \tref{T:correlations}, \pg{T:correlations}.\end{keybox}
+\begin{demobox}\anchor{demo:beaker}\textbf{Beaker side wall: natural convection vs radiation vs wind.} Vertical cylinder $D=\SI{7.0}{cm}$, $H=\SI{9.5}{cm}$, $T_s=\SI{60}{\celsius}$, still air \SI{22}{\celsius}. Film \SI{314.15}{K}: $\nu=\SI{1.710e-5}{m^2/s}$, $k=\SI{0.02743}{W/(m.K)}$, $Pr=0.705$, $\beta=1/314.15$.
+$Gr_H=\num{3.48e6}$, $Ra_H=\num{2.45e6}$ (laminar). C6: $Nu=21.1$, $h_c=21.1(0.02743)/0.095=\SI{6.1}{W/(m^2.K)}$.
+\emph{Limit check:} needs $D\ge35H/Gr^{1/4}=\SI{7.7}{cm}$; $D=\SI{7.0}{cm}$ fails slightly, so the flat-plate value somewhat \emph{underestimates} $h_c$ (curvature thins the boundary layer).
+Radiation, $\varepsilon=0.90$ (assumed), surroundings \SI{22}{\celsius}: $h_r=\SI{6.35}{W/(m^2.K)}$ (\eqp{F:rad:hr})---as large as convection. Side loss $\approx(6.1+6.35)(0.0209)(38)=\SI{9.9}{W}$, excluding top, bottom, and evaporation.
+Wind at \SI{5}{m/s} (C3): $Re_D=\num{20500}$, $Nu=80$, $h=\SI{31}{W/(m^2.K)}$, about $5\times$ natural.\src{HT}\src{CP}\src{DER}\end{demobox}
+
+\begin{trapbox}Do not apply an external-flow correlation inside a pipe, a laminar correlation in a turbulent range, or a ``vertical plate'' result to a short fat cylinder without the curvature check. Evaluate properties at the stated temperature. Natural-convection $h$ grows with $\Delta T$ (roughly $\Delta T^{1/4}$ in laminar flow), so ``constant $h$'' cooling models are approximations.\end{trapbox}
+\end{multicols}
+
+\begin{reftab}{T:correlations}{Selected correlations. All $Nu$ are \emph{averages} over the surface unless marked local. Forms cross-checked numerically against the \texttt{ht} library's implementations; validity notes from its documentation unless marked.\src{HT}}
+\small
+\renewcommand{\arraystretch}{1.25}
+\begin{tabularx}{\textwidth}{@{}L{0.21\textwidth}L{0.42\textwidth}Y@{}}
+\toprule
+Geometry, condition & Correlation & Validity; properties\\
+\midrule
+C1 Flat plate, laminar, isothermal & $Nu_L=0.664\,Re_L^{1/2}Pr^{1/3}$\quad (local: $Nu_x=0.332\,Re_x^{1/2}Pr^{1/3}$) & $Re_L<5\times10^5$; $0.6<Pr<10$; film $T$\label{F:conv:plate-lam}\\
+C2 Flat plate, turbulent from leading edge & $Nu_L=0.037\,Re_L^{0.8}Pr^{1/3}$\quad (some texts: 0.036)\src{EK} & turbulent $Re_L$, $Pr\gtrsim0.6$; film $T$\\
+C2$'$ Plate, laminar then turbulent & $Nu_L=(0.037\,Re_L^{0.8}-871)\,Pr^{1/3}$ & $Re_{x,c}=5\times10^5$ (871 derived from C1, C2)\src{DER}\\
+C3 Cylinder in crossflow (Churchill--Bernstein) & $Nu_D=0.3+\dfrac{0.62\,Re_D^{1/2}Pr^{1/3}}{[1+(0.4/Pr)^{2/3}]^{1/4}}\Big[1+\Big(\dfrac{Re_D}{282\,000}\Big)^{5/8}\Big]^{4/5}$ & all $Re_D$ with $Re_DPr\gtrsim0.2$ (tends to be a lower bound); film $T$\label{F:conv:cyl}\\
+C4 Pipe, laminar, fully developed & $Nu_D=3.66$ (uniform $T_s$);\quad $Nu_D=4.36$ (uniform $q''_s$) & $Re_D<2300$, beyond entrance length; bulk $T$\src{EK}\\
+C5 Pipe, turbulent (Dittus--Boelter) & $Nu_D=0.023\,Re_D^{0.8}Pr^{n}$,\ $n=0.4$ heating fluid, $0.3$ cooling & $Re_D\ge10^4$, $0.6\le Pr\le160$, $L/D\ge10$; bulk $T$\label{F:conv:db}\\
+C5$'$ Pipe, turbulent (Gnielinski) & $Nu_D=\dfrac{(f/8)(Re_D-1000)Pr}{1+12.7\sqrt{f/8}\,(Pr^{2/3}-1)}$,\ $f=(0.790\ln Re_D-1.64)^{-2}$ & $2300\le Re_D\le5\times10^6$, $0.5<Pr\le2000$; more accurate than C5\\
+C6 Vertical plate / tall cylinder, isothermal, natural (Churchill--Chu) & $Nu_L=\Big\{0.825+\dfrac{0.387\,Ra_L^{1/6}}{[1+(0.492/Pr)^{9/16}]^{8/27}}\Big\}^2$ & all $Ra_L$ (laminar and turbulent); cylinder only if $D/L\ge35/Gr_L^{1/4}$; film $T$\label{F:conv:vert}\\
+C7 Horizontal cylinder, isothermal, natural (Churchill--Chu) & $Nu_D=\Big\{0.60+\dfrac{0.387\,Ra_D^{1/6}}{[1+(0.559/Pr)^{9/16}]^{8/27}}\Big\}^2$ & $10^{-5}\le Ra_D\le10^{12}$; film $T$\label{F:conv:hcyl}\\
+C8 Horizontal plate, natural (McAdams) & hot face up / cold face down: $Nu=0.54\,Ra^{1/4}$ ($Ra\le10^7$), $0.15\,Ra^{1/3}$ ($Ra>10^7$);\quad hot face down / cold face up: $Nu=0.27\,Ra^{1/4}$ & length convention per source; film $T$\label{F:conv:hplate}\\
+C9 Sphere, isothermal, natural (Churchill) & $Nu_D=2+\dfrac{0.589\,Ra_D^{1/4}}{[1+(0.469/Pr)^{9/16}]^{4/9}}\times\Phi$ & $Ra_D<10^{13}$; $\Phi=\{1+7.44\times10^{-8}Ra_D/[1+(0.469/Pr)^{9/16}]^{16/9}\}^{1/12}\approx1$ for $Ra_D\lesssim10^6$; $Nu\to2$ as $Ra\to0$\\
+\bottomrule
+\end{tabularx}\end{reftab}

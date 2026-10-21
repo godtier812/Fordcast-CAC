@@ -1,0 +1,64 @@
+% ===================================================================
+\section{Thermochemistry and chemical equilibrium}\label{sec:thermochem}
+% ===================================================================
+\begin{multicols}{2}
+\subsection{Conventions}\label{sec:stdstate}
+\CORE{} \textbf{Standard state} ($^\circ$): pure substance in a specified phase at $p^\circ=\SI{1}{bar}$ (solutes: \SI{1}{mol/kg} or \SI{1}{mol/L} as stated). Temperature is \emph{not} part of the definition; tables are usually at \SI{298.15}{K}. \textbf{Formation reaction}: one mole of compound from its elements in their reference states (graphite, \ce{O2(g)}, \ce{H2(g)}, \ce{N2(g)}, \ce{Br2(l)}, \ldots), for which $\Delta H_f^\circ=\Delta G_f^\circ=0$ but $S^\circ>0$. Always write balanced equations \textbf{with phase labels}: \ce{H2O(l)} and \ce{H2O(g)} differ by \SI{44.0}{kJ/mol} at \SI{298.15}{K}.\src{CRC}\src{IAPWS}
+
+\begin{formulabox}
+\vspace{-6pt}
+\begin{align}
+\Delta_rH^\circ &= \textstyle\sum\nu_p\,\Delta H_f^\circ(\text{prod})-\sum\nu_r\,\Delta H_f^\circ(\text{reac}) \label{F:thermo:formation}\\
+\Delta_rS^\circ &= \textstyle\sum\nu_p\,S^\circ(\text{prod})-\sum\nu_r\,S^\circ(\text{reac}) \label{F:thermo:entropy}\\
+\Delta_rG^\circ &= \textstyle\sum\nu\,\Delta G_f^\circ = \Delta_rH^\circ-T\Delta_rS^\circ \label{F:thermo:gibbs}
+\end{align}
+\end{formulabox}
+Same pattern for $\Delta G_f^\circ$; for entropy use \emph{absolute} $S^\circ$ (elements included).
+
+\textbf{Hess's law:} $\Delta H$ is a state function, so reaction enthalpies add along any route. Reverse a reaction: change the sign. Multiply coefficients by $n$: multiply $\Delta H$ by $n$. Cancel species only if the phases match.
+
+\subsection{Calorimetry links}\label{sec:thermocal}
+\begin{formulabox}Bomb ($q_V=\Delta U$) to enthalpy, ideal gases, condensed-phase $PV$ neglected:
+\begin{equation}
+\Delta_rH=\Delta_rU+\Delta n_{\text{gas}}RT \label{F:thermo:bomb}
+\end{equation}
+\end{formulabox}
+$\Delta n_{\text{gas}}$ = moles of gaseous products minus gaseous reactants per mole of reaction as written; condensed water counts zero.
+
+\textbf{Heating values:} higher heating value (HHV) has product water liquid; lower (LHV) has water vapor; they differ by $n_{\ce{H2O}}\times\SI{44.0}{kJ/mol}$ at \SI{25}{\celsius}.
+
+\textbf{Bond-enthalpy estimate:} $\Delta_rH\approx\sum BE(\text{broken})-\sum BE(\text{formed})$. Valid only for gas-phase species; average bond enthalpies carry errors of several kJ/mol per bond; misses resonance and phase changes. Prefer formation data when available; use the bond values a question supplies.
+
+\textbf{Kirchhoff's law} (no phase change between $T_1$ and $T_2$):
+\begin{equation}
+\Delta_rH(T_2)=\Delta_rH(T_1)+\int_{T_1}^{T_2}\Delta_rC_p\,\dd T. \label{F:thermo:kirchhoff}
+\end{equation}
+
+\begin{demobox}\textbf{Methane combustion} at \SI{298.15}{K} (\tref{T:thermo} data). \ce{CH4(g) + 2O2(g) -> CO2(g) + 2H2O(l)}: $\Delta_rH^\circ=-393.5+2(-285.8)-(-74.6)=\SI{-890.5}{kJ/mol}$ (HHV; \SI{55.5}{kJ/g}). With \ce{2H2O(g)}: \SI{-802.5}{kJ/mol} (LHV); difference $88.0=2\times44.0$ \checkmark.
+Bomb: $\Delta n_{\text{gas}}=1-3=-2$, so $\Delta_rU=-890.5+2(8.314)(298.15)/1000=\SI{-885.5}{kJ/mol}$.
+$\Delta_rS^\circ=213.8+2(70.0)-186.3-2(205.2)=\SI{-242.9}{J/K}$; $\Delta_rG^\circ$ from $\Delta G_f^\circ$ values: \SI{-818.1}{kJ/mol}; from $\Delta H-T\Delta S$: \SI{-818.1}{kJ/mol} \checkmark.\src{CRC}\src{DER}\end{demobox}
+
+\subsection{Equilibrium and temperature}\label{sec:thermoK}
+\CORE{} $K=\exp(-\Delta_rG^\circ/RT)$ (\eqp{F:entropy:K}); $\Delta_rG=\Delta_rG^\circ+RT\ln Q$ decides direction away from equilibrium.
+\begin{formulabox}van 't Hoff (constant $\Delta_rH^\circ$ over the range):
+\begin{equation}
+\ln\frac{K_2}{K_1}=-\frac{\Delta_rH^\circ}{R}\Big(\frac{1}{T_2}-\frac{1}{T_1}\Big) \label{F:thermo:vanthoff}
+\end{equation}
+\end{formulabox}
+Exothermic ($\Delta_rH^\circ<0$): $K$ falls as $T$ rises; endothermic: $K$ rises (Le Chatelier). A plot of $\ln K$ vs $1/T$ has slope $-\Delta_rH^\circ/R$.
+
+\begin{demobox}\textbf{Ammonia synthesis}, \ce{N2(g) + 3H2(g) <=> 2NH3(g)} at \SI{298.15}{K}: $\Delta_rG^\circ=2(-16.4)=\SI{-32.8}{kJ/mol}$, so $K=e^{32800/(8.314\times298.15)}=\num{5.6e5}$. $\Delta_rH^\circ=\SI{-91.8}{kJ/mol}$, $\Delta_rS^\circ=2(192.8)-191.6-3(130.7)=\SI{-198.1}{J/K}$ (\emph{check:} $\Delta H-T\Delta S=\SI{-32.7}{kJ/mol}$, within table rounding). Both negative: favorable only below $T^\ast\approx\SI{463}{K}$; van 't Hoff estimate at \SI{700}{K}: $K\approx\num{3e-4}$. Industry still runs hot---for \emph{rate}---and compensates with high pressure (Le Chatelier).\src{CRC}\src{DER}\end{demobox}
+
+\begin{trapbox}Use consistent units ($\Delta G$ in J/mol with $R=8.314$); $K$ is dimensionless (activities, \pg{sec:chempot}); $\Delta_rG^\circ$ refers to standard states, not actual mixtures; a large $K$ says nothing about speed.\end{trapbox}
+
+\begin{reftab}{T:thermo}{Standard formation data at \SI{298.15}{K}, \SI{1}{bar} (CRC Handbook values as transcribed).\src{CRC} $^\ddagger$Independent datasets differ by $>\SI{1}{kJ/mol}$ (ethanol(l) \num{-277.0} to \num{-276.0}; NO \numrange{90.3}{91.1}; sucrose \num{-2221.2}).\src{XCHK} --- = not in this dataset.}
+\small
+\begin{tabularx}{\linewidth}{@{}Yrrr@{}}
+\toprule
+Species & $\Delta H_f^\circ$ & $\Delta G_f^\circ$ & $S^\circ$\\
+ & (\si{kJ/mol}) & (\si{kJ/mol}) & (\si{J/(mol.K)})\\
+\midrule
+\tabinput{data/thermochem.tex}
+\bottomrule
+\end{tabularx}\end{reftab}
+\end{multicols}

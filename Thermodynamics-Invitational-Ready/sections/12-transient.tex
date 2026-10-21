@@ -1,0 +1,68 @@
+% ===================================================================
+\section{Transient heating and cooling}\label{sec:transient}
+% ===================================================================
+\begin{multicols}{2}
+\subsection{Lumped-capacitance model}\label{sec:lumped}
+\CORE{} \textbf{Cue:} ``cooling curve'', ``time to reach'', ``half-life'', ``time constant'', ``fitted slope''.
+\begin{formulabox}No input, constant $h$ and $T_\infty$, uniform body temperature:
+\begin{align}
+\rho Vc\,\frac{\dd T}{\dd t} &= -hA_s\,(T-T_\infty) \notag\\
+\frac{T-T_\infty}{T_i-T_\infty} &= e^{-t/\tau},\qquad \tau=\frac{\rho Vc}{hA_s}=\frac{C}{hA_s}=R_{\text{th}}C \label{F:transfer:lumped}\\
+t_{1/2} &= \tau\ln2,\qquad t=\tau\ln\frac{T_i-T_\infty}{T-T_\infty} \label{F:transfer:halflife}
+\end{align}
+\end{formulabox}
+After $1\tau$: \SI{36.8}{\percent} of the initial excess remains; $3\tau$: \SI{5.0}{\percent}; $5\tau$: \SI{0.7}{\percent}. $1/R_{\text{th}}$ may combine convection and radiation: $hA_s\to(h_c+h_r)A_s$, or any overall conductance $K$.
+
+\textbf{Validity (small Biot number):}
+\begin{equation}
+Bi=\frac{hL_c}{k_{\text{solid}}}<0.1,\qquad L_c=\frac{V}{A_s}. \label{F:transfer:biot}
+\end{equation}
+$L_c$ conversions: plane wall of thickness $2L$ cooled on both faces: $L$; long cylinder radius $r_0$: $r_0/2$; sphere: $r_0/3$.
+
+\begin{trapbox}Heisler charts and one-term series solutions (distributed transients, an \EXT{} topic) define $Bi$ with the half-thickness $L$ or the radius $r_0$, \emph{not} $V/A_s$. Convert before comparing: a sphere's $Bi_{r_0}=3\,Bi_{V/A}$.\end{trapbox}
+
+\begin{demobox}\textbf{Biot screening.} Copper sphere, $D=\SI{1.0}{cm}$, $k=\SI{380}{W/(m.K)}$, in air with $h=\SI{10}{W/(m^2.K)}$: $L_c=r_0/3=\SI{1.67}{mm}$, $Bi=\num{4.4e-5}\ll0.1$---lumped is excellent. For a cup of \emph{water}, internal mixing by natural convection (not conduction) usually keeps the water nearly uniform; the lumped model then hinges on stirring, not on $k_{\text{water}}$.\src{DER}\end{demobox}
+
+\subsection{Fitting a cooling curve}\label{sec:coolingfit}
+\CORE{} Taking logs linearizes \eqref{F:transfer:lumped}:
+\begin{equation}
+\ln\big(T-T_\infty\big)=\ln\big(T_i-T_\infty\big)-\frac{t}{\tau}. \label{F:transfer:semilog}
+\end{equation}
+Plot $\ln(T-T_\infty)$ vs $t$; slope $=-1/\tau$. Requirements and diagnostics: use the \emph{measured} ambient (a wrong $T_\infty$ bends the line); fit only the range you will predict in; inspect residuals; curvature signals $T$-dependent $h$ (natural convection, radiation), evaporation, or two time constants (container vs contents).
+
+\begin{demobox}\textbf{ILLUSTRATIVE, NOT MEASURED.} Suppose $T_\infty=\SI{22.0}{\celsius}$, $T(0)=\SI{70.0}{\celsius}$, $T(\SI{10}{min})=\SI{58.0}{\celsius}$. Then $\tau=10/\ln(48/36)=\SI{34.8}{min}$, $t_{1/2}=\SI{24.1}{min}$, and $T(\SI{25}{min})=22+48e^{-25/34.8}=\SI{45.4}{\celsius}$. Two points give a fit but no uncertainty; real calibration needs repeated trials (\sref{sec:device}).\src{DER}\end{demobox}
+
+\subsection{Constant heat input}\label{sec:constinput}
+\CORE{}
+\begin{formulabox}$C\,\dd T/\dd t=P-K(T-T_a)$ with constant $P$, $K$, $C$, $T_a$:
+\begin{equation}
+T(t)=T_a+\frac{P}{K}+\Big(T_0-T_a-\frac{P}{K}\Big)e^{-t/\tau},\quad \tau=\frac{C}{K} \label{F:transfer:input}
+\end{equation}
+\end{formulabox}
+Limits: early slope $\dd T/\dd t\approx P/C$ (when $T\approx T_a$); steady rise $T_\infty-T_a=P/K$; $P=0$ recovers \eqref{F:transfer:lumped}.
+\textbf{Identifiability:} a cooling trace alone determines only $\tau=C/K$. Separating $C$ and $K$ needs a known $P$ (early slope gives $C$, plateau gives $K$) or an independently known $C$ (masses $\times$ specific heats).
+
+\begin{demobox}$P=\SI{50}{W}$, $K=\SI{0.50}{W/K}$, $C=\SI{600}{J/K}$, start at $T_a=\SI{22}{\celsius}$: $\tau=\SI{1200}{s}$; $T(\SI{600}{s})=22+100(1-e^{-0.5})=\SI{61.3}{\celsius}$ (numerical ODE agrees). The model's ``steady state'' \SI{122}{\celsius} is unreachable for liquid water: boiling caps it. Check the physics before trusting an extrapolation.\src{DER}\end{demobox}
+
+\textbf{Sensor lag.} A probe with its own time constant $\tau_s$ obeys $\dd T_s/\dd t=(T-T_s)/\tau_s$; during a steady ramp at rate $a$ it reads low by $a\tau_s$. Wait several $\tau_s$ after insertion; small, well-coupled probes respond faster.
+
+\EXT{} \textbf{Distributed transients} (large $Bi$): use one-term series or Heisler charts with their own $Bi$ and Fourier number $Fo=\alpha t/L^2$; not reproduced here.
+\end{multicols}
+
+\begin{reftab}{T:applications}{Applications: map each design feature to the mechanism and model term it changes.\src{EK}}
+\small
+\begin{tabularx}{\textwidth}{@{}L{0.22\textwidth}L{0.30\textwidth}Y@{}}
+\toprule
+Feature & Mechanism affected & Model consequence\\
+\midrule
+Vacuum gap (Dewar/vacuum flask) & removes gas conduction and convection & only radiation across the gap plus conduction through the neck and supports remain\\
+Silvered or foil surfaces facing a gap & lowers $\varepsilon$ $\Rightarrow$ radiation & \eqref{F:rad:twosurface}/\eqref{F:rad:plates} with small $\varepsilon$; foil pressed against a solid has no gap and acts only as a (good) conductor\\
+Supports, neck, stopper, wires & conduction bridges & extra parallel $L/(kA)$ paths: make them long, thin, low-$k$\\
+Trapped air (foam, fiber, feathers) & still air $k\approx\SI{0.026}{W/(m.K)}$; small cells suppress convection & low effective $k$; compression or moisture raises it\\
+Double glazing, gas gap & conduction across gas; convection if the gap is too wide; radiation & low-e coatings cut the radiation path\\
+Lid or cover on hot water & stops evaporation and the rising plume & removes a latent loss that can exceed sensible losses (\pg{sec:boiling})\\
+Fan, wind, stirring & raises $h$ (forced convection) & $h$ about $5\times$ larger at \SI{5}{m/s} in the beaker example\\
+Dark/matte vs shiny exterior & $\alpha_{\text{solar}}$ and $\varepsilon_{\text{IR}}$ & collecting sunlight favors high $\alpha_{\text{solar}}$; retaining heat favors low $\varepsilon_{\text{IR}}$\\
+Added thermal mass & larger $C$ & longer $\tau=C/K$; slower change, but the same steady loss for the same $\Delta T$\\
+\bottomrule
+\end{tabularx}\end{reftab}

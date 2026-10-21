@@ -1,0 +1,78 @@
+% ===================================================================
+% Front matter: identity, rules status, legends, contents (2 pages)
+% ===================================================================
+\thispagestyle{plain}
+\pdfbookmark[0]{Front: identity and rules status}{front}
+\begin{center}
+{\Huge\bfseries Thermodynamics \textendash\ Division C}\\[3pt]
+{\Large Invitational Reference Binder (unofficial study reference)}\\[4pt]
+{\normalsize Built \builddate{} for a tournament on \textbf{Thursday, 22 October 2026} (``tomorrow'' resolved in America/Chicago; adjust if your time zone differs)}
+\end{center}
+\vspace{2pt}
+{\small
+\begin{tabularx}{\textwidth}{@{}lXlX@{}}
+Team / school: & \hrulefill & Tournament: & \hrulefill\\[4pt]
+Partner A: & \hrulefill & Partner B: & \hrulefill\\
+\end{tabularx}
+Suggested split (adaptable): A --- Tabs 3--4 (gases, laws, cycles); B --- Tabs 2, 5, 7 (heat, transfer, data); share Tabs 1 and 6.}
+\vspace{2pt}
+
+\begin{rulebox}\label{sec:status}\textbf{RULES STATUS --- READ BEFORE THE EVENT.} The official 2027 Thermodynamics rules, official clarifications, and this tournament's instructions were \textbf{not inspected}: none were attached, and the official site was blocked from the build environment. Therefore the following are \textbf{UNVERIFIED}:
+\begin{enumerate}
+\item whether this binder may be used at all, and in what form (page or sheet limit, binding, protectors, tabs, two-sided printing);
+\item which calculator class is allowed;
+\item the written-test scope or topic list (topic labels below are editorial, not official);
+\item device construction, procedure, timing, and scoring (\pg{sec:device});
+\item any modifications announced by the tournament host.
+\end{enumerate}
+Snippet-level information only (not verified): the official event description reportedly reads ``construct a device prior to the tournament designed to \emph{collect heat} and complete a written test on thermodynamic concepts,''\src{SO1} while a community wiki describes a \emph{heat-retention} beaker task.\src{WIKI} The conflict is unresolved. \textbf{An unverified permission is not a scientific error:} the physics in this binder was checked independently (\pg{sec:sources}); its \emph{eligibility} for use was not.\end{rulebox}
+
+\begin{multicols}{2}
+\begin{reftab}{T:alignment}{Alignment summary (full matrix in \texttt{rules-alignment.md}).}
+\small
+\begin{tabularx}{\linewidth}{@{}L{0.33\linewidth}L{0.24\linewidth}Y@{}}
+\toprule
+Item & Status & Location\\
+\midrule
+Written-test scope & unverified & whole binder; editorial labels\\
+Reference / calculator permissions & unverified & this page\\
+Device participation and limits & unverified; sources conflict & \pg{sec:device}\\
+Event in 2027 Div.\ C slate & snippet only & \pg{sec:sources}\\
+\bottomrule
+\end{tabularx}\end{reftab}
+
+\textbf{Pre-event checklist (most important first)}
+\begin{enumerate}
+\item[$\square$] Confirm in the 2027 Rules Manual (and host instructions) that a binder is allowed, and its size and format limits. Remove pages if required.
+\item[$\square$] Confirm the calculator class.
+\item[$\square$] Confirm device specs, impound time, energy source, and what is scored before touching the device (\pg{sec:device}).
+\item[$\square$] Check for official clarifications/FAQs and host modifications.
+\end{enumerate}
+
+\columnbreak
+\textbf{Content labels (editorial, not official):}\\
+\CORE{} prioritized foundation; \EXT{} useful added depth, no claim it is tested; \RD{} construction, scoring, permissions, or host-specific.
+
+\textbf{Box types:}
+\begin{formulabox}canonical equations with IDs.\end{formulabox}
+\begin{keybox}model choice and decision steps.\end{keybox}
+\begin{demobox}short, fully solved, numerically checked.\end{demobox}
+\begin{trapbox}common mistakes and validity limits.\end{trapbox}
+
+\textbf{Source tags} (superscript, clickable): e.g.\ \srcin{IAPWS}, \srcin{CODATA}, \srcin{DER} (derived/checked here), \srcin{EK} (editor knowledge, unverified this build). Register: \pg{sec:sources}.
+
+\textbf{Conventions:} $\Delta U=Q-\Wby$ (\pg{T:signs}); kelvin in ratios and powers; pressures absolute; cycle quantities are magnitudes.
+\end{multicols}
+
+\clearpage
+\pdfbookmark[0]{Contents}{contents}
+{\small
+\renewcommand{\contentsname}{Contents}
+\makeatletter
+\renewcommand\tableofcontents{%
+  \section*{\contentsname}\vspace{-4pt}%
+  \begin{multicols}{2}\@starttoc{toc}\end{multicols}}
+\makeatother
+\tableofcontents}
+\vspace{4pt}
+\textbf{How to use:} (1) Find the cue in the \textbf{question router} (\pg{sec:router}) or the \textbf{index} (\pg{sec:index}). (2) For a calculation, use the \textbf{formula selector} (\pg{sec:selector}) to confirm the equation's validity and hazards, then jump to its canonical page. (3) Data tables: \tref{T:datalocator}, \pg{T:datalocator}. Equation and table numbers start with the tab number (Eq.\ (3.20) is in Tab~3).

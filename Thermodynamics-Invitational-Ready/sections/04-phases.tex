@@ -1,0 +1,166 @@
+% ===================================================================
+\section{Phases, vapor pressure, and humidity}\label{sec:phases}
+% ===================================================================
+\begin{multicols}{2}
+\subsection{Transitions: latent vs sensible}\label{sec:transitions}
+\CORE{} \textbf{Sensible} energy changes temperature within one phase; \textbf{latent} energy changes phase at constant $T$ and $P$. Toward the higher-entropy phase, $\Delta H>0$ (absorbed).
+
+\begin{reftab}{T:transitions}{Transition names and signs.}
+\small
+\begin{tabularx}{\linewidth}{@{}lYc@{}}
+\toprule
+From $\to$ to & Name & $\Delta H$\\
+\midrule
+solid $\to$ liquid & melting (fusion) & $+$\\
+liquid $\to$ solid & freezing (solidification) & $-$\\
+liquid $\to$ gas & vaporization: \emph{boiling} (bubbles form in the bulk when $p_{\text{sat}}(T)=P_{\text{ext}}$) or \emph{evaporation} (surface, any $T$) & $+$\\
+gas $\to$ liquid & condensation & $-$\\
+solid $\to$ gas & sublimation & $+$\\
+gas $\to$ solid & deposition (desublimation) & $-$\\
+\bottomrule
+\end{tabularx}\end{reftab}
+\end{multicols}
+
+\begin{reffig}{fig:phasediagrams}{Schematic $P$--$T$ phase diagrams (\textbf{not to scale}; pressure axis compressed, log-like). Key coordinates are quantitative.\src{IAPWS}\src{CP} Water's fusion line slopes \emph{left} (ice is less dense than liquid); CO$_2$'s slopes right, and its triple point lies above 1~atm, so solid CO$_2$ sublimes at 1~atm (near \SI{-78.5}{\celsius}).\src{EK}}
+\begin{tikzpicture}[font=\scriptsize,>=Stealth]
+ \begin{scope}
+  \draw[->] (0,0)--(7.4,0) node[below left]{$T$ (schematic)};
+  \draw[->] (0,0)--(0,4.7) node[above right]{$P$ (schematic)};
+  \node[anchor=north west,font=\small\bfseries] at (0.1,4.75) {Water (\ce{H2O})};
+  \coordinate (TP) at (2.2,1.35); \coordinate (CP) at (5.2,3.5);
+  \draw[thick,name path=sub] (0.25,0.2) .. controls (1.3,0.4) .. (TP);
+  \draw[thick,name path=vap] (TP) .. controls (3.6,1.85) .. (CP);
+  \draw[thick,name path=fus] (TP) -- (1.85,4.4);
+  \draw[dashed,name path=atm] (0,2.05) -- (7.2,2.05) node[above left]{1 atm};
+  \path[name intersections={of=atm and vap,by=nb}];
+  \path[name intersections={of=atm and fus,by=nm}];
+  \fill (nb) circle (1.4pt); \fill (nm) circle (1.4pt);
+  \node[above left] at (nb) {\SI{99.97}{\celsius}};
+  \node[below left,xshift=-1pt] at (nm) {\SI{0}{\celsius}};
+  \fill (TP) circle (1.8pt) node[below right]{TP: \SI{273.16}{K}, \SI{611.65}{Pa}};
+  \fill (CP) circle (1.8pt) node[below right,align=left]{CP: \SI{647.10}{K}\\(\SI{373.95}{\celsius})\\\SI{22.064}{MPa}};
+  \draw[dotted,thick] (CP)--(5.2,4.6); \draw[dotted,thick] (CP)--(7.2,3.5);
+  \node at (6.2,4.1) {supercritical};
+  \node[align=center] at (0.95,3.2) {SOLID\\(ice Ih)};
+  \node at (3.5,3.2) {LIQUID};
+  \node at (4.5,0.8) {VAPOR (gas)};
+ \end{scope}
+ \begin{scope}[xshift=8.6cm]
+  \draw[->] (0,0)--(7.4,0) node[below left]{$T$ (schematic)};
+  \draw[->] (0,0)--(0,4.7) node[above right]{$P$ (schematic)};
+  \node[anchor=north west,font=\small\bfseries] at (0.1,4.75) {Carbon dioxide (\ce{CO2})};
+  \coordinate (TP) at (2.6,2.3); \coordinate (CP) at (5.4,3.6);
+  \draw[thick,name path=sub2] (0.25,0.15) .. controls (1.6,0.5) .. (TP);
+  \draw[thick] (TP) .. controls (4.0,2.65) .. (CP);
+  \draw[thick] (TP) -- (3.25,4.45);
+  \draw[dashed,name path=atm2] (0,1.05) -- (7.2,1.05) node[above left]{1 atm};
+  \path[name intersections={of=atm2 and sub2,by=ns}];
+  \fill (ns) circle (1.4pt) node[below right]{sublimes $\approx$\SI{-78.5}{\celsius}};
+  \fill (TP) circle (1.8pt) node[right,align=left,xshift=2pt]{TP: \SI{216.59}{K} (\SI{-56.56}{\celsius})\\\SI{517.96}{kPa} (5.11 atm)};
+  \fill (CP) circle (1.8pt) node[below right,align=left]{CP: \SI{304.13}{K}\\(\SI{30.98}{\celsius})\\\SI{7.377}{MPa} (72.8 atm)};
+  \draw[dotted,thick] (CP)--(5.4,4.6); \draw[dotted,thick] (CP)--(7.3,3.6);
+  \node at (6.4,4.15) {supercritical};
+  \node at (1.3,3.4) {SOLID};
+  \node at (4.0,3.55) {LIQUID};
+  \node at (5.6,0.55) {VAPOR};
+ \end{scope}
+\end{tikzpicture}
+\end{reffig}
+
+\begin{multicols}{2}
+\textbf{Reading the diagram.} Horizontal line = isobaric heating; vertical line = isothermal compression. Each curve is two-phase coexistence ($F=1$); TP: three phases ($F=0$). Above the critical point there is no liquid--vapor boundary: a path around CP converts liquid to gas continuously, and $h_{fg}\to0$ at CP. Compressing ice just below \SI{0}{\celsius} can melt it because water's fusion line slopes left (but only by \SI{7.5}{mK} per atm, below).
+
+\begin{trapbox}\anchor{trap:phasemyths}Pressure melting alone does not explain skating: at typical rink temperatures the needed pressures are far larger than \SI{13.5}{MPa/K} allows for, and surface premelting and frictional heating are invoked; the mechanism is still discussed. Likewise the Mpemba effect (hot water ``freezing faster'') is condition-dependent and not a law, and the Leidenfrost temperature depends on the liquid, surface, and roughness.\src{EK}\end{trapbox}
+
+\subsection{Phase rule and quality}\label{sec:phaserule}
+\CORE{}
+\begin{formulabox}
+\vspace{-6pt}
+\begin{align}
+F &= C - P_{\text{h}} + 2 \label{F:phase:rule}\\
+x &= \frac{m_{\text{vap}}}{m_{\text{liq}}+m_{\text{vap}}},\quad y = y_f + x\,(y_g-y_f) \label{F:phase:quality}
+\end{align}
+\end{formulabox}
+$F$ = independent intensive variables, $C$ = independent components, $P_{\text{h}}$ = number of phases. Limits: assumes only $T$ and $P$ as field variables, no reactions (each independent reaction lowers $C$ by one), no surface/electric/magnetic work. It gives \emph{how many} variables are free, not the amounts present.
+
+Quality $x$ is a \textbf{mass} fraction, defined only in the two-phase dome ($0\le x\le1$); $y$ is any specific property ($v,u,h,s$). Lever rule: $x=(v-v_f)/(v_g-v_f)$. Compressed liquid and superheated vapor have no quality. Even $x=0.01$ is mostly vapor \emph{by volume} at low pressure ($v_g/v_f\approx\num{1600}$ at 1~atm).
+
+\subsection{Clapeyron and Clausius--Clapeyron}\label{sec:clapeyron}
+\CORE{}
+\begin{formulabox}Exact along any two-phase coexistence curve:
+\begin{equation}
+\frac{\dd P}{\dd T}=\frac{\Delta h}{T\,\Delta v}=\frac{\Delta s}{\Delta v}. \label{F:phase:clapeyron}
+\end{equation}
+Approximate (Clausius--Clapeyron) for vaporization or sublimation:
+\begin{equation}
+\ln\frac{P_2}{P_1} = -\frac{\Delta \bar h_{\text{vap}}}{R}\Big(\frac{1}{T_2}-\frac{1}{T_1}\Big). \label{F:phase:cc}
+\end{equation}
+\end{formulabox}
+Assumptions of \eqref{F:phase:cc}: $v_g\gg v_f$; vapor ideal; $\Delta\bar h$ constant (molar, \si{J/mol}, with $R=\SI{8.314}{J/(mol.K)}$; or specific with $R_s=R/M$). Use kelvin. A plot of $\ln P$ vs $1/T$ has slope $-\Delta\bar h/R$. Valid over modest ranges well below the critical point. Sign: vaporization and sublimation always have $\dd P/\dd T>0$; melting has the sign of $\Delta v$ (negative for water).
+
+\begin{demobox}\textbf{Boiling at reduced pressure; validity limit.} Water at \SI{84.0}{kPa}: with $\Delta\bar h_{\text{vap}}=\SI{40.65}{kJ/mol}$ at \SI{373.12}{K}, \eqref{F:phase:cc} gives $T_2=\SI{367.86}{K}=\SI{94.71}{\celsius}$; IAPWS-95 gives \SI{94.80}{\celsius} (error \SI{0.09}{K}).
+\emph{Extrapolating far} (from \SI{100}{\celsius} down to \SI{20}{\celsius}) gives \SI{2.84}{kPa} versus \SI{2.34}{kPa} (\SI{21}{\percent} high), because $\Delta\bar h_{\text{vap}}$ rises to \SI{44.2}{kJ/mol} at \SI{20}{\celsius}.\src{IAPWS}\end{demobox}
+
+\begin{demobox}\textbf{How much does pressure lower ice's melting point?} $\Delta h=\SI{333.4}{kJ/kg}$, $\Delta v=v_{\text{liq}}-v_{\text{ice}}=\num{-9.07e-5}\,\si{m^3/kg}$ at \SI{273.15}{K}: $\dd P/\dd T=333400/(273.15\times-9.07\times10^{-5})=\SI{-13.5}{MPa/K}$, i.e.\ $\SI{-7.5}{mK}$ per atm. \emph{Check:} the IAPWS ice-Ih melting curve gives \SI{-13.45}{MPa/K}.\src{ICE}\end{demobox}
+
+\textbf{Antoine equation} $\log_{10}P = A - B/(C+T)$: every coefficient set is tied to specific pressure units, temperature units ($\si{\celsius}$ or K), logarithm base, and a validity window. Never mix sets or extrapolate outside the window. (No Antoine table is included: no coefficient set could be source-verified for this build; use \tref{T:water:satT} for water.)
+
+\subsection{Boiling, evaporation, and metastability}\label{sec:boiling}
+\textbf{Boiling} begins when $p_{\text{sat}}(T)$ reaches the local pressure: lower at altitude, higher in a pressure cooker (\SI{200}{kPa} absolute $\to$ \SI{120.2}{\celsius}).\src{IAPWS} \textbf{Evaporation} occurs at any temperature when the surrounding vapor pressure is below $p_{\text{sat}}(T_{\text{surface}})$; it removes $h_{fg}$ per unit mass from the liquid (\emph{evaporative cooling}).
+
+\begin{demobox}\textbf{Evaporation from an open beaker.} At \SI{60}{\celsius}, $h_{fg}=\SI{2357.7}{J/g}$. Evaporating just \SI{1.0}{g} removes enough energy to cool \SI{100}{g} of water by $2357.7/(100\times4.18)=\SI{5.6}{K}$. A lid often matters more than extra wall insulation.\src{IAPWS}\end{demobox}
+
+\textbf{Metastable states:} supercooled liquid (below freezing point), superheated liquid (above boiling point), supersaturated vapor. They persist without nucleation sites; when nucleation occurs, the latent energy released drives the mixture back toward the coexistence temperature (apply the ledger). \textbf{Supercritical fluid} ($T>T_c$, $P>P_c$): single phase with gas-like and liquid-like properties; no surface tension or $h_{fg}$.
+
+\subsection{Humidity, dew point, gas over water}\label{sec:humidity}
+\CORE{}
+\begin{formulabox}
+\vspace{-6pt}
+\begin{align}
+\phi &= \frac{p_v}{p_{\text{sat}}(T)},\qquad p_{\text{sat}}(T_{\text{dp}})=p_v \label{F:phase:RH}\\
+\omega &= \frac{M_w}{M_a}\,\frac{p_v}{P-p_v}=0.622\,\frac{p_v}{P-p_v} \label{F:phase:omega}\\
+P_{\text{gas}} &= P_{\text{atm}} - p_{\text{sat,w}}(T)\quad(\text{levels equalized}) \label{F:phase:overwater}
+\end{align}
+\end{formulabox}
+$\phi$ = relative humidity; $T_{\text{dp}}$ = dew point: temperature at which air cooled at constant pressure and constant water content becomes saturated; $\omega$ = humidity ratio (kg water per kg dry air; $0.622=18.015/28.965$). Below \SI{0}{\celsius} use the ice curve (\emph{frost point}, \tref{T:ice:sub}). In \eqref{F:phase:overwater}, if the water level inside the collection tube is higher than outside by $h$, subtract $\rho g h$ as well.
+
+\textbf{Dew point $\ne$ wet bulb.} The wet-bulb temperature is set by evaporative cooling of a wetted sensor in moving air (a heat--mass balance). Always $T_{\text{dp}}\le T_{\text{wb}}\le T_{\text{db}}$, with equality only at \SI{100}{\percent} RH.\src{EK}
+
+\begin{demobox}\textbf{Dew point.} Air at \SI{25}{\celsius}, $\phi=\SI{60}{\percent}$, 1~atm. $p_{\text{sat}}(\SI{25}{\celsius})=\SI{3.170}{kPa}$, so $p_v=\SI{1.902}{kPa}$. Solve $p_{\text{sat}}(T_{\text{dp}})=1.902$: $T_{\text{dp}}=\SI{16.7}{\celsius}$ (linear interpolation between \SI{15}{\celsius} and \SI{20}{\celsius} rows gives \SI{16.55}{\celsius}, slightly low because $p_{\text{sat}}(T)$ is convex). $\omega=0.622(1.902)/(101.325-1.902)=\SI{0.0119}{kg/kg}$.\end{demobox}
+\end{multicols}
+
+\begin{reftab}{T:water:satT}{Saturated water by temperature (IAPWS-95).\src{IAPWS} Reference state: $u=s=0$ for saturated liquid at the triple point; only \emph{differences} of $h$ and $s$ are physical.}
+\small
+\begin{tabularx}{\textwidth}{@{}YYYYYYYYY@{}}
+\toprule
+$T$ & $p_{\text{sat}}$ & $\rho_f$ & $v_g$ & $h_f$ & $h_{fg}$ & $h_g$ & $s_f$ & $s_g$\\
+(\si{\celsius}) & (\si{kPa}) & (\si{kg/m^3}) & (\si{m^3/kg}) & (\si{kJ/kg}) & (\si{kJ/kg}) & (\si{kJ/kg}) & (\si{kJ/(kg.K)}) & (\si{kJ/(kg.K)})\\
+\midrule
+\tabinput{data/water_sat_T.tex}
+\bottomrule
+\end{tabularx}\end{reftab}
+
+\begin{multicols}{2}
+\begin{reftab}{T:water:satP}{Boiling point of water vs absolute pressure.\src{IAPWS}}
+\small
+\begin{tabularx}{\linewidth}{@{}YYY@{}}
+\toprule
+$P$ (\si{kPa}) & $T_{\text{sat}}$ (\si{\celsius}) & $h_{fg}$ (\si{kJ/kg})\\
+\midrule
+\tabinput{data/water_sat_P.tex}
+\bottomrule
+\end{tabularx}\end{reftab}
+
+\columnbreak
+\begin{reftab}{T:ice:sub}{Sublimation (frost-point) pressure over ice Ih.\src{ICE}}
+\small
+\begin{tabularx}{\linewidth}{@{}YY@{}}
+\toprule
+$T$ (\si{\celsius}) & $p_{\text{sub}}$ (\si{Pa})\\
+\midrule
+\tabinput{data/ice_sub.tex}
+\bottomrule
+\end{tabularx}\end{reftab}
+
+\textbf{Use of these tables.} Saturated mixtures: $h=h_f+xh_{fg}$, $s=s_f+x(s_g-s_f)$. Interpolate linearly only between close rows; $p_{\text{sat}}$ grows roughly exponentially, so prefer \eqref{F:phase:cc} between two nearby rows for an in-between pressure. Note the triple-point pressure \SI{611.65}{Pa} at \SI{0.01}{\celsius} vs \SI{611.2}{Pa} over ice at \SI{0}{\celsius}.
+\end{multicols}

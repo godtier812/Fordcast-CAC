@@ -1,0 +1,213 @@
+% =====================================================================
+% style.tex -- preamble for the Thermodynamics C invitational binder
+% Engine: pdfLaTeX (tested with TeX Live 2023). No shell escape needed.
+% =====================================================================
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[letterpaper,twoside,inner=0.85in,outer=0.70in,top=0.50in,
+  bottom=0.50in,includehead,includefoot,headheight=13pt,headsep=7pt,
+  footskip=17pt]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{siunitx}
+\sisetup{per-mode=symbol,inter-unit-product=\ensuremath{{}\cdot{}},
+  range-phrase={--},range-units=single,list-units=single,
+  separate-uncertainty=true,group-minimum-digits=5}
+\DeclareSIUnit\atm{atm}
+\DeclareSIUnit\calorie{cal}
+\DeclareSIUnit\Btu{Btu}
+\DeclareSIUnit\ft{ft}
+\DeclareSIUnit\inch{in}
+\DeclareSIUnit\hour{h}
+\DeclareSIUnit\lbm{lbm}
+\DeclareSIUnit\degF{\ensuremath{^{\circ}}F}
+\DeclareSIUnit\rankine{R}
+\DeclareSIUnit\torr{Torr}
+\DeclareSIUnit\mmHg{mmHg}
+\DeclareSIUnit\psi{psi}
+\usepackage{array,booktabs,tabularx,longtable,multicol}
+\usepackage{enumitem}
+\usepackage[table]{xcolor}
+\usepackage{tcolorbox}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,calc,positioning,decorations.pathreplacing,patterns,intersections,decorations.markings}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+\usepackage{fancyhdr}
+\usepackage[version=4]{mhchem}
+\usepackage[hidelinks,bookmarksnumbered,bookmarksdepth=2,
+  pdftitle={Thermodynamics Division C Invitational Reference},
+  pdfsubject={Science Olympiad Thermodynamics C study reference (unofficial)},
+  pdfkeywords={thermodynamics, calorimetry, heat transfer, Science Olympiad}]{hyperref}
+\usepackage{bookmark}
+\usepackage{needspace}
+
+% ---------------------------------------------------------------------
+% Text layout
+% ---------------------------------------------------------------------
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{2.5pt plus 1pt minus 1pt}
+\setlength{\columnsep}{0.20in}
+\setlength{\columnseprule}{0.3pt}
+\renewcommand{\arraystretch}{1.12}
+\setlist{nosep,leftmargin=1.1em,itemsep=0.5pt}
+\setlist[enumerate]{leftmargin=1.4em}
+\raggedbottom
+\setlength{\multicolsep}{2pt plus 1pt minus 1pt}
+\emergencystretch=1.5em
+\setlength{\abovedisplayskip}{3pt plus 1pt minus 1pt}
+\setlength{\belowdisplayskip}{3pt plus 1pt minus 1pt}
+\setlength{\abovedisplayshortskip}{1pt plus 1pt}
+\setlength{\belowdisplayshortskip}{2pt plus 1pt}
+\setlength{\jot}{2pt}
+\setcounter{secnumdepth}{2}
+\setcounter{tocdepth}{1}
+\numberwithin{equation}{chapter}
+\renewcommand{\theequation}{\thechapter.\arabic{equation}}
+
+% Compact headings (book class)
+\makeatletter
+\def\@makechapterhead#1{%
+  {\parindent\z@\raggedright\normalfont
+   \hrule height 1.4pt\vspace{3pt}%
+   {\LARGE\bfseries TAB \thechapter\quad #1\par}%
+   \vspace{2pt}\hrule height 0.4pt\vspace{6pt}}}
+\def\@makeschapterhead#1{%
+  {\parindent\z@\raggedright\normalfont
+   \hrule height 1.4pt\vspace{3pt}%
+   {\LARGE\bfseries #1\par}%
+   \vspace{2pt}\hrule height 0.4pt\vspace{6pt}}}
+\renewcommand\section{\@startsection{section}{1}{\z@}%
+  {-7pt plus -2pt minus -1pt}{3pt}%
+  {\normalfont\large\bfseries\color{black}}}
+\renewcommand\subsection{\@startsection{subsection}{2}{\z@}%
+  {-5pt plus -1pt minus -1pt}{1.5pt}%
+  {\normalfont\normalsize\bfseries}}
+\renewcommand\paragraph{\@startsection{paragraph}{4}{\z@}%
+  {2pt plus 1pt}{-0.6em}{\normalfont\normalsize\bfseries}}
+\renewcommand{\thesection}{\thechapter.\arabic{section}}
+\let\origsection\section
+\renewcommand{\section}{\Needspace{10\baselineskip}\origsection}
+\makeatother
+
+% ---------------------------------------------------------------------
+% Thumb tabs: text-labelled, mirrored to the outer edge, inside a
+% 0.25 in printable safe area. Active tab = solid black + white text.
+% ---------------------------------------------------------------------
+\newcounter{tabno}
+\newcommand{\tabname}[1]{\ifcase#1\or QUICK\or FOUND/HEAT\or GAS/LAWS\or
+  CYCLES\or TRANSFER\or CHEM/DEVICE\or DATA/INDEX\fi}
+\newcommand{\thumbtabs}{%
+  \ifnum\value{tabno}>0
+  \begin{tikzpicture}[remember picture,overlay]
+    \foreach \i in {1,...,7}{%
+      \pgfmathsetmacro{\ytop}{0.95+(\i-1)*1.27}%
+      \ifodd\value{page}
+        \coordinate (A) at ($(current page.north east)+(-0.62in,-\ytop in)$);
+        \coordinate (B) at ($(current page.north east)+(-0.27in,-\ytop in-1.20in)$);
+        \def\rot{-90}%
+      \else
+        \coordinate (A) at ($(current page.north west)+(0.27in,-\ytop in)$);
+        \coordinate (B) at ($(current page.north west)+(0.62in,-\ytop in-1.20in)$);
+        \def\rot{90}%
+      \fi
+      \ifnum\i=\value{tabno}
+        \fill[black] (A) rectangle (B);
+        \node[rotate=\rot,text=white,font=\footnotesize\bfseries\sffamily]
+          at ($(A)!0.5!(B)$) {\i\ \tabname{\i}};
+      \else
+        \draw[black!35,line width=0.4pt] (A) rectangle (B);
+        \node[rotate=\rot,text=black!45,font=\scriptsize\sffamily]
+          at ($(A)!0.5!(B)$) {\i\ \tabname{\i}};
+      \fi
+    }%
+  \end{tikzpicture}\fi}
+
+\newcommand{\tabchapter}[2]{% #1 = tab number, #2 = title
+  \clearpage\setcounter{tabno}{#1}\chapter{#2}}
+
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\chaptermark}[1]{\markboth{TAB \thechapter: #1}{}}
+\renewcommand{\sectionmark}[1]{\markright{\thesection\ #1}}
+\fancyhead[LE]{\small\bfseries\thepage\quad\normalfont\leftmark}
+\fancyhead[RO]{\small\rightmark\quad\bfseries\thepage}
+\fancyhead[C]{\thumbtabs}
+\fancyfoot[LE,RO]{\scriptsize Unofficial study reference. Rules status: see p.\,1.}
+\fancyfoot[RE,LO]{\scriptsize Thermodynamics C \textbullet\ build \builddate}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0pt}
+\fancypagestyle{plain}{\fancyhf{}\fancyhead[C]{\thumbtabs}%
+  \fancyhead[LE]{\small\bfseries\thepage}\fancyhead[RO]{\small\bfseries\thepage}%
+  \fancyfoot[LE,RO]{\scriptsize Unofficial study reference. Rules status: see p.\,1.}%
+  \fancyfoot[RE,LO]{\scriptsize Thermodynamics C \textbullet\ build \builddate}%
+  \renewcommand{\headrulewidth}{0.4pt}}
+
+% ---------------------------------------------------------------------
+% Four labelled box types (grayscale-safe: label text + rule style)
+% ---------------------------------------------------------------------
+\tcbset{boxsep=0pt,left=3pt,right=3pt,top=2pt,bottom=2pt,arc=0pt,
+  before skip=3pt,after skip=3pt,fontupper=\small}
+\newtcolorbox{formulabox}[1][]{colback=white,colframe=black,boxrule=0.9pt,
+  before upper={\rightskip=0pt plus 1.5em\relax\textsf{\textbf{FORMULA}}\enspace},#1}
+\newtcolorbox{keybox}[1][]{colback=black!6,colframe=black!70,boxrule=0.4pt,
+  before upper={\rightskip=0pt plus 1.5em\relax\textsf{\textbf{KEY IDEA / DECISION}}\enspace},#1}
+\newtcolorbox{demobox}[1][]{colback=white,colframe=black!55,boxrule=0.4pt,
+  leftrule=2.5pt,before upper={\rightskip=0pt plus 1.5em\relax\textsf{\textbf{SOLVED DEMONSTRATION}}\enspace},#1}
+\newtcolorbox{trapbox}[1][]{colback=black!10,colframe=black,boxrule=0pt,
+  leftrule=3pt,before upper={\rightskip=0pt plus 1.5em\relax\textsf{\textbf{TRAP / LIMIT}}\enspace},#1}
+\newtcolorbox{rulebox}[1][]{colback=white,colframe=black,boxrule=1.2pt,
+  fontupper=\small,before upper={\rightskip=0pt plus 1.5em\relax\textsf{\textbf{RULE-DEPENDENT}}\enspace},#1}
+
+% Content-priority labels (editorial, not official)
+\newcommand{\CORE}{{\scriptsize\textsf{\textbf{[CORE]}}}}
+\newcommand{\EXT}{{\scriptsize\textsf{\textbf{[EXTENSION]}}}}
+\newcommand{\RD}{{\scriptsize\textsf{\textbf{[RULE-DEPENDENT]}}}}
+
+% ---------------------------------------------------------------------
+% Numbered non-floating table/figure titles (hyperref anchors)
+% ---------------------------------------------------------------------
+\newcommand{\tabtitle}[2]{\par\refstepcounter{table}\label{#1}%
+  {\small\textbf{Table \thetable.}\ #2}\par\nopagebreak\vspace{1pt}}
+\newcommand{\figtitle}[2]{\par\refstepcounter{figure}\label{#1}%
+  {\small\textbf{Figure \thefigure.}\ #2}\par}
+\renewcommand{\thetable}{\thechapter.\arabic{table}}
+\renewcommand{\thefigure}{\thechapter.\arabic{figure}}
+
+% Cross-reference helpers (all clickable)
+\newcommand{\pg}[1]{p.\,\pageref{#1}}
+\newcommand{\eqp}[1]{(\ref{#1})\,p.\pageref{#1}}
+\newcommand{\eqn}[1]{(\ref{#1})}
+\newcommand{\tref}[1]{Tab.\,\ref{#1}}
+\newcommand{\fref}[1]{Fig.\,\ref{#1}}
+\newcommand{\sref}[1]{\S\ref{#1}}
+\newcommand{\src}[1]{\textsuperscript{\hyperref[src:#1]{\textsf{[#1]}}}}
+\newcommand{\srcin}[1]{\hyperref[src:#1]{\textsf{[#1]}}}
+\newcommand{\anchor}[1]{\phantomsection\label{#1}}
+
+% Notation
+\newcommand{\dd}{\mathrm{d}}
+\newcommand{\Wby}{W_{\mathrm{by}}}
+\newcommand{\Won}{W_{\mathrm{on}}}
+\newcommand{\Tamb}{T_{\mathrm{amb}}}
+\newcommand{\Sgen}{S_{\mathrm{gen}}}
+\newcommand{\degC}{\,^{\circ}\mathrm{C}}
+\newcommand{\RR}{\mathcal{R}}
+\newcommand{\tsub}[1]{_{\mathrm{#1}}}
+\newcolumntype{Y}{>{\raggedright\arraybackslash}X}
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
+\newcolumntype{C}[1]{>{\centering\arraybackslash}p{#1}}
+
+% Expandable input for generated table bodies (avoids "Misplaced \noalign")
+\makeatletter
+\newcommand{\tabinput}[1]{\@@input #1 }
+\makeatother
+
+% Unbreakable table/figure units: title stays with its content
+\newcommand{\flushdepth}{\par\nointerlineskip\hbox{}}
+\newenvironment{reftab}[2]{\par\vspace{2pt}\noindent\begin{minipage}[b]{\linewidth}\tabtitle{#1}{#2}}%
+  {\end{minipage}\flushdepth\vspace{3pt}}
+\newenvironment{reffig}[2]{\par\vspace{2pt}\noindent\begin{minipage}[b]{\linewidth}\figtitle{#1}{#2}\centering}%
+  {\end{minipage}\flushdepth\vspace{3pt}}
+\raggedcolumns
+% mid-path direction arrows for cycle diagrams
+\tikzset{midarrow/.style={postaction={decorate},decoration={markings,mark=at position 0.55 with {\arrow{Stealth[length=5pt]}}}}}

@@ -1,0 +1,227 @@
+% ===================================================================
+\section{Engines, refrigerators, heat pumps}\label{sec:cycles}
+% ===================================================================
+\begin{multicols}{2}
+\subsection{Energy flows and performance}\label{sec:cycleflows}
+\CORE{} All cycle quantities here are \textbf{positive magnitudes}; arrows carry the direction. Steady cyclic operation: $\Delta U_{\text{cycle}}=0$, so $Q_H=W+Q_L$.
+
+\begin{reffig}{fig:energyflow}{Energy-flow diagrams. A refrigerator and a heat pump are the same machine; only the useful output differs.}
+\begin{tikzpicture}[font=\scriptsize,>=Stealth,
+  res/.style={draw,thick,minimum width=2.3cm,minimum height=0.5cm},
+  dev/.style={draw,thick,circle,minimum size=0.95cm,align=center}]
+ \node[res] (H1) at (0,2.2) {Hot reservoir $T_H$};
+ \node[dev] (E) at (0,1.0) {engine};
+ \node[res] (L1) at (0,-0.2) {Cold reservoir $T_L$};
+ \draw[->,thick] (H1) -- node[right]{$Q_H$} (E);
+ \draw[->,thick] (E) -- node[right]{$Q_L$} (L1);
+ \draw[->,thick] (E.east) -- ++(0.8,0) node[above,pos=0.5]{$W$ out};
+ \node[res] (H2) at (4.0,2.2) {Hot reservoir $T_H$};
+ \node[dev] (R) at (4.0,1.0) {R / HP};
+ \node[res] (L2) at (4.0,-0.2) {Cold reservoir $T_L$};
+ \draw[->,thick] (R) -- node[right]{$Q_H$} (H2);
+ \draw[->,thick] (L2) -- node[right]{$Q_L$} (R);
+ \draw[<-,thick] (R.east) -- ++(0.8,0) node[above,pos=0.5]{$W$ in};
+\end{tikzpicture}
+\end{reffig}
+
+\begin{formulabox}
+\vspace{-6pt}
+\begin{align}
+\eta &= \frac{W}{Q_H}=1-\frac{Q_L}{Q_H} \label{F:cycle:eta}\\
+\mathrm{COP}_R &= \frac{Q_L}{W},\qquad \mathrm{COP}_{HP}=\frac{Q_H}{W}=\mathrm{COP}_R+1 \label{F:cycle:cop}\\
+\eta_C &= 1-\frac{T_L}{T_H} \label{F:cycle:carnot}\\
+\mathrm{COP}_{R,C} &= \frac{T_L}{T_H-T_L},\qquad \mathrm{COP}_{HP,C}=\frac{T_H}{T_H-T_L} \notag
+\end{align}
+\end{formulabox}
+$\mathrm{COP}_{HP}=\mathrm{COP}_R+1$ holds for the \emph{same} machine with the same $Q_H,Q_L,W$ and all of $Q_H$ delivered as useful heat. Carnot bounds use the \textbf{reservoir} temperatures in kelvin---not working-fluid extremes of a different cycle, and never an average of endpoints. COP may exceed 1; $\eta$ may not.
+
+\textbf{Second-law efficiency} $\eta_{II}=\eta/\eta_C$ (engines) or $\mathrm{COP}/\mathrm{COP}_C$ (refrigerators, heat pumps) measures how close a device comes to the reversible limit for the same reservoirs.
+
+\begin{demobox}\textbf{Heat pump vs resistance heater.} Deliver \SI{10.0}{kW} to a house. Resistance heater: \SI{10.0}{kW} electric (COP $=1$). Heat pump with $\mathrm{COP}_{HP}=3.0$: $W=\SI{3.33}{kW}$, and $Q_L=\SI{6.67}{kW}$ comes from outdoors. Carnot limit for \SI{35}{\celsius} supply and \SI{0}{\celsius} outdoors: $308.15/35=8.8$, so $\eta_{II}=0.34$.\src{DER}\end{demobox}
+
+\textbf{Finite (cooling) source.} A body of capacity $C$ cooling from $T_1$ to ambient $T_0$ can deliver at most $W_{\max}=C\big[(T_1-T_0)-T_0\ln(T_1/T_0)\big]$. For $C=\SI{1}{kJ/K}$, $T_1=\SI{373.15}{K}$, $T_0=\SI{293.15}{K}$: \SI{9.26}{kJ} of \SI{80}{kJ} (\SI{11.6}{\percent}), not the \SI{21.4}{\percent} a naive Carnot factor at $T_1$ suggests.\src{DER}
+
+\subsection{Machine-feasibility algorithm}\label{sec:feasibility}
+\CORE{}
+\begin{keybox}(1) \textbf{Energy:} does $Q_H=W+Q_L$? If not, impossible (first law). (2) \textbf{Entropy:} $\Sgen=\sum Q_{\text{out}}/T-\sum Q_{\text{in}}/T\ge0$ over all reservoirs (engine: $Q_L/T_L-Q_H/T_H$; refrigerator: $Q_H/T_H-Q_L/T_L$). Negative: impossible; zero: reversible (Carnot); positive: possible but irreversible. Equivalent: $\eta\le\eta_C$, $\mathrm{COP}\le\mathrm{COP}_C$. (3) \textbf{Sanity:} kelvin temperatures, $T_H>T_L$, magnitudes positive, every reservoir counted.\end{keybox}
+
+\begin{demobox}\textbf{Three claims}, reservoirs \SI{500}{K} and \SI{300}{K}, $Q_H=\SI{1000}{kJ}$ each.
+A: $W=500$, $Q_L=\SI{550}{kJ}$: $1000\ne1050$---violates energy.
+B: $W=450$, $Q_L=550$: energy OK; $\Sgen=550/300-1000/500=\SI{-0.167}{kJ/K}<0$ (equivalently $\eta=0.45>\eta_C=0.40$): impossible.
+C: $W=350$, $Q_L=650$: $\Sgen=\SI{+0.167}{kJ/K}$: possible, irreversible.\src{DER}\end{demobox}
+
+\textbf{Clockwise rule, stated carefully:} on $P$ (up)--$V$ (right) axes, or $T$ (up)--$S$ (right) axes, a clockwise loop has positive net work out (engine); counterclockwise = refrigerator/heat pump. Swapping axes reverses the rule.
+
+\subsection{Carnot cycle}\label{sec:carnot}
+\CORE{} Reversible: isothermal expansion at $T_H$ (absorb $Q_H$) $\to$ adiabatic expansion to $T_L$ $\to$ isothermal compression at $T_L$ (reject $Q_L$) $\to$ adiabatic compression to $T_H$. For an ideal gas, $Q_H=nRT_H\ln(V_2/V_1)$, $Q_L=nRT_L\ln(V_3/V_4)$, and the adiabats force $V_2/V_1=V_3/V_4$, giving $Q_L/Q_H=T_L/T_H$ and \eqref{F:cycle:carnot}.
+\end{multicols}
+
+\begin{reffig}{fig:carnot}{Carnot cycle. Left: $P$--$V$ computed for an ideal gas with $\gamma=1.4$, $T_H/T_L=5/3$, $V_2/V_1=2$ (relative units). Right: $T$--$S$ rectangle; enclosed area $=W$, area under the bottom edge $=Q_L$.\src{DER}}
+\begin{tikzpicture}
+\begin{axis}[width=0.47\textwidth,height=5cm,xmin=0,xmax=7.8,ymin=0,ymax=580,clip=false,
+  xlabel={$V$ (relative)},ylabel={$P$ (relative)},ticks=none,label style={font=\small}]
+\addplot[thick,black,domain=1:2,samples=40,midarrow] {500/x};
+\addplot[thick,black,domain=2:7.172,samples=60,midarrow] {250*(2/x)^1.4};
+\addplot[thick,black,domain=7.172:3.586,samples=60,midarrow] {300/x};
+\addplot[thick,black,domain=3.586:1,samples=60,midarrow] {500*(1/x)^1.4};
+\node[font=\scriptsize,anchor=south west] at (axis cs:1,500) {1};
+\node[font=\scriptsize,anchor=south west] at (axis cs:2,250) {2};
+\node[font=\scriptsize,anchor=south] at (axis cs:7.172,42) {3};
+\node[font=\scriptsize,anchor=north east] at (axis cs:3.586,84) {4};
+\node[font=\scriptsize,anchor=north west,align=left] at (axis cs:3.0,560) {$T_H$ isotherm 1--2: $Q_H$ in\\ adiabats 2--3, 4--1: $Q=0$\\ $T_L$ isotherm 3--4: $Q_L$ out};
+\end{axis}
+\end{tikzpicture}\hfill
+\begin{tikzpicture}[font=\scriptsize,>=Stealth]
+ \draw[->] (0,0)--(5.6,0) node[below left]{$S$};
+ \draw[->] (0,0)--(0,3.9) node[above right]{$T$};
+ \fill[black!12] (1.2,1.2) rectangle (4.4,3.0);
+ \fill[pattern=north east lines,pattern color=black!45] (1.2,0) rectangle (4.4,1.2);
+ \draw[thick,midarrow] (1.2,3.0)--(4.4,3.0); \draw[thick,midarrow] (4.4,3.0)--(4.4,1.2);
+ \draw[thick,midarrow] (4.4,1.2)--(1.2,1.2); \draw[thick,midarrow] (1.2,1.2)--(1.2,3.0);
+ \node[above left] at (1.2,3.0){1}; \node[above right] at (4.4,3.0){2};
+ \node[below right] at (4.4,1.2){3}; \node[below left] at (1.2,1.2){4};
+ \node at (2.8,2.1){$W=Q_H-Q_L$}; \node[fill=white,inner sep=1pt] at (2.8,0.6){$Q_L=T_L\Delta S$};
+ \node[left] at (0,3.0){$T_H$}; \node[left] at (0,1.2){$T_L$};
+\end{tikzpicture}
+\end{reffig}
+
+\begin{multicols}{2}
+\subsection{Air-standard piston and turbine cycles}\label{sec:aircycles}
+\CORE{} \textbf{Cold-air-standard assumptions:} working fluid is air as an ideal gas with constant $c_p$, $c_v$, $\gamma$; combustion replaced by heat addition, exhaust by heat rejection; closed, internally reversible processes. Real engines fall well short of these values. Ratios: \textbf{compression ratio} $r=V_{\max}/V_{\min}$; \textbf{cutoff ratio} $r_c=V_3/V_2$ (volume at end/start of constant-pressure heat addition); \textbf{pressure ratio} $r_p=P_{\text{high}}/P_{\text{low}}$.
+\begin{formulabox}
+\vspace{-6pt}
+\begin{align}
+\eta_{\text{Otto}} &= 1-\frac{1}{r^{\gamma-1}} \label{F:cycle:otto}\\
+\eta_{\text{Diesel}} &= 1-\frac{1}{r^{\gamma-1}}\,\frac{r_c^{\gamma}-1}{\gamma\,(r_c-1)} \label{F:cycle:diesel}\\
+\eta_{\text{Brayton}} &= 1-\frac{1}{r_p^{(\gamma-1)/\gamma}} \label{F:cycle:brayton}
+\end{align}
+\end{formulabox}
+All three verified against explicit state-by-state calculations.\src{DER} For the same $r$, Diesel $<$ Otto (the bracket exceeds 1), but Diesels run at much higher $r$ ($r=18$, $r_c=2$: \SI{63.2}{\percent}). Brayton ($r_p=10$, $T_1=\SI{300}{K}$, $T_3=\SI{1400}{K}$): $\eta=\SI{48.2}{\percent}$, back-work ratio $w_c/w_t=0.41$---the compressor eats a large share of turbine work, so component efficiencies matter greatly. A regenerator (exhaust preheats compressed air) helps when $T_4>T_2$.
+
+\begin{demobox}\textbf{Otto vs Carnot between the same extremes.} $r=8$, $\gamma=1.4$, $T_1=\SI{300}{K}$, $T_3=\SI{1800}{K}$. $\eta=1-8^{-0.4}=\SI{56.5}{\percent}$; $T_2=300(8^{0.4})=\SI{689}{K}$; $T_4=1800/8^{0.4}=\SI{783}{K}$. \emph{Check:} $1-(T_4-T_1)/(T_3-T_2)$ gives the same \SI{56.5}{\percent}. A Carnot engine between \SI{1800}{K} and \SI{300}{K} would give \SI{83.3}{\percent}: Otto adds heat over \SI{689}{}--\SI{1800}{K} and rejects it over \SI{783}{}--\SI{300}{K}.\src{DER}\end{demobox}
+\end{multicols}
+
+\begin{reffig}{fig:cyclesketches}{Cycle shapes. Top: $P$--$V$ computed for $\gamma=1.4$ (relative units; Otto $r=8$; Diesel $r=12$, $r_c=2$; Brayton $r_p=8$). Bottom: schematic $T$--$s$ with the vapor dome (not to scale). Numbers = state labels used in the text.\src{DER}}
+\begin{tikzpicture}
+\begin{axis}[name=otto,width=0.36\textwidth,height=4.0cm,xmin=0,xmax=9.2,ymin=-4,ymax=56,ticks=none,clip=false,
+  xlabel={$V$},ylabel={$P$},title={\small Otto},label style={font=\small}]
+\addplot[thick,domain=8:1,samples=50,midarrow] {(8/x)^1.4};
+\addplot[thick,midarrow] coordinates {(1,18.38)(1,48.0)};
+\addplot[thick,domain=1:8,samples=50,midarrow] {48.0*x^(-1.4)};
+\addplot[thick,midarrow] coordinates {(8,2.612)(8,1)};
+\node[font=\scriptsize,anchor=west] at (axis cs:8,0.6){1};\node[font=\scriptsize,anchor=east] at (axis cs:1,18.38){2};
+\node[font=\scriptsize,anchor=south west] at (axis cs:1,48){3};\node[font=\scriptsize,anchor=south west] at (axis cs:8,2.6){4};
+\end{axis}
+\begin{axis}[at={(otto.east)},anchor=west,xshift=0.6cm,width=0.36\textwidth,height=4.0cm,xmin=0,xmax=13.5,ymin=-3,ymax=38,ticks=none,clip=false,
+  xlabel={$V$},title={\small Diesel},label style={font=\small}]
+\addplot[thick,domain=12:1,samples=50,midarrow] {(12/x)^1.4};
+\addplot[thick,midarrow] coordinates {(1,32.4)(2,32.4)};
+\addplot[thick,domain=2:12,samples=50,midarrow] {32.4*(2/x)^1.4};
+\addplot[thick,midarrow] coordinates {(12,2.64)(12,1)};
+\node[font=\scriptsize,anchor=west] at (axis cs:12,0.6){1};\node[font=\scriptsize,anchor=south east] at (axis cs:1,32.4){2};
+\node[font=\scriptsize,anchor=south west] at (axis cs:2,32.4){3};\node[font=\scriptsize,anchor=south west] at (axis cs:12,2.64){4};
+\end{axis}
+\begin{axis}[at={(otto.east)},anchor=west,xshift=6.6cm,width=0.36\textwidth,height=4.0cm,xmin=0,xmax=2.5,ymin=0,ymax=9.5,ticks=none,clip=false,
+  xlabel={$V$},title={\small Brayton},label style={font=\small}]
+\addplot[thick,domain=1:0.2266,samples=50,midarrow] {(1/x)^1.4};
+\addplot[thick,midarrow] coordinates {(0.2266,8)(0.5004,8)};
+\addplot[thick,domain=0.5004:2.209,samples=50,midarrow] {8*(0.5004/x)^1.4};
+\addplot[thick,midarrow] coordinates {(2.209,1)(1,1)};
+\node[font=\scriptsize,anchor=north] at (axis cs:1,1){1};\node[font=\scriptsize,anchor=south east] at (axis cs:0.2266,8){2};
+\node[font=\scriptsize,anchor=south west] at (axis cs:0.5004,8){3};\node[font=\scriptsize,anchor=north] at (axis cs:2.209,1){4};
+\end{axis}
+\end{tikzpicture}
+
+\vspace{4pt}
+\begin{tikzpicture}[font=\scriptsize,>=Stealth]
+ \begin{scope}
+ \draw[->] (0,0)--(6.2,0) node[below left]{$s$};
+ \draw[->] (0,0)--(0,3.9) node[above right]{$T$};
+ \node[font=\small] at (3.1,3.75) {Rankine (steam power)};
+ \draw[black!50] (0.6,0.25) .. controls (1.6,3.2) and (3.6,3.2) .. (5.0,0.25);
+ \coordinate (r1) at (1.05,0.9); \coordinate (r2) at (1.1,1.05);
+ \coordinate (r2b) at (1.65,2.1); \coordinate (r2c) at (4.25,2.1); \coordinate (r3) at (4.75,3.3); \coordinate (r4) at (4.75,0.9);
+ \draw[thick,midarrow] (r1)--(r2); \draw[thick] (r2) .. controls (1.3,1.6) .. (r2b);
+ \draw[thick,midarrow] (r2b)--(r2c); \draw[thick] (r2c) .. controls (4.45,2.6) .. (r3);
+ \draw[thick,midarrow] (r3)--(r4); \draw[thick,midarrow] (r4)--(r1);
+ \node[left] at (r1){1}; \node[left] at (r2){2}; \node[right] at (r3){3}; \node[right] at (r4){4};
+ \node[align=left,anchor=north] at (3.0,-0.15){pump 1--2, boiler 2--3, turbine 3--4, condenser 4--1};
+ \end{scope}
+ \begin{scope}[xshift=8.6cm]
+ \draw[->] (0,0)--(6.2,0) node[below left]{$s$};
+ \draw[->] (0,0)--(0,3.9) node[above right]{$T$};
+ \node[font=\small] at (3.1,3.75) {Vapor-compression refrigeration};
+ \draw[black!50] (0.6,0.25) .. controls (1.6,3.2) and (3.6,3.2) .. (5.0,0.25);
+ \coordinate (v1) at (4.6,0.95); \coordinate (v2) at (4.6,2.75); \coordinate (v2b) at (4.05,2.1);
+ \coordinate (v3) at (1.65,2.1); \coordinate (v4) at (2.0,0.95);
+ \draw[thick,midarrow] (v1)--(v2); \draw[thick] (v2) .. controls (4.3,2.3) .. (v2b);
+ \draw[thick,midarrow] (v2b)--(v3); \draw[thick,dashed,midarrow] (v3) .. controls (1.75,1.3) .. (v4);
+ \draw[thick,midarrow] (v4)--(v1);
+ \node[right] at (v1){1}; \node[right] at (v2){2}; \node[left] at (v3){3}; \node[below] at (v4){4};
+ \node[align=left,anchor=north] at (3.0,-0.15){compressor 1--2, condenser 2--3, valve 3--4 ($h$ const., dashed), evaporator 4--1};
+ \end{scope}
+\end{tikzpicture}
+\end{reffig}
+
+\begin{multicols}{2}
+\subsection{Vapor cycles: property-table method}\label{sec:vaporcycles}
+\CORE{} Phase change makes ideal-gas formulas useless; use $h$, $s$ from tables and the component balances of \tref{T:components}.
+\begin{formulabox}
+\vspace{-6pt}
+\begin{align}
+\eta_{\text{Rankine}} &= \frac{(h_3-h_4)-(h_2-h_1)}{h_3-h_2} \label{F:cycle:rankine}\\
+w_{\text{pump}} &= h_2-h_1\approx v_1(P_2-P_1) \notag\\
+\mathrm{COP}_{R,\text{VCR}} &= \frac{h_1-h_4}{h_2-h_1},\qquad h_4=h_3 \label{F:cycle:vcr}
+\end{align}
+\end{formulabox}
+Tables: saturated water \tref{T:water:satT}, superheated steam \tref{T:steamsh} (\pg{T:steamsh}), R-134a \tref{T:r134a} (\pg{T:r134a}). Isentropic turbine/compressor: find state 4 (or 2) from $s_4=s_3$ (or $s_2=s_1$) at the outlet pressure; inside the dome use $x=(s-s_f)/(s_g-s_f)$, then $h=h_f+xh_{fg}$.
+
+\begin{demobox}\textbf{Ideal Rankine:} boiler \SI{4}{MPa}, \SI{400}{\celsius}; condenser \SI{10}{kPa}. IAPWS-95 values (\si{kJ/kg}): $h_1=191.8$, $v_1=\SI{0.001010}{m^3/kg}$, $w_p=v_1\Delta P=4.03$, $h_2=195.8$; $h_3=3214.5$, $s_3=\SI{6.7714}{kJ/(kg.K)}$; at \SI{10}{kPa} $s_f=0.6492$, $s_g=8.1488$ $\Rightarrow x_4=0.816$, $h_4=2144.5$.
+$w_t=1070.0$, $q_{\text{in}}=3018.6$, $\eta=(1070.0-4.0)/3018.6=\SI{35.3}{\percent}$. Carnot between \SI{673.15}{K} and $T_{\text{sat}}(\SI{10}{kPa})=\SI{318.96}{K}$: \SI{52.6}{\percent}. \emph{Check:} $q_{\text{in}}-w_{\text{net}}=h_4-h_1=\SI{1952.7}{kJ/kg}$ \checkmark; $h_4$ matches the library's $(P,s)$ flash.\src{IAPWS}\end{demobox}
+
+\begin{demobox}\textbf{Ideal vapor-compression, R-134a:} evaporator \SI{-10}{\celsius} (\SI{200.6}{kPa}), condenser \SI{40}{\celsius} (\SI{1016.6}{kPa}). $h_1=392.7$ (sat.\ vapor), $h_2=426.5$ ($s_2=s_1$, $T_2=\SI{46.3}{\celsius}$), $h_3=h_4=256.4$ (sat.\ liquid, then throttled; $x_4=0.338$).
+$\mathrm{COP}_R=(392.7-256.4)/(426.5-392.7)=4.03$ vs Carnot $263.15/50=5.26$; as a heat pump $\mathrm{COP}_{HP}=5.03=\mathrm{COP}_R+1$ \checkmark. Table reference states differ between sources: use only differences.\src{CP}\end{demobox}
+
+\subsection{Multi-leg cycle ledger}\label{sec:cycleledger}
+\CORE{} For any cycle drawn as legs, tabulate $Q$, $\Wby$, $\Delta U$ per leg; checks: $\sum\Delta U=0$, $\sum Q=\sum\Wby$ = enclosed area; $\eta=W_{\text{net}}/\sum Q_{\text{in}}$ (only the \emph{positive} $Q$ legs).
+
+\begin{demobox}\textbf{Rectangle cycle}, monatomic ideal gas ($\Delta U=\tfrac32\Delta(PV)$): 1 (\SI{100}{kPa}, \SI{1}{L}) $\to$ 2 (\SI{300}{kPa}, \SI{1}{L}) $\to$ 3 (\SI{300}{kPa}, \SI{3}{L}) $\to$ 4 (\SI{100}{kPa}, \SI{3}{L}) $\to$ 1.
+\begin{center}\small
+\begin{tabular}{@{}lrrr@{}}
+\toprule
+Leg & $\Delta U$ (J) & $\Wby$ (J) & $Q$ (J)\\
+\midrule
+1--2 (const.\ $V$) & $+300$ & 0 & $+300$\\
+2--3 (const.\ $P$) & $+900$ & $+600$ & $+1500$\\
+3--4 (const.\ $V$) & $-900$ & 0 & $-900$\\
+4--1 (const.\ $P$) & $-300$ & $-200$ & $-500$\\
+\midrule
+Sum & 0 & $+400$ & $+400$\\
+\bottomrule
+\end{tabular}
+\end{center}
+$\eta=400/1800=\SI{22.2}{\percent}$. Carnot between $T_3$ and $T_1$ ($T_3/T_1=9$): \SI{88.9}{\percent}.\src{DER}\end{demobox}
+
+\subsection{Other cycles and effects}\label{sec:othercycles}
+\textbf{Stirling} (two isotherms + two isochores) and \textbf{Ericsson} (two isotherms + two isobars) reach $\eta_C$ \emph{only with ideal regeneration}: the heat released on one non-isothermal leg is stored and returned on the other, so external heat crosses only at $T_H$ and $T_L$. Without a perfect regenerator they fall below Carnot.
+
+\EXT{} \textbf{Curzon--Ahlborn} $\eta_{CA}=1-\sqrt{T_L/T_H}$ is the efficiency at \emph{maximum power} of one particular endoreversible model (finite-rate heat transfer through linear conductances). It is not a bound and not a universal law.
+
+\textbf{Thermoelectric effects} (compact): \emph{Seebeck}---a temperature difference across a junction of dissimilar conductors produces an emf (thermocouples, thermoelectric generators). \emph{Peltier}---current through a junction absorbs or releases heat (solid-state coolers). \emph{Thomson}---heat absorbed or released when current flows along a single conductor with a temperature gradient. Practical efficiencies are far below Carnot.\src{EK}
+\end{multicols}
+
+\begin{reftab}{T:cyclecompare}{Cycle comparison (ideal, cold-air-standard where applicable).}
+\small
+\begin{tabularx}{\textwidth}{@{}lL{0.30\textwidth}L{0.21\textwidth}Y@{}}
+\toprule
+Cycle & Process sequence & Ideal performance & Typical device / note\\
+\midrule
+Carnot & isotherm $T_H$, adiabat, isotherm $T_L$, adiabat & $1-T_L/T_H$ \eqp{F:cycle:carnot} & benchmark; impractical\\
+Otto & $s$-compression, $V$-heat in, $s$-expansion, $V$-heat out & $1-r^{1-\gamma}$ \eqp{F:cycle:otto} & spark-ignition engine; $r=V_{\max}/V_{\min}$\\
+Diesel & $s$-compression, $P$-heat in, $s$-expansion, $V$-heat out & \eqp{F:cycle:diesel} & compression-ignition; $r_c=V_3/V_2$\\
+Brayton & $s$-compression, $P$-heat in, $s$-expansion, $P$-heat out & $1-r_p^{-(\gamma-1)/\gamma}$ \eqp{F:cycle:brayton} & gas turbine, jet engine; $r_p=P_2/P_1$\\
+Rankine & pump, boiler ($P$), turbine ($s$), condenser ($P$) & tables \eqp{F:cycle:rankine} & steam power plant\\
+Vapor compression & compressor ($s$), condenser ($P$), valve ($h$), evaporator ($P$) & tables \eqp{F:cycle:vcr} & refrigerator, A/C, heat pump\\
+Stirling / Ericsson & 2 isotherms + 2 isochores / isobars & $\eta_C$ \emph{with ideal regenerator} & external-combustion engines\\
+\bottomrule
+\end{tabularx}\end{reftab}

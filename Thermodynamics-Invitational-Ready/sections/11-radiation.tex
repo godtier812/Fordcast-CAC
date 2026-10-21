@@ -1,0 +1,65 @@
+% ===================================================================
+\section{Thermal radiation}\label{sec:radiation}
+% ===================================================================
+\begin{multicols}{2}
+\subsection{Emission and surface properties}\label{sec:emission}
+\CORE{}
+\begin{formulabox}
+\vspace{-6pt}
+\begin{align}
+E_b &= \sigma T^4,\qquad E=\varepsilon\sigma T^4 \label{F:rad:sb}\\
+\alpha+\rho+\tau &= 1\quad(\text{opaque: }\tau=0) \label{F:rad:arho}\\
+\lambda_{\max}T &= b = \SI{2897.77}{\micro m.K} \label{F:rad:wien}
+\end{align}
+\end{formulabox}
+$\sigma=\SI{5.670374419e-8}{W/(m^2.K^4)}$ and $b$ follow exactly from the defined SI constants.\src{CODATA} $E_b$ = blackbody \emph{emissive power} (emitted only, \si{W/m^2}); $G$ = irradiation (incident). $\varepsilon$ = emissivity, $\alpha$ = absorptivity, $\rho$ = reflectivity, $\tau$ = transmissivity. \textbf{Absolute temperature, fourth power}: doubling $T$ in kelvin multiplies emission by 16.
+
+\textbf{Wien's law depends on the spectral variable.} \eqref{F:rad:wien} locates the peak of the \emph{per-wavelength} distribution: Sun (\SI{5772}{K}) \SI{0.50}{\micro m}; a \SI{300}{K} surface \SI{9.7}{\micro m} (infrared). The per-frequency distribution peaks at $\nu_{\max}=(\SI{5.879e10}{Hz/K})\,T$, which is \emph{not} $c/\lambda_{\max}$.\src{CODATA}\src{DER} Planck (per wavelength): $E_{b\lambda}=2\pi hc^2/\{\lambda^5[\exp(hc/\lambda kT)-1]\}$; its peak reproduces $b$ to 9 digits.\src{DER}
+
+\textbf{Kirchhoff's law.} Spectral, directional $\varepsilon_{\lambda,\theta}=\alpha_{\lambda,\theta}$ holds for any surface. \emph{Total} $\varepsilon=\alpha$ only if the irradiation comes from a blackbody at the surface's own temperature, or the surface is gray (properties independent of $\lambda$) and diffuse.
+
+\begin{trapbox}\textbf{Solar absorptivity is not infrared emissivity.} Sunlight peaks near \SI{0.5}{\micro m}; room-temperature emission near \SI{10}{\micro m}. A selective solar-collector coating has high $\alpha_{\text{solar}}$ and low $\varepsilon_{\text{IR}}$; white paint has low $\alpha_{\text{solar}}$ but high $\varepsilon_{\text{IR}}$. Visible color says little about IR emissivity. Glass transmits most sunlight but is nearly opaque to long-wave IR.\src{EK}\end{trapbox}
+
+\textbf{Emissivity depends on surface condition} (finish, oxidation, coating, temperature, wavelength). Qualitative guide:\src{EK} polished metals (silver, aluminum foil, gold) are low (a few hundredths); oxidized or rough metals intermediate to high; most nonmetals---paints of any color, glass, water, skin, wood, paper---are high (about 0.85--0.95) in the IR. Use the value a problem gives.
+
+\subsection{Net exchange}\label{sec:netexchange}
+\CORE{}
+\begin{formulabox}Small gray object (area $A$, $\varepsilon$) inside large surroundings at $T_{\text{sur}}$:
+\begin{equation}
+\dot Q_{\text{net}}=\varepsilon\sigma A\,(T_s^4-T_{\text{sur}}^4) \label{F:rad:smallobj}
+\end{equation}
+Exact factorization as a coefficient (for networks):
+\begin{equation}
+h_r=\varepsilon\sigma\,(T_s+T_{\text{sur}})(T_s^2+T_{\text{sur}}^2)\ \approx\ 4\varepsilon\sigma T_m^3 \label{F:rad:hr}
+\end{equation}
+\end{formulabox}
+The approximation (with $T_m$ = mean temperature) is good only when $T_s\approx T_{\text{sur}}$; for \SI{60}{\celsius} vs \SI{22}{\celsius} the exact and linearized $h_r$ differ by \SI{0.4}{\percent}, but the gap grows quickly with $\Delta T$.\src{DER}
+
+\textbf{View factor} $F_{ij}$ = fraction of diffuse radiation leaving surface $i$ that reaches $j$.
+\begin{equation}
+A_iF_{ij}=A_jF_{ji}\ \text{(reciprocity)},\quad \textstyle\sum_jF_{ij}=1\ \text{(enclosure)} \label{F:rad:viewfactor}
+\end{equation}
+$F_{ii}=0$ for flat or convex surfaces; a convex body completely enclosed by another has $F_{12}=1$.
+
+\begin{formulabox}Two diffuse-gray opaque surfaces forming an enclosure:
+\begin{equation}
+\dot Q_{12}=\frac{\sigma\,(T_1^4-T_2^4)}{\dfrac{1-\varepsilon_1}{\varepsilon_1A_1}+\dfrac{1}{A_1F_{12}}+\dfrac{1-\varepsilon_2}{\varepsilon_2A_2}} \label{F:rad:twosurface}
+\end{equation}
+Large parallel plates ($A_1=A_2$, $F_{12}=1$):
+\begin{equation}
+q''_{12}=\frac{\sigma\,(T_1^4-T_2^4)}{1/\varepsilon_1+1/\varepsilon_2-1} \label{F:rad:plates}
+\end{equation}
+Long concentric cylinders or spheres (1 inside 2):
+\begin{equation}
+\dot Q_{12}=\frac{\sigma A_1(T_1^4-T_2^4)}{\dfrac{1}{\varepsilon_1}+\dfrac{1-\varepsilon_2}{\varepsilon_2}\dfrac{A_1}{A_2}} \label{F:rad:concentric}
+\end{equation}
+\end{formulabox}
+As $A_1/A_2\to0$, \eqref{F:rad:concentric} reduces to \eqref{F:rad:smallobj}: in a big room the walls' emissivity does not matter.
+
+\subsection{Radiation shields}\label{sec:shields}
+A thin, low-$\varepsilon$ sheet between two surfaces adds two surface resistances and one space resistance. Parallel plates with \emph{all} emissivities equal and $N$ shields: $q''_N=q''_0/(N+1)$. Low-$\varepsilon$ shields do far better than that.
+
+\begin{demobox}\textbf{One shield.} Large plates at \SI{400}{K} and \SI{300}{K}, $\varepsilon=0.80$: $q''_0=\sigma(400^4-300^4)/(1/0.8+1/0.8-1)=\SI{661.5}{W/m^2}$. Insert a shield with $\varepsilon=0.05$ on both faces: denominator $=(1/0.8+1/0.05-1)\times2=40.5$, so $q''_1=\SI{24.5}{W/m^2}$ (\SI{3.7}{\percent} of the original). \emph{Check:} solving for the shield temperature (\SI{360.3}{K}) with equal fluxes on both sides gives the same $q''$.\src{DER}\end{demobox}
+
+\begin{trapbox}Radiation is net exchange: a surface always emits $\varepsilon\sigma T^4$ even when it is colder than its surroundings. Use kelvin; $T^4$ in \si{\celsius} is meaningless. Emissive power and net exchange are different quantities. A shield works only if it is not in conductive contact with the surfaces it separates.\end{trapbox}
+\end{multicols}

@@ -1,0 +1,10 @@
+# LaTeX intermediates (the deliverable is output/Thermodynamics-DivC-Invitational.pdf)
+*.aux
+*.log
+*.out
+*.toc
+*.synctex.gz
+build.out
+build.log.txt
+main.pdf
+__pycache__/

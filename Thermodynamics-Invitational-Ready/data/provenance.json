@@ -1,0 +1,28 @@
+{
+ "constants.tex": "SciPy 1.18.1 scipy.constants.physical_constants = CODATA 2022 adjustment",
+ "R_units.tex": "derived from CODATA 2022 R with exact definitions 1 L atm = 101.325 J, 1 L bar = 100 J, 1 cal_th = 4.184 J, 1 atm = 760 Torr",
+ "water_sat_T.tex": "CoolProp 8.0.0 'Water' = IAPWS-95 (Wagner & Pruss 2002); IAPWS reference state u=s=0 for saturated liquid at triple point",
+ "water_sat_P.tex": "CoolProp IAPWS-95, saturation by pressure",
+ "ice_sub.tex": "iapws 1.5.5 _Sublimation_Pressure (IAPWS 2011 revised release on pressure along melting and sublimation curves)",
+ "water_key.json": "CoolProp IAPWS-95 (liquid/vapor); iapws IAPWS-06 (ice Ih); CoolProp Span-Wagner 1996 (CO2)",
+ "gases_300K.tex": "CoolProp reference EOS + transport for each fluid at 300 K, 100 kPa (steam row at 400 K, 100 kPa)",
+ "air_props.tex": "CoolProp 'Air' pseudo-pure fluid: EOS Lemmon et al. JPCRD 2000; viscosity/conductivity Lemmon & Jacobsen IJT 2004; P = 101.325 kPa",
+ "water_liq_props.tex": "CoolProp IAPWS-95; viscosity Huber et al. JPCRD 2009; conductivity Huber et al. JPCRD 2012; P = 101.325 kPa",
+ "metals_cp.tex": "chemicals 1.5.2 CRC_standard_data (CRC Handbook 'Standard thermodynamic properties of chemical substances', as transcribed) Cp(s) at 298.15 K, 1 bar; molar mass from chemicals",
+ "conductivity.tex": "ht 1.2.0 insulation module: ASHRAE Handbook Fundamentals 2013; DIN EN 12524:2000 design values; VDI Heat Atlas 2010 (as transcribed). 'Floor covering, tiles, cork' excluded (k=65 W/m/K is a transcription error).",
+ "vdw.tex": "Critical constants from CoolProp reference EOS; a = 27R^2Tc^2/(64Pc), b = RTc/(8Pc) (fit to the critical point only)",
+ "thermochem.tex": "chemicals 1.5.2 CRC_standard_data (CRC Handbook standard thermodynamic properties, 298.15 K, 1 bar); cross-checked against ATcT, JANAF and NIST WebBook transcriptions in the same package",
+ "jt.json": "CoolProp reference EOS: mu_JT = (dT/dP)_h; inversion temperature found at P = 1 kPa (zero-pressure limit)",
+ "melting.tex": "chemicals CRC_INORG/CRC_ORG melting points and CRC enthalpies of fusion (as transcribed); per-gram values divided by package molar mass",
+ "boiling.tex": "CoolProp reference EOS: normal boiling point at 101.325 kPa, h_fg there, critical point",
+ "steam_superheated.tex": "CoolProp IAPWS-95 superheated steam",
+ "r134a_sat.tex": "CoolProp R134a (Tillner-Roth & Baehr 1994 EOS); IIR reference state (h=200 kJ/kg, s=1 kJ/kg/K for sat. liquid at 0 C)",
+ "_versions": {
+  "scipy": "1.18.1",
+  "codata": "CODATA 2022",
+  "CoolProp": "8.0.0",
+  "iapws": "1.5.5",
+  "chemicals": "1.5.2",
+  "ht": "1.2.0"
+ }
+}

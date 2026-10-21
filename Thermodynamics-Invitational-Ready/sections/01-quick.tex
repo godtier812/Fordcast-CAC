@@ -1,0 +1,204 @@
+% ===================================================================
+\section{Question router}\label{sec:router}
+% ===================================================================
+Find the physical cue (synonyms included), then jump. Entries give the canonical equation number with its page, or a table/section page. All links are clickable in the PDF.
+
+\begin{multicols}{2}
+\small
+\setlength{\parskip}{1.2pt}
+\newcommand{\rt}[2]{\textbf{#1}\ $\to$\ #2\par}
+\newcommand{\rh}[1]{\vspace{2pt}{\normalsize\textsf{\textbf{#1}}}\par}
+\rh{Heat and calorimetry}
+\rt{Mix / equilibrium (final) temperature / method of mixtures}{ledger \eqp{F:cal:ledger}, shortcut \eqp{F:cal:mixT}}
+\rt{Ice added / partial melt / ice left over / freezes}{decision \pg{sec:phasedecision}; water data \tref{T:waterledger}}
+\rt{Steam condenses / steam burn / steam into water}{\pg{sec:phasedecision}; $h_{fg}$ \tref{T:water:satT}}
+\rt{Unknown metal / specific heat / calorimeter constant / water equivalent}{demos \pg{sec:calorimeters}; \tref{T:metals}; Dulong--Petit \pg{sec:heatcap}}
+\rt{Heater / electrical energy / joule heating / $VIt$}{\eqp{F:cal:elec}}
+\rt{Coffee cup / bomb calorimeter / solution or combustion energy / $\Delta U$ to $\Delta H$}{\eqp{F:cal:cup}, \eqp{F:cal:bomb}, \eqp{F:thermo:bomb}}
+\rt{Heating curve / plateau / latent vs sensible}{\fref{fig:heatingcurve}, \pg{fig:heatingcurve}}
+\rh{Temperature, expansion, thermometers}
+\rt{Convert \si{\celsius}, \si{\degF}, K, R / absolute zero}{\eqp{F:temp:CK}--\eqref{F:temp:interval}}
+\rt{Thermometer type / thermocouple / RTD / thermistor / IR gun / calibration}{\tref{T:thermometers} \pg{T:thermometers}; \eqp{F:temp:calib}}
+\rt{Expansion / rail gap / ring on shaft / hole / overflow / thermal stress / bimetal}{\eqp{F:expand:linear}, \eqp{F:expand:apparent}, \eqp{F:expand:stress}}
+\rt{Water densest at \SI{4}{\celsius} / lakes freeze on top / ice floats}{\pg{sec:expansion}}
+\rh{Phases}
+\rt{Phase diagram / triple point / critical point / supercritical / dry ice}{\fref{fig:phasediagrams} \pg{fig:phasediagrams}}
+\rt{Boiling point at altitude / pressure cooker / vapor pressure vs $T$}{\tref{T:water:satP} \pg{T:water:satP}; \eqp{F:phase:cc}}
+\rt{Melting under pressure / skating / slope of a phase line}{\eqp{F:phase:clapeyron}}
+\rt{Humidity / dew point / frost / fog / condensation on a glass}{\eqp{F:phase:RH}; \tref{T:ice:sub}}
+\rt{Gas collected over water / wet gas}{\eqp{F:phase:overwater}}
+\rt{Quality / wet steam / two-phase / lever rule}{\eqp{F:phase:quality}}
+\rt{Evaporative cooling / sweating / open beaker / supercooling}{\pg{sec:boiling}}
+\rh{Gases}
+\rt{Ideal gas / density / molar mass from density / absolute pressure}{\eqp{F:gas:ideal}, \eqp{F:gas:density}}
+\rt{STP / SATP / molar volume 22.4 or 22.7}{\tref{T:stp} \pg{T:stp}}
+\rt{Partial pressure / mole fraction / Dalton / air composition}{\eqp{F:gas:dalton}}
+\rt{rms / mean / most probable speed / Maxwell distribution}{\eqp{F:gas:speeds}, \fref{fig:maxwell}}
+\rt{Effusion / Graham / pinhole leak / diffusion}{\eqp{F:gas:graham}}
+\rt{Mean free path / collision frequency}{\eqp{F:gas:mfp}}
+\rt{$C_v$, $C_p$, $\gamma$ / degrees of freedom / equipartition}{\tref{T:equipartition}, \eqp{F:gas:mayer}, \tref{T:gases300}}
+\rt{Real gas / van der Waals / compressibility $Z$ / critical constants}{\eqp{F:gas:vdw}, \tref{T:vdw}}
+\rh{First law}
+\rt{Constant $P$ / rigid tank / isothermal / insulated piston / adiabatic}{master \tref{T:process:ideal-gas} \pg{T:process:ideal-gas}}
+\rt{PV area / work by gas / piston / sudden expansion / vacuum}{\eqp{F:work:boundary}--\eqref{F:work:constP}}
+\rt{Sign of $W$ / chemistry $w$ / polytropic $PV^n$}{\tref{T:signs} \pg{T:signs}; \eqp{F:gas:polytropic}}
+\rt{Turbine / compressor / pump / nozzle / mixing / heat exchanger}{\tref{T:components}, \eqp{F:energy:sfee}}
+\rt{Throttling / Joule--Thomson / valve / inversion / free expansion}{\eqp{F:energy:jt}, \tref{T:expansions}}
+\rh{Entropy, free energy, equilibrium}
+\rt{Entropy change / irreversible / universe / generation}{\eqp{F:entropy:balance}; collection \eqp{F:entropy:idealgas}}
+\rt{Spontaneous / $\Delta G=\Delta H-T\Delta S$ / crossover temperature}{\eqp{F:entropy:dG}, \tref{T:spont}}
+\rt{Equilibrium constant / $Q$ vs $K$ / $\Delta G^\circ=-RT\ln K$}{\eqp{F:entropy:K}; van 't Hoff \eqp{F:thermo:vanthoff}}
+\rt{Third law / absolute zero / residual entropy / microstates}{\pg{sec:thirdlaw}; \eqp{F:entropy:boltzmann}}
+\rh{Cycles}
+\rt{Efficiency / COP / Carnot / ``possible machine?''}{\eqp{F:cycle:carnot}; algorithm \pg{sec:feasibility}}
+\rt{Otto / Diesel / Brayton / compression, cutoff, pressure ratio}{\eqp{F:cycle:otto}--\eqref{F:cycle:brayton}; \tref{T:cyclecompare}}
+\rt{Steam plant / Rankine / refrigerator / A/C / heat pump / R-134a}{\eqp{F:cycle:rankine}, \eqp{F:cycle:vcr}}
+\rt{Clockwise loop / multi-leg cycle / net work}{\pg{sec:cycleledger}}
+\rh{Heat transfer}
+\rt{Wall / pipe / layers / R-value / U-factor / thermal bridge}{\eqp{F:transfer:network}, \eqp{F:transfer:rvalue}, \tref{T:conductivity}}
+\rt{Airflow / wind / fan / $h$ / film temperature / boundary layer}{\eqp{F:transfer:newton}; \tref{T:correlations} \pg{T:correlations}}
+\rt{Natural convection / buoyancy / Rayleigh / Grashof / beaker}{\eqp{F:conv:GrRa}; demo \pg{demo:beaker}}
+\rt{Glow / color / peak wavelength / Wien / sunlight vs IR}{\eqp{F:rad:wien}}
+\rt{Emissivity / shiny / blackbody / shield / Dewar / foil}{\eqp{F:rad:sb}, \eqp{F:rad:twosurface}, \tref{T:applications}}
+\rt{Cooling time / Newton cooling / half-life / time constant / fitted slope / Biot}{\eqp{F:transfer:lumped}, \eqp{F:transfer:semilog}, \eqp{F:transfer:biot}}
+\rh{Chemistry, history, device, data}
+\rt{Reaction enthalpy / formation / Hess / combustion / bond energies}{\eqp{F:thermo:formation}; \tref{T:thermo}; \pg{sec:thermocal}}
+\rt{Person / date / experiment / discovery}{\tref{T:history} \pg{T:history}}
+\rt{Device prediction / calibration / ambient correction}{\pg{sec:device}; \eqp{F:device:balance}}
+\rt{Constants / $R$ in other units / unit conversion / air or water properties}{\tref{T:constants}, \tref{T:conversions}, \tref{T:air}, \tref{T:waterliq}}
+\end{multicols}
+
+% ===================================================================
+\section{Formula selector}\label{sec:selector}
+% ===================================================================
+Cue $\to$ equation $\to$ when it is valid $\to$ the usual unit or sign hazard $\to$ full explanation. Equation numbers are the canonical ones in the chapters; this table repeats only the most-used families.
+
+{\small
+\renewcommand{\arraystretch}{1.3}
+\setlength{\tabcolsep}{4pt}
+\begin{longtable}{@{}L{0.14\textwidth}L{0.29\textwidth}L{0.19\textwidth}L{0.19\textwidth}r@{}}
+\toprule
+Cue & Equation & Valid when & Unit / sign hazard & Eq., page\\
+\midrule
+\endhead
+\multicolumn{5}{@{}l}{\textsf{\textbf{Energy, calorimetry, phases}}}\\
+Closed system & $\Delta U=Q-\Wby$ & any closed system & chemistry uses $w=\Won$ & \eqp{F:energy:closed}\\
+Mixing & $\sum_i\Delta H_i=E_{\text{in}}-Q_{\text{loss}}$ & const.\ $P$, all bodies listed & signed $(T_f-T_i)$; include cup & \eqp{F:cal:ledger}\\
+Sensible heat & $Q=mc\Delta T$ (or $\int C\,\dd T$) & one phase, $c$ roughly const. & g vs kg; J vs cal & \eqp{F:cal:sensible}\\
+Phase change & $Q=\pm mL$ & at $T_{\text{tr}}(P)$ & $L_v$ depends on $T$ & \pg{T:waterledger}\\
+Vapor pressure & $\ln\frac{P_2}{P_1}=-\frac{\Delta\bar h}{R}\big(\frac1{T_2}-\frac1{T_1}\big)$ & ideal vapor, $v_g\gg v_f$, $\Delta h$ const. & kelvin; molar $\Delta\bar h$ & \eqp{F:phase:cc}\\
+Phase-line slope & $\frac{\dd P}{\dd T}=\frac{\Delta h}{T\Delta v}$ & exact on coexistence & sign of $\Delta v$ & \eqp{F:phase:clapeyron}\\
+Humidity & $\phi=p_v/p_{\text{sat}}(T)$; $p_{\text{sat}}(T_{\text{dp}})=p_v$ & ideal-gas vapor & dew point $\ne$ wet bulb & \eqp{F:phase:RH}\\
+Quality & $y=y_f+x(y_g-y_f)$ & inside dome only & mass fraction & \eqp{F:phase:quality}\\
+\multicolumn{5}{@{}l}{\textsf{\textbf{Gases and processes}}}\\
+Ideal gas & $PV=nRT=NkT=mR_sT$ & low density ($Z\approx1$) & absolute $P$, K & \eqp{F:gas:ideal}\\
+Speeds & $v_{\text{rms}}=\sqrt{3RT/M}$ etc. & ideal gas, equilibrium & $M$ in kg/mol & \eqp{F:gas:speeds}\\
+Effusion & rate $\propto1/\sqrt M$ & same $T$, $n_N$, hole & not exact for diffusion & \eqp{F:gas:graham}\\
+Mean free path & $\lambda=kT/(\sqrt2\pi d^2P)$ & hard spheres & number density & \eqp{F:gas:mfp}\\
+Mayer & $\bar C_p-\bar C_v=R$ & ideal gas & molar vs total vs specific & \eqp{F:gas:mayer}\\
+Ideal-gas $\Delta U$ & $\Delta U=n\bar C_v\Delta T$ & \emph{any} ideal-gas process & not ``$Q$'' & \eqp{F:gas:dU}\\
+Work & $\Wby=\int P_{\text{ext}}\dd V$ & always & use gas $P$ only if quasistatic & \eqp{F:work:boundary}\\
+Isothermal work & $W=nRT\ln(V_2/V_1)$ & reversible, ideal gas & $\ln$ of a ratio & \eqp{F:gas:isothermal-work}\\
+Adiabat & $PV^\gamma=$ const. & reversible, ideal, const.\ $\gamma$ & not for free expansion & \eqp{F:gas:adiabat}\\
+Polytropic & $\Wby=\frac{P_2V_2-P_1V_1}{1-n_p}$ & reversible $PV^{n_p}$ & $n_p=1$: logarithm & \eqp{F:gas:polytropic}\\
+Flow device & $\dot Q-\dot W=\dot m\,\Delta(h+\tfrac{V^2}2+gz)$ & steady flow & kJ vs J for $V^2/2$ & \eqp{F:energy:sfee}\\
+Throttling & $h_2=h_1$; $\mu_{\text{JT}}=(\partial T/\partial P)_h$ & adiabatic valve & ideal gas: $\Delta T=0$ & \eqp{F:energy:jt}\\
+van der Waals & $(P+a/\bar V^2)(\bar V-b)=RT$ & qualitative real gas & units of $a$, $b$ & \eqp{F:gas:vdw}\\
+\multicolumn{5}{@{}l}{\textsf{\textbf{Entropy, free energy, cycles}}}\\
+Entropy balance & $\Delta S=\sum\int\delta Q/T_b+\Sgen$ & $\Sgen\ge0$ & $T_b$ in K at boundary & \eqp{F:entropy:balance}\\
+Ideal-gas $\Delta S$ & $n\bar C_v\ln\frac{T_2}{T_1}+nR\ln\frac{V_2}{V_1}$ & state function & ratios in K & \eqp{F:entropy:idealgas}\\
+Solid/liquid $\Delta S$ & $mc\ln(T_2/T_1)$ & incompressible & not $mc\Delta T/T$ & \eqp{F:entropy:incompressible}\\
+Phase $\Delta S$ & $\Delta H_{\text{tr}}/T_{\text{tr}}$ & equilibrium $T_{\text{tr}}$ & supercooled: use path & \eqp{F:entropy:phase}\\
+Gibbs & $\Delta G=\Delta H-T\Delta S$ & constant $T$ & J vs kJ & \eqp{F:entropy:dG}\\
+Equilibrium & $\Delta_rG^\circ=-RT\ln K$ & activities & $K$ dimensionless & \eqp{F:entropy:K}\\
+Carnot & $\eta_C=1-T_L/T_H$ & reservoir $T$ in K & not endpoint averages & \eqp{F:cycle:carnot}\\
+COP & $\mathrm{COP}_{HP}=\mathrm{COP}_R+1$ & same machine & magnitudes & \eqp{F:cycle:cop}\\
+Otto & $\eta=1-r^{1-\gamma}$ & cold-air standard & $r=V_{\max}/V_{\min}$ & \eqp{F:cycle:otto}\\
+Brayton & $\eta=1-r_p^{-(\gamma-1)/\gamma}$ & cold-air standard & pressure ratio & \eqp{F:cycle:brayton}\\
+Vapor cycles & $\eta=\frac{w_t-w_p}{q_{\text{in}}}$, $\mathrm{COP}=\frac{h_1-h_4}{h_2-h_1}$ & table properties & reference states differ & \eqp{F:cycle:rankine}\\
+\multicolumn{5}{@{}l}{\textsf{\textbf{Heat transfer and chemistry}}}\\
+Conduction & $\dot Q=kA\Delta T/L$ & steady, 1D, const.\ $k$ & flux vs rate & \eqp{F:transfer:wall}\\
+Networks & $\dot Q=\Delta T/\sum R$; $R=L/(kA)$, $1/(hA)$ & steady 1D paths & parallel: add $1/R$ & \eqp{F:transfer:network}\\
+Cylinder wall & $R=\ln(r_2/r_1)/(2\pi kL)$ & radial, steady & $U$ area basis & \eqp{F:transfer:Rcyl}\\
+R-value & $R_{\text{US}}=5.678\,R_{\text{SI}}$ & per unit area & direction of factor & \eqp{F:transfer:rvalue}\\
+Convection & $\dot Q=hA(T_s-T_\infty)$ & $h$ from correlation & $h$ not a property & \eqp{F:transfer:newton}\\
+Groups & $Re$, $Pr$, $Nu$, $Gr$, $Ra$, $Bi$ & correlation-specific $L$ & fluid vs solid $k$ & \eqp{F:conv:NuBi}\\
+Radiation (small body) & $\dot Q=\varepsilon\sigma A(T_s^4-T_{\text{sur}}^4)$ & large surroundings & kelvin & \eqp{F:rad:smallobj}\\
+Radiation coefficient & $h_r=\varepsilon\sigma(T_s+T_{\text{sur}})(T_s^2+T_{\text{sur}}^2)$ & combine with $h$ & $4\varepsilon\sigma T_m^3$ only if close & \eqp{F:rad:hr}\\
+Two surfaces & $\dot Q=\sigma\Delta T^4/[\ldots]$ & gray, diffuse & view factor & \eqp{F:rad:twosurface}\\
+Wien & $\lambda_{\max}T=\SI{2898}{\micro m.K}$ & per-wavelength & not per-frequency & \eqp{F:rad:wien}\\
+Lumped cooling & $\frac{T-T_\infty}{T_i-T_\infty}=e^{-t/\tau}$, $\tau=\frac{C}{hA}$ & $Bi<0.1$ & $L_c=V/A_s$ & \eqp{F:transfer:lumped}\\
+Constant input & $T=T_a+\frac PK+(T_0-T_a-\frac PK)e^{-t/\tau}$ & const.\ $P,K,C$ & phase limits & \eqp{F:transfer:input}\\
+Reaction enthalpy & $\sum\nu\Delta H_f^\circ$(prod)$-\sum\nu\Delta H_f^\circ$(reac) & phases labeled & \ce{H2O(l)} vs \ce{(g)} & \eqp{F:thermo:formation}\\
+Bomb $\to$ enthalpy & $\Delta H=\Delta U+\Delta n_{\text{gas}}RT$ & ideal gases & count gas moles only & \eqp{F:thermo:bomb}\\
+van 't Hoff & $\ln\frac{K_2}{K_1}=-\frac{\Delta H^\circ}R\big(\frac1{T_2}-\frac1{T_1}\big)$ & $\Delta H^\circ$ const. & kelvin & \eqp{F:thermo:vanthoff}\\
+\bottomrule
+\end{longtable}}
+
+% ===================================================================
+\section{Master process table (ideal gas)}\label{sec:master}
+% ===================================================================
+\begin{reftab}{T:process:ideal-gas}{Master process table: $n$ moles of ideal gas, constant $\bar C_v$, $\bar C_p=\bar C_v+R$, $\gamma=\bar C_p/\bar C_v$; work \emph{by} the gas; reversible unless stated. Every row is consistent with $\Delta U=Q-\Wby$.\src{DER}}
+\small
+\renewcommand{\arraystretch}{1.5}
+\setlength{\tabcolsep}{4pt}
+\begin{tabularx}{\textwidth}{@{}L{0.10\textwidth}L{0.155\textwidth}L{0.13\textwidth}L{0.10\textwidth}L{0.16\textwidth}L{0.105\textwidth}Y@{}}
+\toprule
+Process & $\Wby$ & $Q$ & $\Delta U$ & $\Delta S_{\text{gas}}$ & Relation & $P$--$V$ cue\\
+\midrule
+Isochoric ($V$ const.) & $0$ & $n\bar C_v\Delta T$ & $n\bar C_v\Delta T$ & $n\bar C_v\ln\frac{T_2}{T_1}$ & $P/T$ const. & vertical line\\
+Isobaric ($P$ const.) & $P\Delta V=nR\Delta T$ & $n\bar C_p\Delta T$ & $n\bar C_v\Delta T$ & $n\bar C_p\ln\frac{T_2}{T_1}$ & $V/T$ const. & horizontal line\\
+Isothermal ($T$ const.) & $nRT\ln\frac{V_2}{V_1}$ & $=\Wby$ & $0$ & $nR\ln\frac{V_2}{V_1}$ & $PV$ const. & hyperbola, slope $-P/V$\\
+Adiabatic ($Q=0$, reversible) & $\frac{P_1V_1-P_2V_2}{\gamma-1}=-n\bar C_v\Delta T$ & $0$ & $n\bar C_v\Delta T$ & $0$ & $PV^\gamma$, $TV^{\gamma-1}$ const. & steeper: $-\gamma P/V$\\
+Polytropic ($PV^{n_p}$) & $\frac{P_2V_2-P_1V_1}{1-n_p}$ & $n\bar C_v\frac{\gamma-n_p}{1-n_p}\Delta T$ & $n\bar C_v\Delta T$ & $n\bar C_v\frac{\gamma-n_p}{1-n_p}\ln\frac{T_2}{T_1}$ & $TV^{n_p-1}$ const. & between isotherm and adiabat for $1<n_p<\gamma$\\
+Free expansion (into vacuum; irreversible) & $0$ & $0$ & $0$ ($T$ unchanged) & $nR\ln\frac{V_2}{V_1}>0$ (all generated) & $P_1V_1=P_2V_2$ & endpoints only (no quasistatic path)\\
+Complete cycle & enclosed area (clockwise $+$) & $Q_{\text{net}}=W_{\text{net}}$ & $0$ & $0$ for gas; $\Sgen\ge0$ in reservoirs & returns to start & closed loop\\
+\bottomrule
+\end{tabularx}\end{reftab}
+
+% ===================================================================
+\section{Units, signs, and conventions}\label{sec:units}
+% ===================================================================
+\begin{multicols}{2}
+\begin{reftab}{T:conventions}{Convention map used in this binder.}
+\small
+\begin{tabularx}{\linewidth}{@{}L{0.27\linewidth}Y@{}}
+\toprule
+Item & Convention\\
+\midrule
+First law (default) & $\Delta U=Q-\Wby$; $Q>0$ into system\\
+Chemistry form & $\Delta U=q+w$, $w=\Won=-\Wby$\\
+Cycles & $Q_H,Q_L,W$ positive magnitudes; arrows give direction\\
+Reaction & $\Delta_rH<0$ exothermic; per mole of reaction as written\\
+Entropy balance & heats into the system positive; $\Sgen\ge0$\\
+Heat transfer & $\dot Q>0$ from hot to cold along the path\\
+Standard state & $p^\circ=\SI{1}{bar}$; tables at \SI{298.15}{K}\\
+Pressure & absolute unless ``gauge'' is stated\\
+\bottomrule
+\end{tabularx}\end{reftab}
+
+\begin{keybox}\textbf{Kelvin required} in: $PV=nRT$; any $T_2/T_1$ or $\ln T$; Carnot; $\sigma T^4$ and $h_r$; $\Delta G=\Delta H-T\Delta S$; $RT\ln K$; Clausius--Clapeyron; kinetic speeds. \textbf{Celsius allowed} only for differences: $mc\Delta T$, $hA\Delta T$, $kA\Delta T/L$, $T-T_\infty$ in cooling laws.\end{keybox}
+
+\textbf{Unit hazards that cost points}
+\begin{itemize}
+\item kJ vs J (heats of formation in kJ/mol, $R$ in J/(mol\,K)).
+\item g vs kg (specific heat per gram vs per kilogram; molar mass in kg/mol for speeds).
+\item L vs \si{m^3} ($\SI{1}{L}=\SI{e-3}{m^3}$; $\SI{1}{L.kPa}=\SI{1}{J}$; $\SI{1}{L.atm}=\SI{101.325}{J}$).
+\item kPa vs Pa vs atm vs bar (\tref{T:conversions}).
+\item Flux (\si{W/m^2}) vs rate (W); per-area R-value vs total resistance (K/W).
+\item Thermochemical vs IT calorie; food Calorie = kcal.
+\item Specific (per kg) vs molar (per mol) vs total (per object) heat capacities.
+\end{itemize}
+
+\textbf{Dimension checks:} $[R T]=\si{J/mol}$; $[PV]=\si{J}$; $[hA]=[kA/L]=\si{W/K}$; $[\sigma T^4]=\si{W/m^2}$; $[C/K]=\si{s}$; $[\Delta H/R]=\si{K}$ (Clausius--Clapeyron, van 't Hoff slopes). Logarithms and exponentials need dimensionless arguments.
+
+\textbf{Prefix and symbol collisions:} $\sigma$ (Stefan--Boltzmann) vs $\sigma_{\text{th}}$ (stress); $k$ (Boltzmann) vs $k$ (conductivity); $n$ (moles) vs $n_N$ (number density) vs $n_p$ (polytropic index); $\alpha$ (expansion, diffusivity, absorptivity); $\nu$ (kinematic viscosity, stoichiometric coefficient, frequency). Read the context.
+
+\textbf{Most-used constants} (full list \tref{T:constants}):
+\begin{itemize}
+\item $R=\SI{8.314}{J/(mol.K)}=\SI{0.08206}{L.atm/(mol.K)}$
+\item $k=\SI{1.380649e-23}{J/K}$;\ \ $N_A=\SI{6.02214076e23}{mol^{-1}}$
+\item $\sigma=\SI{5.670e-8}{W/(m^2.K^4)}$;\ \ $b=\SI{2.898e-3}{m.K}$
+\item $\SI{1}{atm}=\SI{101.325}{kPa}$;\ \ $c_{\text{water}}=\SI{4.18}{J/(g.K)}$
+\end{itemize}
+\end{multicols}

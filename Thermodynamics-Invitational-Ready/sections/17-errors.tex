@@ -1,0 +1,50 @@
+% ===================================================================
+\section{Error prevention and solution algorithms}\label{sec:errors}
+% ===================================================================
+\begin{reftab}{T:errors}{Error-prevention catalog: the symptom you see $\to$ the fix.}
+\small
+\renewcommand{\arraystretch}{1.08}
+\begin{tabularx}{\textwidth}{@{}L{0.27\textwidth}L{0.30\textwidth}Yr@{}}
+\toprule
+Symptom / cue & Likely error & Fix or check & See\\
+\midrule
+$T_f$ outside initial range (no input) & sign slip; missed phase change or input & signed ledger $\sum\Delta H_i=E_{\text{in}}-Q_{\text{loss}}$ & \pg{F:cal:ledger}\\
+``$T_f>0$ with ice left'' & assumed phase state wrong & compare $Q_{\text{av}}$, $Q_1$, $Q_2$ first & \pg{sec:phasedecision}\\
+Specific heat 5\% low & container/probe capacity ignored & include $C_{\text{cal}}$ & \pg{sec:calorimeters}\\
+Ratio, power, log, or $PV=nRT$ with \si{\celsius} & absolute temperature needed & convert to K (or R) & \pg{F:temp:CK}\\
+Pressure looks small / negative & gauge used as absolute & $P_{\text{abs}}=P_g+P_{\text{atm}}$ & \pg{F:gas:ideal}\\
+$v_{\text{rms}}$ off by $\sqrt{1000}$ & $M$ in g/mol & $M$ in \si{kg/mol} & \pg{F:gas:speeds}\\
+Mean free path off by $N_A$ & molar vs number density & $n_N=P/(kT)$ & \pg{F:gas:mfp}\\
+Work with the wrong sign & mixed $\Wby$ and $w=\Won$ & pick one convention, translate once & \pg{T:signs}\\
+Work for sudden expansion & used gas $P$ instead of $P_{\text{ext}}$ & $\Wby=\int P_{\text{ext}}\dd V$; vacuum $\Rightarrow0$ & \pg{F:work:boundary}\\
+$Q=n\bar C_p\Delta T$ at constant volume & $C_p$/$C_v$ swapped & constant $V$: $\bar C_v$; constant $P$: $\bar C_p$ & \pg{F:gas:dU}\\
+Adiabatic $\Rightarrow$ ``$T$ constant'' & confused adiabatic and isothermal & adiabatic: $Q=0$; use $PV^\gamma$ if reversible & \pg{F:gas:adiabat}\\
+Entropy of irreversible step via $Q/T$ & used actual heat & reversible path between the same states & \pg{F:entropy:def}\\
+$\Sgen<0$ & impossible process or sign error & recheck magnitudes and which reservoir gains & \pg{F:entropy:balance}\\
+Carnot with \si{\celsius} or endpoint averages & wrong temperatures & reservoir temperatures in K & \pg{F:cycle:carnot}\\
+$\mathrm{COP}_{HP}=\mathrm{COP}_R+1$ misapplied & different machines or lost heat & same machine, all $Q_H$ useful & \pg{F:cycle:cop}\\
+``Clockwise = engine'' on odd axes & axis orientation & rule holds for $P$--$V$ and $T$--$S$ only & \pg{sec:feasibility}\\
+Heat rate vs flux mismatch & \si{W} vs \si{W/m^2} & multiply flux by the correct area & \pg{F:transfer:fourier}\\
+R-value conversion wrong by 32$\times$ & direction of 5.678 & $R_{\text{US}}=5.678R_{\text{SI}}$ & \pg{F:transfer:rvalue}\\
+Parallel layers ``averaged'' & averaged $R$ & add conductances $UA$ & \pg{F:transfer:network}\\
+$Nu$ used as $Bi$ (or reverse) & fluid vs solid $k$ & $Nu$: fluid $k$; $Bi$: solid $k$, $L_c=V/A_s$ & \pg{F:conv:NuBi}\\
+Correlation outside range & regime/geometry mismatch & check validity column & \pg{T:correlations}\\
+$\sigma T^4$ with \si{\celsius}; ``cold objects don't radiate'' & absolute $T$; net exchange & kelvin; both surfaces emit & \pg{F:rad:smallobj}\\
+Solar $\alpha$ used as IR $\varepsilon$ & Kirchhoff misapplied & spectral match required & \pg{sec:emission}\\
+Cooling fit curves upward/downward & wrong $T_\infty$; nonconstant $h$ & measured ambient; residuals; fit range & \pg{F:transfer:semilog}\\
+Bomb $\Delta U$ reported as $\Delta H$ & constant-$V$ data & add $\Delta n_{\text{gas}}RT$ & \pg{F:thermo:bomb}\\
+Element entropy set to zero & confused $\Delta H_f^\circ$ with $S^\circ$ & elements: $\Delta H_f^\circ=0$, $S^\circ>0$ & \pg{T:thermo}\\
+$\ln K$ with units & non-dimensionless activities & $p/p^\circ$, $c/c^\circ$ & \pg{F:entropy:dGQ}\\
+$L_v(\SI{100}{\celsius})$ for room-$T$ evaporation & latent heat varies with $T$ & use $h_{fg}(T)$ from table & \pg{T:water:satT}\\
+\bottomrule
+\end{tabularx}\end{reftab}
+
+\begin{multicols}{2}
+\begin{keybox}\textbf{A. Any energy problem.} (1) Draw the boundary; closed, open, or isolated? (2) List what crosses: $Q$, $W$ (type), mass. (3) Pick the balance: \eqp{F:energy:closed}, \eqp{F:cal:ledger}, or \eqp{F:energy:sfee}. (4) Write state relations (ideal gas, tables, phase). (5) Solve symbolically, then substitute with units. (6) Check sign, range, limits, and units.\end{keybox}
+
+\begin{keybox}\textbf{B. Entropy audit.} (1) $\Delta S$ of each body via a reversible path (\pg{F:entropy:idealgas}). (2) Reservoirs: $Q/T$. (3) Sum $=\Sgen\ge0$. (4) For machines, also check $\eta\le\eta_C$ (\pg{sec:feasibility}).\end{keybox}
+
+\begin{keybox}\textbf{C. Heat-transfer network.} (1) Sketch nodes (temperatures) and paths. (2) Each path's resistance: \eqp{F:transfer:Rwall}--\eqref{F:transfer:Rcontact}, convection from a correlation (\tref{T:correlations}), radiation via $h_r$ (\eqp{F:rad:hr}). (3) Combine series/parallel. (4) $\dot Q=\Delta T/R$. (5) Back out intermediate temperatures; if $h$ or $h_r$ depended on a guessed surface $T$, iterate once.\end{keybox}
+
+\begin{keybox}\textbf{D. Transient.} (1) $Bi<0.1$? (\eqp{F:transfer:biot}). (2) $C$ and $K$ (or $\tau$). (3) Input? Use \eqp{F:transfer:input}; none: \eqp{F:transfer:lumped}. (4) Sanity: physical limits (boiling, freezing), sensor lag.\end{keybox}
+\end{multicols}

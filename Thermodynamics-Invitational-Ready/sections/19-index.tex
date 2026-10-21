@@ -1,0 +1,13 @@
+% ===================================================================
+\section{Index}\label{sec:index}
+% ===================================================================
+Curated terms with common synonyms; numbers are clickable page links to substantive coverage. Also see the question router (\pg{sec:router}) and formula selector (\pg{sec:selector}).
+
+\newcommand{\idxletter}[1]{\par\vspace{2pt}{\textsf{\textbf{#1}}}\par\nopagebreak}
+\newcommand{\idxitem}[2]{\par\hangindent=1em\hangafter=1 #1\enspace\dotfill\enspace #2}
+\begin{multicols}{3}
+\small
+\setlength{\parskip}{0.3pt}
+\raggedright
+\IfFileExists{sections/19-index-body.tex}{\input{sections/19-index-body}}{(index not yet generated)}
+\end{multicols}

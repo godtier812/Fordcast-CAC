@@ -1,0 +1,66 @@
+[PASS] D1 partial melt melted=57.35 g, left=42.65 g
+[PASS] D2 calorimeter constant C_cal=31.49 J/K
+[PASS] D3 unknown metal c=0.3855 (no cup 0.3671); range 0.376-0.395
+[PASS] D4 steam into water Tf=49.52 C
+[PASS] D5 C-C vs IAPWS CC 94.71 C vs IAPWS 94.80 C
+     C-C extrapolated to 20 C: 2839 Pa vs IAPWS 2339 Pa
+[PASS] D6 dew point Tdp=16.70 C (table interp 16.55)
+[PASS] D7 Maxwell normalisation 
+[PASS] D7 speeds analytic vs numeric vmp=422.0 vavg=476.2 vrms=516.8 m/s
+[PASS] D7 mean free path lambda=67.2 nm, z=7.085e+09 1/s
+[PASS] D7 Maxwell 1000 K normalisation 
+[PASS] D8 path work n=0.8018 mol W_iso=1386.3 W_a=1000 W_b=2000 dS=4.621 J/K
+[PASS] D9 compression Won_rev=1729 J, Won_irr=2494 J, Sgen=2.551 J/K
+[PASS] D10 entropy audit dS_cu=-49.63, dS_lake=56.64, Sgen=7.01 J/K
+[PASS] D11 feasibility B Sgen=-0.1667, C Sgen=0.1667 kJ/K
+[PASS] D12 Otto eta=0.5647, T2=689.2, T4=783.5, Carnot=0.833
+[PASS] Diesel formula eta=0.6316 (r=18, rc=2)
+[PASS] Brayton formula eta=0.4821, bwr=0.414
+[PASS] D13 cycle ledger Wnet=400 J, Qin=1800 J, eta=0.2222
+[PASS] D14 Rankine x4=0.8163, wt=1070.0, wp=4.03, qin=3018.6 kJ/kg, eta=0.3531
+[PASS] D15 VCR COP_R=4.029 (Carnot 5.26), x4=0.338, h1=392.7, h2=426.5, h3=256.4
+[PASS] D16 R-value conversion 1 US R = 0.17611 RSI; RSI->US x5.6783
+[PASS] D16 wall R_cav=2.602, R_stud=1.344, R_eff=2.281 m2K/W (US R-13.0), U=0.438
+[PASS] D17 Churchill-Chu vs ht Ra=2.455e+06, Nu=21.08, h_c=6.09, h_r=6.35 W/m2K, Q_side=9.87 W, plate-approx ok=False (D_min=7.7 cm)
+[PASS] Churchill-Bernstein vs ht Nu=79.31
+[PASS] turbulent flat plate 0.037 vs Kreith 0.036 ratio=1.0278
+[PASS] McAdams plate Ra=1e+06 up=True 
+[PASS] McAdams plate Ra=1e+08 up=True 
+[PASS] McAdams plate Ra=1e+06 up=False 
+[PASS] Churchill natural-convection sphere vs ht Nu=16.40
+[PASS] Dittus-Boelter vs ht Nu=356.9
+[PASS] Churchill-Chu horiz. cyl vs ht Nu=14.54
+[PASS] laminar flat plate avg Nu=187.3
+[PASS] Gnielinski vs ht Nu=404.7
+[PASS] D18 shield q0=661.5 W/m2, q1=24.50 W/m2, ratio=0.0370, Tshield=360.3 K
+[PASS] D19 cooling fit tau=34.76 min, t1/2=24.09 min, T(25)=45.38 C
+[PASS] D19 constant-input ODE tau=1200 s, T(600 s)=61.35 C, Tss=122 C
+[PASS] D20 Biot Bi=4.39e-05
+[PASS] D21 CH4 combustion HHV=-890.5, LHV=-802.5, dU=-885.5, dS=-242.9 J/K, dG=-818.1 (H-TS -818.1) kJ/mol
+[PASS] D22 NH3 equilibrium dG=-32.8 (alt -32.74), K298=5.576e+05, K700~3.26e-04, dS=-198.1
+[PASS] D23 thermal stress sigma=96 MPa
+[PASS] D24 heating curve (enthalpy differences) ice=40.5 melt=333.4 water=419.0 boil=2256.5 steam=41.0 total=3090.3 kJ
+[PASS] molar volumes {'STP_IUPAC': 22.711, 'STP_1atm': 22.414, 'SATP': 24.79, 'NTP': 24.055, '25C_1atm': 24.465}
+[PASS] polytropic C_n (n=0.0) C_n/R=3.500
+[PASS] polytropic C_n (n=1.2) C_n/R=-2.500
+[PASS] polytropic C_n (n=1.4) C_n/R=-0.000
+[PASS] polytropic C_n (n=3.0) C_n/R=2.000
+[PASS] vdW critical constants (symbolic) Vc=3*b, Tc=8*a/(27*R*b), Pc=a/(27*b**2)
+[PASS] Wien b from Planck b=2.897772e-03 m K
+[PASS] D25 Clapeyron ice dP/dT=-13.46 MPa/K (melting curve -13.45), dT/atm=-7.53 mK
+[PASS] D26 evaporative cooling h_fg(60C)=2357.7 J/g, 1 g evaporated cools 100 g by 5.64 K
+[PASS] D27 finite-source max work Wmax=9264 J of Q=80000 J (0.116); naive Carnot 0.214
+[PASS] D28 forced convection Re=20474, Nu=80.2, h=31.4 W/m2K (5.2x natural)
+[PASS] flat-plate mixed constant A=871.3
+[PASS] DA1 gas over water psat=2645 Pa, p_gas=96.85 kPa, n=9.867 mmol, M=32.03 g/mol (ignoring vapor 31.17)
+[PASS] DA2 adiabatic compression T2=953 K (680 C), P2=5.72 MPa
+[PASS] DA3 Graham rate ratio=3.984
+[PASS] DA4 vdW CO2 Vm ideal=0.4989 L/mol, vdW=0.3648, Z_vdw=0.731, Z_ref=0.687, real roots=1
+[PASS] DB1 compressor T2s=543.4 K, T2=586.4 K, W=143.9 kW (ideal 122.3)
+[PASS] DC1 supercooled freezing dS_sys=-1.1400, L(-10C)=311.8 J/g, dS_surr=1.1849, Sgen=0.0449 J/(g K)
+[PASS] DC2 mixing entropy dS_hot=-371.1, dS_cold=407.3, total=36.2 J/K
+[PASS] DD1 heat pump W=3.33 kW, Q_L=6.67 kW, COP_C=8.80, eta_II=0.341
+[PASS] DE1 insulated container R_ins=15.15 K/W, T_o=27.35 C, h_c=3.51, h_r=5.39, R_out=2.48, Q_side=2.155 W, R_disc=122.0, K=0.0731 W/K, tau=6.35 h, T(30 min)=57.12 C, ins share=0.859
+[PASS] DG1 electrical calibration E=5400 J, C_tot=1091 J/K, C_cal=46 J/K
+
+FAILURES: none

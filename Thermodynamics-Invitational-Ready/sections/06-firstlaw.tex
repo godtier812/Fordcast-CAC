@@ -1,0 +1,146 @@
+% ===================================================================
+\section{First law: work, heat, processes, flow}\label{sec:firstlaw}
+% ===================================================================
+\begin{multicols}{2}
+\subsection{Energy balance and sign conventions}\label{sec:signs}
+\CORE{}
+\begin{formulabox}Closed system (this binder's default):
+\begin{equation}
+\Delta U = Q - \Wby \qquad(\Delta E_{\text{sys}}=Q-\Wby \text{ if KE, PE change}) \label{F:energy:closed}
+\end{equation}
+Chemistry form (IUPAC), $w$ = work done \emph{on} the system:
+\begin{equation}
+\Delta U=q+w,\qquad w=\Won=-\Wby \label{F:energy:chem}
+\end{equation}
+\end{formulabox}
+\begin{reftab}{T:signs}{One translation, used everywhere.}
+\small
+\begin{tabularx}{\linewidth}{@{}Ycc@{}}
+\toprule
+Event & $Q$ & $\Wby$ ($w=\Won$)\\
+\midrule
+Heat enters system & $+$ & \\
+Gas expands, pushes surroundings & & $+$\ \ ($-$)\\
+Gas compressed by surroundings & & $-$\ \ ($+$)\\
+Stirring paddle, electric heater inside & & $-$\ \ ($+$)\\
+\bottomrule
+\end{tabularx}\end{reftab}
+Cycle devices use \textbf{magnitudes} $Q_H,Q_L,W>0$ with arrows (\sref{sec:cycles}). A stirrer or resistor inside the system does work \emph{on} it; that energy cannot be recovered as work (irreversible).
+
+\subsection{Boundary work}\label{sec:work}
+\CORE{}
+\begin{formulabox}
+\vspace{-6pt}
+\begin{align}
+\Wby &= \int_{V_1}^{V_2} P_{\text{ext}}\,\dd V \label{F:work:boundary}\\
+\Wby &= \int_{V_1}^{V_2} P\,\dd V \quad\text{(quasistatic: } P_{\text{ext}}=P\text{)} \label{F:work:rev}\\
+\Wby &= P_{\text{ext}}\,(V_2-V_1)\quad\text{(constant } P_{\text{ext}}\text{)} \label{F:work:constP}
+\end{align}
+\end{formulabox}
+Use the gas's own $P$ only when the process is quasistatic (mechanical balance at every instant). A sudden expansion against a fixed external pressure uses $P_{\text{ext}}$; expansion into vacuum does \emph{zero} work.
+
+\textbf{Signed PV area.} On axes $P$ (up) vs $V$ (right): moving right gives $\Wby>0$ = area under the path; moving left gives $\Wby<0$. Around a cycle, $W_{\text{net,by}}=$ enclosed area, \emph{positive for clockwise} traversal (engine), negative for counterclockwise (refrigerator/heat pump). On other axes ($V$ vs $P$, or $T$--$V$) the clockwise rule changes; recheck.
+
+\begin{formulabox}Enthalpy and ideal-gas internal energy:
+\begin{align}
+H &\equiv U+PV;\quad Q_P=\Delta H\ \text{(const.\ }P\text{, only }P\dd V\text{ work)} \label{F:energy:enthalpy}\\
+\Delta U &= n\bar C_v\Delta T,\quad \Delta H=n\bar C_p\Delta T \label{F:gas:dU}\\
+&\text{(ideal gas, \emph{any} process)}\notag
+\end{align}
+\end{formulabox}
+Ideal-gas $U$ and $H$ depend on $T$ only, so \eqref{F:gas:dU} holds even for non-constant-volume processes; constant $\bar C$ assumed (else integrate).
+
+\subsection{Process relations (ideal gas)}\label{sec:processes}
+\CORE{} The complete master table (work, heat, $\Delta U$, $\Delta S$, cues) is \tref{T:process:ideal-gas}, \pg{T:process:ideal-gas}.
+\begin{formulabox}
+\vspace{-6pt}
+\begin{align}
+\text{isothermal (rev.)}:\ & \Wby=Q=nRT\ln\frac{V_2}{V_1}=nRT\ln\frac{P_1}{P_2} \label{F:gas:isothermal-work}\\
+\text{adiabatic (rev.)}:\ & PV^\gamma,\ TV^{\gamma-1},\ TP^{(1-\gamma)/\gamma}\ \text{const.} \label{F:gas:adiabat}\\
+& \Wby=\frac{P_1V_1-P_2V_2}{\gamma-1}=n\bar C_v(T_1-T_2) \label{F:gas:adiabatic-work}\\
+\text{polytropic }PV^{n_p}:\ & \Wby=\frac{P_2V_2-P_1V_1}{1-n_p}\ \ (n_p\ne1) \label{F:gas:polytropic}\\
+& Q=n\bar C_{n}\Delta T,\ \ \bar C_{n}=\bar C_v\,\frac{\gamma-n_p}{1-n_p} \label{F:gas:polyheat}
+\end{align}
+\end{formulabox}
+Polytropic special cases: $n_p=0$ isobaric, $1$ isothermal (use the logarithm), $\gamma$ adiabatic, $\infty$ isochoric. For $1<n_p<\gamma$, $\bar C_n<0$: the gas \emph{warms while losing heat} (compressed faster than it can shed heat). Formula \eqref{F:gas:polyheat} verified for $n_p=0,1.2,1.4,3$.\src{DER}
+
+\begin{demobox}\textbf{Adiabatic compression heats a gas.} Air ($\gamma=1.4$) at \SI{300}{K}, \SI{100}{kPa}, compressed reversibly and adiabatically by a volume ratio of 18 (diesel-like): $T_2=300(18^{0.4})=\SI{953}{K}$ (\SI{680}{\celsius}), $P_2=100(18^{1.4})=\SI{5.72}{MPa}$---hot enough to ignite injected fuel. \emph{Check:} numerical integration of $\dd T/T=-(\gamma-1)\,\dd V/V$ agrees. A bicycle pump warms for the same reason (only partly adiabatic).\src{DER}\end{demobox}
+
+\begin{reffig}{fig:pvprocesses}{Four reversible processes from a common state on $P$--$V$ axes (schematic, $\gamma=1.4$). Slopes at the shared point: isotherm $-P/V$, adiabat $-\gamma P/V$ (steeper).\src{DER}}
+\begin{tikzpicture}
+\begin{axis}[width=\linewidth,height=4.6cm,xmin=0.4,xmax=3.2,ymin=0,ymax=3.3,
+ xlabel={$V$ (relative)},ylabel={$P$ (relative)},ticks=none,label style={font=\small},domain=0.45:3.1,samples=80]
+\addplot[thick,black] {1/x}; \node[font=\scriptsize,anchor=west] at (axis cs:2.55,0.47) {isotherm};
+\addplot[thick,black,dashed] {1/x^1.4}; \node[font=\scriptsize,anchor=west] at (axis cs:2.2,0.18) {adiabat};
+\addplot[black,dotted,thick,domain=1:3.1] {1}; \node[font=\scriptsize,anchor=south] at (axis cs:2.4,1.0) {isobar};
+\draw[black,dash dot,thick] (axis cs:1,0)--(axis cs:1,3.2); \node[font=\scriptsize,anchor=west] at (axis cs:1.03,2.9) {isochore};
+\fill (axis cs:1,1) circle (2pt);
+\draw[-{Stealth}] (axis cs:1.5,1/1.5+0.25)--(axis cs:1.75,1/1.75+0.18);
+\end{axis}
+\end{tikzpicture}
+\end{reffig}
+
+\begin{demobox}\textbf{Same endpoints, three paths.} Ideal gas from $(\SI{200}{kPa},\SI{10}{L})$ to $(\SI{100}{kPa},\SI{20}{L})$; both states at \SI{300}{K} ($n=\SI{0.8018}{mol}$), so $\Delta U=0$ on every path and $Q=\Wby$.
+(a) Reversible isotherm: $W=2000\ln2=\SI{1386}{J}$.
+(b) Isochoric drop to \SI{100}{kPa}, then isobaric: $W=100(10)=\SI{1000}{J}$.
+(c) Isobaric at \SI{200}{kPa}, then isochoric drop: $W=\SI{2000}{J}$.
+$Q$ and $W$ depend on path; $\Delta U=0$ and $\Delta S=nR\ln2=\SI{4.62}{J/K}$ do not. \emph{Check:} $\Delta S=Q_{\text{rev}}/T=1386/300$ \checkmark.\src{DER}\end{demobox}
+
+\begin{demobox}\textbf{Reversible vs one-step compression.} \SI{1.00}{mol} ideal gas at \SI{300}{K} in contact with a \SI{300}{K} reservoir, compressed \SI{100}{kPa}$\to$\SI{200}{kPa} (\SI{24.94}{L}$\to$\SI{12.47}{L}).
+Reversible: $\Won=nRT\ln2=\SI{1729}{J}$. One step with $P_{\text{ext}}=\SI{200}{kPa}$ throughout: $\Won=P_{\text{ext}}(V_1-V_2)=\SI{2494}{J}$.
+Same end state, so the extra \SI{765}{J} leaves as extra heat to the reservoir: $\Sgen=2494/300-R\ln2=\SI{2.55}{J/K}>0$. Irreversible compression always costs more work.\src{DER}\end{demobox}
+
+\subsection{Steady-flow energy balance}\label{sec:sfee}
+\CORE{} For one inlet (1) and one outlet (2) at steady state:
+\begin{formulabox}
+\vspace{-6pt}
+\begin{align}
+\dot Q-\dot W_{\text{sh}} &= \dot m\Big[h_2-h_1+\tfrac{V_2^2-V_1^2}{2}+g(z_2-z_1)\Big] \label{F:energy:sfee}\\
+\dot m &= \rho AV\ \ (\text{same at inlet and outlet}) \label{F:energy:mass}
+\end{align}
+\end{formulabox}
+Flow work $Pv$ is already inside $h$. Units trap: $h$ in \si{kJ/kg} but $V^2/2$ in \si{J/kg}; \SI{100}{m/s} is only \SI{5}{kJ/kg}.
+
+\begin{reftab}{T:components}{Component selector (usual idealizations; drop terms only when justified).\src{EK}}
+\small
+\begin{tabularx}{\linewidth}{@{}L{0.22\linewidth}Y@{}}
+\toprule
+Device & Reduced balance\\
+\midrule
+Heater, boiler, condenser & $\dot Q=\dot m(h_2-h_1)$ ($\dot W=0$)\\
+Turbine (adiabatic) & $\dot W_{\text{out}}=\dot m(h_1-h_2)$; $\eta_t=\dfrac{h_1-h_2}{h_1-h_{2s}}$\\
+Compressor (adiabatic) & $\dot W_{\text{in}}=\dot m(h_2-h_1)$; $\eta_c=\dfrac{h_{2s}-h_1}{h_2-h_1}$\\
+Pump (liquid) & $w_{\text{in}}\approx v\,\Delta P$ (incompressible, reversible)\\
+Nozzle / diffuser & $\tfrac12V_2^2=\tfrac12V_1^2+h_1-h_2$\\
+Throttling valve & $h_2=h_1$ (adiabatic, no work, $\Delta$KE$\approx0$)\\
+Mixing chamber & $\sum\dot m_{\text{in}}h_{\text{in}}=\sum\dot m_{\text{out}}h_{\text{out}}$\\
+Heat exchanger & $\dot m_{\text{h}}\Delta h_{\text{h}}=\dot m_{\text{c}}\Delta h_{\text{c}}$ (insulated shell)\\
+\bottomrule
+\end{tabularx}\end{reftab}
+Subscript $s$ = isentropic (ideal) outlet at the actual outlet pressure.
+
+\begin{demobox}\textbf{Compressor with losses.} Air, $\dot m=\SI{0.50}{kg/s}$, \SI{300}{K}, pressure ratio 8, $\eta_c=0.85$, $c_p=\SI{1.005}{kJ/(kg.K)}$, $\gamma=1.4$. Ideal outlet $T_{2s}=300(8^{0.2857})=\SI{543.4}{K}$; actual $T_2=300+243.4/0.85=\SI{586.4}{K}$. Power $\dot W=\dot mc_p(T_2-T_1)=\SI{143.9}{kW}$ (ideal \SI{122.3}{kW}). Irreversibility shows up as a \emph{hotter} outlet and more work, never less.\src{DER}\end{demobox}
+
+\subsection{Throttling, free expansion, Joule--Thomson}\label{sec:throttling}
+\CORE{}
+\begin{formulabox}
+\begin{equation}
+\mu_{\text{JT}}=\Big(\frac{\partial T}{\partial P}\Big)_{\!h};\quad \mu_{\text{JT}}>0\Rightarrow\text{cools as pressure drops} \label{F:energy:jt}
+\end{equation}
+\end{formulabox}
+Ideal gas: $\mu_{\text{JT}}=0$ (no temperature change on throttling). Real gases at \SI{300}{K}, \SI{0.1}{MPa}: \ce{N2} $+2.1$, air $+2.3$, \ce{CO2} $+10.8$, \ce{H2} $-0.30$, He $-0.63$ \si{K/MPa}. Low-pressure inversion temperatures (sign change): \ce{N2} \SI{608}{K}, air \SI{645}{K}, \ce{H2} \SI{201}{K}, He \SI{46}{K}.\src{CP} So \ce{H2} and He \emph{warm} on throttling at room temperature and must be precooled below inversion before Joule--Thomson liquefaction. (vdW estimate $2a/(Rb)=6.75\,T_c$ overestimates: \SI{852}{K} for \ce{N2}.)
+
+\begin{reftab}{T:expansions}{Three ``expansions'' that are often confused.}
+\small
+\begin{tabularx}{\linewidth}{@{}L{0.22\linewidth}YY@{}}
+\toprule
+ & Constraint & Ideal-gas result\\
+\midrule
+Free expansion (into vacuum) & rigid insulated tank: $Q=0$, $W=0$, $\Delta U=0$ & $\Delta T=0$; $\Delta S=nR\ln\frac{V_2}{V_1}>0$\\
+Throttling (steady flow) & adiabatic valve: $h_2=h_1$ & $\Delta T=0$; $\Delta s=-R_s\ln\frac{P_2}{P_1}>0$\\
+Reversible adiabatic & work extracted, $\Delta S=0$ & $T_2=T_1(P_2/P_1)^{(\gamma-1)/\gamma}$ (large drop)\\
+\bottomrule
+\end{tabularx}\end{reftab}
+
+\begin{trapbox}Not all cooling is Joule--Thomson. Vapor-compression refrigerators cool mainly because liquid refrigerant \emph{flashes} (partly evaporates) across the valve into a low-pressure, low-$T_{\text{sat}}$ region; gas-cycle machines use expansion \emph{turbines}; Peltier devices use the thermoelectric effect.\end{trapbox}
+\end{multicols}

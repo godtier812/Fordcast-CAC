@@ -1,0 +1,125 @@
+% ===================================================================
+\section{Data: constants, conversions, properties}\label{sec:data}
+% ===================================================================
+\begin{multicols}{2}
+\begin{reftab}{T:datalocator}{Where every data table lives.}
+\small
+\begin{tabularx}{\linewidth}{@{}Yr@{}}
+\toprule
+Data & Location\\
+\midrule
+Water/ice/steam ledger constants & \tref{T:waterledger}, \pg{T:waterledger}\\
+Saturated water by $T$ / boiling point by $P$ & \tref{T:water:satT}, \pg{T:water:satT}; \tref{T:water:satP}, \pg{T:water:satP}\\
+Frost-point (ice) pressures & \tref{T:ice:sub}, \pg{T:ice:sub}\\
+Expansion coefficients & \tref{T:alpha}, \pg{T:alpha}\\
+Gases at 300 K ($c_p$, $\gamma$, $k$, $\mu$, $Z$) & \tref{T:gases300}, \pg{T:gases300}\\
+van der Waals constants & \tref{T:vdw}, \pg{T:vdw}\\
+Thermal conductivity of solids & \tref{T:conductivity}, \pg{T:conductivity}\\
+Formation enthalpy / Gibbs / entropy & \tref{T:thermo}, \pg{T:thermo}\\
+Constants, conversions, metals, air, liquid water & this section\\
+Melting and boiling data, superheated steam, R-134a & this section\\
+\bottomrule
+\end{tabularx}\end{reftab}
+
+\begin{reftab}{T:metals}{Specific heat of calorimetry metals at \SI{298.15}{K} (CRC data as transcribed).\src{CRC} Last column tests Dulong--Petit ($\bar C_p/R\approx3$).}
+\small
+\begin{tabularx}{\linewidth}{@{}Yrrrr@{}}
+\toprule
+Metal & $M$ & $\bar C_p$ & $c_p$ & $\bar C_p/R$\\
+ & (\si{g/mol}) & (\si{J/(mol.K)}) & (\si{J/(g.K)}) & \\
+\midrule
+\tabinput{data/metals_cp.tex}
+\bottomrule
+\end{tabularx}\end{reftab}
+\end{multicols}
+
+\begin{reftab}{T:constants}{Physical constants (CODATA 2022).\src{CODATA} $^\ast$Exact by SI definition. $^\dagger$Exact because computed from exactly defined constants (shown rounded). Others: relative standard uncertainty $u_r$. $g_n$ and the standard atmosphere are conventional defined values.}
+\small
+\begin{tabularx}{\textwidth}{@{}L{0.19\textwidth}L{0.29\textwidth}L{0.19\textwidth}Y@{}}
+\toprule
+Constant & Value & Constant & Value\\
+\midrule
+\tabinput{data/constants.tex}
+\bottomrule
+\end{tabularx}\end{reftab}
+\textbf{$R$ in common units:} \tabinput{data/R_units.tex}\src{CODATA}\src{DER}
+
+\begin{reftab}{T:conversions}{Unit conversions computed with a unit library; the exact International Table Btu is defined explicitly.\src{PINT} $^\ast$Exact by definition. Temperature \emph{intervals}: \SI{1}{K} $=$ \SI{1}{\celsius} $=$ \SI{1.8}{\degF} $=$ \SI{1.8}{R}; scale conversions: \eqp{F:temp:CK}.}
+\small
+\begin{tabularx}{\textwidth}{@{}L{0.25\textwidth}L{0.22\textwidth}L{0.27\textwidth}Y@{}}
+\toprule
+Quantity & Equals & Quantity & Equals\\
+\midrule
+\tabinput{data/conversions.tex}
+\bottomrule
+\end{tabularx}\end{reftab}
+
+\begin{reftab}{T:air}{Dry air at \SI{101.325}{kPa}.\src{CP} $\nu=\mu/\rho$, $\alpha=k/(\rho c_p)$; ideal-gas $\beta=1/T$.}
+\small
+\begin{tabularx}{\textwidth}{@{}YYYYYYYYY@{}}
+\toprule
+$T$ & $t$ & $\rho$ & $c_p$ & $k$ & $\mu$ & $\nu$ & $\alpha$ & $Pr$\\
+(K) & (\si{\celsius}) & (\si{kg/m^3}) & (\si{J/(kg.K)}) & (\si{mW/(m.K)}) & (\si{\micro Pa.s}) & (\si{mm^2/s}) & (\si{mm^2/s}) & \\
+\midrule
+\tabinput{data/air_props.tex}
+\bottomrule
+\end{tabularx}\end{reftab}
+
+\begin{reftab}{T:waterliq}{Liquid water at \SI{101.325}{kPa}.\src{IAPWS} $\beta$ = volumetric expansion coefficient (negative below \SI{3.98}{\celsius}).}
+\small
+\begin{tabularx}{\textwidth}{@{}YYYYYYYY@{}}
+\toprule
+$t$ & $\rho$ & $c_p$ & $k$ & $\mu$ & $\nu$ & $Pr$ & $\beta$\\
+(\si{\celsius}) & (\si{kg/m^3}) & (\si{J/(kg.K)}) & (\si{W/(m.K)}) & (\si{mPa.s}) & (\si{mm^2/s}) & & ($10^{-4}$\,\si{K^{-1}})\\
+\midrule
+\tabinput{data/water_liq_props.tex}
+\bottomrule
+\end{tabularx}\end{reftab}
+
+\Needspace{0.45\textheight}
+\begin{multicols}{2}
+\begin{reftab}{T:melting}{Melting points and enthalpies of fusion at about 1~atm (CRC data as transcribed; sorted by $T_m$).\src{CRC} The CRC water value (\SI{333.6}{J/g}) differs slightly from IAPWS (\SI{333.4}{J/g}, \tref{T:waterledger}).}
+\small
+\begin{tabularx}{\linewidth}{@{}Yrrrr@{}}
+\toprule
+Substance & $T_m$ & $t_m$ & $\Delta\bar H_{\text{fus}}$ & $L_f$\\
+ & (K) & (\si{\celsius}) & (\si{kJ/mol}) & (\si{J/g})\\
+\midrule
+\tabinput{data/melting.tex}
+\bottomrule
+\end{tabularx}\end{reftab}
+
+\begin{reftab}{T:steamsh}{Superheated steam (IAPWS-95; same reference state as \tref{T:water:satT}).\src{IAPWS}}
+\small
+\begin{tabularx}{\linewidth}{@{}YYYY@{}}
+\toprule
+$t$ & $v$ & $h$ & $s$\\
+(\si{\celsius}) & (\si{m^3/kg}) & (\si{kJ/kg}) & (\si{kJ/(kg.K)})\\
+\midrule
+\tabinput{data/steam_superheated.tex}
+\bottomrule
+\end{tabularx}\end{reftab}
+
+\begin{reftab}{T:r134a}{Saturated R-134a (Tillner-Roth--Baehr equation of state). Reference state: $h=\SI{200}{kJ/kg}$, $s=\SI{1}{kJ/(kg.K)}$ for saturated liquid at \SI{0}{\celsius}; other tables may use other references---use differences only.\src{CP}}
+\small
+\begin{tabularx}{\linewidth}{@{}YYYYYY@{}}
+\toprule
+$t$ & $P$ & $h_f$ & $h_g$ & $s_f$ & $s_g$\\
+(\si{\celsius}) & (\si{kPa}) & (\si{kJ/kg}) & (\si{kJ/kg}) & \multicolumn{2}{c}{(\si{kJ/(kg.K)})}\\
+\midrule
+\tabinput{data/r134a_sat.tex}
+\bottomrule
+\end{tabularx}\end{reftab}
+\end{multicols}
+
+\begin{reftab}{T:boiling}{Normal boiling point (\SI{101.325}{kPa}), enthalpy of vaporization there, and critical point (reference equations of state).\src{CP}}
+\small
+\begin{tabularx}{\textwidth}{@{}lYYYYYY@{}}
+\toprule
+Fluid & $T_b$ & $t_b$ & $h_{fg}$ & $\Delta\bar H_{\text{vap}}$ & $T_c$ & $P_c$\\
+ & (K) & (\si{\celsius}) & (\si{kJ/kg}) & (\si{kJ/mol}) & (K) & (MPa)\\
+\midrule
+\tabinput{data/boiling.tex}
+\bottomrule
+\end{tabularx}\end{reftab}
+

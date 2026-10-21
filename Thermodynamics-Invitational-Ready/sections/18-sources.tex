@@ -1,0 +1,30 @@
+% ===================================================================
+\section{Source register}\label{sec:sources}
+% ===================================================================
+\textbf{Access context (build of \builddate):} the build environment's network policy blocked the Science Olympiad site, NIST, MIT, OpenStax, BIPM, and general web hosts (HTTP 403). No rules, host, or device documents were attached. Package registries were reachable, so authoritative \emph{datasets and models} were used through versioned software and computed locally. A web-search tool returned result summaries (snippets) only; snippet-level items are labeled as such and are not treated as verified. Full provenance with exact functions and settings: \texttt{sources.md} and \texttt{data/provenance.json} in the source package.
+
+\begin{reftab}{T:sources}{Source register (IDs appear as superscripts throughout).}
+\small
+\renewcommand{\arraystretch}{1.1}
+\begin{tabularx}{\textwidth}{@{}lL{0.42\textwidth}L{0.17\textwidth}Y@{}}
+\toprule
+ID & Source & Access status & Used for\\
+\midrule
+\anchor{src:SO1}SO1 & Science Olympiad Inc., ``Thermodynamics C'' event page, \texttt{soinc.org/thermodynamics-c} & \textbf{not accessed} (403); search snippet only & conflict note on device purpose\\
+\anchor{src:SO2}SO2 & Science Olympiad Inc., 2027 Division~C Event Slate (PDF) and 2027 conflict-block PDF, hosted under \texttt{soinc.org} (uploaded files) & \textbf{not accessed}; snippets only & event exists in 2027 slate (unverified)\\
+\anchor{src:WIKI}WIKI & Scio.ly community guide ``Thermodynamics'', \texttt{scio.ly/docs/thermodynamics} & \textbf{not accessed}; snippet only; not authoritative & conflict note only\\
+\anchor{src:CODATA}CODATA & CODATA 2022 recommended values, as distributed in SciPy 1.18.1 \texttt{scipy.constants} & inspected locally & constants, exact SI values\\
+\anchor{src:IAPWS}IAPWS & IAPWS-95 water formulation (Wagner \& Pru\ss, \emph{J.\ Phys.\ Chem.\ Ref.\ Data} 31, 387, 2002); viscosity (Huber et al.\ 2009), conductivity (Huber et al.\ 2012); via CoolProp 8.0.0 & computed locally; papers not accessed & water and steam properties, saturation tables\\
+\anchor{src:ICE}ICE & IAPWS-06 ice Ih and IAPWS (2011) melting/sublimation curves, via \texttt{iapws} 1.5.5 & computed locally; releases not accessed & ice $c_p$, $\rho$, $L_f$, frost-point pressures\\
+\anchor{src:CP}CP & CoolProp 8.0.0 reference equations of state and transport models (e.g.\ \ce{CO2} Span--Wagner 1996; air Lemmon et al.\ 2000 with Lemmon--Jacobsen 2004 transport; R-134a; \ce{N2}, \ce{O2}, Ar, He, \ce{H2}, \ce{CH4}, \ce{NH3}) & computed locally; papers not accessed & gas tables, critical points, $Z$, $\mu_{\text{JT}}$, R-134a states, air properties\\
+\anchor{src:CRC}CRC & CRC Handbook of Chemistry and Physics, standard thermodynamic properties table, as transcribed in \texttt{chemicals} 1.5.2 (\texttt{CRC\_standard\_data}); handbook edition not confirmed & package data inspected; handbook not accessed & $\Delta H_f^\circ$, $\Delta G_f^\circ$, $S^\circ$, metal $c_p$\\
+\anchor{src:XCHK}XCHK & Active Thermochemical Tables, NIST-JANAF, NIST WebBook values as transcribed in \texttt{chemicals} 1.5.2 & package data inspected & flags ($^\ddagger$) where datasets disagree\\
+\anchor{src:HT}HT & \texttt{ht} 1.2.0 (C.\ Bell) correlation implementations and documentation, citing Churchill \& Chu (1975, two papers), Churchill \& Bernstein (1977), Dittus \& Boelter (1930), Gnielinski (1976), McAdams, Bergman et al.\ (2011) & code and docstrings inspected; original papers not accessed & convection correlations and validity notes (formulas cross-checked numerically)\\
+\anchor{src:MAT}MAT & ASHRAE Handbook---Fundamentals (2013), DIN EN 12524:2000, VDI Heat Atlas (2010) design values, as transcribed in \texttt{ht} 1.2.0 \texttt{insulation} & package data inspected; one erroneous entry excluded & $k$, $\rho$, $c_p$ of solids and insulation\\
+\anchor{src:PINT}PINT & \texttt{pint} 0.26.2 unit definitions; exact IT Btu defined explicitly & inspected locally & unit conversions, R-value factor\\
+\anchor{src:DER}DER & Derived or verified in this build: symbolic/numerical derivations; every solved demonstration recomputed with an independent check (\texttt{checks/demos.py}, 63 checks) & executed locally & equations marked DER and all demonstrations\\
+\anchor{src:EK}EK & Editor knowledge: standard textbook results or facts \emph{not} verified against an accessed source in this build & unverified this build & qualitative notes, some correlations, history, approximate coefficients\\
+\bottomrule
+\end{tabularx}\end{reftab}
+
+\textbf{Recommended but not accessed (blocked):} official 2027 Rules Manual and clarifications (soinc.org); NIST Chemistry WebBook and CODATA web pages; J.\,H. Lienhard IV \& V, \emph{A Heat Transfer Textbook} (author-hosted); MIT OpenCourseWare thermodynamics notes; OpenStax \emph{University Physics} Vol.~2. None of these is cited as verification for any statement in this binder.

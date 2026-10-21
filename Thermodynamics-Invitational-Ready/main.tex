@@ -1,0 +1,45 @@
+% =====================================================================
+% Thermodynamics Division C -- Invitational Reference Binder
+% Build: pdflatex main.tex  (run until "Rerun" warnings disappear; see README)
+% =====================================================================
+\documentclass[10pt,twoside,openany]{book}
+\newcommand{\builddate}{2026-10-21}
+\input{style}
+
+\begin{document}
+\pagenumbering{arabic}
+\input{sections/00-front}
+
+\tabchapter{1}{Quick Reference}
+\input{sections/01-quick}
+
+\tabchapter{2}{Foundations, Calorimetry \& Phases}
+\input{sections/02-foundations}
+\input{sections/03-calorimetry}
+\input{sections/04-phases}
+
+\tabchapter{3}{Gases, First Law, Second \& Third Laws}
+\input{sections/05-gases}
+\input{sections/06-firstlaw}
+\input{sections/07-secondlaw}
+
+\tabchapter{4}{Cycles: Engines, Refrigerators, Heat Pumps}
+\input{sections/08-cycles}
+
+\tabchapter{5}{Heat Transfer}
+\input{sections/09-conduction}
+\input{sections/10-convection}
+\input{sections/11-radiation}
+\input{sections/12-transient}
+
+\tabchapter{6}{Thermochemistry, History \& Device}
+\input{sections/13-thermochem}
+\input{sections/14-history}
+\input{sections/15-device}
+
+\tabchapter{7}{Data, Error Prevention, Sources \& Index}
+\input{sections/16-data}
+\input{sections/17-errors}
+\input{sections/18-sources}
+\input{sections/19-index}
+\end{document}

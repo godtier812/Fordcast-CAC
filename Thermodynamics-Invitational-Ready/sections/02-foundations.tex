@@ -1,0 +1,125 @@
+% ===================================================================
+\section{Foundations: systems, temperature, thermometry, expansion}\label{sec:found}
+% ===================================================================
+\begin{multicols}{2}
+\subsection{Systems and vocabulary}\label{sec:systems}
+\CORE{} \textbf{Cue:} ``isolated'', ``state function'', ``steady'', ``reversible''. Name the system boundary \emph{first}; every sign below depends on it.
+
+\begin{reftab}{T:systems}{System types and paired concepts.}
+\small
+\begin{tabularx}{\linewidth}{@{}L{0.25\linewidth}Y@{}}
+\toprule
+Term & Meaning / discriminating test\\
+\midrule
+Isolated & No mass, heat, or work crosses. $\Delta U=0$; $\Delta S\ge0$.\\
+Closed (control mass) & Energy crosses, mass does not. Default for $\Delta U=Q-\Wby$.\\
+Open (control volume) & Mass and energy cross; use flow balance \eqp{F:energy:sfee}.\\
+Adiabatic & $Q=0$. Temperature \emph{can} change (work does it). Not ``isothermal''.\\
+Diathermal & Wall that permits heat transfer.\\
+State function & Depends only on state: $T,P,V,U,H,S,A,G$. $\oint\dd X=0$.\\
+Path function & $Q$, $W$: depend on the process (inexact $\delta Q,\delta W$).\\
+Intensive & Independent of amount: $T,P,\rho$, specific $u$, molar $\bar c_p$.\\
+Extensive & Scales with amount: $m,V,U,H,S,C$. Specific $=$ extensive$/m$.\\
+Equilibrium & No unbalanced potentials (thermal, mechanical, phase, chemical); isolated system would not change.\\
+Steady state & Properties constant in time \emph{while flows persist} (a wall conducting a constant $\dot Q$). Not equilibrium.\\
+Quasistatic & Infinitely slow sequence of equilibrium states.\\
+Reversible & Quasistatic \emph{and} no dissipation (no friction, no finite-$\Delta T$ heat transfer, no unrestrained expansion, no mixing). $\Sgen=0$.\\
+\bottomrule
+\end{tabularx}\end{reftab}
+
+\begin{keybox}Heat and work are energy \emph{in transit} across a boundary; a body stores internal energy $U$, not ``heat''. Heat is transfer driven by a temperature difference; work is every other boundary energy transfer (shaft, boundary motion, electrical).\end{keybox}
+
+\textbf{Zeroth law.} If $A$ and $B$ are each in thermal equilibrium with $C$, then $A$ and $B$ are in thermal equilibrium with each other. This makes ``temperature'' a well-defined property and justifies thermometers (the thermometer is body $C$).\src{EK}
+
+\subsection{Temperature scales and the kelvin}\label{sec:tscales}
+\CORE{}
+\begin{formulabox}
+\vspace{-6pt}
+\begin{align}
+T/\mathrm{K} &= t/{}^\circ\mathrm{C} + 273.15 \label{F:temp:CK}\\
+t/{}^\circ\mathrm{F} &= 1.8\,(t/{}^\circ\mathrm{C}) + 32 \label{F:temp:CF}\\
+T/{}^\circ\mathrm{R} &= t/{}^\circ\mathrm{F} + 459.67 = 1.8\,(T/\mathrm{K}) \label{F:temp:R}\\
+\Delta T\,(\mathrm{K}) &= \Delta t\,({}^\circ\mathrm{C});\quad \Delta t\,({}^\circ\mathrm{F})=\Delta T\,({}^\circ\mathrm{R}) = 1.8\,\Delta T\,(\mathrm{K}) \label{F:temp:interval}
+\end{align}
+\end{formulabox}
+Anchors: $0\,\mathrm{K}=\SI{-273.15}{\celsius}=\SI{-459.67}{\degF}$; $\SI{-40}{\celsius}=\SI{-40}{\degF}$; water triple point \SI{273.16}{K}\,$=$\,\SI{0.01}{\celsius}, \SI{611.65}{Pa}.\src{IAPWS} Water boils at \SI{99.97}{\celsius} at \SI{101.325}{kPa} on today's scale (ITS-90/IAPWS-95), not exactly \SI{100}{\celsius}.\src{IAPWS}
+
+\textbf{Absolute vs interval.} Use kelvin (or rankine) whenever $T$ appears \emph{multiplied, divided, in a ratio, a power, or a logarithm}: $PV=nRT$, $T_2/T_1$, Carnot, $\sigma T^4$, $\ln(T_2/T_1)$, $e^{-E/RT}$. Celsius is acceptable only for differences: $Q=mc\Delta T$, $\dot Q=hA\Delta T$, $kA\Delta T/L$.
+
+\textbf{Kelvin since 20~May~2019.} The kelvin is defined by fixing the Boltzmann constant at exactly $k=\SI{1.380649e-23}{J/K}$.\src{CODATA} The water triple point is therefore now a \emph{measured} value (still \SI{273.16}{K} to within about \SI{0.1}{mK}).\src{EK} Because $N_A$ is also exact, $R=N_Ak$ is exact.
+
+\textbf{Rankine} is the absolute scale with Fahrenheit-sized degrees. \emph{Historical one-liner:} R\'eaumur scale has \SI{0}{\degree}R\'e at the ice point and \SI{80}{\degree}R\'e at the boiling point (\SI{1}{\degree}R\'e $=$ \SI{1.25}{\celsius} interval).\src{EK}
+
+\subsection{Thermometers}\label{sec:thermometers}
+\CORE{} Every thermometer reports \emph{its own sensing element's} temperature (or, for IR, the radiation leaving a surface). Good practice: good thermal contact, immersion, shielding from radiation, waiting $\gtrsim 3$--$5$ sensor time constants (\pg{F:transfer:lumped}), and calibration against fixed points.
+\end{multicols}
+
+\begin{reftab}{T:thermometers}{Thermometer comparison (qualitative; ranges and accuracies depend on the specific instrument, so none are quoted).\src{EK}}
+\small
+\begin{tabularx}{\textwidth}{@{}L{0.14\textwidth}L{0.22\textwidth}L{0.24\textwidth}Y@{}}
+\toprule
+Type & Physical quantity sensed & Strengths & Limitations, corrections, calibration\\
+\midrule
+Liquid-in-glass & Expansion of liquid relative to glass bulb/stem & No power; simple; direct reading & Slow; immersion-depth (emergent stem) correction; parallax; fragile; Hg toxicity; reads its own bulb temperature\\
+Bimetallic & Bending of two bonded strips with different $\alpha$ & Rugged, cheap; drives switches (thermostats) & Coarse accuracy; hysteresis; mechanical drift\\
+Constant-volume gas & $P\propto T$ for dilute gas at fixed $V$ & Primary (absolute) thermometry; extrapolate to $P\to0$ & Bulky, slow; corrections for dead volume and bulb expansion\\
+Thermocouple & Seebeck emf set by temperature \emph{difference} between measuring and reference junctions & Wide range; tiny; fast; cheap & Needs cold-junction compensation; \si{\micro V/K}-scale signal; nonlinear; type-specific tables; inhomogeneity errors\\
+RTD (Pt) & Electrical resistance of platinum (rises nearly linearly with $T$) & Accurate, stable, repeatable & Self-heating from current; lead resistance (use 3- or 4-wire); slower, costlier\\
+Thermistor & Resistance of semiconductor (NTC: falls steeply with $T$) & High sensitivity; small & Strongly nonlinear (fit, e.g.\ Steinhart--Hart $1/T=A+B\ln R+C(\ln R)^3$); limited range; self-heating\\
+Infrared (radiation) & Thermal radiation from a surface spot & Non-contact; fast; moving or hot targets & Needs correct emissivity; shiny surfaces read low; sees through nothing opaque to IR (e.g.\ reads glass surface, not water inside); spot-size averaging; reflections\\
+\bottomrule
+\end{tabularx}\end{reftab}
+
+\begin{multicols}{2}
+\textbf{Two-point linear calibration} (reading $r$, reference temperatures $T_a,T_b$ with readings $r_a,r_b$):
+\begin{equation}
+T = T_a + (T_b-T_a)\,\frac{r-r_a}{r_b-r_a}. \label{F:temp:calib}
+\end{equation}
+Ice point: stirred slurry of crushed ice and pure water, \SI{0.00}{\celsius} at 1~atm. Boiling point: depends on pressure---use \tref{T:water:satP} (\pg{T:water:satP}), not \SI{100}{\celsius}. Calibrate over the range you will use; linear interpolation between two points does not fix nonlinearity (thermistors).
+
+\begin{trapbox}A thermometer in air near a hot lamp or a cold window reads a mix of air convection and \emph{radiation} exchange; shield it. An IR gun aimed at a shiny can or a glass beaker reports a meaningless number unless emissivity is set for that surface.\end{trapbox}
+
+\subsection{Thermal expansion}\label{sec:expansion}
+\CORE{} \textbf{Cue:} rails, rings over shafts, overflowing liquid, bimetal, stress in a clamped bar.
+\begin{formulabox}
+\vspace{-6pt}
+\begin{align}
+\Delta L &= \alpha L_0\,\Delta T,\qquad \Delta A \approx 2\alpha A_0\Delta T, \label{F:expand:linear}\\
+\Delta V &= \beta V_0\,\Delta T,\qquad \beta\approx 3\alpha\ \text{(isotropic solid)}. \label{F:expand:volume}
+\end{align}
+\end{formulabox}
+Assumptions: small strain ($\alpha\Delta T\ll1$), $\alpha$ constant over the range (otherwise $\ln(L/L_0)=\int\alpha\,\dd T$), isotropic material. A \textbf{hole} in a plate grows exactly as if it were filled with the same material.
+
+\textbf{Apparent expansion} of a liquid in a container that also expands:
+\begin{equation}
+\Delta V_{\text{overflow}} = V_0\,(\beta_{\text{liq}}-3\alpha_{\text{cont}})\,\Delta T. \label{F:expand:apparent}
+\end{equation}
+
+\textbf{Thermal stress} in a bar fully restrained at both ends (linear elastic, uniaxial, no buckling or yielding):
+\begin{equation}
+\sigma_{\text{th}} = -E\,\alpha\,\Delta T \quad\text{(negative = compressive on heating).} \label{F:expand:stress}
+\end{equation}
+Notation: $\sigma_{\text{th}}$ is mechanical stress (Pa); do not confuse with the Stefan--Boltzmann constant $\sigma$ in \eqp{F:rad:sb}.
+
+\begin{demobox}\textbf{Restrained rail.} Steel, $E=\SI{200}{GPa}$, $\alpha=\SI{12e-6}{K^{-1}}$ (given values), heated \SI{40}{K} with ends fixed: $\sigma_{\text{th}}=-(200\times10^9)(12\times10^{-6})(40)=\SI{-96}{MPa}$ (compressive). The length $L$ cancels: stress does not depend on bar length; the \emph{free} elongation would.\end{demobox}
+
+\textbf{Bimetal strip} bends with the higher-$\alpha$ metal on the \emph{outside} (convex side) when heated. \textbf{Ideal gas} at constant $P$: $\beta=1/T$ (absolute $T$).
+
+\textbf{Water's density anomaly.} At \SI{101.325}{kPa}, liquid water is densest at \SI{3.98}{\celsius} (\SI{999.97}{kg/m^3}); $\beta<0$ from 0 to \SI{3.98}{\celsius}.\src{IAPWS} Ice Ih at \SI{0}{\celsius} has $\rho=\SI{916.7}{kg/m^3}$ versus \SI{999.84}{kg/m^3} for the liquid, so freezing expands volume by about \SI{9.1}{\percent}.\src{ICE} Consequences: ice floats; lakes stratify with \SI{4}{\celsius} water at depth in winter and freeze from the top; freezing water bursts pipes.
+
+\begin{reftab}{T:alpha}{Representative coefficients near room temperature. Composition- and grade-dependent: \textbf{use the value a question supplies}.}
+\small
+\begin{tabularx}{\linewidth}{@{}Yr@{}}
+\toprule
+Material & $\alpha$ or $\beta$ (\si{K^{-1}})\\
+\midrule
+Aluminum ($\alpha$) & $\approx23\times10^{-6}$\src{EK}\\
+Copper / brass ($\alpha$) & $\approx17\times10^{-6}$ / $\approx19\times10^{-6}$\src{EK}\\
+Carbon steel ($\alpha$) & $\approx12\times10^{-6}$\src{EK}\\
+Invar ($\alpha$) & $\approx1.2\times10^{-6}$\src{EK}\\
+Soda-lime / borosilicate glass ($\alpha$) & $\approx9\times10^{-6}$ / $\approx3.3\times10^{-6}$\src{EK}\\
+Water at \SI{20}{\celsius} ($\beta$) & $2.07\times10^{-4}$\src{IAPWS}\\
+Ideal gas at \SI{300}{K} ($\beta=1/T$) & $3.33\times10^{-3}$\\
+\bottomrule
+\end{tabularx}\end{reftab}
+\end{multicols}

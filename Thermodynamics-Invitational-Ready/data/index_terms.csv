@@ -1,0 +1,242 @@
+# term|label[;label...]   (curated; every target is substantive coverage)
+absolute zero|sec:tscales;sec:thirdlaw
+absorptivity|F:rad:arho;sec:emission
+activity (chemical)|sec:chempot
+adiabatic process|F:gas:adiabat;T:process:ideal-gas
+air, composition|sec:dalton
+air, property table|T:air
+Amagat partial volume|F:gas:dalton
+ammonia synthesis (demo)|sec:thermoK
+Antoine equation (caution)|sec:clapeyron
+apparent expansion|F:expand:apparent
+Avogadro constant|T:constants
+back-work ratio|sec:aircycles
+beaker heat loss (demo)|demo:beaker
+bimetallic strip|sec:expansion;T:thermometers
+Biot number|F:transfer:biot;F:conv:NuBi
+blackbody|F:rad:sb
+boiling point vs pressure|T:water:satP;sec:boiling
+bomb calorimeter|F:cal:bomb;F:thermo:bomb
+bond enthalpy|sec:thermocal
+Boltzmann constant|T:constants;sec:tscales
+Boltzmann entropy S = k ln Omega|F:entropy:boltzmann
+boundary conditions (conduction)|T:bcs
+boundary work|F:work:boundary
+Boyle temperature|sec:realgas
+Boyle's law|sec:idealgas
+Brayton cycle|F:cycle:brayton;fig:cyclesketches
+Btu (British thermal unit)|T:conversions
+calibration, thermometer|F:temp:calib
+calibration, device|sec:devicecal;T:devicelog
+calorie|T:conversions
+calorimeter constant|sec:calorimeters
+Carnot cycle|sec:carnot;fig:carnot
+Carnot efficiency and COP|F:cycle:carnot
+Celsius scale|F:temp:CK
+characteristic length|sec:newton;F:transfer:biot
+Charles's law|sec:idealgas
+chemical potential|F:entropy:mu
+Churchill-Bernstein correlation|T:correlations
+Churchill-Chu correlations|T:correlations
+Clapeyron equation|F:phase:clapeyron
+Clausius inequality|F:entropy:clausius
+Clausius statement|sec:2ndstatements
+Clausius-Clapeyron equation|F:phase:cc
+clockwise rule (cycles)|sec:work;sec:feasibility
+CO2 phase diagram|fig:phasediagrams
+coefficient of performance (COP)|F:cycle:cop
+coffee-cup calorimeter|F:cal:cup
+collection vs retention (device)|sec:collectretain
+combined gas law|F:gas:combined
+combustion, heating values|sec:thermocal
+composite wall|fig:network;demo:wall
+compressibility factor Z|sec:realgas
+compression ratio|sec:aircycles
+conduction|F:transfer:fourier
+conductivity, thermal (table)|T:conductivity
+constants, physical|T:constants
+contact resistance|F:transfer:Rcontact
+control volume|T:systems
+convection|F:transfer:newton
+conversions, units|T:conversions
+cooling curve, fitting|F:transfer:semilog
+critical point|fig:phasediagrams;F:gas:vdwcrit
+critical radius of insulation|F:transfer:rcrit
+Curzon-Ahlborn efficiency|sec:othercycles
+cutoff ratio|sec:aircycles
+cylinder, radial conduction|F:transfer:Rcyl
+Dalton's law|F:gas:dalton
+degrees of freedom, equipartition|T:equipartition
+degrees of freedom, phase rule|F:phase:rule
+density maximum of water|sec:expansion
+device energy balance|F:device:balance
+dew point|F:phase:RH
+Dewar (vacuum) flask|T:applications
+Diesel cycle|F:cycle:diesel
+diffusion vs effusion|sec:effusion
+diffusivity, thermal|F:transfer:diffusivity
+Dittus-Boelter correlation|T:correlations
+Dulong-Petit rule|sec:heatcap;T:metals
+effusion|F:gas:effusion;F:gas:graham
+efficiency, engine|F:cycle:eta
+electrical heating|F:cal:elec
+emissivity|sec:emission
+energy balance, closed system|F:energy:closed
+energy-flow diagram|fig:energyflow
+enthalpy|F:energy:enthalpy
+enthalpy of formation|F:thermo:formation;T:thermo
+entropy balance|F:entropy:balance
+entropy change formulas|F:entropy:idealgas
+entropy of mixing|F:entropy:mixing
+equilibrium constant|F:entropy:K
+equilibrium vs steady state|T:systems
+equipartition|sec:equipartition
+Ericsson cycle|sec:othercycles
+evaporative cooling|sec:boiling
+expansion, thermal|F:expand:linear
+extensive property|T:systems
+Fahrenheit scale|F:temp:CF
+feasibility of a machine|sec:feasibility
+film temperature|sec:newton
+fins|sec:heateq
+first law|F:energy:closed
+flux vs rate|sec:fourier
+formula selector|sec:selector
+Fourier's law|F:transfer:fourier
+free energy (Gibbs, Helmholtz)|F:entropy:AG
+free expansion|T:expansions;T:process:ideal-gas
+frost point|T:ice:sub
+gamma (heat-capacity ratio)|F:gas:gamma;T:gases300
+gas collected over water|F:phase:overwater
+gas properties at 300 K|T:gases300
+Gibbs energy|F:entropy:dG
+Gibbs phase rule|F:phase:rule
+Gnielinski correlation|T:correlations
+Graham's law|F:gas:graham
+Grashof number|F:conv:GrRa
+heat capacity|sec:heatcap
+heat equation|F:transfer:heateq
+heat exchanger|T:components
+heat pump|F:cycle:cop;F:cycle:vcr
+heating curve|fig:heatingcurve
+heating value (HHV, LHV)|sec:thermocal
+Hess's law|sec:stdstate
+history timeline|T:history
+humidity ratio|F:phase:omega
+ideal gas law|F:gas:ideal
+infrared thermometer|T:thermometers
+insulation|sec:rvalue;T:applications
+internal energy, ideal gas|F:gas:dU
+inversion temperature (J-T)|sec:throttling
+irreversibility|sec:2ndstatements
+isentropic efficiency|T:components
+isobaric process|T:process:ideal-gas
+isochoric process|T:process:ideal-gas
+isolated system|T:systems
+isothermal process|F:gas:isothermal-work;T:process:ideal-gas
+Joule-Thomson effect|F:energy:jt
+kelvin, definition|sec:tscales
+Kelvin-Planck statement|sec:2ndstatements
+kinetic theory|F:gas:kinetic
+Kirchhoff's law (radiation)|sec:emission
+Kirchhoff's law (thermochemistry)|F:thermo:kirchhoff
+Landauer limit|sec:thirdlaw
+latent heat|T:waterledger;sec:transitions
+ledger (calorimetry)|F:cal:ledger
+Leidenfrost effect (caution)|trap:phasemyths
+lumped capacitance|F:transfer:lumped
+master process table|T:process:ideal-gas
+Maxwell speed distribution|F:gas:maxwell;fig:maxwell
+Maxwell relations|F:entropy:fundamental
+Mayer's relation|F:gas:mayer
+mean free path|F:gas:mfp
+mixing temperature|F:cal:mixT
+molar volume|T:stp
+Mpemba effect (caution)|trap:phasemyths
+natural convection|T:correlations;demo:beaker
+Newton's law of cooling|F:transfer:newton;F:transfer:lumped
+nozzle|T:components
+Nusselt number|F:conv:NuBi
+Otto cycle|F:cycle:otto
+partial pressure|F:gas:dalton
+Peltier effect|sec:othercycles
+phase diagram|fig:phasediagrams
+polytropic process|F:gas:polytropic
+Prandtl number|F:conv:ReP
+prediction interval|sec:devicecal
+pressure cooker|sec:boiling
+pump work|T:components;F:cycle:rankine
+quality (vapor)|F:phase:quality
+R (gas constant)|T:constants;sec:idealgas
+R-value|F:transfer:rvalue
+radiation|F:rad:sb
+radiation shield|sec:shields
+Rankine cycle|F:cycle:rankine
+Rankine scale|F:temp:R
+Rayleigh number|F:conv:GrRa
+real gas|sec:realgas
+refrigerator|F:cycle:cop;F:cycle:vcr
+regenerator|sec:aircycles;sec:othercycles
+relative humidity|F:phase:RH
+residual entropy|sec:thirdlaw
+resistance, thermal|F:transfer:Rwall
+reversible process|T:systems;sec:2ndstatements
+Reynolds number|F:conv:ReP
+rms speed|F:gas:speeds
+safety (device testing)|trap:safety
+saturation table, water|T:water:satT
+Seebeck effect|sec:othercycles
+sensor lag|sec:constinput
+sign conventions|T:signs;T:conventions
+skating, pressure melting|trap:phasemyths
+solar absorptivity vs IR emissivity|sec:emission
+specific heat|sec:heatcap;T:metals
+spontaneity|T:spont
+standard state|sec:stdstate
+state function|T:systems
+steady-flow energy equation|F:energy:sfee
+steam tables|T:water:satT
+Stefan-Boltzmann law|F:rad:sb
+Stirling cycle|sec:othercycles
+STP and SATP|T:stp
+sublimation|T:transitions;T:ice:sub
+supercooling, superheating|sec:boiling
+supercritical fluid|fig:phasediagrams;sec:boiling
+T-S diagram|sec:ts
+temperature scales|F:temp:CK
+thermal bridge|sec:resistances;demo:wall
+thermal stress|F:expand:stress
+thermistor|T:thermometers
+thermocouple|T:thermometers
+thermoelectric effects|sec:othercycles
+third law|sec:thirdlaw
+throttling|F:energy:jt;T:expansions
+time constant|F:transfer:lumped
+transient conduction|sec:transient
+triple point|fig:phasediagrams;sec:tscales
+turbine|T:components
+U-factor (overall coefficient)|F:transfer:U
+unit hazards|sec:units
+van der Waals equation|F:gas:vdw;T:vdw
+van 't Hoff equation|F:thermo:vanthoff
+vapor-compression refrigeration|F:cycle:vcr
+vapor pressure|F:phase:cc;T:water:satT
+view factor|F:rad:viewfactor
+water, liquid properties|T:waterliq
+wet-bulb temperature|sec:humidity
+Wien's law|F:rad:wien
+work, boundary|F:work:boundary
+zeroth law|sec:systems
+melting points and heat of fusion|T:melting
+boiling points of common fluids|T:boiling
+superheated steam table|T:steamsh
+R-134a table|T:r134a;F:cycle:vcr
+second-law efficiency|sec:cycleflows
+heat pump vs resistance heating|sec:cycleflows
+supercooled water freezing (entropy)|sec:entropy
+compressor (isentropic efficiency demo)|sec:sfee
+adiabatic compression (diesel ignition)|sec:processes
+drift (heat-leak) correction|fig:drift
+insulated container network (demo)|demo:container
+gas over water, molar mass (demo)|sec:dalton
+phase-change materials (paraffin)|T:melting

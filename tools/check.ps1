@@ -9,10 +9,11 @@ try {
     Invoke-Check uv @('run', '--project', 'backend', 'ruff', 'check', 'backend')
     Invoke-Check uv @('run', '--project', 'backend', 'ruff', 'format', '--check', 'backend')
     Invoke-Check uv @('run', '--project', 'backend', 'pytest', 'backend/tests', '-q')
+    Invoke-Check uv @('run', '--project', 'backend', 'python', 'tools/qa_audit.py')
     Push-Location mobile
     try {
-        Invoke-Check npm @('run', 'typecheck')
-        Invoke-Check npm @('run', 'lint')
-        Invoke-Check npm @('test', '--', '--ci')
+        Invoke-Check node @('node_modules/typescript/bin/tsc', '--noEmit')
+        Invoke-Check node @('node_modules/eslint/bin/eslint.js', 'src')
+        Invoke-Check node @('node_modules/jest/bin/jest.js', '--ci', '--runInBand')
     } finally { Pop-Location }
 } finally { Pop-Location }

@@ -143,18 +143,12 @@ def learn_fold_links(
                 lag_p75 = round(max(lag_min, combined.lag_p75_min), 1)
                 n_storms = combined.n_storms
                 xcorr_r = round(combined.xcorr_r, 3)
-                celerity_ms = round(combined.celerity_ms, 2) if combined.celerity_ms else None
                 lag_review = combined.needs_review
             else:
-                # Physical celerity transfer (§17.13): c_hat = 2.5 m/s -> tau = dist_km * 1000 / (2.5 * 60)
-                tau_b = max(15.0, round(sp.channel_dist_km * 1000.0 / (2.5 * 60.0), 1))
-                lag_min = tau_b
-                lag_p25 = round(max(5.0, 0.75 * tau_b), 1)
-                lag_p75 = round(1.25 * tau_b, 1)
-                n_storms = max(1, len(lag_ests))
-                xcorr_r = 0.60
-                celerity_ms = 2.50
-                lag_review = crossing.tier == "A"
+                lag_min = lag_p25 = lag_p75 = None
+                n_storms = len(lag_ests)
+                xcorr_r = None
+                lag_review = True
 
             # 2. Learn trigger stage on training storms
             train_onsets_for_c = [
@@ -174,19 +168,8 @@ def learn_fold_links(
                 delay_min=float(delay_m),
                 nws_action_stage_ft=nws_action_by_gauge.get(gid),
             )
-            params_src = "transferred" if crossing.tier == "B" else trig.params_source
-            link_obj = Link(
-                crossing_id=cid,
-                gauge=gauge_obj,
-                lag_min=lag_min,
-                lag_p25_min=lag_p25,
-                lag_p75_min=lag_p75,
-                trigger_stage_ft=trig.trigger_stage_ft,
-                watch_stage_ft=trig.watch_stage_ft,
-                n_storms=max(1, n_storms),
-                is_primary=False,
-                relation="upstream",
-                min_rise_ft_30m=trig.min_rise_ft_30m,
+            params_src = (
+                "learned_proxy" if crossing.reference_stage_ft is not None else trig.params_source
             )
             row_dict = {
                 "crossing_id": cid,
@@ -200,8 +183,11 @@ def learn_fold_links(
                 "lag_p25_min": lag_p25,
                 "lag_p75_min": lag_p75,
                 "xcorr_r": xcorr_r,
-                "n_storms": max(1, n_storms),
-                "celerity_ms": celerity_ms,
+                "n_storms": n_storms,
+                "celerity_ms": None,
+                "calibration_kind": "empirical_gauge_lag" if not lag_review else "uncalibrated",
+                "distance_source": "assumed_corridor_distance",
+                "topology_verified": False,
                 "baseline_stage_ft": trig.baseline_stage_ft,
                 "trigger_stage_ft": trig.trigger_stage_ft,
                 "watch_stage_ft": trig.watch_stage_ft,
@@ -210,6 +196,23 @@ def learn_fold_links(
                 "params_source": params_src,
                 "needs_review": lag_review or trig.needs_review,
             }
+            if row_dict["needs_review"]:
+                # Keep rejected evidence visible, but never instantiate a forecasting link.
+                csv_rows.append(row_dict)
+                continue
+            link_obj = Link(
+                crossing_id=cid,
+                gauge=gauge_obj,
+                lag_min=lag_min,
+                lag_p25_min=lag_p25,
+                lag_p75_min=lag_p75,
+                trigger_stage_ft=trig.trigger_stage_ft,
+                watch_stage_ft=trig.watch_stage_ft,
+                n_storms=n_storms,
+                is_primary=False,
+                relation="upstream",
+                min_rise_ft_30m=trig.min_rise_ft_30m,
+            )
             learned_items.append((xcorr_r, link_obj, row_dict))
 
         # Sort to pick primary link: highest xcorr_r, then smallest lag_min (§17.9 rule 7)
@@ -297,7 +300,7 @@ async def run_loso_backtest(
     onsets_by_storm: dict[str, list[Onset]] = {}
 
     crossings_by_id = {c.id: c for c in crossings}
-    tier_a_crossings = [c for c in crossings if c.tier == "A"]
+    tier_a_crossings = [c for c in crossings if c.tier == "A" or c.reference_stage_ft is not None]
     tier_a_ids = {c.id for c in tier_a_crossings}
 
     for sdir in storm_dirs:
@@ -330,12 +333,14 @@ async def run_loso_backtest(
 
         storm_episodes = []
         for c in tier_a_crossings:
-            if c.target_gauge and c.overtop_stage_ft is not None:
+            if c.target_gauge and (
+                c.overtop_stage_ft is not None or c.reference_stage_ft is not None
+            ):
                 t_meta = crossing_truth_meta.get(c.id, {})
                 q_str = str(t_meta.get("truth_quality", "impact_statement"))
                 eps = extract_truth_episodes(
                     by_gauge.get(c.target_gauge.id, ()),
-                    c.overtop_stage_ft,
+                    c.overtop_stage_ft if c.overtop_stage_ft is not None else c.reference_stage_ft,
                     crossing_id=c.id,
                     storm_id=sid,
                     quality=q_str,
@@ -348,8 +353,21 @@ async def run_loso_backtest(
 
     all_storm_ids = [m["id"] for m in storm_metas]
 
+    control = next((m for m in storm_metas if m["id"] == "oct-2018"), None)
+    control_days = (
+        (
+            (
+                datetime.fromisoformat(control["window"]["end"])
+                - datetime.fromisoformat(control["window"]["start"])
+            ).total_seconds()
+            / 86400
+        )
+        if control
+        else 0
+    )
+
     # Learn live model parameters on all storms
-    live_version = "rule-2026.10.17"
+    live_version = "rule-reference-2026.10.18"
     live_links, all_link_rows = learn_fold_links(
         all_storm_ids,
         readings_by_storm,
@@ -473,7 +491,7 @@ async def run_loso_backtest(
                         {
                             "crossing_id": o.crossing_id,
                             "storm_id": sid,
-                            "tier": "A",
+                            "tier": crossings_by_id[o.crossing_id].tier,
                             "truth_quality": o.quality,
                             "onset": iso_z(o.t),
                             "first_alert_at": iso_z(hit.episode.start) if hit else None,
@@ -527,9 +545,13 @@ async def run_loso_backtest(
                 "per_crossing": per_crossing_watch,
             },
             "calm_fa_per_crossing_per_100d": {
-                "avoid": round(100.0 * ctrl_avoid_fa / (n_c * 1.5), 2),
-                "watch": round(100.0 * ctrl_watch_fa / (n_c * 1.5), 2),
-                "tier_b": {"avoid": 0.0, "watch": 0.0},
+                "avoid": round(100.0 * ctrl_avoid_fa / (n_c * control_days), 2),
+                "watch": round(100.0 * ctrl_watch_fa / (n_c * control_days), 2),
+                "tier_b": {
+                    "avoid": None,
+                    "watch": None,
+                    "status": "Not evaluated as a separate population",
+                },
             },
         }
 
@@ -616,10 +638,20 @@ async def run_loso_backtest(
     results_doc: dict[str, Any] = {
         "schema": "fordcast.results.v1",
         "generated_by": {
-            "command": "make backtest",
+            "command": "uv run --project backend python tools/build_replays.py",
             "git_sha": git_sha,
             "model_version": live_version,
-            "data_manifest_sha256": latency_sha,
+            "data_manifest_sha256": hashlib.sha256(
+                json.dumps(
+                    {
+                        m["id"]: hashlib.sha256(
+                            (data_dir / "storms" / m["id"] / "readings.parquet").read_bytes()
+                        ).hexdigest()
+                        for m in storm_metas
+                    },
+                    sort_keys=True,
+                ).encode()
+            ).hexdigest(),
             "latency_sha256": latency_sha,
             "python": "3.13",
             "hero_rule": f"tools/select_hero.py@{git_sha}",
@@ -640,28 +672,30 @@ async def run_loso_backtest(
                 }
             ],
             "calm_set": "oct-2018-control",
-            "calm_days": 2,
-            "calm_candidates": 2,
-            "calm_seed": 20241231,
+            "calm_days": control_days,
+            "calm_scope": "36-hour smoke control; not the required 30-day calm evaluation",
+            "calm_candidates": None,
+            "calm_seed": None,
         },
         "storms": storm_summary_rows,
         "methods": {
             "upstream_rule": methods_out["upstream_rule"],
             "nearest_gauge": methods_out["nearest_gauge"],
             "ml": None,
-            "reactive": {"median_lead_min": 0},
+            "reactive": {"median_lead_min": None, "status": "Not evaluated"},
         },
         "by_truth_quality": {
-            "non_proxy": pooled_up_avoid,
-            "proxy": {
-                "H": 0,
-                "M": 0,
-                "F": 0,
+            "non_proxy": {
+                "H": None,
+                "M": None,
+                "F": None,
                 "pod": None,
                 "far": None,
                 "csi": None,
                 "median_lead_min": None,
+                "status": "No validated road-overtopping labels",
             },
+            "proxy": pooled_up_avoid,
         },
         "delay_sensitivity": delay_sensitivity,
         "headline": {
@@ -672,7 +706,8 @@ async def run_loso_backtest(
             "far": pooled_up_avoid["far"],
             "csi": pooled_up_avoid["csi"],
             "median_lead_min": pooled_up_avoid["median_lead_min"],
-            "labels": "non_proxy",
+            "labels": "gauge_flood_stage_proxy",
+            "road_forecast_skill_verified": False,
         },
         "hero": None,
         "hero_by_storm": {},
@@ -705,6 +740,9 @@ def write_links_csv(path: Path, rows: Sequence[Mapping[str, Any]]) -> None:
         "train_csi",
         "params_source",
         "needs_review",
+        "calibration_kind",
+        "distance_source",
+        "topology_verified",
     ]
     with path.open("w", encoding="utf-8", newline="") as fh:
         writer = csv.DictWriter(fh, fieldnames=fieldnames)
@@ -723,10 +761,10 @@ def render_results_markdown(results: Mapping[str, Any]) -> str:
     lines = [
         "# FordCast Out-of-Sample Backtest Results (`fordcast.results.v1`)",
         "",
-        "> Generated deterministically by `make backtest` using Leave-One-Storm-Out (LOSO) cross-validation",
+        "> Generated deterministically by `uv run --project backend python tools/build_replays.py` using Leave-One-Storm-Out (LOSO) cross-validation",
         "> and frozen data-arrival latency (`data/latency/gauge_latency.json`, default 60 min delay).",
         "",
-        "## Pooled Headline Comparison (Tier-A Validated Crossings)",
+        "## Reference-Gauge Proxy Comparison — Not Road-Flooding Skill",
         "",
         "| Method | Level | Hits (H) | Misses (M) | False Alarms (F) | POD | FAR | CSI | Median Lead (min) |",
         "|---|---|---:|---:|---:|---:|---:|---:|---:|",
@@ -760,7 +798,7 @@ def render_results_markdown(results: Mapping[str, Any]) -> str:
         lines.extend(
             [
                 "",
-                "## Pre-Registered Hero Example (`tools/select_hero.py`)",
+                "## Deterministic Median-Lead Reference Example (`tools/select_hero.py`)",
                 "",
                 f"- **Rule:** {hero['rule']}",
                 f"- **Selected Storm:** `{hero['storm_id']}`",
@@ -769,4 +807,18 @@ def render_results_markdown(results: Mapping[str, Any]) -> str:
                 f"- **First Alert At:** `{hero['first_alert_at']}` → **Onset At:** `{hero['onset']}`",
             ]
         )
+    lines.extend(
+        [
+            "",
+            "## Interpretation and scope",
+            "",
+            "All evaluated labels are downstream NOAA gauge-category threshold crossings (proxy cases). None establishes that a road flooded. Several cases share a gauge; they are not independent roads. Bootstrap intervals resample storms.",
+            "",
+            "Drawn lines are schematic corridor connectors, not NLDI flowlines. Candidate topology and channel distances are unverified. Only empirically calibrated links passing quality gates generate experimental states. Uncalibrated links remain Unknown.",
+            "",
+            f"Calm exposure: {results['assumptions']['calm_days']} days from the bundled control timestamps. This is a 36-hour smoke control, not a 30-day calm evaluation. Separate Tier-B calm rates and reactive-baseline results are not evaluated (null).",
+            "",
+            "Road-level forecast performance, live operation, native-device behavior and human translation/accessibility acceptance remain unverified.",
+        ]
+    )
     return "\n".join(lines) + "\n"

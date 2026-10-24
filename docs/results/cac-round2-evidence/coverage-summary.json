@@ -1,0 +1,74 @@
+{
+  "scope": "Bundled app data, not district point-in-polygon coverage",
+  "official_seed_records": 1911,
+  "official_seed_region_km": 70,
+  "jurisdictions": {
+    "Georgetown": 46,
+    "City of Austin": 54,
+    "Travis County": 208,
+    "Caldwell County": 236,
+    "Williamson County": 231,
+    "Hays County": 364,
+    "Marble Falls": 52,
+    "Sunset Valley": 4,
+    "Bastrop County": 428,
+    "Round Rock": 17,
+    "Lee County": 40,
+    "Burnet County": 148,
+    "Leander": 10,
+    "Rollingwood": 3,
+    "West Lake Hills": 21,
+    "Cedar Park": 6,
+    "Bee Cave": 1,
+    "Horseshoe Bay": 4,
+    "Central Texas": 6,
+    "City of Bastrop": 2,
+    "Lago Vista": 1,
+    "Fayette County": 3,
+    "Pflugerville": 15,
+    "Blanco County": 1,
+    "Granite Shoals": 2,
+    "City of Kyle": 4,
+    "": 2,
+    "San Marcos": 2
+  },
+  "study_records": 141,
+  "calibrated_crossing_records": 4,
+  "linked_records": [
+    {
+      "id": "atx-19",
+      "name": "E. William Cannon Slave Arm (W)",
+      "coordinates": [
+        -97.7455673550752,
+        30.1791056763852
+      ]
+    },
+    {
+      "id": "atx-20",
+      "name": "E. William Cannon Master Standpipe",
+      "coordinates": [
+        -97.7439588482711,
+        30.1769141489512
+      ]
+    },
+    {
+      "id": "atx-21",
+      "name": "E. William Cannon Slave Arm (E)",
+      "coordinates": [
+        -97.738412894872,
+        30.1691228632686
+      ]
+    },
+    {
+      "id": "tc-167",
+      "name": "Henry Marx @ Barton Creek",
+      "coordinates": [
+        -97.88720392641063,
+        30.270618058516998
+      ]
+    }
+  ],
+  "road_forecast_verified_values": [
+    false
+  ]
+}

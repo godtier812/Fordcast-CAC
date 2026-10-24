@@ -1,0 +1,81 @@
+FAIL .local/__tests__/peer-probes.test.ts (21.348 s)
+  round 3 independent peer probes
+    × web Guardian exports the serializer imported by MonitorProvider (15 ms)
+    × one out-of-coverage excursion is not hidden by dense in-area vertices (5 ms)
+    × same NOAA event seen from two crossings counts once despite different distance (6 ms)
+    × Bear Creek and Bear Branch remain distinct named waterways (6 ms)
+
+  ● round 3 independent peer probes › web Guardian exports the serializer imported by MonitorProvider
+
+    expect(received).toEqual(expected) // deep equality
+
+    Expected: Any<Function>
+    Received: undefined
+
+      14 | describe('round 3 independent peer probes', () => {
+      15 |   test('web Guardian exports the serializer imported by MonitorProvider', () => {
+    > 16 |     expect((webGuardian as Record<string, unknown>).buildGuardianHazardsFromStatuses).toEqual(expect.any(Function));
+         |                                                                                       ^
+      17 |   });
+      18 |
+      19 |   test('one out-of-coverage excursion is not hidden by dense in-area vertices', () => {
+
+      at Object.toEqual (.local/__tests__/peer-probes.test.ts:16:87)
+
+  ● round 3 independent peer probes › one out-of-coverage excursion is not hidden by dense in-area vertices
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: true
+    Received: false
+
+      20 |     const austin = {lat:30.2672,lon:-97.7431};
+      21 |     const beyond = {lat:30.6265,lon:-96.3385};
+    > 22 |     expect(assessRouteCoverage(austin,austin,[...Array(100).fill(austin),beyond,austin]).outsideCoverage).toBe(true);
+         |                                                                                                           ^
+      23 |   });
+      24 |
+      25 |   test('same NOAA event seen from two crossings counts once despite different distance', () => {
+
+      at Object.toBe (.local/__tests__/peer-probes.test.ts:22:107)
+
+  ● round 3 independent peer probes › same NOAA event seen from two crossings counts once despite different distance
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: 1
+    Received: 2
+
+      33 |       base({id:'probe-b',lat:30.2673,history:history(0.3)}),
+      34 |     ]);
+    > 35 |     expect(countDistinctHistoryEvents(groups).distinctEvents).toBe(1);
+         |                                                               ^
+      36 |   });
+      37 |
+      38 |   test('Bear Creek and Bear Branch remain distinct named waterways', () => {
+
+      at Object.toBe (.local/__tests__/peer-probes.test.ts:35:63)
+
+  ● round 3 independent peer probes › Bear Creek and Bear Branch remain distinct named waterways
+
+    expect(received).toHaveLength(expected)
+
+    Expected length: 2
+    Received length: 1
+    Received array:  [{"cleanName": "Probe Road at Bear Creek", "id": "probe-a", "primary": {"alert": null, "coverage": "none", "creek": "Bear Creek", "danger": null, "displayState": null, "distanceKm": 1, "history": null, "id": "probe-a", "lat": 30.2672, "live": null, "lon": -97.7431, "monitored": false, "name": "Probe Road at Bear Creek", "official": null, "rain": null, "reasons": [], "state": "unknown", "window": null}, "recordCount": 2, "records": [{"alert": null, "coverage": "none", "creek": "Bear Creek", "danger": null, "displayState": null, "distanceKm": 1, "history": null, "id": "probe-a", "lat": 30.2672, "live": null, "lon": -97.7431, "monitored": false, "name": "Probe Road at Bear Creek", "official": null, "rain": null, "reasons": [], "state": "unknown", "window": null}, {"alert": null, "coverage": "none", "creek": "Bear Branch", "danger": null, "displayState": null, "distanceKm": 1, "history": null, "id": "probe-b", "lat": 30.2673, "live": null, "lon": -97.7431, "monitored": false, "name": "Probe Road at Bear Branch", "official": null, "rain": null, "reasons": [], "state": "unknown", "window": null}], "routeIndex": 0}]
+
+      39 |     expect(groupPhysicalCrossings([
+      40 |       base(),base({id:'probe-b',name:'Probe Road at Bear Branch',creek:'Bear Branch',lat:30.2673}),
+    > 41 |     ])).toHaveLength(2);
+         |         ^
+      42 |   });
+      43 | });
+      44 |
+
+      at Object.toHaveLength (.local/__tests__/peer-probes.test.ts:41:9)
+
+Test Suites: 1 failed, 1 total
+Tests:       4 failed, 4 total
+Snapshots:   0 total
+Time:        26.983 s
+Ran all test suites within paths ".local/__tests__/peer-probes.test.ts".

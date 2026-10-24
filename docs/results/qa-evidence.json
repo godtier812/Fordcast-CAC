@@ -1,0 +1,30 @@
+{
+  "checked_at": "2026-10-18T05:45:10.105059+00:00",
+  "status": "PASS",
+  "scope": "Scientific artifact contracts; browser/device acceptance is separate",
+  "tier_counts": {
+    "B": 30,
+    "C": 111
+  },
+  "reference_cases": 6,
+  "future_or_incorrect_chart_assignments": [],
+  "review_flagged_links_used_in_replays": [],
+  "hero": {
+    "storm_id": "memorial-day-2015",
+    "crossing_id": "tc-167",
+    "lead_min": 90.0,
+    "level": "avoid",
+    "onset": "2015-05-24T12:40:00Z",
+    "first_alert_at": "2015-05-24T11:10:00Z",
+    "censored": false,
+    "target_median_lead_min": 65.0,
+    "rule": "proxy-reference AVOID hit closest to the overall median lead; ties: catalog order, then crossing id"
+  },
+  "errors": [],
+  "remaining_external_acceptance": [
+    "road threshold and topology validation",
+    "30-day calm evaluation",
+    "live service and notification delivery",
+    "native-device, accessibility and fluent Spanish review"
+  ]
+}

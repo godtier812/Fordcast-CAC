@@ -1,0 +1,60 @@
+{
+  "checkedAt": "2026-10-22T05:01:49.583Z",
+  "scope": "Public fixed Austin coordinates only. Endpoint reachability and payload shape, not browser CORS, source truth, field safety, or service availability tomorrow.",
+  "results": [
+    {
+      "name": "ATXFloods",
+      "ok": true,
+      "status": 200,
+      "ms": 266,
+      "count": 6,
+      "shapePresent": false
+    },
+    {
+      "name": "NWS",
+      "ok": true,
+      "status": 200,
+      "ms": 157,
+      "count": 2,
+      "shapePresent": false
+    },
+    {
+      "name": "USGS",
+      "ok": true,
+      "status": 200,
+      "ms": 481,
+      "count": 755,
+      "returnedGaugeCount": 18,
+      "shapePresent": false
+    },
+    {
+      "name": "Valhalla",
+      "ok": true,
+      "status": 200,
+      "ms": 684,
+      "count": null,
+      "routeSummary": {
+        "has_time_restrictions": false,
+        "has_toll": false,
+        "has_highway": true,
+        "has_ferry": false,
+        "min_lat": 30.168953,
+        "min_lon": -97.770941,
+        "max_lat": 30.267215,
+        "max_lon": -97.735131,
+        "time": 857.145,
+        "length": 15.011,
+        "cost": 1261.06
+      },
+      "shapePresent": true
+    },
+    {
+      "name": "Photon",
+      "ok": true,
+      "status": 200,
+      "ms": 612,
+      "count": 3,
+      "shapePresent": false
+    }
+  ]
+}

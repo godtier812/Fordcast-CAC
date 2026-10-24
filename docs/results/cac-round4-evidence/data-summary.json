@@ -1,0 +1,215 @@
+{
+  "counts": {
+    "study": 141,
+    "regional": 1911,
+    "historyEvents": 727,
+    "historyPeriod": {
+      "start": "1996-01-01",
+      "end": "2026-06-15"
+    },
+    "primaryLinks": [
+      {
+        "crossing": "atx-19",
+        "gauge": "USGS-08158860"
+      },
+      {
+        "crossing": "atx-20",
+        "gauge": "USGS-08158860"
+      },
+      {
+        "crossing": "atx-21",
+        "gauge": "USGS-08158860"
+      },
+      {
+        "crossing": "tc-167",
+        "gauge": "USGS-08155240"
+      }
+    ]
+  },
+  "metrics": {
+    "upstream_rule": {
+      "H": 4,
+      "M": 8,
+      "F": 1,
+      "pod": 0.333,
+      "far": 0.2,
+      "csi": 0.308,
+      "median_lead_min": 65,
+      "lead_iqr_min": [
+        32.5,
+        112.5
+      ],
+      "pct_lead_ge_15": 75,
+      "ci95": {
+        "pod": [
+          0.167,
+          0.5
+        ],
+        "far": [
+          0,
+          0.75
+        ],
+        "csi": [
+          0.125,
+          0.5
+        ],
+        "median_lead_min": [
+          40,
+          95
+        ]
+      }
+    },
+    "nearest_gauge": {
+      "H": 4,
+      "M": 8,
+      "F": 0,
+      "pod": 0.333,
+      "far": 0,
+      "csi": 0.333,
+      "median_lead_min": 65,
+      "lead_iqr_min": [
+        32.5,
+        112.5
+      ],
+      "pct_lead_ge_15": 75,
+      "ci95": {
+        "pod": [
+          0.167,
+          0.5
+        ],
+        "far": [
+          0,
+          0
+        ],
+        "csi": [
+          0.167,
+          0.5
+        ],
+        "median_lead_min": [
+          40,
+          95
+        ]
+      }
+    }
+  },
+  "exampleRecords": [
+    {
+      "id": "atx-19",
+      "name": "E. William Cannon Slave Arm (W)",
+      "creek": "Onion Creek",
+      "coords": [
+        -97.7455673550752,
+        30.1791056763852
+      ],
+      "review": "unverified_road_and_topology"
+    },
+    {
+      "id": "atx-20",
+      "name": "E. William Cannon Master Standpipe",
+      "creek": "Onion Creek",
+      "coords": [
+        -97.7439588482711,
+        30.1769141489512
+      ],
+      "review": "unverified_road_and_topology"
+    },
+    {
+      "id": "atx-21",
+      "name": "E. William Cannon Slave Arm (E)",
+      "creek": "Onion Creek",
+      "coords": [
+        -97.738412894872,
+        30.1691228632686
+      ],
+      "review": "unverified_road_and_topology"
+    },
+    {
+      "id": "tc-167",
+      "name": "Henry Marx @ Barton Creek",
+      "creek": "Barton Creek",
+      "coords": [
+        -97.88720392641063,
+        30.270618058516998
+      ],
+      "review": "unverified_road_and_topology"
+    }
+  ],
+  "trips": [
+    {
+      "storm": "halloween-2013",
+      "crossing": "tc-167",
+      "name": "Henry Marx @ Barton Creek",
+      "trigger": {
+        "t": "2013-10-31T06:50:00Z",
+        "state": "avoid"
+      },
+      "decisionSeconds": 10.75058337464097,
+      "expectedTriggerSeconds": 7.75058337464097,
+      "expectedArrivalSecondsWithDetour": 245.55167396387466,
+      "baselineMin": 9.4,
+      "detourMin": 22.2,
+      "hasDetour": true
+    },
+    {
+      "storm": "memorial-day-2015",
+      "crossing": "tc-167",
+      "name": "Henry Marx @ Barton Creek",
+      "trigger": {
+        "t": "2015-05-24T11:10:00Z",
+        "state": "avoid"
+      },
+      "decisionSeconds": 5.9573541673299575,
+      "expectedTriggerSeconds": 2.9573541673299575,
+      "expectedArrivalSecondsWithDetour": 122.96604273754602,
+      "baselineMin": 10.8,
+      "detourMin": 18.5,
+      "hasDetour": true
+    },
+    {
+      "storm": "halloween-2015",
+      "crossing": "tc-167",
+      "name": "Henry Marx @ Barton Creek",
+      "trigger": {
+        "t": "2015-10-30T19:40:00Z",
+        "state": "avoid"
+      },
+      "decisionSeconds": 8.427854678179258,
+      "expectedTriggerSeconds": 5.4278546781792585,
+      "expectedArrivalSecondsWithDetour": 118.87313136835563,
+      "baselineMin": 11.7,
+      "detourMin": 18.5,
+      "hasDetour": true
+    },
+    {
+      "storm": "oct-2018",
+      "crossing": "atx-19",
+      "name": "E. William Cannon Slave Arm (W)",
+      "trigger": {
+        "t": "2018-10-16T14:40:00Z",
+        "state": "avoid"
+      },
+      "decisionSeconds": 15.019634476168186,
+      "expectedTriggerSeconds": 12.019634476168186,
+      "expectedArrivalSecondsWithDetour": 91.21681490641551,
+      "baselineMin": 8.6,
+      "detourMin": 14,
+      "hasDetour": true
+    },
+    {
+      "storm": "july-2025",
+      "crossing": "atx-19",
+      "name": "E. William Cannon Slave Arm (W)",
+      "trigger": {
+        "t": "2025-07-05T17:10:00Z",
+        "state": "watch"
+      },
+      "decisionSeconds": 12.705526461707038,
+      "expectedTriggerSeconds": 9.705526461707038,
+      "expectedArrivalSecondsWithDetour": 118.29800782990286,
+      "baselineMin": 9.2,
+      "detourMin": 16.4,
+      "hasDetour": true
+    }
+  ],
+  "studyMetadataPresent": 30
+}

@@ -1,0 +1,252 @@
+{
+  "checked_at": "2026-10-18T04:30:12.997085+00:00",
+  "method": "Committed artifacts and source audit; no rendered browser interaction",
+  "tier_counts": {
+    "B": 18,
+    "A": 12,
+    "C": 111
+  },
+  "onion_filter_count_monitored": 4,
+  "wrong_nearest_baselines": [
+    {
+      "crossing": "atx-12",
+      "configured": "USGS-08154700",
+      "actual_nearest": "USGS-08158200"
+    },
+    {
+      "crossing": "atx-13",
+      "configured": "USGS-08154700",
+      "actual_nearest": "USGS-08158200"
+    },
+    {
+      "crossing": "atx-15",
+      "configured": "USGS-08158840",
+      "actual_nearest": "USGS-08158920"
+    },
+    {
+      "crossing": "atx-16",
+      "configured": "USGS-08158840",
+      "actual_nearest": "USGS-08158920"
+    },
+    {
+      "crossing": "atx-19",
+      "configured": "USGS-08158840",
+      "actual_nearest": "USGS-08158970"
+    },
+    {
+      "crossing": "atx-20",
+      "configured": "USGS-08158840",
+      "actual_nearest": "USGS-08158970"
+    },
+    {
+      "crossing": "atx-21",
+      "configured": "USGS-08158840",
+      "actual_nearest": "USGS-08158970"
+    },
+    {
+      "crossing": "atx-3",
+      "configured": "USGS-08154700",
+      "actual_nearest": "USGS-08158200"
+    },
+    {
+      "crossing": "atx-7",
+      "configured": "USGS-08158860",
+      "actual_nearest": "USGS-08158930"
+    },
+    {
+      "crossing": "atx-8",
+      "configured": "USGS-08158860",
+      "actual_nearest": "USGS-08158930"
+    },
+    {
+      "crossing": "tc-133",
+      "configured": "USGS-08158827",
+      "actual_nearest": "USGS-08158860"
+    },
+    {
+      "crossing": "tc-167",
+      "configured": "USGS-08158920",
+      "actual_nearest": "USGS-08155240"
+    }
+  ],
+  "target_distances": [
+    {
+      "crossing": "atx-12",
+      "target": "USGS-08158600",
+      "distance_km": 15.61
+    },
+    {
+      "crossing": "atx-13",
+      "target": "USGS-08158600",
+      "distance_km": 16.01
+    },
+    {
+      "crossing": "atx-15",
+      "target": "USGS-08158930",
+      "distance_km": 6.35
+    },
+    {
+      "crossing": "atx-16",
+      "target": "USGS-08158930",
+      "distance_km": 6.31
+    },
+    {
+      "crossing": "atx-19",
+      "target": "USGS-08159000",
+      "distance_km": 5.48
+    },
+    {
+      "crossing": "atx-20",
+      "target": "USGS-08159000",
+      "distance_km": 5.32
+    },
+    {
+      "crossing": "atx-21",
+      "target": "USGS-08159000",
+      "distance_km": 4.89
+    },
+    {
+      "crossing": "atx-3",
+      "target": "USGS-08158600",
+      "distance_km": 15.83
+    },
+    {
+      "crossing": "atx-7",
+      "target": "USGS-08158970",
+      "distance_km": 4.43
+    },
+    {
+      "crossing": "atx-8",
+      "target": "USGS-08158970",
+      "distance_km": 4.36
+    },
+    {
+      "crossing": "tc-133",
+      "target": "USGS-08158860",
+      "distance_km": 1.14
+    },
+    {
+      "crossing": "tc-167",
+      "target": "USGS-08155300",
+      "distance_km": 8.66
+    }
+  ],
+  "review_flagged_link_rows": 207,
+  "total_link_rows": 264,
+  "hero": {
+    "censored": false,
+    "crossing_id": "atx-7",
+    "first_alert_at": "2013-10-31T06:15:00Z",
+    "lead_min": 70.0,
+    "level": "avoid",
+    "onset": "2013-10-31T07:25:00Z"
+  },
+  "storyboard_third": {
+    "en": "Onion Ck at US Hwy 183, Austin, TX went silent. Its readings only arrived later, so FordCast shows Unknown here.",
+    "es": "Onion Ck at US Hwy 183, Austin, TX dej\u00f3 de transmitir. Sus lecturas llegaron despu\u00e9s, as\u00ed que FordCast muestra Desconocido aqu\u00ed.",
+    "kind": "gauge_silent",
+    "t": "2013-10-31T06:10:00Z"
+  },
+  "ross_at_0610": "unknown",
+  "outage_indicator_checks": [
+    {
+      "sim_time": "2013-10-31T11:20:00Z",
+      "screen_silent_indicator_from_current_algorithm": false
+    },
+    {
+      "sim_time": "2013-10-31T12:20:00Z",
+      "screen_silent_indicator_from_current_algorithm": true
+    }
+  ],
+  "future_observations_assigned_to_earlier_chart_grid": [
+    {
+      "storm": "halloween-2013",
+      "gauge": "USGS-08158200",
+      "grid_at": "2013-10-31 19:45:00+00:00",
+      "actual_observation_at": "2013-10-31 19:50:00+00:00"
+    },
+    {
+      "storm": "halloween-2013",
+      "gauge": "USGS-08158200",
+      "grid_at": "2013-10-31 22:00:00+00:00",
+      "actual_observation_at": "2013-10-31 22:10:00+00:00"
+    },
+    {
+      "storm": "halloween-2015",
+      "gauge": "USGS-08158860",
+      "grid_at": "2015-10-30 10:15:00+00:00",
+      "actual_observation_at": "2015-10-30 10:25:00+00:00"
+    },
+    {
+      "storm": "july-2025",
+      "gauge": "USGS-08155300",
+      "grid_at": "2025-07-04 14:15:00+00:00",
+      "actual_observation_at": "2025-07-04 14:30:00+00:00"
+    },
+    {
+      "storm": "july-2025",
+      "gauge": "USGS-08155300",
+      "grid_at": "2025-07-04 18:15:00+00:00",
+      "actual_observation_at": "2025-07-04 18:30:00+00:00"
+    },
+    {
+      "storm": "july-2025",
+      "gauge": "USGS-08155300",
+      "grid_at": "2025-07-05 09:45:00+00:00",
+      "actual_observation_at": "2025-07-05 10:00:00+00:00"
+    },
+    {
+      "storm": "july-2025",
+      "gauge": "USGS-08155300",
+      "grid_at": "2025-07-05 15:45:00+00:00",
+      "actual_observation_at": "2025-07-05 15:55:00+00:00"
+    },
+    {
+      "storm": "july-2025",
+      "gauge": "USGS-08158840",
+      "grid_at": "2025-07-05 14:15:00+00:00",
+      "actual_observation_at": "2025-07-05 14:30:00+00:00"
+    },
+    {
+      "storm": "memorial-day-2015",
+      "gauge": "USGS-08158200",
+      "grid_at": "2015-05-24 21:30:00+00:00",
+      "actual_observation_at": "2015-05-24 21:35:00+00:00"
+    }
+  ],
+  "official_AAIT2": {
+    "url": "https://api.water.noaa.gov/nwps/v1/gauges/AAIT2",
+    "categories": {
+      "major": {
+        "stage": 18,
+        "flow": -9999
+      },
+      "moderate": {
+        "stage": 14,
+        "flow": -9999
+      },
+      "minor": {
+        "stage": 13,
+        "flow": -9999
+      },
+      "action": {
+        "stage": -9999,
+        "flow": -9999
+      }
+    },
+    "impacts": []
+  },
+  "official_USGS_spot_check": {
+    "url": "https://api.waterdata.usgs.gov/ogcapi/v1/collections/continuous/items?f=json&monitoring_location_id=USGS-08158970&parameter_code=00065&time=2013-10-31T06%3A00%3A00Z%2F2013-10-31T08%3A00%3A00Z&limit=100",
+    "compared": 25,
+    "matched": 25
+  },
+  "isolated_rebuild_exact_matches": {
+    "docs/results/results.json": true,
+    "data/replays/halloween-2013.json.gz": true,
+    "data/replays/halloween-2015.json.gz": true,
+    "data/replays/july-2025.json.gz": true,
+    "data/replays/memorial-day-2015.json.gz": true,
+    "data/replays/oct-2018.json.gz": true
+  }
+}

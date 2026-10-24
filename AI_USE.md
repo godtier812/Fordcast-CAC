@@ -12,4 +12,21 @@ This document records actual authorship across the repository in accordance with
 
 ## Student Review & Explain-Back
 - One-page explainers in `docs/explain/` summarize the mathematical and algorithmic design of the four core modules (`travel_time.py`, `baseline_rule.py`, `metrics.py`, and `sources/base.py`) so the student can review, inspect, and explain every component.
-- All quantitative claims in `docs/CLAIMS.md` and `docs/results/results.json` are computed deterministically from real archived USGS Water Data OGC API v1 and NOAA NWPS records.
+- Source observations were checked against public USGS/NOAA records. The October 18 audit
+  repairs remove unsupported road thresholds, an incorrectly selected comparator,
+  future-to-past chart assignments, and invented fallback calibration evidence. Results
+  now concern downstream gauge-category proxy cases; road-flooding skill is unverified.
+- The repair code, regression tests and documentation are agent-authored. No student
+  explain-back review, human field validation or submission-policy compliance is implied.
+
+## October 22 finalization pass
+
+- At the user's request, the agent implemented additional trip-evidence loading/failure states,
+  malformed ATXFloods/NWS response guards, a storm-transition regression repair, origin-selection
+  handling, route-screen simplification, contrast changes, bilingual copy and regression tests.
+- The agent corrected submission wording, including a USGS station name and the national deadline,
+  and wrote the Round 5 audit/recording handoff. These edits and drafts are agent-authored.
+- No student personal experience, field validation, fluent Spanish review, user study, eligibility
+  confirmation, official endorsement or competition-policy compliance was established by this pass.
+- Existing scientific results were not recalibrated or rewritten. The student must review the
+  implementation, understand the limits and provide truthful personal answers and disclosure.

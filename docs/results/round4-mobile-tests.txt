@@ -1,0 +1,12 @@
+PASS src/__tests__/round2-probes.test.ts (13.168 s)
+PASS src/__tests__/components.test.tsx
+PASS src/__tests__/routing.test.ts
+PASS src/__tests__/contracts.test.ts
+PASS src/__tests__/replay-controls.test.ts
+PASS src/__tests__/live.test.ts
+
+Test Suites: 6 passed, 6 total
+Tests:       82 passed, 82 total
+Snapshots:   0 total
+Time:        21.279 s, estimated 27 s
+Ran all test suites.

@@ -10,10 +10,15 @@ import halloween2015 from '../../assets/replays/halloween-2015.json';
 import oct2018 from '../../assets/replays/oct-2018.json';
 import july2025 from '../../assets/replays/july-2025.json';
 import resultsDoc from '../../assets/results/results.json';
+import historyDoc from '../../assets/history/crossing_history.json';
+import tripsDoc from '../../assets/demo/trips.json';
+import officialDoc from '../../assets/seed/official_crossings.json';
 import type { RiskState } from './risk';
 
 export const crossings = inventory.features;
 export type Crossing = (typeof crossings)[number];
+export type OfficialSeedCrossing = { id: string; name: string; j: string; lat: number; lon: number };
+export const officialCrossings = (officialDoc as { crossings: OfficialSeedCrossing[] }).crossings;
 export const gauges = gaugesDoc.features;
 export type GaugeFeature = (typeof gauges)[number];
 export const creeks = creeksDoc.features;
@@ -22,6 +27,54 @@ export type CrossingLink = (typeof links)[number];
 export const history = observations;
 export const replayIndex = replayIndexDoc;
 export const results = resultsDoc;
+
+/** NOAA Storm Events flood reports within 2 km of each crossing (tools/build_flood_history.py). */
+export type FloodHistoryEntry = {
+  reports: number;
+  flash_flood_reports: number;
+  deaths: number;
+  vehicle_deaths: number;
+  injuries: number;
+  vehicle_related: number;
+  nearest_km: number | null;
+  last_event: string | null;
+  risk_tier: 'high' | 'elevated' | 'none';
+  event_ids?: string[];
+  events: {
+    event_id?: string;
+    date: string;
+    type: string;
+    dist_km: number;
+    deaths: number;
+    vehicle_related: boolean;
+    summary: string;
+  }[];
+};
+export const floodHistory = historyDoc as unknown as {
+  source: string;
+  source_url: string;
+  period: { start: string; end: string };
+  radius_km: number;
+  total_events_in_area: number;
+  crossings: Record<string, FloodHistoryEntry>;
+};
+
+/** One precomputed moving-car demo per storm (tools/build_demo_trips.mjs, Valhalla routing). */
+export type DemoTrip = {
+  stormId: string;
+  crossingId: string;
+  crossingName: string;
+  cluster: string[];
+  trigger: { t: string; state: string };
+  origin: [number, number];
+  destination: [number, number];
+  viaCrossing: boolean;
+  baseline: { coords: [number, number][]; km: number; min: number };
+  decisionIndex: number;
+  crossingAlongKm: number;
+  reroute: { coords: [number, number][]; km: number; min: number } | null;
+};
+export const demoTrips = (tripsDoc as unknown as { trips: DemoTrip[] }).trips;
 
 export type ReplayGauge = {
   id: string;

@@ -1,0 +1,53 @@
+FAIL .local/__tests__/round4-guardian-probes.test.ts
+  √ partial refresh drops an expired NWS-only warning when official feed succeeds (4 ms)
+  × recent cache never sends an expired NWS warning before the ten-minute refresh threshold (1 ms)
+  × total network failure never revives an expired NWS warning from fallback cache
+  √ total network failure retains an unexpired known warning within retention
+
+  ● recent cache never sends an expired NWS warning before the ten-minute refresh threshold
+
+    expect(jest.fn()).not.toHaveBeenCalled()
+
+    Expected number of calls: 0
+    Received number of calls: 1
+
+    1: "Flood Alert: Probe crossing ahead", "Flash Flood Warning, 0.0 mi from you. Turn around — find another route."
+
+      40 | test('recent cache never sends an expired NWS warning before the ten-minute refresh threshold', async () => {
+      41 |   await approach(cache(2, true));
+    > 42 |   expect(sendLocalNotification).not.toHaveBeenCalled();
+         |                                     ^
+      43 | });
+      44 | test('total network failure never revives an expired NWS warning from fallback cache', async () => {
+      45 |   await approach(cache(11, true));
+
+      at Object.toHaveBeenCalled (.local/__tests__/round4-guardian-probes.test.ts:42:37)
+      at asyncGeneratorStep (node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+
+  ● total network failure never revives an expired NWS warning from fallback cache
+
+    expect(jest.fn()).not.toHaveBeenCalled()
+
+    Expected number of calls: 0
+    Received number of calls: 1
+
+    1: "Flood Alert: Probe crossing ahead", "Flash Flood Warning, 0.0 mi from you. Turn around — find another route."
+
+      44 | test('total network failure never revives an expired NWS warning from fallback cache', async () => {
+      45 |   await approach(cache(11, true));
+    > 46 |   expect(sendLocalNotification).not.toHaveBeenCalled();
+         |                                     ^
+      47 | });
+      48 | test('total network failure retains an unexpired known warning within retention', async () => {
+      49 |   await approach(cache(11, false));
+
+      at Object.toHaveBeenCalled (.local/__tests__/round4-guardian-probes.test.ts:46:37)
+      at asyncGeneratorStep (node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+
+Test Suites: 1 failed, 1 total
+Tests:       2 failed, 2 passed, 4 total
+Snapshots:   0 total
+Time:        2.766 s
+Ran all test suites within paths ".local/__tests__/round4-guardian-probes.test.ts".

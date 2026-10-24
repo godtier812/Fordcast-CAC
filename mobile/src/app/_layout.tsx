@@ -11,6 +11,10 @@ import { PreferencesProvider, usePreferences } from '@/lib/preferences';
 import { theme } from '@/lib/theme';
 import Pledge from '@/features/onboarding/Pledge';
 import { AppText } from '@/components/fordcast/UI';
+import { AlertBanner } from '@/components/fc/Kit';
+import { MonitorProvider } from '@/lib/monitor';
+// Registers the background "guardian" task at startup (required by expo-task-manager).
+import '@/lib/guardian';
 function Routes() {
   const { ready, pledgeVersion, t, storageError } = usePreferences();
   if (!ready)
@@ -21,34 +25,38 @@ function Routes() {
     );
   if (pledgeVersion !== 1) return <Pledge />;
   return (
-    <View style={{ flex: 1 }}>
-      {storageError && (
-        <AppText style={{ backgroundColor: theme.raised, padding: 12 }}>
-          {t('error.storage')}
-        </AppText>
-      )}
-      <Stack
-        screenOptions={{
-          headerStyle: { backgroundColor: theme.bg },
-          headerTintColor: theme.text,
-          contentStyle: { backgroundColor: theme.bg },
-          headerBackTitle: t('common.back'),
-        }}
-      >
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen
-          name="crossing/[id]"
-          options={{
-            presentation: 'formSheet',
-            title: t('crossing.title'),
-            sheetAllowedDetents: [0.62, 1],
-            sheetGrabberVisible: true,
+    <MonitorProvider>
+      <View style={{ flex: 1 }}>
+        {storageError && (
+          <AppText style={{ backgroundColor: theme.raised, padding: 12 }}>
+            {t('error.storage')}
+          </AppText>
+        )}
+        <Stack
+          screenOptions={{
+            headerStyle: { backgroundColor: theme.bg },
+            headerTintColor: theme.text,
+            contentStyle: { backgroundColor: theme.bg },
+            headerBackTitle: t('common.back'),
           }}
-        />
-        <Stack.Screen name="settings" options={{ title: t('nav.settings') }} />
-        <Stack.Screen name="legend" options={{ title: t('map.legend') }} />
-      </Stack>
-    </View>
+        >
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack.Screen
+            name="crossing/[id]"
+            options={{
+              presentation: 'formSheet',
+              title: t('crossing.title'),
+              sheetAllowedDetents: [0.62, 1],
+              sheetGrabberVisible: true,
+            }}
+          />
+          <Stack.Screen name="settings" options={{ title: t('nav.settings') }} />
+          <Stack.Screen name="legend" options={{ title: t('map.legend') }} />
+          <Stack.Screen name="lab" options={{ title: t('lab.title') }} />
+        </Stack>
+        <AlertBanner />
+      </View>
+    </MonitorProvider>
   );
 }
 export default function RootLayout() {

@@ -76,12 +76,10 @@ def build_stage_grid(
     n_rows = len(sorted_rows)
     for k in range(n_steps):
         target = window_start + timedelta(seconds=k * dt_s)
-        while idx + 1 < n_rows and abs(
-            (sorted_rows[idx + 1].obs_time - target).total_seconds()
-        ) <= abs((sorted_rows[idx].obs_time - target).total_seconds()):
+        while idx + 1 < n_rows and sorted_rows[idx + 1].obs_time <= target:
             idx += 1
         best = sorted_rows[idx]
-        if abs((best.obs_time - target).total_seconds()) <= 1200:
+        if 0 <= (target - best.obs_time).total_seconds() <= 1200:
             out.append(round(float(best.value), 2))
         else:
             out.append(None)
@@ -199,6 +197,7 @@ async def build_replay_document(
     linked_gauge_ids = sorted(
         {lnk.gauge.id for lnks in model.links.values() for lnk in lnks}
         | {c.target_gauge.id for c in model.crossings if c.target_gauge is not None}
+        | {r.gauge_id for r in readings}
     )
 
     readings_by_gauge: dict[str, list[Reading]] = {}
@@ -256,6 +255,7 @@ async def build_replay_document(
                 "tier": c.tier,
                 "initial_state": initial_states.get(c.id, "unknown"),
                 "overtop_stage_ft": c.overtop_stage_ft,
+                "reference_stage_ft": c.reference_stage_ft,
                 "target_gauge_id": c.target_gauge.id if c.target_gauge else None,
             }
         )
@@ -287,7 +287,8 @@ async def build_replay_document(
                     "tau_hi_min": tau_hi,
                     "trigger_ft": round(lnk.trigger_stage_ft, 2),
                     "watch_ft": round(lnk.watch_stage_ft, 2),
-                    "channel_dist_km": lmeta.get("channel_dist_km", 8.5),
+                    "channel_dist_km": lmeta.get("channel_dist_km"),
+                    "geometry_source": "schematic_corridor_connector",
                     "flowline": flowline,
                 }
             )

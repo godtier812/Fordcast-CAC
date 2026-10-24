@@ -9,10 +9,10 @@ kind = "storm"
 bundle = true
 catalog_order = 1
 data_sha256 = "09303369428e661dc20fc4dc522f1bb7ba0f435e500be543144c794ac38a132b"
-notes = "US 183 gauge silent after 2013-10-31T04:45:00Z; values are approved USGS OGC API v1 data"
+notes = "Archive gaps are distinct from the modeled delivery interruption at 11:15Z–13:45Z. This interruption is an explicit robustness assumption, not a verified historical transmission outage."
 
 outages = [
-  { site = "USGS-08159000", start = "2013-10-31T11:15:00Z", end = "2013-10-31T13:45:00Z", source = "USGS alert 2013-10-31; Statesman 2013-11-10" },
+  { site = "USGS-08159000", start = "2013-10-31T11:15:00Z", end = "2013-10-31T13:45:00Z", source = "Modeled delivery interruption; historical transmission timing unverified" },
 ]
 
 [window]

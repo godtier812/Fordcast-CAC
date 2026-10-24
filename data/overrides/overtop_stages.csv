@@ -1,13 +1,1 @@
 crossing_id,gauge_id,overtop_stage_ft,truth_quality,truth_source,confirmed_by,date
-atx-12,USGS-08158600,21.0,gauge,COA FEWS LWC gate 6710 / USGS-08158600 Walnut Creek overbank road stage 21.0 ft,NWPS/COA archive verification,2026-10-17
-atx-13,USGS-08158600,22.0,gauge,COA FEWS LWC gate 6200 / USGS-08158600 Walnut Creek overbank road stage 22.0 ft,NWPS/COA archive verification,2026-10-17
-atx-15,USGS-08158930,13.0,impact_statement,NWS NWPS AAIT2 minor flood stage 13.0 ft (Williamson Creek flood plain),NWPS/COA archive verification,2026-10-17
-atx-16,USGS-08158930,14.0,impact_statement,NWS NWPS AAIT2 moderate flood stage 14.0 ft (Williamson Creek flood plain),NWPS/COA archive verification,2026-10-17
-atx-19,USGS-08159000,17.0,impact_statement,NWS NWPS ATIT2 minor flood stage 17.0 ft (low street crossings on Onion Creek),NWPS/COA archive verification,2026-10-17
-atx-20,USGS-08159000,22.0,impact_statement,NWS NWPS ATIT2 moderate flood approach 22.0 ft (Onion Creek low corridor),NWPS/COA archive verification,2026-10-17
-atx-21,USGS-08159000,27.0,impact_statement,NWS NWPS ATIT2 @ 27.0 ft: 6100 block of East William Cannon Drive flooded,NWPS/COA archive verification,2026-10-17
-atx-3,USGS-08158600,20.0,gauge,COA FEWS LWC gate 6300 / USGS-08158600 Walnut Creek overbank road stage 20.0 ft,NWPS/COA archive verification,2026-10-17
-atx-7,USGS-08158970,15.5,gauge,COA FEWS LWC gate 6500 / USGS-08158970 Williamson Creek overbank stage 15.5 ft,NWPS/COA archive verification,2026-10-17
-atx-8,USGS-08158970,16.0,gauge,COA FEWS LWC gate 6510 / USGS-08158970 Williamson Creek overbank stage 16.0 ft,NWPS/COA archive verification,2026-10-17
-tc-133,USGS-08158860,9.0,impact_statement,NWS NWPS SCAT2/SLHT2 @ 9.0 ft: Moderate lowland flooding covers Slaughter Creek crossing,NWPS/COA archive verification,2026-10-17
-tc-167,USGS-08155300,11.0,impact_statement,NWS NWPS ABTT2 @ 11.0 ft: Minor lowland flooding reaches lowest secondary roads and bridges,NWPS/COA archive verification,2026-10-17

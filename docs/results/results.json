@@ -1,13 +1,15 @@
 {
   "schema": "fordcast.results.v1",
   "generated_by": {
-    "command": "make backtest",
-    "git_sha": "fd9407c",
-    "model_version": "rule-2026.10.17",
-    "data_manifest_sha256": "544d87a5b0586876d1dcdd9c2f63f01eecb665bfc36648ed58c2b235dbca64ec",
+    "command": "uv run --project backend python tools/build_replays.py",
+    "git_sha": "69c90c2",
+    "model_version": "rule-reference-2026.10.18",
+    "data_manifest_sha256": "83b8aa1b0d25c5f3a385b987580b40865b4aa450d8cc559dc31b696337242f80",
     "latency_sha256": "544d87a5b0586876d1dcdd9c2f63f01eecb665bfc36648ed58c2b235dbca64ec",
     "python": "3.13",
-    "hero_rule": "tools/select_hero.py@fd9407c"
+    "hero_rule": "tools/select_hero.py@69c90c2",
+    "source_sha256": "e5a6aa42c16fbe093449eb183b181d2bea111d16d1124ded7b1f811bb65f3fe3",
+    "working_tree_dirty": true
   },
   "assumptions": {
     "lead_window_min": 180,
@@ -45,9 +47,10 @@
       }
     ],
     "calm_set": "oct-2018-control",
-    "calm_days": 2,
-    "calm_candidates": 2,
-    "calm_seed": 20241231
+    "calm_days": 1.5,
+    "calm_scope": "36-hour smoke control; not the required 30-day calm evaluation",
+    "calm_candidates": null,
+    "calm_seed": null
   },
   "storms": [
     {
@@ -56,10 +59,10 @@
       "name_es": "Inundación de Halloween 2013",
       "catalog_order": 1,
       "bundle": true,
-      "n_crossings": 12,
-      "n_onsets": 10,
+      "n_crossings": 6,
+      "n_onsets": 4,
       "n_censored": 0,
-      "unknown_at_onset": 0
+      "unknown_at_onset": 2
     },
     {
       "id": "memorial-day-2015",
@@ -67,10 +70,10 @@
       "name_es": "Inundación del Día de los Caídos 2015",
       "catalog_order": 2,
       "bundle": true,
-      "n_crossings": 12,
-      "n_onsets": 3,
+      "n_crossings": 6,
+      "n_onsets": 2,
       "n_censored": 0,
-      "unknown_at_onset": 0
+      "unknown_at_onset": 1
     },
     {
       "id": "halloween-2015",
@@ -78,10 +81,10 @@
       "name_es": "Inundación de Todos los Santos 2015",
       "catalog_order": 3,
       "bundle": true,
-      "n_crossings": 12,
-      "n_onsets": 12,
+      "n_crossings": 6,
+      "n_onsets": 6,
       "n_censored": 0,
-      "unknown_at_onset": 0
+      "unknown_at_onset": 2
     },
     {
       "id": "oct-2018",
@@ -89,7 +92,7 @@
       "name_es": "Lluvia de octubre de 2018 (Control)",
       "catalog_order": 4,
       "bundle": true,
-      "n_crossings": 12,
+      "n_crossings": 6,
       "n_onsets": 0,
       "n_censored": 0,
       "unknown_at_onset": 0
@@ -100,8 +103,8 @@
       "name_es": "Crecida rápida urbana de julio de 2025",
       "catalog_order": 5,
       "bundle": true,
-      "n_crossings": 12,
-      "n_onsets": 3,
+      "n_crossings": 6,
+      "n_onsets": 0,
       "n_censored": 0,
       "unknown_at_onset": 0
     }
@@ -110,73 +113,73 @@
     "upstream_rule": {
       "avoid": {
         "pooled": {
-          "H": 25,
-          "M": 3,
-          "F": 25,
-          "pod": 0.893,
-          "far": 0.5,
-          "csi": 0.472,
-          "median_lead_min": 70.0,
+          "H": 4,
+          "M": 8,
+          "F": 1,
+          "pod": 0.333,
+          "far": 0.2,
+          "csi": 0.308,
+          "median_lead_min": 65.0,
           "lead_iqr_min": [
-            30.0,
-            180.0
+            32.5,
+            112.5
           ],
-          "pct_lead_ge_15": 84.0,
+          "pct_lead_ge_15": 75.0,
           "ci95": {
             "pod": [
-              0.778,
-              1.0
+              0.167,
+              0.5
             ],
             "far": [
-              0.341,
-              0.721
+              0.0,
+              0.75
             ],
             "csi": [
-              0.267,
-              0.647
+              0.125,
+              0.5
             ],
             "median_lead_min": [
-              30.0,
-              180.0
+              40.0,
+              95.0
             ]
           }
         },
         "per_storm": [
           {
             "storm_id": "halloween-2013",
-            "H": 10,
-            "M": 0,
-            "F": 3,
-            "pod": 1.0,
-            "far": 0.231,
-            "csi": 0.769,
-            "median_lead_min": 135.0
+            "H": 2,
+            "M": 2,
+            "F": 0,
+            "pod": 0.5,
+            "far": 0.0,
+            "csi": 0.5,
+            "median_lead_min": 95.0
           },
           {
             "storm_id": "memorial-day-2015",
-            "H": 3,
-            "M": 0,
-            "F": 4,
-            "pod": 1.0,
-            "far": 0.571,
-            "csi": 0.429,
-            "median_lead_min": 180.0
+            "H": 1,
+            "M": 1,
+            "F": 0,
+            "pod": 0.5,
+            "far": 0.0,
+            "csi": 0.5,
+            "median_lead_min": 90.0
           },
           {
             "storm_id": "halloween-2015",
-            "H": 9,
-            "M": 3,
-            "F": 9,
-            "pod": 0.75,
-            "far": 0.5,
-            "csi": 0.429,
-            "median_lead_min": 20.0
+            "H": 1,
+            "M": 5,
+            "F": 0,
+            "pod": 0.167,
+            "far": 0.0,
+            "csi": 0.167,
+            "median_lead_min": 40.0
           },
           {
             "storm_id": "oct-2018",
             "H": 0,
             "M": 0,
-            "F": 6,
+            "F": 1,
             "pod": null,
             "far": 1.0,
             "csi": 0.0,
@@ -184,109 +187,43 @@
           },
           {
             "storm_id": "july-2025",
-            "H": 3,
+            "H": 0,
             "M": 0,
-            "F": 3,
-            "pod": 1.0,
-            "far": 0.5,
-            "csi": 0.5,
-            "median_lead_min": 40.0
+            "F": 0,
+            "pod": null,
+            "far": null,
+            "csi": null,
+            "median_lead_min": null
           }
         ],
         "per_crossing": [
           {
-            "crossing_id": "atx-12",
-            "storm_id": "halloween-2013",
-            "tier": "A",
-            "truth_quality": "gauge",
-            "onset": "2013-10-31T06:55:00Z",
-            "first_alert_at": "2013-10-31T03:55:00Z",
-            "lead_min": 180,
-            "censored": false,
-            "capped": false
-          },
-          {
-            "crossing_id": "atx-13",
-            "storm_id": "halloween-2013",
-            "tier": "A",
-            "truth_quality": "gauge",
-            "onset": "2013-10-31T07:00:00Z",
-            "first_alert_at": "2013-10-31T03:45:00Z",
-            "lead_min": 180,
-            "censored": false,
-            "capped": true
-          },
-          {
             "crossing_id": "atx-15",
             "storm_id": "halloween-2013",
-            "tier": "A",
-            "truth_quality": "impact_statement",
+            "tier": "B",
+            "truth_quality": "proxy",
             "onset": "2013-10-31T07:10:00Z",
-            "first_alert_at": "2013-10-31T05:30:00Z",
-            "lead_min": 100.0,
+            "first_alert_at": null,
+            "lead_min": null,
             "censored": false,
             "capped": false
           },
           {
             "crossing_id": "atx-16",
             "storm_id": "halloween-2013",
-            "tier": "A",
-            "truth_quality": "impact_statement",
+            "tier": "B",
+            "truth_quality": "proxy",
             "onset": "2013-10-31T07:30:00Z",
-            "first_alert_at": "2013-10-31T05:30:00Z",
-            "lead_min": 120.0,
-            "censored": false,
-            "capped": false
-          },
-          {
-            "crossing_id": "atx-3",
-            "storm_id": "halloween-2013",
-            "tier": "A",
-            "truth_quality": "gauge",
-            "onset": "2013-10-31T06:45:00Z",
-            "first_alert_at": "2013-10-31T03:55:00Z",
-            "lead_min": 170.0,
-            "censored": false,
-            "capped": false
-          },
-          {
-            "crossing_id": "atx-7",
-            "storm_id": "halloween-2013",
-            "tier": "A",
-            "truth_quality": "gauge",
-            "onset": "2013-10-31T07:25:00Z",
-            "first_alert_at": "2013-10-31T06:15:00Z",
-            "lead_min": 70.0,
-            "censored": false,
-            "capped": false
-          },
-          {
-            "crossing_id": "atx-8",
-            "storm_id": "halloween-2013",
-            "tier": "A",
-            "truth_quality": "gauge",
-            "onset": "2013-10-31T07:50:00Z",
-            "first_alert_at": "2013-10-31T06:15:00Z",
-            "lead_min": 95.0,
-            "censored": false,
-            "capped": false
-          },
-          {
-            "crossing_id": "tc-133",
-            "storm_id": "halloween-2013",
-            "tier": "A",
-            "truth_quality": "impact_statement",
-            "onset": "2013-10-31T07:10:00Z",
-            "first_alert_at": "2013-10-31T04:40:00Z",
-            "lead_min": 150.0,
+            "first_alert_at": null,
+            "lead_min": null,
             "censored": false,
             "capped": false
           },
           {
             "crossing_id": "tc-167",
             "storm_id": "halloween-2013",
-            "tier": "A",
-            "truth_quality": "impact_statement",
+            "tier": "B",
+            "truth_quality": "proxy",
             "onset": "2013-10-31T07:00:00Z",
             "first_alert_at": "2013-10-31T06:50:00Z",
             "lead_min": 10.0,
@@ -296,8 +233,8 @@
           {
             "crossing_id": "tc-167",
             "storm_id": "halloween-2013",
-            "tier": "A",
-            "truth_quality": "impact_statement",
+            "tier": "B",
+            "truth_quality": "proxy",
             "onset": "2013-10-31T09:55:00Z",
             "first_alert_at": "2013-10-31T06:50:00Z",
             "lead_min": 180,
@@ -307,63 +244,30 @@
           {
             "crossing_id": "atx-19",
             "storm_id": "memorial-day-2015",
-            "tier": "A",
-            "truth_quality": "impact_statement",
+            "tier": "B",
+            "truth_quality": "proxy",
             "onset": "2015-05-24T15:15:00Z",
-            "first_alert_at": "2015-05-23T15:30:00Z",
-            "lead_min": 180,
-            "censored": false,
-            "capped": true
-          },
-          {
-            "crossing_id": "atx-20",
-            "storm_id": "memorial-day-2015",
-            "tier": "A",
-            "truth_quality": "impact_statement",
-            "onset": "2015-05-24T17:20:00Z",
-            "first_alert_at": "2015-05-23T15:30:00Z",
-            "lead_min": 180,
-            "censored": false,
-            "capped": true
-          },
-          {
-            "crossing_id": "tc-167",
-            "storm_id": "memorial-day-2015",
-            "tier": "A",
-            "truth_quality": "impact_statement",
-            "onset": "2015-05-24T12:40:00Z",
-            "first_alert_at": "2015-05-24T08:20:00Z",
-            "lead_min": 180,
-            "censored": false,
-            "capped": true
-          },
-          {
-            "crossing_id": "atx-12",
-            "storm_id": "halloween-2015",
-            "tier": "A",
-            "truth_quality": "gauge",
-            "onset": "2015-10-30T16:15:00Z",
-            "first_alert_at": "2015-10-30T16:10:00Z",
-            "lead_min": 5.0,
+            "first_alert_at": null,
+            "lead_min": null,
             "censored": false,
             "capped": false
           },
           {
-            "crossing_id": "atx-13",
-            "storm_id": "halloween-2015",
-            "tier": "A",
-            "truth_quality": "gauge",
-            "onset": "2015-10-30T16:30:00Z",
-            "first_alert_at": "2015-10-30T16:10:00Z",
-            "lead_min": 20.0,
+            "crossing_id": "tc-167",
+            "storm_id": "memorial-day-2015",
+            "tier": "B",
+            "truth_quality": "proxy",
+            "onset": "2015-05-24T12:40:00Z",
+            "first_alert_at": "2015-05-24T11:10:00Z",
+            "lead_min": 90.0,
             "censored": false,
             "capped": false
           },
           {
             "crossing_id": "atx-15",
             "storm_id": "halloween-2015",
-            "tier": "A",
-            "truth_quality": "impact_statement",
+            "tier": "B",
+            "truth_quality": "proxy",
             "onset": "2015-10-30T14:50:00Z",
             "first_alert_at": null,
             "lead_min": null,
@@ -373,8 +277,8 @@
           {
             "crossing_id": "atx-16",
             "storm_id": "halloween-2015",
-            "tier": "A",
-            "truth_quality": "impact_statement",
+            "tier": "B",
+            "truth_quality": "proxy",
             "onset": "2015-10-30T15:00:00Z",
             "first_alert_at": null,
             "lead_min": null,
@@ -384,120 +288,43 @@
           {
             "crossing_id": "atx-19",
             "storm_id": "halloween-2015",
-            "tier": "A",
-            "truth_quality": "impact_statement",
+            "tier": "B",
+            "truth_quality": "proxy",
             "onset": "2015-10-30T14:54:00Z",
-            "first_alert_at": "2015-10-30T14:45:00Z",
-            "lead_min": 9.0,
-            "censored": false,
-            "capped": false
-          },
-          {
-            "crossing_id": "atx-20",
-            "storm_id": "halloween-2015",
-            "tier": "A",
-            "truth_quality": "impact_statement",
-            "onset": "2015-10-30T15:14:00Z",
-            "first_alert_at": "2015-10-30T14:55:00Z",
-            "lead_min": 19.0,
-            "censored": false,
-            "capped": false
-          },
-          {
-            "crossing_id": "atx-21",
-            "storm_id": "halloween-2015",
-            "tier": "A",
-            "truth_quality": "impact_statement",
-            "onset": "2015-10-30T15:44:00Z",
-            "first_alert_at": "2015-10-30T14:50:00Z",
-            "lead_min": 54.0,
-            "censored": false,
-            "capped": false
-          },
-          {
-            "crossing_id": "atx-3",
-            "storm_id": "halloween-2015",
-            "tier": "A",
-            "truth_quality": "gauge",
-            "onset": "2015-10-30T16:05:00Z",
             "first_alert_at": null,
             "lead_min": null,
             "censored": false,
             "capped": false
           },
           {
-            "crossing_id": "atx-7",
+            "crossing_id": "atx-20",
             "storm_id": "halloween-2015",
-            "tier": "A",
-            "truth_quality": "gauge",
-            "onset": "2015-10-30T15:30:00Z",
-            "first_alert_at": "2015-10-30T15:00:00Z",
-            "lead_min": 30.0,
+            "tier": "B",
+            "truth_quality": "proxy",
+            "onset": "2015-10-30T15:19:00Z",
+            "first_alert_at": null,
+            "lead_min": null,
             "censored": false,
             "capped": false
           },
           {
-            "crossing_id": "atx-8",
+            "crossing_id": "atx-21",
             "storm_id": "halloween-2015",
-            "tier": "A",
-            "truth_quality": "gauge",
-            "onset": "2015-10-30T15:40:00Z",
-            "first_alert_at": "2015-10-30T15:00:00Z",
-            "lead_min": 40.0,
-            "censored": false,
-            "capped": false
-          },
-          {
-            "crossing_id": "tc-133",
-            "storm_id": "halloween-2015",
-            "tier": "A",
-            "truth_quality": "impact_statement",
-            "onset": "2015-10-30T15:20:00Z",
-            "first_alert_at": "2015-10-30T15:15:00Z",
-            "lead_min": 5.0,
+            "tier": "B",
+            "truth_quality": "proxy",
+            "onset": "2015-10-30T15:44:00Z",
+            "first_alert_at": null,
+            "lead_min": null,
             "censored": false,
             "capped": false
           },
           {
             "crossing_id": "tc-167",
             "storm_id": "halloween-2015",
-            "tier": "A",
-            "truth_quality": "impact_statement",
+            "tier": "B",
+            "truth_quality": "proxy",
             "onset": "2015-10-30T20:20:00Z",
-            "first_alert_at": "2015-10-30T16:55:00Z",
-            "lead_min": 180,
-            "censored": false,
-            "capped": true
-          },
-          {
-            "crossing_id": "atx-12",
-            "storm_id": "july-2025",
-            "tier": "A",
-            "truth_quality": "gauge",
-            "onset": "2025-07-05T18:00:00Z",
-            "first_alert_at": "2025-07-05T17:20:00Z",
-            "lead_min": 40.0,
-            "censored": false,
-            "capped": false
-          },
-          {
-            "crossing_id": "atx-13",
-            "storm_id": "july-2025",
-            "tier": "A",
-            "truth_quality": "gauge",
-            "onset": "2025-07-05T18:10:00Z",
-            "first_alert_at": "2025-07-05T17:20:00Z",
-            "lead_min": 50.0,
-            "censored": false,
-            "capped": false
-          },
-          {
-            "crossing_id": "atx-3",
-            "storm_id": "july-2025",
-            "tier": "A",
-            "truth_quality": "gauge",
-            "onset": "2025-07-05T17:55:00Z",
-            "first_alert_at": "2025-07-05T17:15:00Z",
+            "first_alert_at": "2015-10-30T19:40:00Z",
             "lead_min": 40.0,
             "censored": false,
             "capped": false
@@ -506,33 +333,33 @@
       },
       "watch": {
         "pooled": {
-          "H": 28,
-          "M": 0,
-          "F": 49,
-          "pod": 1.0,
+          "H": 4,
+          "M": 8,
+          "F": 7,
+          "pod": 0.333,
           "far": 0.636,
-          "csi": 0.364,
-          "median_lead_min": 110.0,
+          "csi": 0.211,
+          "median_lead_min": 142.5,
           "lead_iqr_min": [
-            44.8,
+            83.8,
             180.0
           ],
-          "pct_lead_ge_15": 92.9,
+          "pct_lead_ge_15": 100.0,
           "ci95": {
             "pod": [
-              1.0,
-              1.0
+              0.167,
+              0.5
             ],
             "far": [
-              0.397,
-              0.868
+              0.166,
+              0.929
             ],
             "csi": [
-              0.132,
-              0.603
+              0.059,
+              0.364
             ],
             "median_lead_min": [
-              45.0,
+              100.0,
               180.0
             ]
           }
@@ -540,39 +367,39 @@
         "per_storm": [
           {
             "storm_id": "halloween-2013",
-            "H": 10,
-            "M": 0,
-            "F": 3,
-            "pod": 1.0,
-            "far": 0.231,
-            "csi": 0.769,
-            "median_lead_min": 165.0
+            "H": 2,
+            "M": 2,
+            "F": 0,
+            "pod": 0.5,
+            "far": 0.0,
+            "csi": 0.5,
+            "median_lead_min": 100.0
           },
           {
             "storm_id": "memorial-day-2015",
-            "H": 3,
-            "M": 0,
-            "F": 16,
-            "pod": 1.0,
-            "far": 0.842,
-            "csi": 0.158,
+            "H": 1,
+            "M": 1,
+            "F": 2,
+            "pod": 0.5,
+            "far": 0.667,
+            "csi": 0.25,
             "median_lead_min": 180.0
           },
           {
             "storm_id": "halloween-2015",
-            "H": 12,
-            "M": 0,
-            "F": 11,
-            "pod": 1.0,
-            "far": 0.478,
-            "csi": 0.522,
-            "median_lead_min": 44.5
+            "H": 1,
+            "M": 5,
+            "F": 0,
+            "pod": 0.167,
+            "far": 0.0,
+            "csi": 0.167,
+            "median_lead_min": 105.0
           },
           {
             "storm_id": "oct-2018",
             "H": 0,
             "M": 0,
-            "F": 15,
+            "F": 4,
             "pod": null,
             "far": 1.0,
             "csi": 0.0,
@@ -580,109 +407,43 @@
           },
           {
             "storm_id": "july-2025",
-            "H": 3,
+            "H": 0,
             "M": 0,
-            "F": 4,
-            "pod": 1.0,
-            "far": 0.571,
-            "csi": 0.429,
-            "median_lead_min": 45.0
+            "F": 1,
+            "pod": null,
+            "far": 1.0,
+            "csi": 0.0,
+            "median_lead_min": null
           }
         ],
         "per_crossing": [
           {
-            "crossing_id": "atx-12",
-            "storm_id": "halloween-2013",
-            "tier": "A",
-            "truth_quality": "gauge",
-            "onset": "2013-10-31T06:55:00Z",
-            "first_alert_at": "2013-10-31T02:10:00Z",
-            "lead_min": 180,
-            "censored": false,
-            "capped": true
-          },
-          {
-            "crossing_id": "atx-13",
-            "storm_id": "halloween-2013",
-            "tier": "A",
-            "truth_quality": "gauge",
-            "onset": "2013-10-31T07:00:00Z",
-            "first_alert_at": "2013-10-31T02:10:00Z",
-            "lead_min": 180,
-            "censored": false,
-            "capped": true
-          },
-          {
             "crossing_id": "atx-15",
             "storm_id": "halloween-2013",
-            "tier": "A",
-            "truth_quality": "impact_statement",
+            "tier": "B",
+            "truth_quality": "proxy",
             "onset": "2013-10-31T07:10:00Z",
-            "first_alert_at": "2013-10-31T04:35:00Z",
-            "lead_min": 155.0,
+            "first_alert_at": null,
+            "lead_min": null,
             "censored": false,
             "capped": false
           },
           {
             "crossing_id": "atx-16",
             "storm_id": "halloween-2013",
-            "tier": "A",
-            "truth_quality": "impact_statement",
+            "tier": "B",
+            "truth_quality": "proxy",
             "onset": "2013-10-31T07:30:00Z",
-            "first_alert_at": "2013-10-31T04:35:00Z",
-            "lead_min": 175.0,
-            "censored": false,
-            "capped": false
-          },
-          {
-            "crossing_id": "atx-3",
-            "storm_id": "halloween-2013",
-            "tier": "A",
-            "truth_quality": "gauge",
-            "onset": "2013-10-31T06:45:00Z",
-            "first_alert_at": "2013-10-31T02:35:00Z",
-            "lead_min": 180,
-            "censored": false,
-            "capped": true
-          },
-          {
-            "crossing_id": "atx-7",
-            "storm_id": "halloween-2013",
-            "tier": "A",
-            "truth_quality": "gauge",
-            "onset": "2013-10-31T07:25:00Z",
-            "first_alert_at": "2013-10-31T05:35:00Z",
-            "lead_min": 110.0,
-            "censored": false,
-            "capped": false
-          },
-          {
-            "crossing_id": "atx-8",
-            "storm_id": "halloween-2013",
-            "tier": "A",
-            "truth_quality": "gauge",
-            "onset": "2013-10-31T07:50:00Z",
-            "first_alert_at": "2013-10-31T05:35:00Z",
-            "lead_min": 135.0,
-            "censored": false,
-            "capped": false
-          },
-          {
-            "crossing_id": "tc-133",
-            "storm_id": "halloween-2013",
-            "tier": "A",
-            "truth_quality": "impact_statement",
-            "onset": "2013-10-31T07:10:00Z",
-            "first_alert_at": "2013-10-31T04:40:00Z",
-            "lead_min": 150.0,
+            "first_alert_at": null,
+            "lead_min": null,
             "censored": false,
             "capped": false
           },
           {
             "crossing_id": "tc-167",
             "storm_id": "halloween-2013",
-            "tier": "A",
-            "truth_quality": "impact_statement",
+            "tier": "B",
+            "truth_quality": "proxy",
             "onset": "2013-10-31T07:00:00Z",
             "first_alert_at": "2013-10-31T06:40:00Z",
             "lead_min": 20.0,
@@ -692,8 +453,8 @@
           {
             "crossing_id": "tc-167",
             "storm_id": "halloween-2013",
-            "tier": "A",
-            "truth_quality": "impact_statement",
+            "tier": "B",
+            "truth_quality": "proxy",
             "onset": "2013-10-31T09:55:00Z",
             "first_alert_at": "2013-10-31T06:40:00Z",
             "lead_min": 180,
@@ -703,382 +464,207 @@
           {
             "crossing_id": "atx-19",
             "storm_id": "memorial-day-2015",
-            "tier": "A",
-            "truth_quality": "impact_statement",
+            "tier": "B",
+            "truth_quality": "proxy",
             "onset": "2015-05-24T15:15:00Z",
-            "first_alert_at": "2015-05-23T15:30:00Z",
-            "lead_min": 180,
+            "first_alert_at": null,
+            "lead_min": null,
             "censored": false,
-            "capped": true
-          },
-          {
-            "crossing_id": "atx-20",
-            "storm_id": "memorial-day-2015",
-            "tier": "A",
-            "truth_quality": "impact_statement",
-            "onset": "2015-05-24T17:20:00Z",
-            "first_alert_at": "2015-05-23T15:30:00Z",
-            "lead_min": 180,
-            "censored": false,
-            "capped": true
+            "capped": false
           },
           {
             "crossing_id": "tc-167",
             "storm_id": "memorial-day-2015",
-            "tier": "A",
-            "truth_quality": "impact_statement",
+            "tier": "B",
+            "truth_quality": "proxy",
             "onset": "2015-05-24T12:40:00Z",
-            "first_alert_at": "2015-05-24T06:40:00Z",
+            "first_alert_at": "2015-05-24T08:35:00Z",
             "lead_min": 180,
             "censored": false,
             "capped": true
           },
           {
-            "crossing_id": "atx-12",
-            "storm_id": "halloween-2015",
-            "tier": "A",
-            "truth_quality": "gauge",
-            "onset": "2015-10-30T16:15:00Z",
-            "first_alert_at": "2015-10-30T15:30:00Z",
-            "lead_min": 45.0,
-            "censored": false,
-            "capped": false
-          },
-          {
-            "crossing_id": "atx-13",
-            "storm_id": "halloween-2015",
-            "tier": "A",
-            "truth_quality": "gauge",
-            "onset": "2015-10-30T16:30:00Z",
-            "first_alert_at": "2015-10-30T15:30:00Z",
-            "lead_min": 60.0,
-            "censored": false,
-            "capped": false
-          },
-          {
             "crossing_id": "atx-15",
             "storm_id": "halloween-2015",
-            "tier": "A",
-            "truth_quality": "impact_statement",
+            "tier": "B",
+            "truth_quality": "proxy",
             "onset": "2015-10-30T14:50:00Z",
-            "first_alert_at": "2015-10-30T14:50:00Z",
-            "lead_min": 0.0,
+            "first_alert_at": null,
+            "lead_min": null,
             "censored": false,
             "capped": false
           },
           {
             "crossing_id": "atx-16",
             "storm_id": "halloween-2015",
-            "tier": "A",
-            "truth_quality": "impact_statement",
+            "tier": "B",
+            "truth_quality": "proxy",
             "onset": "2015-10-30T15:00:00Z",
-            "first_alert_at": "2015-10-30T14:50:00Z",
-            "lead_min": 10.0,
+            "first_alert_at": null,
+            "lead_min": null,
             "censored": false,
             "capped": false
           },
           {
             "crossing_id": "atx-19",
             "storm_id": "halloween-2015",
-            "tier": "A",
-            "truth_quality": "impact_statement",
+            "tier": "B",
+            "truth_quality": "proxy",
             "onset": "2015-10-30T14:54:00Z",
-            "first_alert_at": "2015-10-30T14:30:00Z",
-            "lead_min": 24.0,
+            "first_alert_at": null,
+            "lead_min": null,
             "censored": false,
             "capped": false
           },
           {
             "crossing_id": "atx-20",
             "storm_id": "halloween-2015",
-            "tier": "A",
-            "truth_quality": "impact_statement",
-            "onset": "2015-10-30T15:14:00Z",
-            "first_alert_at": "2015-10-30T14:30:00Z",
-            "lead_min": 44.0,
+            "tier": "B",
+            "truth_quality": "proxy",
+            "onset": "2015-10-30T15:19:00Z",
+            "first_alert_at": null,
+            "lead_min": null,
             "censored": false,
             "capped": false
           },
           {
             "crossing_id": "atx-21",
             "storm_id": "halloween-2015",
-            "tier": "A",
-            "truth_quality": "impact_statement",
+            "tier": "B",
+            "truth_quality": "proxy",
             "onset": "2015-10-30T15:44:00Z",
-            "first_alert_at": "2015-10-30T14:30:00Z",
-            "lead_min": 74.0,
-            "censored": false,
-            "capped": false
-          },
-          {
-            "crossing_id": "atx-3",
-            "storm_id": "halloween-2015",
-            "tier": "A",
-            "truth_quality": "gauge",
-            "onset": "2015-10-30T16:05:00Z",
-            "first_alert_at": "2015-10-30T15:30:00Z",
-            "lead_min": 35.0,
-            "censored": false,
-            "capped": false
-          },
-          {
-            "crossing_id": "atx-7",
-            "storm_id": "halloween-2015",
-            "tier": "A",
-            "truth_quality": "gauge",
-            "onset": "2015-10-30T15:30:00Z",
-            "first_alert_at": "2015-10-30T13:40:00Z",
-            "lead_min": 110.0,
-            "censored": false,
-            "capped": false
-          },
-          {
-            "crossing_id": "atx-8",
-            "storm_id": "halloween-2015",
-            "tier": "A",
-            "truth_quality": "gauge",
-            "onset": "2015-10-30T15:40:00Z",
-            "first_alert_at": "2015-10-30T13:40:00Z",
-            "lead_min": 120.0,
-            "censored": false,
-            "capped": false
-          },
-          {
-            "crossing_id": "tc-133",
-            "storm_id": "halloween-2015",
-            "tier": "A",
-            "truth_quality": "impact_statement",
-            "onset": "2015-10-30T15:20:00Z",
-            "first_alert_at": "2015-10-30T15:00:00Z",
-            "lead_min": 20.0,
+            "first_alert_at": null,
+            "lead_min": null,
             "censored": false,
             "capped": false
           },
           {
             "crossing_id": "tc-167",
             "storm_id": "halloween-2015",
-            "tier": "A",
-            "truth_quality": "impact_statement",
+            "tier": "B",
+            "truth_quality": "proxy",
             "onset": "2015-10-30T20:20:00Z",
-            "first_alert_at": "2015-10-30T16:40:00Z",
-            "lead_min": 180,
-            "censored": false,
-            "capped": true
-          },
-          {
-            "crossing_id": "atx-12",
-            "storm_id": "july-2025",
-            "tier": "A",
-            "truth_quality": "gauge",
-            "onset": "2025-07-05T18:00:00Z",
-            "first_alert_at": "2025-07-05T17:15:00Z",
-            "lead_min": 45.0,
-            "censored": false,
-            "capped": false
-          },
-          {
-            "crossing_id": "atx-13",
-            "storm_id": "july-2025",
-            "tier": "A",
-            "truth_quality": "gauge",
-            "onset": "2025-07-05T18:10:00Z",
-            "first_alert_at": "2025-07-05T17:15:00Z",
-            "lead_min": 55.0,
-            "censored": false,
-            "capped": false
-          },
-          {
-            "crossing_id": "atx-3",
-            "storm_id": "july-2025",
-            "tier": "A",
-            "truth_quality": "gauge",
-            "onset": "2025-07-05T17:55:00Z",
-            "first_alert_at": "2025-07-05T17:10:00Z",
-            "lead_min": 45.0,
+            "first_alert_at": "2015-10-30T18:35:00Z",
+            "lead_min": 105.0,
             "censored": false,
             "capped": false
           }
         ]
       },
       "calm_fa_per_crossing_per_100d": {
-        "avoid": 33.33,
-        "watch": 83.33,
+        "avoid": 11.11,
+        "watch": 44.44,
         "tier_b": {
-          "avoid": 0.0,
-          "watch": 0.0
+          "avoid": null,
+          "watch": null,
+          "status": "Not evaluated as a separate population"
         }
       }
     },
     "nearest_gauge": {
       "avoid": {
         "pooled": {
-          "H": 11,
-          "M": 17,
-          "F": 42,
-          "pod": 0.393,
-          "far": 0.792,
-          "csi": 0.157,
-          "median_lead_min": 150.0,
+          "H": 4,
+          "M": 8,
+          "F": 0,
+          "pod": 0.333,
+          "far": 0.0,
+          "csi": 0.333,
+          "median_lead_min": 65.0,
           "lead_iqr_min": [
-            45.0,
-            180.0
+            32.5,
+            112.5
           ],
-          "pct_lead_ge_15": 100.0,
+          "pct_lead_ge_15": 75.0,
           "ci95": {
             "pod": [
-              0.0,
-              0.818
+              0.167,
+              0.5
             ],
             "far": [
-              0.49,
-              1.0
+              0.0,
+              0.0
             ],
             "csi": [
-              0.0,
-              0.458
+              0.167,
+              0.5
             ],
             "median_lead_min": [
-              45.0,
-              170.0
+              40.0,
+              95.0
             ]
           }
         },
         "per_storm": [
           {
             "storm_id": "halloween-2013",
-            "H": 9,
-            "M": 1,
-            "F": 4,
-            "pod": 0.9,
-            "far": 0.308,
-            "csi": 0.643,
-            "median_lead_min": 170.0
+            "H": 2,
+            "M": 2,
+            "F": 0,
+            "pod": 0.5,
+            "far": 0.0,
+            "csi": 0.5,
+            "median_lead_min": 95.0
           },
           {
             "storm_id": "memorial-day-2015",
-            "H": 0,
-            "M": 3,
-            "F": 9,
-            "pod": 0.0,
-            "far": 1.0,
-            "csi": 0.0,
-            "median_lead_min": null
+            "H": 1,
+            "M": 1,
+            "F": 0,
+            "pod": 0.5,
+            "far": 0.0,
+            "csi": 0.5,
+            "median_lead_min": 90.0
           },
           {
             "storm_id": "halloween-2015",
-            "H": 2,
-            "M": 10,
-            "F": 16,
+            "H": 1,
+            "M": 5,
+            "F": 0,
             "pod": 0.167,
-            "far": 0.889,
-            "csi": 0.071,
-            "median_lead_min": 45.0
+            "far": 0.0,
+            "csi": 0.167,
+            "median_lead_min": 40.0
           },
           {
             "storm_id": "oct-2018",
             "H": 0,
             "M": 0,
-            "F": 5,
+            "F": 0,
             "pod": null,
-            "far": 1.0,
-            "csi": 0.0,
+            "far": null,
+            "csi": null,
             "median_lead_min": null
           },
           {
             "storm_id": "july-2025",
             "H": 0,
-            "M": 3,
-            "F": 8,
-            "pod": 0.0,
-            "far": 1.0,
-            "csi": 0.0,
+            "M": 0,
+            "F": 0,
+            "pod": null,
+            "far": null,
+            "csi": null,
             "median_lead_min": null
           }
         ],
         "per_crossing": [
           {
-            "crossing_id": "atx-12",
-            "storm_id": "halloween-2013",
-            "tier": "A",
-            "truth_quality": "gauge",
-            "onset": "2013-10-31T06:55:00Z",
-            "first_alert_at": "2013-10-31T03:15:00Z",
-            "lead_min": 180,
-            "censored": false,
-            "capped": true
-          },
-          {
-            "crossing_id": "atx-13",
-            "storm_id": "halloween-2013",
-            "tier": "A",
-            "truth_quality": "gauge",
-            "onset": "2013-10-31T07:00:00Z",
-            "first_alert_at": "2013-10-31T03:15:00Z",
-            "lead_min": 180,
-            "censored": false,
-            "capped": true
-          },
-          {
             "crossing_id": "atx-15",
             "storm_id": "halloween-2013",
-            "tier": "A",
-            "truth_quality": "impact_statement",
+            "tier": "B",
+            "truth_quality": "proxy",
             "onset": "2013-10-31T07:10:00Z",
-            "first_alert_at": "2013-10-31T04:40:00Z",
-            "lead_min": 150.0,
+            "first_alert_at": null,
+            "lead_min": null,
             "censored": false,
             "capped": false
           },
           {
             "crossing_id": "atx-16",
             "storm_id": "halloween-2013",
-            "tier": "A",
-            "truth_quality": "impact_statement",
+            "tier": "B",
+            "truth_quality": "proxy",
             "onset": "2013-10-31T07:30:00Z",
-            "first_alert_at": "2013-10-31T04:40:00Z",
-            "lead_min": 170.0,
-            "censored": false,
-            "capped": false
-          },
-          {
-            "crossing_id": "atx-3",
-            "storm_id": "halloween-2013",
-            "tier": "A",
-            "truth_quality": "gauge",
-            "onset": "2013-10-31T06:45:00Z",
-            "first_alert_at": "2013-10-31T03:15:00Z",
-            "lead_min": 180,
-            "censored": false,
-            "capped": true
-          },
-          {
-            "crossing_id": "atx-7",
-            "storm_id": "halloween-2013",
-            "tier": "A",
-            "truth_quality": "gauge",
-            "onset": "2013-10-31T07:25:00Z",
-            "first_alert_at": "2013-10-31T06:45:00Z",
-            "lead_min": 40.0,
-            "censored": false,
-            "capped": false
-          },
-          {
-            "crossing_id": "atx-8",
-            "storm_id": "halloween-2013",
-            "tier": "A",
-            "truth_quality": "gauge",
-            "onset": "2013-10-31T07:50:00Z",
-            "first_alert_at": "2013-10-31T06:45:00Z",
-            "lead_min": 65.0,
-            "censored": false,
-            "capped": false
-          },
-          {
-            "crossing_id": "tc-133",
-            "storm_id": "halloween-2013",
-            "tier": "A",
-            "truth_quality": "impact_statement",
-            "onset": "2013-10-31T07:10:00Z",
             "first_alert_at": null,
             "lead_min": null,
             "censored": false,
@@ -1087,21 +673,21 @@
           {
             "crossing_id": "tc-167",
             "storm_id": "halloween-2013",
-            "tier": "A",
-            "truth_quality": "impact_statement",
+            "tier": "B",
+            "truth_quality": "proxy",
             "onset": "2013-10-31T07:00:00Z",
-            "first_alert_at": "2013-10-31T06:35:00Z",
-            "lead_min": 25.0,
+            "first_alert_at": "2013-10-31T06:50:00Z",
+            "lead_min": 10.0,
             "censored": false,
             "capped": false
           },
           {
             "crossing_id": "tc-167",
             "storm_id": "halloween-2013",
-            "tier": "A",
-            "truth_quality": "impact_statement",
+            "tier": "B",
+            "truth_quality": "proxy",
             "onset": "2013-10-31T09:55:00Z",
-            "first_alert_at": "2013-10-31T06:35:00Z",
+            "first_alert_at": "2013-10-31T06:50:00Z",
             "lead_min": 180,
             "censored": false,
             "capped": true
@@ -1109,20 +695,9 @@
           {
             "crossing_id": "atx-19",
             "storm_id": "memorial-day-2015",
-            "tier": "A",
-            "truth_quality": "impact_statement",
+            "tier": "B",
+            "truth_quality": "proxy",
             "onset": "2015-05-24T15:15:00Z",
-            "first_alert_at": null,
-            "lead_min": null,
-            "censored": false,
-            "capped": false
-          },
-          {
-            "crossing_id": "atx-20",
-            "storm_id": "memorial-day-2015",
-            "tier": "A",
-            "truth_quality": "impact_statement",
-            "onset": "2015-05-24T17:20:00Z",
             "first_alert_at": null,
             "lead_min": null,
             "censored": false,
@@ -1131,41 +706,19 @@
           {
             "crossing_id": "tc-167",
             "storm_id": "memorial-day-2015",
-            "tier": "A",
-            "truth_quality": "impact_statement",
+            "tier": "B",
+            "truth_quality": "proxy",
             "onset": "2015-05-24T12:40:00Z",
-            "first_alert_at": null,
-            "lead_min": null,
-            "censored": false,
-            "capped": false
-          },
-          {
-            "crossing_id": "atx-12",
-            "storm_id": "halloween-2015",
-            "tier": "A",
-            "truth_quality": "gauge",
-            "onset": "2015-10-30T16:15:00Z",
-            "first_alert_at": null,
-            "lead_min": null,
-            "censored": false,
-            "capped": false
-          },
-          {
-            "crossing_id": "atx-13",
-            "storm_id": "halloween-2015",
-            "tier": "A",
-            "truth_quality": "gauge",
-            "onset": "2015-10-30T16:30:00Z",
-            "first_alert_at": null,
-            "lead_min": null,
+            "first_alert_at": "2015-05-24T11:10:00Z",
+            "lead_min": 90.0,
             "censored": false,
             "capped": false
           },
           {
             "crossing_id": "atx-15",
             "storm_id": "halloween-2015",
-            "tier": "A",
-            "truth_quality": "impact_statement",
+            "tier": "B",
+            "truth_quality": "proxy",
             "onset": "2015-10-30T14:50:00Z",
             "first_alert_at": null,
             "lead_min": null,
@@ -1175,8 +728,8 @@
           {
             "crossing_id": "atx-16",
             "storm_id": "halloween-2015",
-            "tier": "A",
-            "truth_quality": "impact_statement",
+            "tier": "B",
+            "truth_quality": "proxy",
             "onset": "2015-10-30T15:00:00Z",
             "first_alert_at": null,
             "lead_min": null,
@@ -1186,8 +739,8 @@
           {
             "crossing_id": "atx-19",
             "storm_id": "halloween-2015",
-            "tier": "A",
-            "truth_quality": "impact_statement",
+            "tier": "B",
+            "truth_quality": "proxy",
             "onset": "2015-10-30T14:54:00Z",
             "first_alert_at": null,
             "lead_min": null,
@@ -1197,9 +750,9 @@
           {
             "crossing_id": "atx-20",
             "storm_id": "halloween-2015",
-            "tier": "A",
-            "truth_quality": "impact_statement",
-            "onset": "2015-10-30T15:14:00Z",
+            "tier": "B",
+            "truth_quality": "proxy",
+            "onset": "2015-10-30T15:19:00Z",
             "first_alert_at": null,
             "lead_min": null,
             "censored": false,
@@ -1208,53 +761,9 @@
           {
             "crossing_id": "atx-21",
             "storm_id": "halloween-2015",
-            "tier": "A",
-            "truth_quality": "impact_statement",
+            "tier": "B",
+            "truth_quality": "proxy",
             "onset": "2015-10-30T15:44:00Z",
-            "first_alert_at": null,
-            "lead_min": null,
-            "censored": false,
-            "capped": false
-          },
-          {
-            "crossing_id": "atx-3",
-            "storm_id": "halloween-2015",
-            "tier": "A",
-            "truth_quality": "gauge",
-            "onset": "2015-10-30T16:05:00Z",
-            "first_alert_at": null,
-            "lead_min": null,
-            "censored": false,
-            "capped": false
-          },
-          {
-            "crossing_id": "atx-7",
-            "storm_id": "halloween-2015",
-            "tier": "A",
-            "truth_quality": "gauge",
-            "onset": "2015-10-30T15:30:00Z",
-            "first_alert_at": "2015-10-30T14:50:00Z",
-            "lead_min": 40.0,
-            "censored": false,
-            "capped": false
-          },
-          {
-            "crossing_id": "atx-8",
-            "storm_id": "halloween-2015",
-            "tier": "A",
-            "truth_quality": "gauge",
-            "onset": "2015-10-30T15:40:00Z",
-            "first_alert_at": "2015-10-30T14:50:00Z",
-            "lead_min": 50.0,
-            "censored": false,
-            "capped": false
-          },
-          {
-            "crossing_id": "tc-133",
-            "storm_id": "halloween-2015",
-            "tier": "A",
-            "truth_quality": "impact_statement",
-            "onset": "2015-10-30T15:20:00Z",
             "first_alert_at": null,
             "lead_min": null,
             "censored": false,
@@ -1263,44 +772,11 @@
           {
             "crossing_id": "tc-167",
             "storm_id": "halloween-2015",
-            "tier": "A",
-            "truth_quality": "impact_statement",
+            "tier": "B",
+            "truth_quality": "proxy",
             "onset": "2015-10-30T20:20:00Z",
-            "first_alert_at": null,
-            "lead_min": null,
-            "censored": false,
-            "capped": false
-          },
-          {
-            "crossing_id": "atx-12",
-            "storm_id": "july-2025",
-            "tier": "A",
-            "truth_quality": "gauge",
-            "onset": "2025-07-05T18:00:00Z",
-            "first_alert_at": null,
-            "lead_min": null,
-            "censored": false,
-            "capped": false
-          },
-          {
-            "crossing_id": "atx-13",
-            "storm_id": "july-2025",
-            "tier": "A",
-            "truth_quality": "gauge",
-            "onset": "2025-07-05T18:10:00Z",
-            "first_alert_at": null,
-            "lead_min": null,
-            "censored": false,
-            "capped": false
-          },
-          {
-            "crossing_id": "atx-3",
-            "storm_id": "july-2025",
-            "tier": "A",
-            "truth_quality": "gauge",
-            "onset": "2025-07-05T17:55:00Z",
-            "first_alert_at": null,
-            "lead_min": null,
+            "first_alert_at": "2015-10-30T19:40:00Z",
+            "lead_min": 40.0,
             "censored": false,
             "capped": false
           }
@@ -1308,73 +784,73 @@
       },
       "watch": {
         "pooled": {
-          "H": 14,
-          "M": 14,
-          "F": 49,
-          "pod": 0.5,
-          "far": 0.778,
-          "csi": 0.182,
-          "median_lead_min": 105.0,
+          "H": 4,
+          "M": 8,
+          "F": 1,
+          "pod": 0.333,
+          "far": 0.2,
+          "csi": 0.308,
+          "median_lead_min": 142.5,
           "lead_iqr_min": [
-            62.5,
-            177.5
+            83.8,
+            180.0
           ],
-          "pct_lead_ge_15": 92.9,
+          "pct_lead_ge_15": 100.0,
           "ci95": {
             "pod": [
-              0.0,
-              0.818
+              0.167,
+              0.5
             ],
             "far": [
-              0.509,
-              1.0
+              0.0,
+              0.75
             ],
             "csi": [
-              0.0,
-              0.422
+              0.125,
+              0.5
             ],
             "median_lead_min": [
-              60.0,
-              170.0
+              100.0,
+              180.0
             ]
           }
         },
         "per_storm": [
           {
             "storm_id": "halloween-2013",
-            "H": 9,
-            "M": 1,
-            "F": 4,
-            "pod": 0.9,
-            "far": 0.308,
-            "csi": 0.643,
-            "median_lead_min": 170.0
+            "H": 2,
+            "M": 2,
+            "F": 0,
+            "pod": 0.5,
+            "far": 0.0,
+            "csi": 0.5,
+            "median_lead_min": 100.0
           },
           {
             "storm_id": "memorial-day-2015",
-            "H": 0,
-            "M": 3,
-            "F": 11,
-            "pod": 0.0,
-            "far": 1.0,
-            "csi": 0.0,
-            "median_lead_min": null
+            "H": 1,
+            "M": 1,
+            "F": 0,
+            "pod": 0.5,
+            "far": 0.0,
+            "csi": 0.5,
+            "median_lead_min": 180.0
           },
           {
             "storm_id": "halloween-2015",
-            "H": 5,
-            "M": 7,
-            "F": 18,
-            "pod": 0.417,
-            "far": 0.783,
+            "H": 1,
+            "M": 5,
+            "F": 0,
+            "pod": 0.167,
+            "far": 0.0,
             "csi": 0.167,
-            "median_lead_min": 60.0
+            "median_lead_min": 105.0
           },
           {
             "storm_id": "oct-2018",
             "H": 0,
             "M": 0,
-            "F": 8,
+            "F": 1,
             "pod": null,
             "far": 1.0,
             "csi": 0.0,
@@ -1383,98 +859,32 @@
           {
             "storm_id": "july-2025",
             "H": 0,
-            "M": 3,
-            "F": 8,
-            "pod": 0.0,
-            "far": 1.0,
-            "csi": 0.0,
+            "M": 0,
+            "F": 0,
+            "pod": null,
+            "far": null,
+            "csi": null,
             "median_lead_min": null
           }
         ],
         "per_crossing": [
           {
-            "crossing_id": "atx-12",
-            "storm_id": "halloween-2013",
-            "tier": "A",
-            "truth_quality": "gauge",
-            "onset": "2013-10-31T06:55:00Z",
-            "first_alert_at": "2013-10-31T02:45:00Z",
-            "lead_min": 180,
-            "censored": false,
-            "capped": true
-          },
-          {
-            "crossing_id": "atx-13",
-            "storm_id": "halloween-2013",
-            "tier": "A",
-            "truth_quality": "gauge",
-            "onset": "2013-10-31T07:00:00Z",
-            "first_alert_at": "2013-10-31T02:45:00Z",
-            "lead_min": 180,
-            "censored": false,
-            "capped": true
-          },
-          {
             "crossing_id": "atx-15",
             "storm_id": "halloween-2013",
-            "tier": "A",
-            "truth_quality": "impact_statement",
+            "tier": "B",
+            "truth_quality": "proxy",
             "onset": "2013-10-31T07:10:00Z",
-            "first_alert_at": "2013-10-31T04:40:00Z",
-            "lead_min": 150.0,
+            "first_alert_at": null,
+            "lead_min": null,
             "censored": false,
             "capped": false
           },
           {
             "crossing_id": "atx-16",
             "storm_id": "halloween-2013",
-            "tier": "A",
-            "truth_quality": "impact_statement",
+            "tier": "B",
+            "truth_quality": "proxy",
             "onset": "2013-10-31T07:30:00Z",
-            "first_alert_at": "2013-10-31T04:40:00Z",
-            "lead_min": 170.0,
-            "censored": false,
-            "capped": false
-          },
-          {
-            "crossing_id": "atx-3",
-            "storm_id": "halloween-2013",
-            "tier": "A",
-            "truth_quality": "gauge",
-            "onset": "2013-10-31T06:45:00Z",
-            "first_alert_at": "2013-10-31T02:45:00Z",
-            "lead_min": 180,
-            "censored": false,
-            "capped": true
-          },
-          {
-            "crossing_id": "atx-7",
-            "storm_id": "halloween-2013",
-            "tier": "A",
-            "truth_quality": "gauge",
-            "onset": "2013-10-31T07:25:00Z",
-            "first_alert_at": "2013-10-31T06:35:00Z",
-            "lead_min": 50.0,
-            "censored": false,
-            "capped": false
-          },
-          {
-            "crossing_id": "atx-8",
-            "storm_id": "halloween-2013",
-            "tier": "A",
-            "truth_quality": "gauge",
-            "onset": "2013-10-31T07:50:00Z",
-            "first_alert_at": "2013-10-31T06:35:00Z",
-            "lead_min": 75.0,
-            "censored": false,
-            "capped": false
-          },
-          {
-            "crossing_id": "tc-133",
-            "storm_id": "halloween-2013",
-            "tier": "A",
-            "truth_quality": "impact_statement",
-            "onset": "2013-10-31T07:10:00Z",
             "first_alert_at": null,
             "lead_min": null,
             "censored": false,
@@ -1483,21 +893,21 @@
           {
             "crossing_id": "tc-167",
             "storm_id": "halloween-2013",
-            "tier": "A",
-            "truth_quality": "impact_statement",
+            "tier": "B",
+            "truth_quality": "proxy",
             "onset": "2013-10-31T07:00:00Z",
-            "first_alert_at": "2013-10-31T05:50:00Z",
-            "lead_min": 70.0,
+            "first_alert_at": "2013-10-31T06:40:00Z",
+            "lead_min": 20.0,
             "censored": false,
             "capped": false
           },
           {
             "crossing_id": "tc-167",
             "storm_id": "halloween-2013",
-            "tier": "A",
-            "truth_quality": "impact_statement",
+            "tier": "B",
+            "truth_quality": "proxy",
             "onset": "2013-10-31T09:55:00Z",
-            "first_alert_at": "2013-10-31T05:50:00Z",
+            "first_alert_at": "2013-10-31T06:40:00Z",
             "lead_min": 180,
             "censored": false,
             "capped": true
@@ -1505,20 +915,9 @@
           {
             "crossing_id": "atx-19",
             "storm_id": "memorial-day-2015",
-            "tier": "A",
-            "truth_quality": "impact_statement",
+            "tier": "B",
+            "truth_quality": "proxy",
             "onset": "2015-05-24T15:15:00Z",
-            "first_alert_at": null,
-            "lead_min": null,
-            "censored": false,
-            "capped": false
-          },
-          {
-            "crossing_id": "atx-20",
-            "storm_id": "memorial-day-2015",
-            "tier": "A",
-            "truth_quality": "impact_statement",
-            "onset": "2015-05-24T17:20:00Z",
             "first_alert_at": null,
             "lead_min": null,
             "censored": false,
@@ -1527,41 +926,19 @@
           {
             "crossing_id": "tc-167",
             "storm_id": "memorial-day-2015",
-            "tier": "A",
-            "truth_quality": "impact_statement",
+            "tier": "B",
+            "truth_quality": "proxy",
             "onset": "2015-05-24T12:40:00Z",
-            "first_alert_at": null,
-            "lead_min": null,
+            "first_alert_at": "2015-05-24T08:35:00Z",
+            "lead_min": 180,
             "censored": false,
-            "capped": false
-          },
-          {
-            "crossing_id": "atx-12",
-            "storm_id": "halloween-2015",
-            "tier": "A",
-            "truth_quality": "gauge",
-            "onset": "2015-10-30T16:15:00Z",
-            "first_alert_at": null,
-            "lead_min": null,
-            "censored": false,
-            "capped": false
-          },
-          {
-            "crossing_id": "atx-13",
-            "storm_id": "halloween-2015",
-            "tier": "A",
-            "truth_quality": "gauge",
-            "onset": "2015-10-30T16:30:00Z",
-            "first_alert_at": null,
-            "lead_min": null,
-            "censored": false,
-            "capped": false
+            "capped": true
           },
           {
             "crossing_id": "atx-15",
             "storm_id": "halloween-2015",
-            "tier": "A",
-            "truth_quality": "impact_statement",
+            "tier": "B",
+            "truth_quality": "proxy",
             "onset": "2015-10-30T14:50:00Z",
             "first_alert_at": null,
             "lead_min": null,
@@ -1571,19 +948,19 @@
           {
             "crossing_id": "atx-16",
             "storm_id": "halloween-2015",
-            "tier": "A",
-            "truth_quality": "impact_statement",
+            "tier": "B",
+            "truth_quality": "proxy",
             "onset": "2015-10-30T15:00:00Z",
-            "first_alert_at": "2015-10-30T15:00:00Z",
-            "lead_min": 0.0,
+            "first_alert_at": null,
+            "lead_min": null,
             "censored": false,
             "capped": false
           },
           {
             "crossing_id": "atx-19",
             "storm_id": "halloween-2015",
-            "tier": "A",
-            "truth_quality": "impact_statement",
+            "tier": "B",
+            "truth_quality": "proxy",
             "onset": "2015-10-30T14:54:00Z",
             "first_alert_at": null,
             "lead_min": null,
@@ -1593,9 +970,9 @@
           {
             "crossing_id": "atx-20",
             "storm_id": "halloween-2015",
-            "tier": "A",
-            "truth_quality": "impact_statement",
-            "onset": "2015-10-30T15:14:00Z",
+            "tier": "B",
+            "truth_quality": "proxy",
+            "onset": "2015-10-30T15:19:00Z",
             "first_alert_at": null,
             "lead_min": null,
             "censored": false,
@@ -1604,53 +981,9 @@
           {
             "crossing_id": "atx-21",
             "storm_id": "halloween-2015",
-            "tier": "A",
-            "truth_quality": "impact_statement",
+            "tier": "B",
+            "truth_quality": "proxy",
             "onset": "2015-10-30T15:44:00Z",
-            "first_alert_at": "2015-10-30T15:25:00Z",
-            "lead_min": 19.0,
-            "censored": false,
-            "capped": false
-          },
-          {
-            "crossing_id": "atx-3",
-            "storm_id": "halloween-2015",
-            "tier": "A",
-            "truth_quality": "gauge",
-            "onset": "2015-10-30T16:05:00Z",
-            "first_alert_at": null,
-            "lead_min": null,
-            "censored": false,
-            "capped": false
-          },
-          {
-            "crossing_id": "atx-7",
-            "storm_id": "halloween-2015",
-            "tier": "A",
-            "truth_quality": "gauge",
-            "onset": "2015-10-30T15:30:00Z",
-            "first_alert_at": "2015-10-30T14:30:00Z",
-            "lead_min": 60.0,
-            "censored": false,
-            "capped": false
-          },
-          {
-            "crossing_id": "atx-8",
-            "storm_id": "halloween-2015",
-            "tier": "A",
-            "truth_quality": "gauge",
-            "onset": "2015-10-30T15:40:00Z",
-            "first_alert_at": "2015-10-30T14:30:00Z",
-            "lead_min": 70.0,
-            "censored": false,
-            "capped": false
-          },
-          {
-            "crossing_id": "tc-133",
-            "storm_id": "halloween-2015",
-            "tier": "A",
-            "truth_quality": "impact_statement",
-            "onset": "2015-10-30T15:20:00Z",
             "first_alert_at": null,
             "lead_min": null,
             "censored": false,
@@ -1659,189 +992,145 @@
           {
             "crossing_id": "tc-167",
             "storm_id": "halloween-2015",
-            "tier": "A",
-            "truth_quality": "impact_statement",
+            "tier": "B",
+            "truth_quality": "proxy",
             "onset": "2015-10-30T20:20:00Z",
-            "first_alert_at": "2015-10-30T18:05:00Z",
-            "lead_min": 135.0,
-            "censored": false,
-            "capped": false
-          },
-          {
-            "crossing_id": "atx-12",
-            "storm_id": "july-2025",
-            "tier": "A",
-            "truth_quality": "gauge",
-            "onset": "2025-07-05T18:00:00Z",
-            "first_alert_at": null,
-            "lead_min": null,
-            "censored": false,
-            "capped": false
-          },
-          {
-            "crossing_id": "atx-13",
-            "storm_id": "july-2025",
-            "tier": "A",
-            "truth_quality": "gauge",
-            "onset": "2025-07-05T18:10:00Z",
-            "first_alert_at": null,
-            "lead_min": null,
-            "censored": false,
-            "capped": false
-          },
-          {
-            "crossing_id": "atx-3",
-            "storm_id": "july-2025",
-            "tier": "A",
-            "truth_quality": "gauge",
-            "onset": "2025-07-05T17:55:00Z",
-            "first_alert_at": null,
-            "lead_min": null,
+            "first_alert_at": "2015-10-30T18:35:00Z",
+            "lead_min": 105.0,
             "censored": false,
             "capped": false
           }
         ]
       },
       "calm_fa_per_crossing_per_100d": {
-        "avoid": 27.78,
-        "watch": 44.44,
+        "avoid": 0.0,
+        "watch": 11.11,
         "tier_b": {
-          "avoid": 0.0,
-          "watch": 0.0
+          "avoid": null,
+          "watch": null,
+          "status": "Not evaluated as a separate population"
         }
       }
     },
     "ml": null,
     "reactive": {
-      "median_lead_min": 0
+      "median_lead_min": null,
+      "status": "Not evaluated"
     }
   },
   "by_truth_quality": {
     "non_proxy": {
-      "H": 25,
-      "M": 3,
-      "F": 25,
-      "pod": 0.893,
-      "far": 0.5,
-      "csi": 0.472,
-      "median_lead_min": 70.0,
-      "lead_iqr_min": [
-        30.0,
-        180.0
-      ],
-      "pct_lead_ge_15": 84.0,
-      "ci95": {
-        "pod": [
-          0.778,
-          1.0
-        ],
-        "far": [
-          0.341,
-          0.721
-        ],
-        "csi": [
-          0.267,
-          0.647
-        ],
-        "median_lead_min": [
-          30.0,
-          180.0
-        ]
-      }
-    },
-    "proxy": {
-      "H": 0,
-      "M": 0,
-      "F": 0,
+      "H": null,
+      "M": null,
+      "F": null,
       "pod": null,
       "far": null,
       "csi": null,
-      "median_lead_min": null
+      "median_lead_min": null,
+      "status": "No validated road-overtopping labels"
+    },
+    "proxy": {
+      "H": 4,
+      "M": 8,
+      "F": 1,
+      "pod": 0.333,
+      "far": 0.2,
+      "csi": 0.308,
+      "median_lead_min": 65.0,
+      "lead_iqr_min": [
+        32.5,
+        112.5
+      ],
+      "pct_lead_ge_15": 75.0,
+      "ci95": {
+        "pod": [
+          0.167,
+          0.5
+        ],
+        "far": [
+          0.0,
+          0.75
+        ],
+        "csi": [
+          0.125,
+          0.5
+        ],
+        "median_lead_min": [
+          40.0,
+          95.0
+        ]
+      }
     }
   },
   "delay_sensitivity": [
     {
       "delay_min": 0,
-      "median_lead_min": 109.5
+      "median_lead_min": 125.0
     },
     {
       "delay_min": 15,
-      "median_lead_min": 97.0
+      "median_lead_min": 110.0
     },
     {
       "delay_min": 30,
-      "median_lead_min": 82.0
+      "median_lead_min": 95.0
     },
     {
       "delay_min": 60,
-      "median_lead_min": 70.0
+      "median_lead_min": 65.0
     }
   ],
   "headline": {
     "method": "upstream_rule",
     "level": "avoid",
     "n_storms": 5,
-    "pod": 0.893,
-    "far": 0.5,
-    "csi": 0.472,
-    "median_lead_min": 70.0,
-    "labels": "non_proxy"
+    "pod": 0.333,
+    "far": 0.2,
+    "csi": 0.308,
+    "median_lead_min": 65.0,
+    "labels": "gauge_flood_stage_proxy",
+    "road_forecast_skill_verified": false
   },
   "hero": {
-    "storm_id": "halloween-2013",
-    "crossing_id": "atx-7",
-    "lead_min": 70.0,
+    "storm_id": "memorial-day-2015",
+    "crossing_id": "tc-167",
+    "lead_min": 90.0,
     "level": "avoid",
-    "onset": "2013-10-31T07:25:00Z",
-    "first_alert_at": "2013-10-31T06:15:00Z",
+    "onset": "2015-05-24T12:40:00Z",
+    "first_alert_at": "2015-05-24T11:10:00Z",
     "censored": false,
-    "target_median_lead_min": 70.0,
-    "rule": "tier-A AVOID hit closest to the overall median lead; ties: catalog order, then crossing id"
+    "target_median_lead_min": 65.0,
+    "rule": "proxy-reference AVOID hit closest to the overall median lead; ties: catalog order, then crossing id"
   },
   "hero_by_storm": {
     "halloween-2013": {
-      "crossing_id": "atx-7",
-      "lead_min": 70.0,
+      "crossing_id": "tc-167",
+      "lead_min": 10.0,
       "level": "avoid",
-      "onset": "2013-10-31T07:25:00Z",
-      "first_alert_at": "2013-10-31T06:15:00Z",
+      "onset": "2013-10-31T07:00:00Z",
+      "first_alert_at": "2013-10-31T06:50:00Z",
       "censored": false
     },
     "memorial-day-2015": {
-      "crossing_id": "atx-19",
-      "lead_min": 180,
+      "crossing_id": "tc-167",
+      "lead_min": 90.0,
       "level": "avoid",
-      "onset": "2015-05-24T15:15:00Z",
-      "first_alert_at": "2015-05-23T15:30:00Z",
+      "onset": "2015-05-24T12:40:00Z",
+      "first_alert_at": "2015-05-24T11:10:00Z",
       "censored": false
     },
     "halloween-2015": {
-      "crossing_id": "atx-21",
-      "lead_min": 54.0,
+      "crossing_id": "tc-167",
+      "lead_min": 40.0,
       "level": "avoid",
-      "onset": "2015-10-30T15:44:00Z",
-      "first_alert_at": "2015-10-30T14:50:00Z",
+      "onset": "2015-10-30T20:20:00Z",
+      "first_alert_at": "2015-10-30T19:40:00Z",
       "censored": false
     },
     "oct-2018": null,
-    "july-2025": {
-      "crossing_id": "atx-13",
-      "lead_min": 50.0,
-      "level": "avoid",
-      "onset": "2025-07-05T18:10:00Z",
-      "first_alert_at": "2025-07-05T17:20:00Z",
-      "censored": false
-    }
+    "july-2025": null
   },
   "examples": {
-    "nearest_gauge_story": {
-      "storm_id": "halloween-2013",
-      "crossing_id": "tc-133",
-      "onset": "2013-10-31T07:10:00Z",
-      "upstream_first_alert_at": "2013-10-31T04:40:00Z",
-      "upstream_lead_min": 150.0,
-      "nearest_gauge_lead_min": null,
-      "explanation": "The upstream river-network gauge rose ahead of the flood wave and triggered an Avoid warning, while the nearest straight-line gauge sits on an adjacent creek that missed the onset."
-    }
+    "nearest_gauge_story": null
   }
 }

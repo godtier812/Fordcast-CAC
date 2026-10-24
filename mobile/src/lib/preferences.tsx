@@ -21,6 +21,8 @@ type Context = Preferences & {
   storageError: boolean;
   activeStormId: string;
   simDriveActive: boolean;
+  replayResetToken: number;
+  triggerSampleReplay: (stormId: string) => void;
   setActiveStormId: (stormId: string) => void;
   setSimDriveActive: (active: boolean) => void;
   setLanguage: (value: 'en' | 'es') => void;
@@ -37,6 +39,7 @@ export function PreferencesProvider({ children }: PropsWithChildren) {
   const [storageError, setStorageError] = useState(false);
   const [activeStormId, setActiveStormId] = useState('halloween-2013');
   const [simDriveActive, setSimDriveActive] = useState(false);
+  const [replayResetToken, setReplayResetToken] = useState(0);
 
   useEffect(() => {
     let mounted = true;
@@ -92,6 +95,11 @@ export function PreferencesProvider({ children }: PropsWithChildren) {
         storageError,
         activeStormId,
         simDriveActive,
+        replayResetToken,
+        triggerSampleReplay: (stormId) => {
+          setActiveStormId(stormId);
+          setReplayResetToken((token) => token + 1);
+        },
         setActiveStormId,
         setSimDriveActive,
         t,

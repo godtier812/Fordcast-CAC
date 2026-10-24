@@ -32,8 +32,6 @@ def build_storyboard(
     has_first_watch = False
     has_first_avoid = False
 
-    outage_sites = {o["site"] for o in outages}
-
     for ev in sorted(events, key=lambda e: (e["t"], e["crossing_id"])):
         t_iso = ev["t"]
         state = ev["state"]
@@ -98,7 +96,7 @@ def build_storyboard(
                 if r.get("code") == "DATA_STALE" and r.get("gauge_id"):
                     gid = r["gauge_id"]
                     gname = gauge_names.get(gid, gid)
-                    if gid in outage_sites:
+                    if any(o["site"] == gid and o["start"] <= t_iso < o["end"] for o in outages):
                         if ("gauge_silent", gid) in seen_kinds_per_gauge:
                             continue
                         seen_kinds_per_gauge.add(("gauge_silent", gid))

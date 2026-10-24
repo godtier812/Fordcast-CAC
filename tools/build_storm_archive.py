@@ -66,13 +66,13 @@ STORMS = [
         "headline_event": "2013-10-31T11:15:00Z",
         "catalog_order": 1,
         "bundle": True,
-        "notes": "US 183 gauge silent after 2013-10-31T04:45:00Z; values are approved USGS OGC API v1 data",
+        "notes": "Archive gaps are distinct from the modeled 11:15Z–13:45Z delivery interruption; historical transmission timing unverified",
         "outages": [
             {
                 "site": "USGS-08159000",
                 "start": "2013-10-31T11:15:00Z",
                 "end": "2013-10-31T13:45:00Z",
-                "source": "USGS alert 2013-10-31; Statesman 2013-11-10",
+                "source": "Modeled delivery interruption; historical transmission timing unverified",
             }
         ],
     },
@@ -191,7 +191,7 @@ async def main() -> None:
         print(f"Wrote {len(gauges_geojson)} gauges to data/seed/gauges.geojson")
 
         # 2. Fetch continuous 00065 data for each storm
-        fetched_iso = "2026-10-17T23:00:00Z"
+        fetched_iso = datetime.now(UTC).isoformat()
         for storm in STORMS:
             sid = storm["id"]
             sdir = ROOT / "data/storms" / sid

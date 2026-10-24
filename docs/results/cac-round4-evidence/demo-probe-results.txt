@@ -1,0 +1,42 @@
+FAIL .local/__tests__/round4-demo-probes.test.tsx
+  × a named 50-second Memorial Day demo has reached its end by 60 seconds even with its detour (27 ms)
+  × switching the drill storm ends the old car run rather than combining old geometry with new statuses (3 ms)
+
+  ● a named 50-second Memorial Day demo has reached its end by 60 seconds even with its detour
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: "arrived"
+    Received: "rerouted"
+
+      22 |   expect(trip.run?.phase).toBe('rerouted');
+      23 |   act(() => { jest.advanceTimersByTime(60_000); });
+    > 24 |   expect(trip.run?.phase).toBe('arrived');
+         |                           ^
+      25 | });
+      26 | test('switching the drill storm ends the old car run rather than combining old geometry with new statuses', () => {
+      27 |   jest.useFakeTimers();
+
+      at Object.toBe (.local/__tests__/round4-demo-probes.test.tsx:24:27)
+
+  ● switching the drill storm ends the old car run rather than combining old geometry with new statuses
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: false
+    Received: true
+
+      31 |   mockMonitor.drill.stormId = 'halloween-2013';
+      32 |   act(() => { tree.update(<Harness />); });
+    > 33 |   expect(trip.active).toBe(false);
+         |                       ^
+      34 | });
+      35 |
+
+      at Object.toBe (.local/__tests__/round4-demo-probes.test.tsx:33:23)
+
+Test Suites: 1 failed, 1 total
+Tests:       2 failed, 2 total
+Snapshots:   0 total
+Time:        3.051 s
+Ran all test suites within paths ".local/__tests__/round4-demo-probes.test.tsx".

@@ -1,18 +1,18 @@
 {
   "first_watch": {
     "key": "reason.UPSTREAM_RISING",
-    "en": "Water rising upstream at {{gauge}}",
-    "es": "El agua sube río arriba en {{gauge}}"
+    "en": "Reference-gauge experiment: rising stage at {{gauge}}",
+    "es": "Experimento de referencia: nivel en aumento en {{gauge}}"
   },
   "first_avoid": {
     "key": "reason.UPSTREAM_ABOVE_TRIGGER",
-    "en": "{{gauge}}: +{{rise}} ft over the last 30 min, upstream. Water usually takes {{tau_lo}}–{{tau_hi}} min to get here.",
-    "es": "{{gauge}}: +{{rise}} pies en los últimos 30 min, río arriba. El agua suele tardar {{tau_lo}}–{{tau_hi}} min en llegar aquí."
+    "en": "Reference-gauge experiment: {{gauge}} rose {{rise}} ft in 30 min. Estimated gauge-to-gauge lag: {{tau_lo}}–{{tau_hi}} min. Road arrival is unverified.",
+    "es": "Experimento de referencia: {{gauge}} subió {{rise}} pies en 30 min. Retraso estimado entre estaciones: {{tau_lo}}–{{tau_hi}} min. No se ha verificado la llegada al camino."
   },
   "gauge_silent": {
     "key": "replay.gauge_silent",
-    "en": "{{gauge}} went silent. Its readings only arrived later, so FordCast shows Unknown here.",
-    "es": "{{gauge}} dejó de transmitir. Sus lecturas llegaron después, así que FordCast muestra Desconocido aquí."
+    "en": "Modeled delivery interruption at {{gauge}}. Missing arrivals are shown as Unknown; this is an explicit replay assumption.",
+    "es": "Interrupción de entrega modelada en {{gauge}}. Las entregas faltantes se muestran como Desconocido; es una suposición explícita de la reproducción."
   },
   "gauge_gap": {
     "key": "reason.DATA_STALE_gauge",

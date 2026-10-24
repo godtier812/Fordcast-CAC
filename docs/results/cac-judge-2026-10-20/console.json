@@ -1,0 +1,44 @@
+[
+  {
+    "level": "error",
+    "message": "Unknown event handler property `%s`. It will be ignored. onStartShouldSetResponder",
+    "timestamp": "2026-10-21T01:44:27.146Z",
+    "url": "http://localhost:8081/node_modules/expo-router/entry.bundle?platform=web&dev=true&hot=false&lazy=true&transform.engine=hermes&transform.routerRoot=src%2Fapp&transform.reactCompiler=true&unstable_transformProfile=hermes-stable"
+  },
+  {
+    "level": "error",
+    "message": "Unknown event handler property `%s`. It will be ignored. onResponderTerminationRequest",
+    "timestamp": "2026-10-21T01:44:27.147Z",
+    "url": "http://localhost:8081/node_modules/expo-router/entry.bundle?platform=web&dev=true&hot=false&lazy=true&transform.engine=hermes&transform.routerRoot=src%2Fapp&transform.reactCompiler=true&unstable_transformProfile=hermes-stable"
+  },
+  {
+    "level": "error",
+    "message": "Unknown event handler property `%s`. It will be ignored. onResponderGrant",
+    "timestamp": "2026-10-21T01:44:27.147Z",
+    "url": "http://localhost:8081/node_modules/expo-router/entry.bundle?platform=web&dev=true&hot=false&lazy=true&transform.engine=hermes&transform.routerRoot=src%2Fapp&transform.reactCompiler=true&unstable_transformProfile=hermes-stable"
+  },
+  {
+    "level": "error",
+    "message": "Unknown event handler property `%s`. It will be ignored. onResponderMove",
+    "timestamp": "2026-10-21T01:44:27.147Z",
+    "url": "http://localhost:8081/node_modules/expo-router/entry.bundle?platform=web&dev=true&hot=false&lazy=true&transform.engine=hermes&transform.routerRoot=src%2Fapp&transform.reactCompiler=true&unstable_transformProfile=hermes-stable"
+  },
+  {
+    "level": "error",
+    "message": "Unknown event handler property `%s`. It will be ignored. onResponderRelease",
+    "timestamp": "2026-10-21T01:44:27.148Z",
+    "url": "http://localhost:8081/node_modules/expo-router/entry.bundle?platform=web&dev=true&hot=false&lazy=true&transform.engine=hermes&transform.routerRoot=src%2Fapp&transform.reactCompiler=true&unstable_transformProfile=hermes-stable"
+  },
+  {
+    "level": "error",
+    "message": "Unknown event handler property `%s`. It will be ignored. onResponderTerminate",
+    "timestamp": "2026-10-21T01:44:27.148Z",
+    "url": "http://localhost:8081/node_modules/expo-router/entry.bundle?platform=web&dev=true&hot=false&lazy=true&transform.engine=hermes&transform.routerRoot=src%2Fapp&transform.reactCompiler=true&unstable_transformProfile=hermes-stable"
+  },
+  {
+    "level": "warn",
+    "message": "Require cycle: src/components/fordcast/UI.tsx -> src/components/StateBadge.tsx -> src/components/fordcast/UI.tsx\n\nRequire cycles are allowed, but can result in uninitialized values. Consider refactoring to remove the need for a cycle.",
+    "timestamp": "2026-10-21T01:44:45.903Z",
+    "url": "http://localhost:8081/node_modules/expo-router/entry.bundle?platform=web&dev=true&hot=false&lazy=true&transform.engine=hermes&transform.routerRoot=src%2Fapp&transform.reactCompiler=true&unstable_transformProfile=hermes-stable"
+  }
+]

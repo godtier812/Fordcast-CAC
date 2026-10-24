@@ -1,3 +1,4 @@
+import { router } from 'expo-router';
 import { View } from 'react-native';
 import {
   AppText,
@@ -38,6 +39,7 @@ export default function Settings() {
         </Card>
       ))}
       <Eyebrow>{t('common.prototype')} · 0.1.0</Eyebrow>
+      <Button secondary title={t('storms.science')} onPress={() => router.push('/lab')} />
       <Button secondary title={t('settings.intro')} onPress={resetPledge} />
       <Footer />
     </Page>

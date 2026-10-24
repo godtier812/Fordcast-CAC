@@ -1,4 +1,4 @@
-"""Pre-registered closest-to-median hero selector (§18.13). Never cherry-picks the maximum lead."""
+"""Deterministic median-lead closest-to-median hero selector (§18.13). Never cherry-picks the maximum lead."""
 
 import argparse
 import json
@@ -6,7 +6,7 @@ import sys
 from pathlib import Path
 from typing import Any
 
-HERO_RULE_TEXT = "tier-A AVOID hit closest to the overall median lead; ties: catalog order, then crossing id"
+HERO_RULE_TEXT = "proxy-reference AVOID hit closest to the overall median lead; ties: catalog order, then crossing id"
 
 
 def compute_heroes(
@@ -31,8 +31,7 @@ def compute_heroes(
         row
         for row in per_crossing
         if row.get("lead_min") is not None
-        and row.get("tier") == "A"
-        and row.get("truth_quality") != "proxy"
+        and row.get("truth_quality") == "proxy"
         and row.get("storm_id") in bundled_ids
     ]
 
@@ -84,7 +83,7 @@ def compute_heroes(
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
-        description="Select or verify pre-registered hero example (§18.13)."
+        description="Select or verify deterministic median-lead hero example (§18.13)."
     )
     parser.add_argument("file", type=Path, help="Path to docs/results/results.json")
     parser.add_argument(
@@ -100,7 +99,7 @@ def main(argv: list[str] | None = None) -> int:
     if args.check:
         if data.get("hero") != hero or data.get("hero_by_storm") != hero_by_storm:
             print(
-                "Hero check failed: committed hero does not match pre-registered rule.",
+                "Hero check failed: committed hero does not match deterministic median-lead rule.",
                 file=sys.stderr,
             )
             return 1

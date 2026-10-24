@@ -1,0 +1,266 @@
+{
+  "USGS-08158600": {
+    "gauge_id": "USGS-08158600",
+    "nws_lid": "WWVT2",
+    "url": "https://api.water.noaa.gov/nwps/v1/gauges/WWVT2",
+    "retrieved_at": "2026-10-18T05:10:51.028346+00:00",
+    "http_status": 200,
+    "categories": {
+      "major": {
+        "stage": -9999,
+        "flow": -9999
+      },
+      "moderate": {
+        "stage": -9999,
+        "flow": -9999
+      },
+      "minor": {
+        "stage": -9999,
+        "flow": -9999
+      },
+      "action": {
+        "stage": -9999,
+        "flow": -9999
+      }
+    },
+    "impacts": [],
+    "road_transfer_verified": false
+  },
+  "USGS-08158970": {
+    "gauge_id": "USGS-08158970",
+    "nws_lid": "WJCT2",
+    "url": "https://api.water.noaa.gov/nwps/v1/gauges/WJCT2",
+    "retrieved_at": "2026-10-18T05:10:51.157341+00:00",
+    "http_status": 200,
+    "categories": {
+      "major": {
+        "stage": -9999,
+        "flow": -9999
+      },
+      "moderate": {
+        "stage": -9999,
+        "flow": -9999
+      },
+      "minor": {
+        "stage": -9999,
+        "flow": -9999
+      },
+      "action": {
+        "stage": -9999,
+        "flow": -9999
+      }
+    },
+    "impacts": [],
+    "road_transfer_verified": false
+  },
+  "USGS-08158930": {
+    "gauge_id": "USGS-08158930",
+    "nws_lid": "AAIT2",
+    "url": "https://api.water.noaa.gov/nwps/v1/gauges/AAIT2",
+    "retrieved_at": "2026-10-18T05:10:51.202882+00:00",
+    "http_status": 200,
+    "categories": {
+      "major": {
+        "stage": 18,
+        "flow": -9999
+      },
+      "moderate": {
+        "stage": 14,
+        "flow": -9999
+      },
+      "minor": {
+        "stage": 13,
+        "flow": -9999
+      },
+      "action": {
+        "stage": -9999,
+        "flow": -9999
+      }
+    },
+    "impacts": [],
+    "road_transfer_verified": false
+  },
+  "USGS-08159000": {
+    "gauge_id": "USGS-08159000",
+    "nws_lid": "ATIT2",
+    "url": "https://api.water.noaa.gov/nwps/v1/gauges/ATIT2",
+    "retrieved_at": "2026-10-18T05:10:51.253312+00:00",
+    "http_status": 200,
+    "categories": {
+      "major": {
+        "stage": 27,
+        "flow": -9999
+      },
+      "moderate": {
+        "stage": 23,
+        "flow": -9999
+      },
+      "minor": {
+        "stage": 17,
+        "flow": -9999
+      },
+      "action": {
+        "stage": 15,
+        "flow": -9999
+      }
+    },
+    "impacts": [
+      {
+        "stage": 54,
+        "statement": "Height of instruments inside gauge house."
+      },
+      {
+        "stage": 47,
+        "statement": "Catastrophic flooding in neighborhoods of Onion Creek, with depths of 8 to 10 feet in Timber Creek, 10 to 15 feet in Onion Creek Forest, 10 to 12 feet in Yarrabee Bend, 2 feet in Onion Creek Plantations, 10 feet on the southeast side of Silverstone, 6 to 10 feet in Perkins Valley, and 5 to 10 feet in Onion Creek Club. The US Highway 183 bridge over Onion Creek and McKinney Falls Parkway are flooded. Major flooding of the south side of ABIA, including portions of FM 973. USGS 500 year storm floodplain."
+      },
+      {
+        "stage": 41,
+        "statement": "Major flooding in Onion Creek neighborhoods, with depths up to 6 feet in Onion Creek Plantations, 6 to 9 feet in Onion Creek Forest, 6 to 8 feet in Yarrabee Bend, 7 feet on the east side of Silverstone, and 4 to 11 feet in Timber Creek near Pearce Lane. Onion Creek Club, Perkins Valley neighborhood, Pleasant Valley Road, Pearce Lane, FM 973, Burleson Road, and Emma Browning Avenue are flooded. The south access to ABIA is flooded as is the South Austin WWTP. Flood of record is 40.15 on October 31, 2013."
+      },
+      {
+        "stage": 38,
+        "statement": "Major flooding in Onion Creek neighborhoods with depths up to 5 feet in Onion Creek Forest, 3 to 10 feet in Timber Creek near Pearce Lane, 4 feet in Onion Creek Plantations, 1 to 2 feet in Perkins Valley, and 2 to 3 feet in Yarrabee Bend. Access to the Onion Creek neighborhoods is now limited. Flooding of the South Austin WWTP is imminent. Much of FM 973 and parts of Burleson Road are flooded. The 6100 block of East William Cannon Drive and Pleasant Valley Road are flooded."
+      },
+      {
+        "stage": 35,
+        "statement": "Major flooding. Water enters homes in portions of several Onion Creek neighborhoods with 2 to 5 feet of water in parts of Onion Creek Plantations, Onion Creek Forest, Yarrabee Bend, Silverstone, and Perkins Valley. Up to 8 feet of water impacts homes in Timber Creek near Pearce Lane. FM 973, Burleson Road, William Cannon Drive, and Pleasant Valley Road are flooded, and the south Access to ABIA is blocked."
+      },
+      {
+        "stage": 32,
+        "statement": "Major flooding begins to flood the homes lower portions of Timber Creek, and the homes along Pinhurst Drive and Champions Lane. Vehicle access becomes limited to portions of Onion Creek Plantations, and street flooding begins to impact the Perkins Valley subdivision. Major portions of Brandt Road, Bluff Springs Road, and William Cannon Drive are flooded. Richard Moya Park is severely flooded, and water is spilling onto Burleson Road."
+      },
+      {
+        "stage": 29,
+        "statement": "Major flooding impacts several neighborhoods along Onion Creek. Homes on Pinehurst Drive and Champions Lane are threatened by flood waters. Portions of Timber Creek, Onion Creek Forest, Onion Creek Plantations, and Yarrabee Bend South subdivisions are flooded. Major portions of Bluff Springs Road, East William Cannon Drive and Brandt Road near Onion Creek are flooded, and Burleson Road begins to flood near Richard Moya Park.  "
+      },
+      {
+        "stage": 28,
+        "statement": "Major flooding impacts several neighborhoods along Onion Creek. Homes on Dixie Drive near Foyt Ct. are close to flooding. Homes on Pinehurst Drive and Champions Lane are surrounded by flood waters, but structures are not expected to be flooded at this level. Low portions of Timber Creek, Onion Creek Forest, Onion Creek Plantations, and Yarrabee Bend South subdivisions are flooded. Portions of Bluff Springs Road, East William Cannon Drive and Brandt Road near Onion Creek are flooded and impassable.  "
+      },
+      {
+        "stage": 27,
+        "statement": "Major flooding impacts several neighborhoods along Onion Creek. The Timber Creek neighborhood is starting to flood, and lowland areas in the Onion Creek Forest, Onion Creek Plantations, and Yarrabee Bend South subdivisions begin to flood. The 6100 block of East William Cannon Drive, and the 3100 block of Brandt Road may be flooded and impassable. Bluff Springs Road near the bridge at Onion Creek may also begin to flood. Much of Richard Moya Park is flooded."
+      },
+      {
+        "stage": 23,
+        "statement": "Moderate lowland flooding is well into the flood plain. Richard Moya Park on Burleson Road is flooded. Water is out of banks near Champions Lane, but no residential structures in neighborhoods along Onion Creek are impacted at this level."
+      },
+      {
+        "stage": 20,
+        "statement": "Minor lowland flooding threatens secondary roads, but neighborhoods along Onion Creek are not affected. Upstream, the 12000 block of Old San Antonio Road is likely flooded and impassable."
+      },
+      {
+        "stage": 17,
+        "statement": "The 12000 block of Old San Antonio Road upstream may be flooded. Neighborhoods along Onion Creek are not affected."
+      },
+      {
+        "stage": 15,
+        "statement": "Flow exceeds lowest sections of the banks. Low street crossings and bridges are threatened."
+      }
+    ],
+    "road_transfer_verified": false
+  },
+  "USGS-08158860": {
+    "gauge_id": "USGS-08158860",
+    "nws_lid": "SLHT2",
+    "url": "https://api.water.noaa.gov/nwps/v1/gauges/SLHT2",
+    "retrieved_at": "2026-10-18T05:10:51.298349+00:00",
+    "http_status": 200,
+    "categories": {
+      "major": {
+        "stage": -9999,
+        "flow": -9999
+      },
+      "moderate": {
+        "stage": -9999,
+        "flow": -9999
+      },
+      "minor": {
+        "stage": -9999,
+        "flow": -9999
+      },
+      "action": {
+        "stage": -9999,
+        "flow": -9999
+      }
+    },
+    "impacts": [],
+    "road_transfer_verified": false
+  },
+  "USGS-08155300": {
+    "gauge_id": "USGS-08155300",
+    "nws_lid": "ABTT2",
+    "url": "https://api.water.noaa.gov/nwps/v1/gauges/ABTT2",
+    "retrieved_at": "2026-10-18T05:10:51.347547+00:00",
+    "http_status": 200,
+    "categories": {
+      "major": {
+        "stage": 12,
+        "flow": -9999
+      },
+      "moderate": {
+        "stage": 11,
+        "flow": -9999
+      },
+      "minor": {
+        "stage": 8,
+        "flow": -9999
+      },
+      "action": {
+        "stage": 6,
+        "flow": -9999
+      }
+    },
+    "impacts": [
+      {
+        "stage": 26,
+        "statement": "Flow is near the USGS 1:100 year flood level (26 feet - 44,400 cfs). Disastrous flooding reaches several homes in the lower flood plain. Streets, roads and bridges are very dangerous to motorists. Barton Springs Pool is severely damaged."
+      },
+      {
+        "stage": 25,
+        "statement": "Flow reaches the usgs 1:50 year flood level (34,200 cfs). Major flooding severely damages Barton Springs Pool downstream. Roads, streets and bridges are extremely dangerous to motorists. Lowest residences are threatened."
+      },
+      {
+        "stage": 23,
+        "statement": "Major, very dangerous flooding occurs. Many streets and bridges above Loop 360 to the Colorado River are very dangerous. Nearing the USGS 1:50 foot flood level. Barton Springs Pool is severely damaged. Lowest residences are threatened."
+      },
+      {
+        "stage": 22,
+        "statement": "The Barton Creek flood plain is very dangerous. Travel should be prohibited on streets and bridges that cross the flood plain. Barton Springs Pool will be severely impacted with major damage. Well in excess of a 1:25 year flood. Lowest residences are threatened."
+      },
+      {
+        "stage": 20,
+        "statement": "Flow is in excess of the USGS 1:25 year flood level. Severe flooding damage to Barton Springs Pool downstream. Major flooding makes low lying streets and bridges very dangerous."
+      },
+      {
+        "stage": 18,
+        "statement": "Major flooding of the lower flood plain occurs including Barton Springs Pool. Flow reaches the usgs 1:25 year flood level (25,400 cfs). Low roads, streets and bridges are severely flooded and dangerous."
+      },
+      {
+        "stage": 16,
+        "statement": "Major flooding causes severe damage to Barton Springs Pool downstream. Roads, streets and bridges are severely flooding and dangerous in the Barton Creek flood plain."
+      },
+      {
+        "stage": 14,
+        "statement": "Major flooding covers lower areas of Barton Springs Pool downstream. Jogging and biking trails in the lower flood plain are flooded. Flow is near the USGS 1:10 year flood level of 14.2 feet."
+      },
+      {
+        "stage": 12,
+        "statement": "Major flooding puts flow overbanks in Barton Springs Pool downstream. Roads and low bridges are very dangerous above Loop 360 to the Colorado River."
+      },
+      {
+        "stage": 11,
+        "statement": "Minor lowland flooding reaches lowest secondary roads and low bridges. Significant rise downstream in Barton Springs Pool."
+      },
+      {
+        "stage": 8,
+        "statement": "Flow exceeds lowest sections of the banks."
+      },
+      {
+        "stage": 6,
+        "statement": "Flood waters begin to flood Barton Springs pool. "
+      }
+    ],
+    "road_transfer_verified": false
+  }
+}

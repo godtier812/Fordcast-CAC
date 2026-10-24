@@ -1,0 +1,71 @@
+FAIL .local/__tests__/round2-probes.test.ts (5.682 s)
+  round 2 adversarial audit
+    √ visual arrival contract accepts model window 0,15 (3 ms)
+    √ visual arrival contract accepts model window 15,30 (1 ms)
+    √ visual arrival contract accepts model window 30,60
+    √ visual arrival contract accepts model window 60,90
+    √ visual arrival contract accepts model window 0,30 (1 ms)
+    √ visual arrival contract accepts model window 15,60
+    × visual arrival contract accepts model window 30,90 (1 ms)
+    √ a calm sensor at an official closure is still closed and has no lag window (1 ms)
+    √ an unmonitored NWS warning is selected for Drive (1 ms)
+    × closure observation time must describe the closure rather than a calm gauge (1 ms)
+    × distinct creek crossings on the same road must not merge solely by proximity (2 ms)
+    √ current coverage excludes the public College Station district-office coordinate
+
+  ● round 2 adversarial audit › visual arrival contract accepts model window 30,90
+
+    expect(received).not.toBeNull()
+
+    Received: null
+
+      18 |   test.each(allowedWindows)('visual arrival contract accepts model window %s', (encoded) => {
+      19 |     const window = encoded.split(',').map(Number) as [number, number];
+    > 20 |     expect(toArrivalBucketKey(window)).not.toBeNull();
+         |                                            ^
+      21 |   });
+      22 |
+      23 |   test('a calm sensor at an official closure is still closed and has no lag window', () => {
+
+      at toBeNull (.local/__tests__/round2-probes.test.ts:20:44)
+
+  ● round 2 adversarial audit › closure observation time must describe the closure rather than a calm gauge
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: 2000
+    Received: 1000
+
+      44 |         stageFt: 1, rise30Ft: 0, obsAt: 1000 },
+      45 |     })]);
+    > 46 |     expect(target?.obsAt).toBe(2000);
+         |                           ^
+      47 |   });
+      48 |
+      49 |   test('distinct creek crossings on the same road must not merge solely by proximity', () => {
+
+      at Object.toBe (.local/__tests__/round2-probes.test.ts:46:27)
+
+  ● round 2 adversarial audit › distinct creek crossings on the same road must not merge solely by proximity
+
+    expect(received).toHaveLength(expected)
+
+    Expected length: 2
+    Received length: 1
+    Received array:  [{"cleanName": "Probe Road at Creek A", "id": "atx-probe", "primary": {"alert": null, "coverage": "calibrated", "creek": "Creek A", "danger": null, "displayState": "no_rise", "distanceKm": 1, "history": null, "id": "atx-probe", "lat": 30.2672, "live": null, "lon": -97.7431, "monitored": true, "name": "Probe Road at Creek A", "official": null, "rain": null, "reasons": [], "state": "no_rise", "window": null}, "recordCount": 2, "records": [{"alert": null, "coverage": "calibrated", "creek": "Creek A", "danger": null, "displayState": "no_rise", "distanceKm": 1, "history": null, "id": "atx-probe", "lat": 30.2672, "live": null, "lon": -97.7431, "monitored": true, "name": "Probe Road at Creek A", "official": null, "rain": null, "reasons": [], "state": "no_rise", "window": null}, {"alert": null, "coverage": "calibrated", "creek": "Creek B", "danger": null, "displayState": "no_rise", "distanceKm": 1, "history": null, "id": "atx-probe-b", "lat": 30.2692, "live": null, "lon": -97.7431, "monitored": true, "name": "Probe Road at Creek B", "official": null, "rain": null, "reasons": [], "state": "no_rise", "window": null}], "routeIndex": 0}]
+
+      52 |       base({ id: 'atx-probe-b', name: 'Probe Road at Creek B', creek: 'Creek B', lat: 30.2692 }),
+      53 |     ]);
+    > 54 |     expect(groups).toHaveLength(2);
+         |                    ^
+      55 |   });
+      56 |
+      57 |   test('current coverage excludes the public College Station district-office coordinate', () => {
+
+      at Object.toHaveLength (.local/__tests__/round2-probes.test.ts:54:20)
+
+Test Suites: 1 failed, 1 total
+Tests:       3 failed, 9 passed, 12 total
+Snapshots:   0 total
+Time:        6.149 s
+Ran all test suites within paths ".local/__tests__/round2-probes.test.ts".

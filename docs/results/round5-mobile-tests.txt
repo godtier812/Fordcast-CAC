@@ -1,0 +1,14 @@
+PASS src/__tests__/contracts.test.ts (22.067 s)
+PASS src/__tests__/round4-demo-probes.test.tsx (25.779 s)
+PASS src/__tests__/components.test.tsx (6.326 s)
+PASS src/__tests__/routing.test.ts
+PASS src/__tests__/round2-probes.test.ts
+PASS src/__tests__/round4-guardian-probes.test.ts
+PASS src/__tests__/live.test.ts
+PASS src/__tests__/replay-controls.test.ts
+
+Test Suites: 8 passed, 8 total
+Tests:       94 passed, 94 total
+Snapshots:   0 total
+Time:        69.653 s
+Ran all test suites.

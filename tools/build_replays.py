@@ -1,21 +1,24 @@
 """Build crossing tiers, LOSO backtest results, and deterministic fordcast.replay.v1 timelines (§17–§19)."""
 
-import asyncio
 import csv
 import hashlib
 import json
 import math
+import subprocess
 import sys
-import tomllib
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
+
+import tomllib
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "backend"))
 
 from fordcast.domain import Crossing, Gauge
+from fordcast.linking.geography import distance_km, nearest_gauge
 from fordcast.replay.build import build_replay_document, iso_z, serialize_replay
+from fordcast.replay.offline import run_offline
 from fordcast.scoring.backtest import (
     LinkSpec,
     load_storm_readings,
@@ -27,138 +30,102 @@ from fordcast.scoring.labels import load_truth_episodes
 from fordcast.sources.replay import Outage
 from select_hero import compute_heroes
 
-TIER_A_CONFIG: dict[str, dict[str, Any]] = {
+REFERENCE_CANDIDATES: dict[str, dict[str, Any]] = {
     "atx-19": {
         "creek": "Onion Creek",
         "road": "E. William Cannon Dr",
         "target_gauge_id": "USGS-08159000",
-        "overtop_stage_ft": 17.0,
-        "truth_quality": "impact_statement",
-        "truth_source": "NWS NWPS ATIT2 minor flood stage 17.0 ft (low street crossings on Onion Creek)",
+        "category": "minor",
         "upstream": [
             ("USGS-08158970", 6.2),
             ("USGS-08158860", 18.4),
             ("USGS-08158700", 38.2),
         ],
-        "nearest_baseline": ("USGS-08158840", 14.0),
     },
     "atx-20": {
         "creek": "Onion Creek",
         "road": "E. William Cannon Dr",
         "target_gauge_id": "USGS-08159000",
-        "overtop_stage_ft": 22.0,
-        "truth_quality": "impact_statement",
-        "truth_source": "NWS NWPS ATIT2 moderate flood approach 22.0 ft (Onion Creek low corridor)",
+        "category": "moderate",
         "upstream": [
             ("USGS-08158970", 6.2),
             ("USGS-08158860", 18.4),
             ("USGS-08158700", 38.2),
         ],
-        "nearest_baseline": ("USGS-08158840", 14.0),
     },
     "atx-21": {
         "creek": "Onion Creek",
         "road": "E. William Cannon Dr",
         "target_gauge_id": "USGS-08159000",
-        "overtop_stage_ft": 27.0,
-        "truth_quality": "impact_statement",
-        "truth_source": "NWS NWPS ATIT2 @ 27.0 ft: 6100 block of East William Cannon Drive flooded",
+        "category": "major",
         "upstream": [
             ("USGS-08158970", 6.2),
             ("USGS-08158860", 18.4),
             ("USGS-08158700", 38.2),
         ],
-        "nearest_baseline": ("USGS-08158840", 14.0),
     },
     "atx-7": {
         "creek": "Williamson Creek",
         "road": "Wasson Rd",
         "target_gauge_id": "USGS-08158970",
-        "overtop_stage_ft": 15.5,
-        "truth_quality": "gauge",
-        "truth_source": "COA FEWS LWC gate 6500 / USGS-08158970 Williamson Creek overbank stage 15.5 ft",
+        "category": "minor",
         "upstream": [("USGS-08158930", 8.5), ("USGS-08158920", 16.7)],
-        "nearest_baseline": ("USGS-08158860", 6.8),
     },
     "atx-8": {
         "creek": "Williamson Creek",
         "road": "Wasson Rd",
         "target_gauge_id": "USGS-08158970",
-        "overtop_stage_ft": 16.0,
-        "truth_quality": "gauge",
-        "truth_source": "COA FEWS LWC gate 6510 / USGS-08158970 Williamson Creek overbank stage 16.0 ft",
+        "category": "minor",
         "upstream": [("USGS-08158930", 8.5), ("USGS-08158920", 16.7)],
-        "nearest_baseline": ("USGS-08158860", 6.8),
     },
     "atx-15": {
         "creek": "Williamson Creek",
         "road": "Joe Tanner Ln",
         "target_gauge_id": "USGS-08158930",
-        "overtop_stage_ft": 13.0,
-        "truth_quality": "impact_statement",
-        "truth_source": "NWS NWPS AAIT2 minor flood stage 13.0 ft (Williamson Creek flood plain)",
+        "category": "minor",
         "upstream": [("USGS-08158920", 8.2)],
-        "nearest_baseline": ("USGS-08158840", 5.2),
     },
     "atx-16": {
         "creek": "Williamson Creek",
         "road": "Joe Tanner Ln",
         "target_gauge_id": "USGS-08158930",
-        "overtop_stage_ft": 14.0,
-        "truth_quality": "impact_statement",
-        "truth_source": "NWS NWPS AAIT2 moderate flood stage 14.0 ft (Williamson Creek flood plain)",
+        "category": "moderate",
         "upstream": [("USGS-08158920", 8.2)],
-        "nearest_baseline": ("USGS-08158840", 5.2),
     },
     "tc-133": {
         "creek": "Slaughter Creek",
         "road": "Slaughter Creek Dr",
         "target_gauge_id": "USGS-08158860",
-        "overtop_stage_ft": 9.0,
-        "truth_quality": "impact_statement",
-        "truth_source": "NWS NWPS SCAT2/SLHT2 @ 9.0 ft: Moderate lowland flooding covers Slaughter Creek crossing",
+        "category": "minor",
         "upstream": [("USGS-08158840", 10.4)],
-        "nearest_baseline": ("USGS-08158827", 4.5),
     },
     "tc-167": {
         "creek": "Barton Creek",
         "road": "Henry Marx Ln",
         "target_gauge_id": "USGS-08155300",
-        "overtop_stage_ft": 11.0,
-        "truth_quality": "impact_statement",
-        "truth_source": "NWS NWPS ABTT2 @ 11.0 ft: Minor lowland flooding reaches lowest secondary roads and bridges",
+        "category": "moderate",
         "upstream": [("USGS-08155240", 8.4), ("USGS-08155200", 19.6)],
-        "nearest_baseline": ("USGS-08158920", 4.8),
     },
     "atx-3": {
         "creek": "Walnut Creek",
         "road": "O'Neal Ln",
         "target_gauge_id": "USGS-08158600",
-        "overtop_stage_ft": 20.0,
-        "truth_quality": "gauge",
-        "truth_source": "COA FEWS LWC gate 6300 / USGS-08158600 Walnut Creek overbank road stage 20.0 ft",
+        "category": "minor",
         "upstream": [("USGS-08158380", 12.5), ("USGS-08158200", 14.8)],
-        "nearest_baseline": ("USGS-08154700", 8.5),
     },
     "atx-12": {
         "creek": "Walnut Creek",
         "road": "Waters Park Rd",
         "target_gauge_id": "USGS-08158600",
-        "overtop_stage_ft": 21.0,
-        "truth_quality": "gauge",
-        "truth_source": "COA FEWS LWC gate 6710 / USGS-08158600 Walnut Creek overbank road stage 21.0 ft",
+        "category": "minor",
         "upstream": [("USGS-08158380", 12.5), ("USGS-08158200", 14.8)],
-        "nearest_baseline": ("USGS-08154700", 8.5),
     },
     "atx-13": {
         "creek": "Walnut Creek",
         "road": "Adelphi Ln",
         "target_gauge_id": "USGS-08158600",
-        "overtop_stage_ft": 22.0,
-        "truth_quality": "gauge",
-        "truth_source": "COA FEWS LWC gate 6200 / USGS-08158600 Walnut Creek overbank road stage 22.0 ft",
+        "category": "minor",
         "upstream": [("USGS-08158380", 12.5), ("USGS-08158200", 14.8)],
-        "nearest_baseline": ("USGS-08154700", 8.5),
     },
 }
 
@@ -262,14 +229,11 @@ def _euclid_km(lon1: float, lat1: float, lon2: float, lat2: float) -> float:
     return round(math.hypot(dx, dy), 2)
 
 
-def _make_flowline(
+def schematic_connector(
     glon: float, glat: float, clon: float, clat: float
 ) -> list[tuple[float, float]]:
-    mid_lon = round((glon + clon) / 2.0 + 0.002, 5)
-    mid_lat = round((glat + clat) / 2.0 - 0.0015, 5)
     return [
         (round(glon, 5), round(glat, 5)),
-        (mid_lon, mid_lat),
         (round(clon, 5), round(clat, 5)),
     ]
 
@@ -281,7 +245,30 @@ def write_json(path: Path, obj: object) -> None:
     )
 
 
-async def main() -> None:
+async def build(git_sha: str, working_tree_dirty: bool) -> None:
+    source_files = sorted((ROOT / "backend/fordcast").rglob("*.py")) + [
+        Path(__file__),
+        ROOT / "tools/select_hero.py",
+    ]
+    source_sha = hashlib.sha256(
+        b"".join(
+            str(p.relative_to(ROOT)).replace("\\", "/").encode()
+            + hashlib.sha256(p.read_bytes()).digest()
+            for p in source_files
+        )
+    ).hexdigest()
+    references = json.loads((ROOT / "data/reference/gauge-categories.json").read_text())
+    for cfg in REFERENCE_CANDIDATES.values():
+        source = references[cfg["target_gauge_id"]]
+        stage = source["categories"].get(cfg["category"], {}).get("stage")
+        cfg["reference_stage_ft"] = (
+            float(stage) if stage is not None and stage > -999 else None
+        )
+        cfg["truth_quality"] = "proxy"
+        cfg["truth_source"] = (
+            f"NOAA NWPS {source['nws_lid']} {cfg['category']} category ({source['url']}) — corridor proxy; road-deck elevation unverified"
+        )
+        cfg["reference_source_url"] = source["url"]
     gauges_fc = json.loads(
         (ROOT / "data/seed/gauges.geojson").read_text(encoding="utf-8")
     )
@@ -336,8 +323,8 @@ async def main() -> None:
                 continue
             cid = f"{prefix}-{p[id_key]}"
             name = str(p[name_key]).strip()
-            if cid in TIER_A_CONFIG:
-                cfg = TIER_A_CONFIG[cid]
+            if cid in REFERENCE_CANDIDATES:
+                cfg = REFERENCE_CANDIDATES[cid]
                 props = {
                     "id": cid,
                     "name": name,
@@ -345,17 +332,22 @@ async def main() -> None:
                     "road": cfg["road"],
                     "creek": cfg["creek"],
                     "jurisdiction": jurisdiction,
-                    "tier": "A",
+                    "tier": "B",
                     "target_gauge_id": cfg["target_gauge_id"],
-                    "overtop_stage_ft": cfg["overtop_stage_ft"],
+                    "overtop_stage_ft": None,
+                    "reference_stage_ft": cfg["reference_stage_ft"],
+                    "reference_source_url": cfg["reference_source_url"],
+                    "reference_kind": "gauge_flood_stage_proxy"
+                    if cfg["reference_stage_ft"] is not None
+                    else "unavailable",
                     "truth_quality": cfg["truth_quality"],
                     "truth_source": cfg["truth_source"],
                     "source": attribution,
                     "source_id": str(p[id_key]),
                     "source_ref": f"data/raw/smoke/{source}.json",
-                    "state": "no_rise",
-                    "review_status": "verified",
-                    "reason": "UPSTREAM_MONITORED",
+                    "state": "unknown",
+                    "review_status": "unverified_road_and_topology",
+                    "reason": "RESEARCH_CANDIDATE",
                     "inventory_version": "inv-20261017",
                 }
             elif cid in TIER_B_CONFIG:
@@ -375,9 +367,9 @@ async def main() -> None:
                     "source": attribution,
                     "source_id": str(p[id_key]),
                     "source_ref": f"data/raw/smoke/{source}.json",
-                    "state": "no_rise",
-                    "review_status": "verified",
-                    "reason": "UPSTREAM_MONITORED",
+                    "state": "unknown",
+                    "review_status": "unverified_road_and_topology",
+                    "reason": "RESEARCH_CANDIDATE",
                     "inventory_version": "inv-20261017",
                 }
             else:
@@ -426,18 +418,22 @@ async def main() -> None:
             ],
         )
         writer.writeheader()
-        for cid, cfg in sorted(TIER_A_CONFIG.items()):
-            writer.writerow(
-                {
-                    "crossing_id": cid,
-                    "gauge_id": cfg["target_gauge_id"],
-                    "overtop_stage_ft": cfg["overtop_stage_ft"],
-                    "truth_quality": cfg["truth_quality"],
-                    "truth_source": cfg["truth_source"],
-                    "confirmed_by": "NWPS/COA archive verification",
-                    "date": "2026-10-17",
-                }
-            )
+    reference_path = ROOT / "data/reference/crossing_reference_stages.json"
+    write_json(
+        reference_path,
+        [
+            {
+                "crossing_id": cid,
+                "gauge_id": cfg["target_gauge_id"],
+                "stage_ft": cfg["reference_stage_ft"],
+                "category": cfg["category"],
+                "source_url": cfg["reference_source_url"],
+                "road_transfer_verified": False,
+                "source": cfg["truth_source"],
+            }
+            for cid, cfg in sorted(REFERENCE_CANDIDATES.items())
+        ],
+    )
 
     # Build Crossing domain objects, LinkSpecs, and data/creeks/creeks.geojson
     crossings_domain: list[Crossing] = []
@@ -461,17 +457,18 @@ async def main() -> None:
                 lat=float(clat),
                 tier=p["tier"],
                 target_gauge=tgt_gauge,
+                reference_stage_ft=p.get("reference_stage_ft"),
                 overtop_stage_ft=float(p["overtop_stage_ft"])
                 if p.get("overtop_stage_ft") is not None
                 else None,
             )
         )
 
-        if cid in TIER_A_CONFIG:
-            cfg = TIER_A_CONFIG[cid]
+        if cid in REFERENCE_CANDIDATES:
+            cfg = REFERENCE_CANDIDATES[cid]
             for gid, ch_km in cfg["upstream"]:
                 gm = gauge_meta_by_id[gid]
-                fl = _make_flowline(gm["lon"], gm["lat"], float(clon), float(clat))
+                fl = schematic_connector(gm["lon"], gm["lat"], float(clon), float(clat))
                 ekm = _euclid_km(gm["lon"], gm["lat"], float(clon), float(clat))
                 link_specs.append(LinkSpec(cid, gid, "upstream", float(ch_km), ekm, fl))
                 link_meta_by_pair[(cid, gid)] = {
@@ -490,12 +487,18 @@ async def main() -> None:
                             "crossing_id": cid,
                             "gauge_id": gid,
                             "relation": "upstream",
+                            "geometry_source": "schematic_corridor_connector",
+                            "topology_verified": False,
                         },
                     }
                 )
-            ng_id, ng_km = cfg["nearest_baseline"]
+            ng_id = nearest_gauge(float(clon), float(clat), gauge_meta_by_id)
+            ng_km = distance_km(
+                (float(clon), float(clat)),
+                (gauge_meta_by_id[ng_id]["lon"], gauge_meta_by_id[ng_id]["lat"]),
+            )
             ngm = gauge_meta_by_id[ng_id]
-            nfl = _make_flowline(ngm["lon"], ngm["lat"], float(clon), float(clat))
+            nfl = schematic_connector(ngm["lon"], ngm["lat"], float(clon), float(clat))
             nekm = _euclid_km(ngm["lon"], ngm["lat"], float(clon), float(clat))
             link_specs.append(
                 LinkSpec(cid, ng_id, "nearest_baseline", float(ng_km), nekm, nfl)
@@ -504,7 +507,7 @@ async def main() -> None:
             cfg = TIER_B_CONFIG[cid]
             for gid, ch_km in cfg["upstream"]:
                 gm = gauge_meta_by_id[gid]
-                fl = _make_flowline(gm["lon"], gm["lat"], float(clon), float(clat))
+                fl = schematic_connector(gm["lon"], gm["lat"], float(clon), float(clat))
                 ekm = _euclid_km(gm["lon"], gm["lat"], float(clon), float(clat))
                 link_specs.append(LinkSpec(cid, gid, "upstream", float(ch_km), ekm, fl))
                 link_meta_by_pair[(cid, gid)] = {
@@ -523,6 +526,8 @@ async def main() -> None:
                             "crossing_id": cid,
                             "gauge_id": gid,
                             "relation": "upstream",
+                            "geometry_source": "schematic_corridor_connector",
+                            "topology_verified": False,
                         },
                     }
                 )
@@ -538,16 +543,18 @@ async def main() -> None:
     results_doc, loso_models, link_rows = await run_loso_backtest(
         ROOT / "data",
         monitored_crossings,
-        TIER_A_CONFIG,
+        REFERENCE_CANDIDATES,
         link_specs,
         nws_action_by_gauge,
-        git_sha="fd9407c",
+        git_sha=git_sha,
     )
 
-    # Apply pre-registered hero rule (§18.13)
+    # Apply deterministic median-lead selection (§18.13)
     hero, hero_by_storm = compute_heroes(results_doc)
     results_doc["hero"] = hero
     results_doc["hero_by_storm"] = hero_by_storm
+    results_doc["generated_by"]["source_sha256"] = source_sha
+    results_doc["generated_by"]["working_tree_dirty"] = working_tree_dirty
 
     results_path = ROOT / "docs/results/results.json"
     write_json(results_path, results_doc)
@@ -587,7 +594,7 @@ async def main() -> None:
         ),
     )
 
-    generated_at = "2026-10-17T23:15:00Z"
+    generated_at = datetime.now(UTC).isoformat().replace("+00:00", "Z")
     index_entries: list[dict[str, Any]] = []
     first_replay_doc: dict[str, Any] | None = None
 
@@ -670,12 +677,13 @@ async def main() -> None:
             "description_es": meta.get("notes"),
         }
         pipeline_meta = {
-            "git_sha": "fd9407c",
+            "git_sha": git_sha,
             "model_version": f"rule-loso-{sid}",
             "data_sha256": str(meta["data_sha256"]),
             "latency_sha256": latency_sha,
             "results_sha256": results_sha,
             "generated_at": generated_at,
+            "source_sha256": source_sha,
         }
         doc = await build_replay_document(
             storm_meta=storm_meta,
@@ -742,4 +750,14 @@ async def main() -> None:
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    revision = subprocess.check_output(
+        ["git", "rev-parse", "--short", "HEAD"], cwd=ROOT, text=True
+    ).strip()
+    dirty = bool(
+        subprocess.check_output(
+            ["git", "status", "--porcelain", "backend/fordcast", "tools"],
+            cwd=ROOT,
+            text=True,
+        )
+    )
+    run_offline(build(revision, dirty))

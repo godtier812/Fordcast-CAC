@@ -5,6 +5,13 @@ from datetime import datetime, timedelta
 from fordcast.sources.base import Reading, assert_no_lookahead, aware, visible
 
 
+def grouped_index(readings: Sequence[Reading]):
+    grouped: dict[str, list[Reading]] = {}
+    for reading in sorted(readings, key=lambda r: (r.available_at, r.obs_time)):
+        grouped.setdefault(reading.gauge_id, []).append(reading)
+    return grouped, {gid: [r.available_at for r in rows] for gid, rows in grouped.items()}
+
+
 @dataclass(frozen=True)
 class Outage:
     gauge_id: str
@@ -39,8 +46,7 @@ class StormReplaySource:
                 if outage.gauge_id == r.gauge_id and outage.start <= r.obs_time < outage.end:
                     arrival = max(arrival, outage.end)
             prepared.append(replace(r, available_at=arrival))
-        self._readings = sorted(prepared, key=lambda r: (r.available_at, r.gauge_id, r.obs_time))
-        self._index = [r.available_at for r in self._readings]
+        self._readings, self._index = grouped_index(prepared)
 
     async def series(
         self, gauge_ids: Sequence[str], param: str, as_of: datetime, lookback: timedelta
@@ -48,7 +54,9 @@ class StormReplaySource:
         result = {
             g: [
                 r
-                for r in visible(self._readings, self._index, g, as_of, lookback)
+                for r in visible(
+                    self._readings.get(g, []), self._index.get(g, []), g, as_of, lookback
+                )
                 if r.param == param
             ]
             for g in gauge_ids
@@ -61,8 +69,7 @@ class RecordedSource:
     """Local/live observations retaining their actual first-received timestamps."""
 
     def __init__(self, readings: Sequence[Reading]) -> None:
-        self._readings = sorted(readings, key=lambda r: (r.available_at, r.gauge_id, r.obs_time))
-        self._index = [r.available_at for r in self._readings]
+        self._readings, self._index = grouped_index(readings)
 
     async def series(
         self, gauge_ids: Sequence[str], param: str, as_of: datetime, lookback: timedelta
@@ -70,7 +77,9 @@ class RecordedSource:
         return {
             g: [
                 r
-                for r in visible(self._readings, self._index, g, as_of, lookback)
+                for r in visible(
+                    self._readings.get(g, []), self._index.get(g, []), g, as_of, lookback
+                )
                 if r.param == param
             ]
             for g in gauge_ids

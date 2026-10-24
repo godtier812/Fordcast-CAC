@@ -15,7 +15,7 @@ export default function TabsLayout() {
       </NativeTabs.Trigger>
       <NativeTabs.Trigger name="replay">
         <NativeTabs.Trigger.Label>{t('nav.replay')}</NativeTabs.Trigger.Label>
-        <NativeTabs.Trigger.Icon sf="play.circle" md="play_circle" />
+        <NativeTabs.Trigger.Icon sf="cloud.bolt.rain" md="thunderstorm" />
       </NativeTabs.Trigger>
       <NativeTabs.Trigger name="alerts">
         <NativeTabs.Trigger.Label>{t('nav.alerts')}</NativeTabs.Trigger.Label>

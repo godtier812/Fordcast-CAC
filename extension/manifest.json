@@ -1,0 +1,30 @@
+{
+  "manifest_version": 3,
+  "name": "FordCast for Google Maps",
+  "short_name": "FordCast",
+  "version": "0.1.0",
+  "description": "Experimental: shows flooded or closed Austin-area low-water crossings on Google Maps and suggests a route around them.",
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://www.google.com/maps/*"],
+      "js": ["data.js", "lib.js", "fordcast.js"],
+      "css": ["panel.css"],
+      "run_at": "document_idle"
+    }
+  ],
+  "host_permissions": [
+    "https://api.atxfloods.com/*",
+    "https://api.waterdata.usgs.gov/*",
+    "https://api.weather.gov/*",
+    "https://valhalla1.openstreetmap.de/*",
+    "https://photon.komoot.io/*"
+  ]
+}

@@ -22,6 +22,7 @@ class Crossing:
     tier: Literal["A", "B", "C"] = "C"
     target_gauge: Gauge | None = None
     overtop_stage_ft: float | None = None
+    reference_stage_ft: float | None = None
 
 
 @dataclass(frozen=True)

@@ -1,0 +1,21 @@
+ok   decodePolyline: reference polyline at precision 5 and 6
+ok   decodePolyline: real Valhalla polyline6 starts at the requested origin
+ok   pointInPolygon: polygon with hole and multipolygon
+ok   distanceToPolyline + itemsNearRoute
+ok   pickDeviationWaypoints picks the detour apex, in route order, max 3
+ok   parseViewport: zoom and metre forms
+ok   parseDirectionsUrl: coordinate path segments
+ok   parseDirectionsUrl: data-param form (lon then lat)
+ok   parseDirectionsUrl: mixed coordinates + named place, and names needing geocoding
+ok   buildGoogleDirectionsUrl + round trip through parseDirectionsUrl
+ok   toWindow buckets
+ok   live rule: flat gauge → no_rise
+ok   live rule: rising past trigger → avoid with window
+ok   live rule: rising toward trigger → watch
+ok   live rule: stale data (>80 min) → unknown; missing gauge → unknown
+ok   parseUsgsFeatures filters parameter, units, qualifiers and dedupes timestamps
+ok   filterAlerts + flashAlertAt + classifySite
+ok   generated data.js matches seed shape
+ok   assessRouteCoverage: flags Austin to College Station and mid-route excursions outside 80 km
+
+19 passed

@@ -1,0 +1,49 @@
+FAIL .local/__tests__/round6-ios-voice-probes.test.ts
+  × an explicit native voice preview can play while automatic voice alerts remain muted (13 ms)
+  × native speech waits for the audio-session preparation promise before playback (5 ms)
+
+  ● an explicit native voice preview can play while automatic voice alerts remain muted
+
+    expect(jest.fn()).toHaveBeenCalledTimes(expected)
+
+    Expected number of calls: 1
+    Received number of calls: 0
+
+      13 |   setVoiceMuted(true);
+      14 |   speak('Preview only. Never drive into water.','en',{force:true,allowWhenMuted:true});
+    > 15 |   expect(Speech.speak).toHaveBeenCalledTimes(1);
+         |                        ^
+      16 | });
+      17 | test('native speech waits for the audio-session preparation promise before playback',async()=>{
+      18 |   const ready=prepareAudio();
+
+      at Object.toHaveBeenCalledTimes (.local/__tests__/round6-ios-voice-probes.test.ts:15:24)
+
+  ● native speech waits for the audio-session preparation promise before playback
+
+    expect(jest.fn()).not.toHaveBeenCalled()
+
+    Expected number of calls: 0
+    Received number of calls: 1
+
+    1: "Simulation: Never drive into water.", {"language": "en-US", "onDone": [Function onDone], "onError": [Function onError], "onStopped": [Function onStopped], "pitch": 0.98, "rate": 0.95}
+
+      18 |   const ready=prepareAudio();
+      19 |   speak('Simulation. Never drive into water.','en',{force:true});
+    > 20 |   try {expect(Speech.speak).not.toHaveBeenCalled();}
+         |                                 ^
+      21 |   finally {mockReady();await ready;}
+      22 | });
+      23 |
+
+      at Object.toHaveBeenCalled (.local/__tests__/round6-ios-voice-probes.test.ts:20:33)
+      at asyncGeneratorStep (node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+      at node_modules/@babel/runtime/helpers/asyncToGenerator.js:22:7
+      at Object.<anonymous> (node_modules/@babel/runtime/helpers/asyncToGenerator.js:14:12)
+
+Test Suites: 1 failed, 1 total
+Tests:       2 failed, 2 total
+Snapshots:   0 total
+Time:        4.739 s
+Ran all test suites within paths ".local/__tests__/round6-ios-voice-probes.test.ts".

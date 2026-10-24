@@ -16,3 +16,17 @@ replay timer cleanup and SDK compatibility. Reduced font imports to the four use
 
 Current evidence and outstanding gates are in `results/verification.md` and the root README.
 This milestone is a local prototype, not completion of the proposal or master build plan.
+
+## October 18 repair
+
+With the user's authorization, removed unsupported road-overtop thresholds and retained
+only sourced NOAA gauge-category proxies. Recomputed the geodesic nearest baseline,
+removed invented fallback calibration, gated review-required links, made chart grids
+strictly causal, and labeled connector geometry as schematic. Real road-level validation
+and topology review remain pending.
+
+Repaired visible state words, zero-arrival warnings, local-only Watch preferences,
+15–30-minute test previews, clock-based modeled-interruption banners, guided replay reset,
+real-time speed multipliers, stopped HUD state, and speech cancellation. Added scientific
+and rendered-component regressions. Rebuilt five archive bundles and regenerated claims.
+Full current evidence and environmental test limitations are recorded separately.

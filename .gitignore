@@ -15,6 +15,7 @@ __pycache__/
 *.pyc
 *.log
 coverage/
+.jest-cache/
 dist/
 mobile/android/
 mobile/ios/
@@ -27,3 +28,6 @@ GoogleService-Info.plist
 *service-account*.json
 data/raw/
 .local/
+
+.github/workflows/
+

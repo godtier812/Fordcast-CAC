@@ -1,0 +1,47 @@
+FAIL .local/__tests__/round6-provider-probes.test.tsx (9.768 s)
+  √ rapid destination taps: the newer request wins even when the aborted request resolves late (1235 ms)
+  × starting a different normal trip removes the simulated closure from the previous trip (180 ms)
+  × a simulated closure cannot produce a real Google Maps handoff after the test detour completes (3278 ms)
+
+  ● starting a different normal trip removes the simulated closure from the previous trip
+
+    expect(received).toBeNull()
+
+    Received: {"id": "test-1792719927182", "lat": 30.2672, "level": "block", "lon": -97.7431, "name": "Test flooded crossing", "reason": "TEST – simulated flooding"}
+
+      58 |   mockPlan.mockResolvedValue(plan('B'));
+      59 |   await act(async()=>{await monitor.planRoute(dest('B'));});
+    > 60 |   expect(monitor.testHazard).toBeNull();
+         |                              ^
+      61 | });
+      62 |
+      63 | test('a simulated closure cannot produce a real Google Maps handoff after the test detour completes',async()=>{
+
+      at Object.toBeNull (.local/__tests__/round6-provider-probes.test.tsx:60:30)
+      at asyncGeneratorStep (node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+
+  ● a simulated closure cannot produce a real Google Maps handoff after the test detour completes
+
+    expect(received).toHaveLength(expected)
+
+    Expected length: 0
+    Received length: 3
+    Received array:  [{"_fiber": [FiberNode]}, {"_fiber": [FiberNode]}, {"_fiber": [FiberNode]}]
+
+      70 |   expect(monitor.testHazard).not.toBeNull();
+      71 |   const handoff=tree.root.findAll(n=>n.props.accessibilityRole==='button' && n.props.accessibilityLabel===en['route.open_google']);
+    > 72 |   expect(handoff).toHaveLength(0);
+         |                   ^
+      73 | });
+      74 |
+
+      at Object.toHaveLength (.local/__tests__/round6-provider-probes.test.tsx:72:19)
+      at asyncGeneratorStep (node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+
+Test Suites: 1 failed, 1 total
+Tests:       2 failed, 1 passed, 3 total
+Snapshots:   0 total
+Time:        10.41 s
+Ran all test suites within paths ".local/__tests__/round6-provider-probes.test.tsx".

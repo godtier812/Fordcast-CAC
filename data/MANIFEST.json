@@ -3,8 +3,8 @@
   "files": [
     {
       "path": "seed/crossings.geojson",
-      "sha256": "fdab0eb8b8da9457a1469b74873cbc70e2b110eeff9afcfdf8c7dfa7cf8c0881",
-      "bytes": 132912
+      "sha256": "f5300d3c82c2d2bb72348cfec28752e2a3dad0a5b44af18f2a4f858a98f8d150",
+      "bytes": 136104
     },
     {
       "path": "seed/gauges.geojson",
@@ -13,8 +13,8 @@
     },
     {
       "path": "creeks/creeks.geojson",
-      "sha256": "d19460b0cc0a1a06e71ea4bafa09f74027068243306759356c5e0803b045516b",
-      "bytes": 22687
+      "sha256": "d214db58a90a74c69948bc8ac59773fedfc1b14c6436c42772e3ce694a9601fb",
+      "bytes": 23704
     },
     {
       "path": "observations/halloween-2013.json",
@@ -23,58 +23,68 @@
     },
     {
       "path": "replays/index.json",
-      "sha256": "511da37ca8c0c31924dd536404b81656b7e42e661db667d40a63c49da7447d82",
-      "bytes": 4024
+      "sha256": "15cde647d08deab6677ebc28ea30266f088de8dabeca8ab768e87910babc412b",
+      "bytes": 4063
+    },
+    {
+      "path": "reference/gauge-categories.json",
+      "sha256": "ca84c50783ed995ad0df5dfd155834fdba582cf40237294a1a9956845e9c0f8c",
+      "bytes": 11830
+    },
+    {
+      "path": "reference/crossing_reference_stages.json",
+      "sha256": "40cd89a7e63f232d30f403f7cd4fc57708087ce6d764b11934a8a81d9db3ad43",
+      "bytes": 4592
     },
     {
       "path": "replays/halloween-2013.json.gz",
-      "sha256": "49fcb49b547e64564a0f97aff93fb43c95c2a87f76f153dd082db61622ef4740",
-      "bytes": 11986
+      "sha256": "b35c02ea59861c400ec5780b66320812b28de9b6ec7c77826e2e640cb1230d6e",
+      "bytes": 8037
     },
     {
       "path": "replays/halloween-2013.json",
-      "sha256": "929c8bcab6515204bca4a044fd13818f95ba6b375612a0271f99eb8c89ac2fae",
-      "bytes": 122332
+      "sha256": "ed1db6937827d5ef66b3671bafb96cd2403edb8b164d9a05f95fd88c9bca7b53",
+      "bytes": 35846
     },
     {
       "path": "replays/memorial-day-2015.json.gz",
-      "sha256": "30bb784d5f45402000914acffd2a8ce91e0642edb32c54adfdfe51a01bb58ae1",
-      "bytes": 12993
+      "sha256": "da216afbf830c90fa3d2402be63aa1cf739b82d1c593fa24d9951401adafdf71",
+      "bytes": 9979
     },
     {
       "path": "replays/memorial-day-2015.json",
-      "sha256": "ee50b8c7cb0fb7a1be8abfd7dd598c5631cfc2d05f5ea6c9f83da07a8dfec912",
-      "bytes": 125403
+      "sha256": "0c4701150d7bbe0c2d82287864f4a63efddad15f11c98c80bf3ccf3857438c4b",
+      "bytes": 41743
     },
     {
       "path": "replays/halloween-2015.json.gz",
-      "sha256": "99c6ad762107b1fca4b35407e5bca4d9a82cd4ad8e4ad6fd98b41b438f95d692",
-      "bytes": 13152
+      "sha256": "6d505f208a67251157078357a2013cb514d01bcea49e9c1079f3537ef1eb601b",
+      "bytes": 7822
     },
     {
       "path": "replays/halloween-2015.json",
-      "sha256": "662079eb7aac7496198900ac72f4d2fd04a1dd66b4e90d43721d6589be63aa93",
-      "bytes": 141292
+      "sha256": "7934ab7f6fd7450102b767ce8cb7d282057848cfef40e5ceb3441067224dfbba",
+      "bytes": 31581
     },
     {
       "path": "replays/oct-2018.json.gz",
-      "sha256": "37900b4c52f43f4d512076cfe288200937877c9d51bdaf0ae0f8e65c1d5117fd",
-      "bytes": 10165
+      "sha256": "1f7bd0c891e60cb56b1c9841309bb417a46554461951a0f4c8133d295eaaa0b0",
+      "bytes": 7809
     },
     {
       "path": "replays/oct-2018.json",
-      "sha256": "ec442fcce2d477e79bdc5b7d8f661e06949d89f15ada9d158b350466f16a6156",
-      "bytes": 91508
+      "sha256": "f993ad5bcdd3c147a3d6753a41e75eb724c03a915266a27e576734d828727fa8",
+      "bytes": 33456
     },
     {
       "path": "replays/july-2025.json.gz",
-      "sha256": "1eb2216259b7c956d602c28a172a31646ab629f8b8df8fd882b5c6eed36e57dc",
-      "bytes": 8626
+      "sha256": "3c74df7975107c82bb76b6b7e927e9a53046b0d9c84d637addb6605d899f9cdb",
+      "bytes": 6703
     },
     {
       "path": "replays/july-2025.json",
-      "sha256": "48bfbf9eb4cdb991173d5633e6ef8dd9277ec84d4451b49001832d47d20a057b",
-      "bytes": 60438
+      "sha256": "a7e2fca94753effbe80831c9714727ab761b3c4b862867fe51368a748ab2bccf",
+      "bytes": 29859
     }
   ]
 }

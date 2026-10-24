@@ -1,13 +1,45 @@
+import json
 from dataclasses import replace
 from datetime import timedelta
+from pathlib import Path
 
+import pandas as pd
 import pytest
 from conftest import NOW, readings
 
+from fordcast.replay.build import build_stage_grid
+from fordcast.scoring.backtest import load_storm_readings
 from fordcast.sources.base import LookaheadError, assert_no_lookahead
 from fordcast.sources.official import EmptyOfficial
 from fordcast.sources.replay import Outage, RecordedSource, StormReplaySource
 from fordcast.tick import MemoryStateStore, RiskModel, tick
+
+
+def test_chart_grid_does_not_move_irregular_future_observation_earlier():
+    from fordcast.sources.base import Reading
+
+    row = Reading("g", "00065", NOW + timedelta(minutes=10), NOW + timedelta(minutes=70), 99)
+    assert build_stage_grid([row], NOW, NOW + timedelta(minutes=15)) == [None, 99]
+    # Long gaps stay missing, and there is no extrapolation before the first observation.
+    assert build_stage_grid([row], NOW - timedelta(minutes=30), NOW) == [None, None, None]
+
+
+def test_all_bundled_chart_grids_match_strictly_causal_archive_conversion():
+    root = Path(__file__).resolve().parents[2]
+    for path in (root / "data/replays").glob("*.json"):
+        if path.stem == "index":
+            continue
+        doc = json.loads(path.read_text())
+        readings = load_storm_readings(root / "data/storms" / path.stem / "readings.parquet")
+        for gauge in doc["gauges"]:
+            rows = [r for r in readings if r.gauge_id == gauge["id"]]
+            expected = build_stage_grid(
+                rows,
+                pd.Timestamp(doc["storm"]["start"]).to_pydatetime(),
+                pd.Timestamp(doc["storm"]["end"]).to_pydatetime(),
+                gauge["dt_s"],
+            )
+            assert gauge["stage_ft"] == expected, (path.stem, gauge["id"])
 
 
 @pytest.mark.asyncio

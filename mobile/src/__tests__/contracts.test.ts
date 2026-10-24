@@ -16,6 +16,18 @@ import {
   stepLockout,
   visibleSamples,
 } from '../lib/data';
+import { LOCKED_STATE_HEX, TYPOGRAPHY, tokens } from '../theme/tokens';
+import { theme } from '../lib/theme';
+import { SHORT_STATE_KEYWORDS } from '../components/StateBadge';
+import { ARRIVAL_BUCKETS, toArrivalBucketKey } from '../components/ArrivalBucketStrip';
+import {
+  CACHED_NWPS_CATEGORIES_BY_GAUGE,
+  EQUIPPED_NWPS_CROSSING_IDS,
+  scaleLinear,
+  scaleTime,
+} from '../components/CausalHydrograph';
+import { PROVENANCE_LADDER_COPY } from '../components/ProvenanceCard';
+import { SCORECARD_COPY } from '../components/ValidationScorecardModal';
 
 describe('honest state contracts', () => {
   const at = '2026-10-16T12:00:00Z';
@@ -50,8 +62,8 @@ describe('honest state contracts', () => {
     const tierA = crossings.filter((f) => f.properties.tier === 'A');
     const tierB = crossings.filter((f) => f.properties.tier === 'B');
     const tierC = crossings.filter((f) => f.properties.tier === 'C');
-    expect(tierA).toHaveLength(12);
-    expect(tierB).toHaveLength(18);
+    expect(tierA).toHaveLength(0);
+    expect(tierB).toHaveLength(30);
     expect(tierC).toHaveLength(111);
     expect(
       tierA.every(
@@ -65,11 +77,12 @@ describe('honest state contracts', () => {
         (f) => f.properties.state === 'unknown' && f.properties.review_status === 'unreviewed',
       ),
     ).toBe(true);
-    for (const c of [...tierA, ...tierB]) {
-      const cLinks = links.filter((l) => l.crossing_id === c.properties.id);
-      expect(cLinks.length).toBeGreaterThan(0);
-      expect(cLinks.every((l) => l.tau_lo_min >= 5 && l.tau_hi_min > l.tau_lo_min)).toBe(true);
-    }
+    expect(crossings.every((c) => c.properties.overtop_stage_ft == null)).toBe(true);
+    expect(
+      links.every(
+        (l) => l.road_forecast_verified === false && l.calibration_kind === 'empirical_gauge_lag',
+      ),
+    ).toBe(true);
   });
   test('observation playback is explicitly not a forecast', () => {
     expect(history.forecast_available).toBe(false);
@@ -85,8 +98,8 @@ describe('replay and drive pure state machines', () => {
   test('all 5 bundled replays match index and LOSO backtest results', () => {
     expect(replayIndex.storms).toHaveLength(5);
     expect(results.schema).toBe('fordcast.results.v1');
-    expect(results.hero.crossing_id).toBe('atx-7');
-    expect(results.hero.lead_min).toBe(70);
+    expect(results.headline.labels).toBe('gauge_flood_stage_proxy');
+    expect(results.headline.road_forecast_skill_verified).toBe(false);
     for (const entry of replayIndex.storms) {
       const doc = replays[entry.id];
       expect(doc).toBeDefined();
@@ -95,22 +108,19 @@ describe('replay and drive pure state machines', () => {
     }
   });
 
-  test('stateAt resolves hero AVOID alert and USGS-08159000 outage UNKNOWN without lookahead', () => {
-    const h2013 = replays['halloween-2013']!;
-    // Before watch (2013-10-31T05:00:00Z), atx-7 is no_rise
-    expect(stateAt(h2013, 'atx-7', Date.parse('2013-10-31T05:00:00Z')).state).toBe('no_rise');
-    // At hero alert time (2013-10-31T06:15:00Z), atx-7 is avoid with window [0, 15]
-    const alertSlice = stateAt(h2013, 'atx-7', Date.parse('2013-10-31T06:15:00Z'));
-    expect(alertSlice.state).toBe('avoid');
-    expect(alertSlice.window).toEqual([0, 15]);
-    // At 2013-10-31T06:10:00Z, tc-128 transitions to unknown because USGS-08159000 goes silent
-    const silentSlice = stateAt(h2013, 'tc-128', Date.parse('2013-10-31T06:10:00Z'));
-    expect(silentSlice.state).toBe('unknown');
-
-    // Active river pulses interpolate valid coordinates along flowlines
-    const pulses = activePulsesAt(h2013, Date.parse('2013-10-31T06:25:00Z'));
-    expect(pulses.length).toBeGreaterThan(0);
-    expect(pulses.every((p) => p.progress >= 0 && p.progress <= 1)).toBe(true);
+  test('stateAt never applies future events, including proxy examples', () => {
+    for (const replay of Object.values(replays)) {
+      for (const event of replay.events) {
+        const before = stateAt(replay, event.crossing_id, Date.parse(event.t) - 1);
+        const prefix = {
+          ...replay,
+          events: replay.events.filter((e) => Date.parse(e.t) < Date.parse(event.t)),
+        };
+        expect(before).toEqual(stateAt(prefix, event.crossing_id, Date.parse(event.t) - 1));
+      }
+      const pulses = activePulsesAt(replay, Date.parse(replay.storm.start));
+      expect(pulses.every((p) => p.progress >= 0 && p.progress <= 1)).toBe(true);
+    }
   });
 
   test('visibleSamples enforces avail_delay_s and hides outage samples until outage.end', () => {
@@ -168,11 +178,11 @@ describe('copy integrity', () => {
     }
   });
   test('safety-sensitive copy and replay storyboards have no reassurance except pledge negation', () => {
-    const banned = /\b(safe|passable|all.clear|seguro|transitable)\b/i;
+    const banned = /\b(safe|clear|passable|open|normal|all.clear|seguro|transitable|abierto)\b/i;
     for (const locale of [en, es])
       for (const [key, value] of Object.entries(locale)) {
         if (key === 'onboarding.pledge.item3') continue;
-        expect(value).not.toMatch(banned);
+        expect(value.replaceAll('City of Austin Open Data', 'City source')).not.toMatch(banned);
       }
     for (const doc of Object.values(replays)) {
       for (const line of doc.storyboard) {
@@ -181,4 +191,104 @@ describe('copy integrity', () => {
       }
     }
   });
+
+  test('tactical hydrology tokens enforce locked state hexes, tabular numerals, and zero traffic-light green', () => {
+    expect(LOCKED_STATE_HEX).toEqual({
+      no_rise: '#2BD9D9',
+      watch: '#F5A623',
+      avoid: '#FF5470',
+      closed: '#FF5470',
+      unknown: '#7A879C',
+    });
+    expect(TYPOGRAPHY.hudBucket.fontVariant).toContain('tabular-nums');
+    expect(TYPOGRAPHY.metricValue.fontVariant).toContain('tabular-nums');
+    expect(TYPOGRAPHY.chartAxis.fontVariant).toContain('tabular-nums');
+
+    const serialized = JSON.stringify({ tokens, theme });
+    expect(serialized).not.toMatch(/#00ff00|#34d399|#10b981|#22c55e|emerald|green/i);
+  });
+
+  test('StateBadge short keywords and optical glyphs obey triple-redundancy and bilingual parity', () => {
+    expect(Object.keys(SHORT_STATE_KEYWORDS.en).sort()).toEqual([
+      'avoid',
+      'closed',
+      'no_rise',
+      'unknown',
+      'watch',
+    ]);
+    expect(Object.keys(SHORT_STATE_KEYWORDS.es).sort()).toEqual([
+      'avoid',
+      'closed',
+      'no_rise',
+      'unknown',
+      'watch',
+    ]);
+  });
+
+  test('ArrivalBucketStrip permits only the 7 discrete buckets with proportional widths', () => {
+    expect(ARRIVAL_BUCKETS).toHaveLength(7);
+    expect(ARRIVAL_BUCKETS.map((b: { key: string }) => b.key)).toEqual([
+      '[0, 15]',
+      '[15, 30]',
+      '[30, 45]',
+      '[45, 60]',
+      '[60, 90]',
+      '[90, 120]',
+      '[120, 180]',
+    ]);
+    expect(ARRIVAL_BUCKETS.map((b: { flex: number }) => b.flex)).toEqual([
+      1.0, 1.0, 1.0, 1.0, 1.25, 1.25, 1.5,
+    ]);
+    expect(toArrivalBucketKey([0, 15])).toBe('[0, 15]');
+    expect(toArrivalBucketKey([60, 90])).toBe('[60, 90]');
+    expect(toArrivalBucketKey([10, 11])).toBeNull();
+    expect(toArrivalBucketKey(null)).toBeNull();
+  });
+
+  test('CausalHydrograph scales and 6 equipped NOAA NWPS proxy crossings enforce strict causal bounds', () => {
+    expect(EQUIPPED_NWPS_CROSSING_IDS.size).toBe(6);
+    expect(CACHED_NWPS_CATEGORIES_BY_GAUGE['USGS-08159000']).toMatchObject({
+      nwsLid: 'ATIT2',
+      action: 15,
+      minor: 17,
+      mod: 23,
+      maj: 27,
+    });
+    const x = scaleTime(1000, 2000, 44, 664);
+    expect(x(1000)).toBe(44);
+    expect(x(1500)).toBe(354);
+    expect(x(2000)).toBe(664);
+    const y = scaleLinear(0, 40, 18, 118);
+    expect(y(0)).toBe(118);
+    expect(y(40)).toBe(18);
+  });
+
+  test('ProvenanceCard and ValidationScorecardModal copy contain zero banned reassurance words', () => {
+    const banned = /\b(safe|clear|passable|open|normal|all.clear|seguro|transitable|abierto)\b/i;
+    for (const copyGroup of [PROVENANCE_LADDER_COPY.en, PROVENANCE_LADDER_COPY.es, SCORECARD_COPY.en, SCORECARD_COPY.es]) {
+      for (const value of Object.values(copyGroup)) {
+        expect(value).not.toMatch(banned);
+      }
+    }
+  });
+
+  test('Round 4 pre-shoot copy contracts: pilot badge, privacy disclosure, storm reroute label, and Google handoff notes', () => {
+    expect(en['onboarding.pledge.pilot_badge']).toBe('CENTRAL TEXAS PILOT');
+    expect(es['onboarding.pledge.pilot_badge']).toBe('PILOTO DEL CENTRO DE TEXAS');
+    expect(en['onboarding.pledge.subtitle']).toBe('Check the crossings on your trip');
+    expect(en['storms.car_demo']).toBe('Storm reroute demo');
+    expect(es['storms.car_demo']).toBe('Demostración de desvío');
+    expect(en['settings.privacy_body']).not.toMatch(/never leaves your phone/i);
+    expect(es['settings.privacy_body']).not.toMatch(/nunca sale de tu tel[eé]fono/i);
+    expect(en['settings.privacy_body']).toMatch(/Route planning sends start, destination and avoidance coordinates to the routing service/);
+    expect(en['route.google_note_base']).toContain('Google Maps receives suggested waypoints');
+    expect(en['route.google_note_expo_go']).toContain('Expo Go');
+    expect(en['route.google_note_off']).toContain('Background alerts are off');
+    expect(en['route.google_note_on']).toContain('Background alerts are enabled');
+  });
 });
+
+
+
+
+

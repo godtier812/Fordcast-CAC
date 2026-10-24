@@ -1,0 +1,26 @@
+============================= test session starts =============================
+platform win32 -- Python 3.13.7, pytest-9.1.1, pluggy-1.6.0
+rootdir: C:\2025AppChallenge\backend
+configfile: pyproject.toml
+plugins: anyio-4.15.1, hypothesis-6.168.3, asyncio-1.4.0, recording-0.13.4, respx-0.23.1
+asyncio: mode=Mode.AUTO, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collected 59 items
+
+backend\tests\test_api.py ..                                             [  3%]
+backend\tests\test_bundled_data.py .                                     [  5%]
+backend\tests\test_forecast.py .......................                   [ 44%]
+backend\tests\test_metrics.py .....                                      [ 52%]
+backend\tests\test_no_lookahead.py ........                              [ 66%]
+backend\tests\test_offline_execution.py ..                               [ 69%]
+backend\tests\test_replay_and_backtest.py .....                          [ 77%]
+backend\tests\test_scientific_integrity.py .....                         [ 86%]
+backend\tests\test_travel_time.py .......                                [ 98%]
+backend\tests\test_truth_isolation.py .                                  [100%]
+
+============================== warnings summary ===============================
+backend\.venv\Lib\site-packages\fastapi\testclient.py:1
+  C:\2025AppChallenge\backend\.venv\Lib\site-packages\fastapi\testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+======================= 59 passed, 1 warning in 15.76s ========================

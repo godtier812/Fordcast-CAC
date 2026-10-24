@@ -1,19 +1,21 @@
-# One-Page Explainer: `backend/fordcast/scoring/metrics.py` & `backtest.py`
+# Metrics — student review pending
 
-## Purpose
-Scores forecast timelines against ground-truth road-overtopping episodes using Leave-One-Storm-Out (LOSO) cross-validation and 1-to-1 event matching.
+Agent-authored implementation: `scoring/metrics.py`, `labels.py` and `backtest.py`.
 
-## How It Works
-1. **Episode Extraction (`episodes_from_frames`):**
-   - Consecutive ticks where a crossing is at or above the evaluated alert level (`avoid` or `watch`) are grouped into contiguous alert episodes.
-   - Any `unknown` tick or gap $> 2 \times \text{step}$ splits episodes so an outage cannot bridge two separate alerts.
-2. **1-to-1 Event Matching (`match_events`):**
-   - A ground-truth `Onset` at time $t_{\text{onset}}$ is a **Hit ($H$)** if an alert episode is active inside $[t_{\text{onset}} - 180\text{ min}, t_{\text{onset}}]$.
-   - Each alert episode can credit at most one onset, and each onset is credited at most once.
-   - Lead time is $\min(180, t_{\text{onset}} - t_{\text{alert\_start}})$ in minutes (`None` if the onset is `censored`).
-   - Unmatched onsets count as **Misses ($M$)**; alert episodes that never match any onset count as **False Alarms ($F$)**.
-3. **Summary Scores (`scores` & `bootstrap_ci`):**
-   - $\text{POD} = \frac{H}{H + M}$, $\text{FAR} = \frac{F}{H + F}$, $\text{CSI} = \frac{H}{H + M + F}$.
-   - Stationary block bootstrap (`seed = 20261031`, `n_boot = 2000`) computes deterministic 95% confidence intervals.
-4. **LOSO Cross-Validation (`run_loso_backtest`):**
-   - For each held-out storm $S$, `learn_fold_links` estimates lags $\tau$ and trigger thresholds $h^*$ using **only** the other 4 storms, then runs `run_replay` with the 60-minute data-arrival delay.
+Consecutive at-or-above-level ticks form warning episodes; Unknown or missing tick gaps
+split episodes. Onsets and warning episodes are matched once, within the defined 180-minute
+lead window. Censored onsets and unknown-at-onset cases follow explicit eligibility rules.
+POD = H/(H+M), FAR = F/(H+F), CSI = H/(H+M+F). Undefined denominators serialize as null.
+
+LOSO learns parameters on other storms only. Bootstrap intervals resample whole storms
+with replacement (1000 replicates, seed 0), not individual ticks. Only five storms are
+available, so intervals and generalization remain limited. This is not a stationary
+within-storm block bootstrap. Multiple reference cases can share a gauge and are correlated.
+
+Current labels are sourced NOAA gauge-category proxies, not validated road overtops.
+Non-proxy road skill, unevaluated population rates and reactive-baseline performance stay
+null. Calm exposure is the actual 36-hour control span; a 30-day calm study is pending.
+Nearest-gauge selection uses a true WGS84 geodesic minimum over the frozen catalog.
+
+Explain: why does reproducibility not establish valid ground truth? What does a missed
+proxy onset mean? Why are unmeasured rates null instead of zero?

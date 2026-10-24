@@ -1,0 +1,110 @@
+[
+  {
+    "crossing_id": "atx-12",
+    "gauge_id": "USGS-08158600",
+    "stage_ft": null,
+    "category": "minor",
+    "source_url": "https://api.water.noaa.gov/nwps/v1/gauges/WWVT2",
+    "road_transfer_verified": false,
+    "source": "NOAA NWPS WWVT2 minor category (https://api.water.noaa.gov/nwps/v1/gauges/WWVT2) — corridor proxy; road-deck elevation unverified"
+  },
+  {
+    "crossing_id": "atx-13",
+    "gauge_id": "USGS-08158600",
+    "stage_ft": null,
+    "category": "minor",
+    "source_url": "https://api.water.noaa.gov/nwps/v1/gauges/WWVT2",
+    "road_transfer_verified": false,
+    "source": "NOAA NWPS WWVT2 minor category (https://api.water.noaa.gov/nwps/v1/gauges/WWVT2) — corridor proxy; road-deck elevation unverified"
+  },
+  {
+    "crossing_id": "atx-15",
+    "gauge_id": "USGS-08158930",
+    "stage_ft": 13.0,
+    "category": "minor",
+    "source_url": "https://api.water.noaa.gov/nwps/v1/gauges/AAIT2",
+    "road_transfer_verified": false,
+    "source": "NOAA NWPS AAIT2 minor category (https://api.water.noaa.gov/nwps/v1/gauges/AAIT2) — corridor proxy; road-deck elevation unverified"
+  },
+  {
+    "crossing_id": "atx-16",
+    "gauge_id": "USGS-08158930",
+    "stage_ft": 14.0,
+    "category": "moderate",
+    "source_url": "https://api.water.noaa.gov/nwps/v1/gauges/AAIT2",
+    "road_transfer_verified": false,
+    "source": "NOAA NWPS AAIT2 moderate category (https://api.water.noaa.gov/nwps/v1/gauges/AAIT2) — corridor proxy; road-deck elevation unverified"
+  },
+  {
+    "crossing_id": "atx-19",
+    "gauge_id": "USGS-08159000",
+    "stage_ft": 17.0,
+    "category": "minor",
+    "source_url": "https://api.water.noaa.gov/nwps/v1/gauges/ATIT2",
+    "road_transfer_verified": false,
+    "source": "NOAA NWPS ATIT2 minor category (https://api.water.noaa.gov/nwps/v1/gauges/ATIT2) — corridor proxy; road-deck elevation unverified"
+  },
+  {
+    "crossing_id": "atx-20",
+    "gauge_id": "USGS-08159000",
+    "stage_ft": 23.0,
+    "category": "moderate",
+    "source_url": "https://api.water.noaa.gov/nwps/v1/gauges/ATIT2",
+    "road_transfer_verified": false,
+    "source": "NOAA NWPS ATIT2 moderate category (https://api.water.noaa.gov/nwps/v1/gauges/ATIT2) — corridor proxy; road-deck elevation unverified"
+  },
+  {
+    "crossing_id": "atx-21",
+    "gauge_id": "USGS-08159000",
+    "stage_ft": 27.0,
+    "category": "major",
+    "source_url": "https://api.water.noaa.gov/nwps/v1/gauges/ATIT2",
+    "road_transfer_verified": false,
+    "source": "NOAA NWPS ATIT2 major category (https://api.water.noaa.gov/nwps/v1/gauges/ATIT2) — corridor proxy; road-deck elevation unverified"
+  },
+  {
+    "crossing_id": "atx-3",
+    "gauge_id": "USGS-08158600",
+    "stage_ft": null,
+    "category": "minor",
+    "source_url": "https://api.water.noaa.gov/nwps/v1/gauges/WWVT2",
+    "road_transfer_verified": false,
+    "source": "NOAA NWPS WWVT2 minor category (https://api.water.noaa.gov/nwps/v1/gauges/WWVT2) — corridor proxy; road-deck elevation unverified"
+  },
+  {
+    "crossing_id": "atx-7",
+    "gauge_id": "USGS-08158970",
+    "stage_ft": null,
+    "category": "minor",
+    "source_url": "https://api.water.noaa.gov/nwps/v1/gauges/WJCT2",
+    "road_transfer_verified": false,
+    "source": "NOAA NWPS WJCT2 minor category (https://api.water.noaa.gov/nwps/v1/gauges/WJCT2) — corridor proxy; road-deck elevation unverified"
+  },
+  {
+    "crossing_id": "atx-8",
+    "gauge_id": "USGS-08158970",
+    "stage_ft": null,
+    "category": "minor",
+    "source_url": "https://api.water.noaa.gov/nwps/v1/gauges/WJCT2",
+    "road_transfer_verified": false,
+    "source": "NOAA NWPS WJCT2 minor category (https://api.water.noaa.gov/nwps/v1/gauges/WJCT2) — corridor proxy; road-deck elevation unverified"
+  },
+  {
+    "crossing_id": "tc-133",
+    "gauge_id": "USGS-08158860",
+    "stage_ft": null,
+    "category": "minor",
+    "source_url": "https://api.water.noaa.gov/nwps/v1/gauges/SLHT2",
+    "road_transfer_verified": false,
+    "source": "NOAA NWPS SLHT2 minor category (https://api.water.noaa.gov/nwps/v1/gauges/SLHT2) — corridor proxy; road-deck elevation unverified"
+  },
+  {
+    "crossing_id": "tc-167",
+    "gauge_id": "USGS-08155300",
+    "stage_ft": 11.0,
+    "category": "moderate",
+    "source_url": "https://api.water.noaa.gov/nwps/v1/gauges/ABTT2",
+    "road_transfer_verified": false,
+    "source": "NOAA NWPS ABTT2 moderate category (https://api.water.noaa.gov/nwps/v1/gauges/ABTT2) — corridor proxy; road-deck elevation unverified"
+  }
+]

@@ -34,6 +34,8 @@ def main() -> None:
         "creeks/creeks.geojson",
         "observations/halloween-2013.json",
         "replays/index.json",
+        "reference/gauge-categories.json",
+        "reference/crossing_reference_stages.json",
     ]
     for storm in replay_index["storms"]:
         sid = storm["id"]
@@ -79,8 +81,9 @@ def main() -> None:
         with links_csv.open("r", encoding="utf-8", newline="") as fh:
             for row in csv.DictReader(fh):
                 if (
-                    row["model_version"] == "rule-2026.10.17"
+                    row["model_version"] == "rule-reference-2026.10.18"
                     and row["relation"] == "upstream"
+                    and row["needs_review"].lower() == "false"
                 ):
                     p25 = float(row["lag_p25_min"])
                     p75 = float(row["lag_p75_min"])
@@ -91,6 +94,9 @@ def main() -> None:
                             "crossing_id": row["crossing_id"],
                             "gauge_id": row["gauge_id"],
                             "relation": row["relation"],
+                            "calibration_kind": row["calibration_kind"],
+                            "geometry_source": "schematic_corridor_connector",
+                            "road_forecast_verified": False,
                             "is_primary": row["is_primary"].lower() == "true",
                             "channel_dist_km": float(row["channel_dist_km"]),
                             "lag_min": float(row["lag_min"]),

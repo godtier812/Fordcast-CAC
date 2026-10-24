@@ -1,0 +1,209 @@
+FORDCAST — CURRENT FULL PROJECT CONTEXT WINDOW / HANDOFF (TX-37 EDITION)
+Snapshot date: 2026-10-24
+Workspace: C:\2025AppChallenge
+Target District: TX-37 (Austin / Travis County & southern Williamson County portion — verify exact home/school address at house.gov)
+Audience: A future coding agent, reviewer, judge-prep helper, or the student builder. Read this before changing code, claims, demo copy, tests, data, or design. It is a current handoff, not a license to invent results, user studies, native-device tests, or personal experience.
+
+================================================================================
+1. ONE-SENTENCE DESCRIPTION
+================================================================================
+
+FordCast is a bilingual (EN/ES) Central Texas low-water-crossing trip-audit prototype built for Austin-area (TX-37) commuters: it combines the crossings on an Austin-area trip (`2,052` mapped crossings within 120 m, grouped by physical crossing area) with official closure reports, active weather alerts, available creek evidence, historical flood context, and explicit unknowns; a separate, clearly experimental upstream-gauge replay study explores whether warnings may precede downstream reference-gauge category thresholds across five archived Austin floods.
+
+The public-facing tagline is: "Check the crossings on your trip." / "Revisa los cruces de tu trayecto."
+The pilot badge is: "CENTRAL TEXAS PILOT" / "PILOTO DEL CENTRO DE TEXAS"
+
+It is NOT a promise that a road is safe, open, passable, dry, or predictable. It is NOT a validated road-flood forecast system. It is NOT evidence that anyone has already been protected, reached, or changed behavior in the field.
+
+================================================================================
+2. WHAT COMPETING IN TX-37 (INSTEAD OF TX-10) CHANGES — AND HOW IT IMPROVES THE IDEA
+================================================================================
+
+1. Direct Geographic Overlap Between TX-37 and the Dataset:
+   - Earlier reviews penalized FordCast when framed for TX-10 because TX-10 stretches over 100 miles east into rural counties and Brazos County (College Station), where the Austin-area `ATXFloods` dataset (`2,052` crossings) and `19` Austin-area USGS gauges have zero coverage.
+   - **TX-37 is centered directly on Austin and Travis County (plus a neighboring southern portion of Williamson County).** Virtually the entire daily commuter footprint of TX-37 lies **inside** FordCast's 80 km Austin-area crossing and stream-gauge inventory.
+   - The exact creeks that TX-37 families, teen drivers, and commuters cross every day are directly represented in FordCast's seed catalog, official crossing inventory, and preset routes:
+     * **Bull Creek** (Northwest Austin — including `atx-9/10/11` at Old Spicewood Springs Rd and the `Bull Creek -> The Domain` preset)
+     * **Shoal Creek** (Central / North-Central Austin, Pease Park, Lamar, Downtown)
+     * **Waller Creek** (UT Austin & Downtown)
+     * **Barton Creek** (South/Southwest Austin — including `tc-167` Henry Marx Ln, upstream gauge `USGS-08155240` at Lost Creek Blvd, downstream reference gauge `USGS-08155300` at Loop 360, and the `Barton Creek -> UT Austin` preset)
+     * **Walnut Creek & Little Walnut Creek** (North / Northeast Austin & southern Williamson County border corridor)
+     * **Williamson Creek & Slaughter Creek** (South Austin — including upstream gauge `USGS-08158860` Slaughter Creek at FM 2304)
+     * **Onion Creek** (South/Southeast Austin — including `atx-19/20/21` at E. William Cannon Dr, reference gauge `USGS-08159000` at US 183, and the `Downtown -> Onion Creek Park` preset)
+     * **Boggy Creek** (East Austin)
+
+2. The 80 km Coverage Gate Becomes a Feature for Regional Trips, Not an Apology:
+   - Under TX-10, the `Austin -> College Station · coverage check` preset had to explain why half of the student's own congressional district lacked data.
+   - Under **TX-37**, local commutes (Downtown, UT Austin, The Domain, Oak Hill, Pflugerville, South Congress, Onion Creek, Barton Creek, Bull Creek) are in-footprint TX-37 trips, while the 80 km coverage boundary gate (`assessRouteCoverage`) acts as a **proactive engineering safety guardrail** whenever a TX-37 resident plans a weekend or college road trip outside the Austin metro (such as driving to College Station, Houston, or Dallas): instead of silently showing "No hazards reported on this route," FordCast detects that the route leaves the 80 km Austin-area crossing inventory and directs the driver to statewide TxDOT DriveTexas.
+
+3. Honesty Boundary to Keep Even Inside TX-37:
+   - Even though TX-37 sits inside the 80 km Austin-area footprint, **do not claim "100% of TX-37 crossings are monitored."** An inventory of `2,052` mapped crossings does not mean every low-lying road spot in TX-37 is mapped, and most mapped crossings lack automated sensors (`111` of the `141` study crossings have no sensor link; only `4` records across `2` corridors are primary-calibrated for live gauge status). That sensor gap is the exact reason TX-37 drivers need FordCast's "unmonitored crossing" audit.
+
+================================================================================
+3. THE PROBLEM, USER, VALUE, AND PRODUCT POSITION
+================================================================================
+
+Central Texas ("Flash Flood Alley" along the Balcones Escarpment) has over 2,000 mapped low-water crossings. Familiar TX-37 routes cross creeks with sparse road-surface sensors. City closure maps (`ATXFloods` pin map), regional weather warnings (`NWS` polygons), state highway cameras (`TxDOT DriveTexas`), and ordinary turn-by-turn navigation (`Google Maps` / `Waze`) each provide part of the picture in isolation.
+
+FordCast's product contribution is a **trip-specific evidence view**:
+  - Which low-water crossings sit within 120 m of a selected route corridor (with multi-arm municipal hardware records grouped into physical crossing areas).
+  - What official (`ATXFloods` closures, `NWS` Flash Flood Warning/Emergency polygons) and creek-sensor (`USGS` OGC API v1 stage and 30-min rise rate) evidence is currently present.
+  - What historical flood context exists nearby (`727` geocoded NOAA Storm Events reports within 2 km, `1996-2026`, deduplicated by authoritative `event_id`).
+  - What remains **unknown** (crossings with no linked creek sensor, stale readings `> 80 min`, offline feeds, or routes leaving the 80 km coverage radius).
+
+Primary user:
+  - A TX-37 / Austin-area commuter, parent, or teen driver checking a familiar route before leaving during rain or flood watches/warnings.
+
+Positioning relative to existing tools:
+  - FordCast is a **supplementary trip-audit layer**, not a replacement for official closure systems (`ATXFloods`, `TxDOT DriveTexas`), emergency alerts (`NWS`), or road barricades.
+  - It hands off up to 3 detour waypoints to Google Maps for live turn-by-turn navigation (only when in `Live` mode with no synthetic test hazard active).
+
+================================================================================
+4. SCIENTIFIC AND SAFETY BOUNDARIES (SEVEN HARD INVARIANTS)
+================================================================================
+
+1. Never use reassurance words for road status:
+   - Banned words: `safe`, `clear`, `passable`, `open`, `normal`, `all clear`, `seguro`, `transitable`, `abierto` (except explicit negation in `onboarding.pledge.item3`: `"Never treat 'no rise detected' as a guarantee a road is safe"` and stripping the proper noun `"City of Austin Open Data"` in `contracts.test.ts`).
+   - Enforced across all of `en.json`, `es.json`, and replay storyboard strings by `mobile/src/__tests__/contracts.test.ts`.
+
+2. Triple-redundant status encoding (Color + Geometric Shape/Glyph + Text Label, zero traffic-light green):
+   - `no_rise`: Cyan `#2BD9D9` circle + check (`"No rise detected"` / `"Sin crecida detectada"`)
+   - `watch`: Amber `#F5A623` triangle + `!` (`"Watch"` / `"Precaución"`)
+   - `avoid`: Coral-red `#FF5470` octagon + `!` (`"Avoid"` / `"Evite"`)
+   - `closed`: Coral-red `#FF5470` octagon + crossbar (`"Flooded – Closed"` / `"Inundado – Cerrado"`)
+   - `unknown`: Slate `#7A879C` dashed circle + `?` (`"Unknown – data offline"` / `"Desconocido – sin datos"`, or `"Not monitored"` / `"Sin sensor"`)
+   - Official closure reports (`ATXFloods`) always override sensor states (`displayState = 'closed'`).
+
+3. Downstream gauge proxy != road-surface overtopping:
+   - `Tier A = 0` (`road_forecast_verified = false`). No crossing has surveyed road-overtopping stage ground truth.
+   - Historical ground truth in the replay study is `proxy_kind: downstream_gauge_flood_stage` (when a downstream reference gauge crosses its USGS/NWS flood stage).
+   - Gauge height is measured relative to the USGS station datum zero, not water depth over the road deck. Negative values mean water is below the station datum zero, not an instrument error.
+
+4. Strict causal no-lookahead in replays:
+   - At simulated time `simT`, an observation `i` is visible only if `t_obs(i) <= simT` AND `t_avail(i) = t_obs(i) + 60 min <= simT` (and outside any modeled outage window until `outage.end`).
+   - Replay grids (`buildReplayDataset`) use causal prior-observation lookup (`0 <= t_grid - t_obs <= 20 min`), never snapping future readings backward.
+
+5. Range-only timing windows:
+   - Never display a single-minute countdown. Only conservative range buckets (`[0, 15]`, `[15, 30]`, `[30, 45]`, `[45, 60]`, `[60, 90]`, `[90, 120]`, `[120, 180]`) are used.
+   - When the lower bound is `0` (`[0, 15]`), the UI and spoken alert state that water may already be at the crossing (`state.now`).
+
+6. Unknown and partial-failure resilience:
+   - Stale (`> 80 min` live / `> 60 min` background cache), failed, loading, malformed, or unmonitored data never collapses into a calm state.
+   - HTTP 200 responses with malformed JSON structure (ATXFloods missing `attributes` array; NWS missing `features` array) throw errors so source health records `ok: false` and the Guardian cache retains prior valid hazards for that source.
+   - `activeCachedHazards(cache, now)` prunes expired NWS alerts (`expiresAt <= now`) and stale (`> 60 min`) sources before proximity alerting.
+
+7. Strict isolation of simulation / test state from live navigation:
+   - Switching from `drill` to `live` clears drill state; switching storms during a moving-car demo immediately terminates any mismatched run (`awaitingStorm` + `isStormMismatch`).
+   - Dropping a synthetic closure (`simulateHazardOnRoute`) tags the hazard with `test-`, prefixes any route alert with `TEST · `, hides `Go with Google Maps` and `Share route summary`, provides an explicit `"End test and recheck route"` (`endRouteTest()`) button, and is synchronously removed from `hazardsRef` before `planRoute` computes any live route.
+
+================================================================================
+5. DATASET FOOTPRINT AND SCIENTIFIC EVALUATION NUMBERS
+================================================================================
+
+Live Trip-Audit Footprint:
+  - `2,052` Austin-area crossing records (`141` seed study crossings in `mobile/assets/seed/crossings.json` + `1,911` additional official ATXFloods records in `mobile/assets/seed/official_crossings.json`).
+  - `19` Central Texas USGS stream gauges (`mobile/assets/seed/gauges.json`).
+  - `727` geocoded NOAA NCEI Storm Events Flood/Flash Flood reports across 8 Central Texas counties (`1996-01-01` to `2026-06-15`) within 2 km of study crossings (`mobile/assets/history/crossing_history.json`), with authoritative `event_id` deduplication across grouped crossings.
+  - Corridor buffer: `120 m` for route audit (`60 m` for active route alert scope; `40 m` in Chrome extension).
+  - Coverage gate: `80 km` radius around Austin (`30.2672, -97.7431`), requiring `coverageFraction >= 0.85` AND zero out-of-radius vertices/segment midpoints.
+
+Experimental Gauge Study (`mobile/assets/results/results.json`):
+  - `141` study crossings: `Tier A = 0` road-verified, `Tier B = 30` R&D corridor candidates (`geometry_kind: schematic_corridor_connector`, `review_status: unverified_road_and_topology`), `Tier C = 111` unmonitored.
+  - `4` primary-calibrated crossing records (`is_primary: true` in `links.json`) across `2` physical research corridors:
+    1. `tc-167` (**Henry Marx @ Barton Creek**) — upstream gauge `USGS-08155240` (Barton Creek at Lost Creek Blvd), downstream reference gauge `USGS-08155300` (Barton Creek at Loop 360).
+    2. `atx-19`, `atx-20`, `atx-21` (**E. William Cannon Dr** on **Onion Creek** — `Slave Arm (W)`, `Master Standpipe`, `Slave Arm (E)`) — upstream gauge `USGS-08158860` (Slaughter Creek at FM 2304), downstream reference gauge `USGS-08159000` (Onion Creek at US Hwy 183).
+  - `5` historical Austin flood windows (`Halloween 2013`, `Memorial Day 2015`, `Halloween 2015`, `October 2018`, `July 2025`) + `36-hour` calm control window (`May 2015`).
+  - Pooled Leave-One-Storm-Out (LOSO) Cross-Validation across `12` proxy event cases (`assumed_delay_min: 60`):
+    * **Upstream Candidate Rule (`AVOID`)**: `4 / 12` hits (`POD = 33.3%`), `8` misses, `1` false alarm (`FAR = 20.0%`), `CSI = 0.308`, median lead time `65 min` (IQR `47.5–76.2 min`) relative to downstream reference-gauge flood stage.
+    * **WGS84 Nearest-Gauge Baseline (`AVOID`)**: `4 / 12` hits (`POD = 33.3%`), `8` misses, `0` false alarms (`FAR = 0.0%`), `CSI = 0.333`, median lead time `65 min`.
+    * **Upstream Candidate Rule (`WATCH`)**: `6 / 12` hits (`POD = 50.0%`), `6` misses, `3` false alarms (`FAR = 33.3%`), `CSI = 0.400`, median lead time `90 min`.
+  - Honest conclusion: On this small 12-case proxy sample, the upstream rule did not beat the simpler nearest-gauge baseline (`4/12` hits and `65 min` median lead on both; `1` vs. `0` false alarms). FordCast displays this baseline comparison directly in `StormsScreen.tsx` and `/lab`.
+
+================================================================================
+6. ARCHITECTURE AND CODEBASE MAP
+================================================================================
+
+Mobile / Web App (`C:\2025AppChallenge\mobile`, Expo SDK 54 / React Native 0.81.5 / React 19.1):
+  - `src/app/_layout.tsx` — Root layout, Inter font loading, `PreferencesProvider`, `Pledge` onboarding gate, `MonitorProvider`, `AlertBanner`.
+  - `src/app/(tabs)/_layout.tsx` & `_layout.web.tsx` — 4-tab navigation (`Map`, `Drive`, `Storms`, `Alerts`).
+  - `src/app/(tabs)/index.tsx` -> `src/screens/HomeScreen.tsx` — Map screen, top control bar, 3-state mobile bottom sheet (`peek`/`half`/`full` with 8pt drag threshold and 44pt tap target), desktop sidebar, `DemoDirectorBar`.
+  - `src/screens/home/RoutePanels.tsx` — `TripCard` (`Storm reroute demo`), `OriginSelector`, destination search, `COMMUTE_PAIR_PRESETS`, `RouteAuditSummary`, grouped crossing rows, `TripEvidenceExplainer`, live-gated Google Maps handoff, and `Test rerouting with a simulated closure` (`simulateHazardOnRoute` + `endRouteTest`).
+  - `src/app/(tabs)/drive.tsx` & `src/components/DriverHudView.tsx` — Hands-free night HUD, `DRILL`/`SIMULACRO` badge, spoken alert controls, >15 mph distraction lockout with 44x44pt passenger override.
+  - `src/app/(tabs)/replay.tsx` -> `src/screens/StormsScreen.tsx` — Archived storm selector, side-by-side LOSO vs. nearest-gauge baseline scorecard, `Storm reroute demo` trigger, `Run on map` drill trigger, and link to `/lab`.
+  - `src/app/lab.tsx` -> `src/screens/CockpitScreen.tsx` — Hydrograph science lab (`CausalHydrograph.tsx`, `ProvenanceCard.tsx`, `ValidationScorecardModal.tsx`).
+  - `src/app/(tabs)/alerts.tsx` — Push/voice preferences, voice persona selector (`Ava`, `Andrew`, `Aria`), `Test voice` (`allowWhenMuted: true`), `Send test alert`, alert radius, saved crossings (`cleanPhysicalCrossingName`).
+  - `src/app/crossing/[id].tsx` — Crossing detail sheet with combined official + sensor status, continuous live aging (`nowMs`), USGS datum explanation, NOAA flood history within 2 km, and expandable science chart.
+  - `src/lib/monitor.tsx` & `monitor-context.ts` — Central state provider: 5-minute live polling, 15-second aging clock (`nowMs`), storm replay timer, route planning with `AbortController` + request generation counter + synchronous synthetic-hazard cleanup, `endRouteTest()`.
+  - `src/lib/live.ts` — USGS OGC API v1 parser (`parseUsgsFeatures`), 30-min rise rate (`rise30`), causal `evaluateCrossing`, `LIVE_STALE_MIN = 80`.
+  - `src/lib/hazards.ts` — Live ATXFloods (`fetchOfficialClosures`), NWS active alerts (`fetchNwsFloodAlerts`), and Open-Meteo precipitation adapters with strict malformed-payload validation.
+  - `src/lib/danger.ts` — `groupPhysicalCrossings()` (preserves distinct waterway type nouns like Creek vs. Branch, groups multi-arm hardware within 320 m, unions NOAA `event_id`s), `effectiveCrossingState()`, `selectDriveTargets()`.
+  - `src/lib/routing.ts` — Valhalla route planner, `crossingsAlongPolyline(line, 120)`, `assessRouteCoverage(line)` (80 km Austin center), `googleMapsUrl()` (up to 3 max-deviation detour waypoints), `COMMUTE_PAIR_PRESETS`.
+  - `src/lib/route-evidence.ts` — Pure helper `routeEvidence()` computing official closure status (`loading`/`unavailable`/`closed`/`none`), fresh vs. linked sensor counts across all grouped member records, and historical flood report summaries.
+  - `src/lib/guardian.ts`, `guardian.web.ts`, `guardian-cache.ts` — Background/foreground hazard cache with per-source tagging (`usgs`, `atx`, `nws`), 60-minute stale pruning, NWS `expiresAt` pruning, and post-delivery notification cooldown recording.
+  - `src/lib/voice.ts` — Speech queue with iOS silent-switch audio session preparation (`prepareAudio` deduplicated and serialized before `speak`), `allowWhenMuted` preview override, Edge neural TTS + native `expo-speech` fallback.
+
+Companion Chrome Extension (`C:\2025AppChallenge\extension`):
+  - `manifest.json` (MV3), `data.js`, `lib.js`, `fordcast.js`, `background.js`, `panel.css`, `test.mjs`.
+  - Injects a Shadow-DOM panel on `https://www.google.com/maps/*`, evaluates viewport crossings and `/maps/dir/` routes, checks the 80 km coverage boundary (`assessRouteCoverage`), and builds a 3-waypoint Google Maps detour URL.
+
+Python Backend & Offline Reproducibility Tools (`C:\2025AppChallenge\backend` & `tools`):
+  - `backend/app/` — FastAPI reference backend (`59` pytest tests).
+  - `tools/recompute_loso_and_baseline.py` — Recomputes causal LOSO and nearest-gauge baseline metrics into `mobile/assets/results/results.json`.
+  - `tools/build_flood_history.py` — Streams NOAA NCEI Storm Events CSVs (`1996-2026`) and generates `mobile/assets/history/crossing_history.json` with `event_id` deduplication.
+
+================================================================================
+7. ROUND 1–6 AUDIT REPAIRS COMPLETED & VERIFIED
+================================================================================
+
+  - **Causal Hydrograph & Honest LOSO Science:** Fixed reverse-loop lookahead in `buildReplayDataset`, enforced `assumed_delay_min: 60`, added WGS84 nearest-gauge baseline (`4/12` hits on both, `1` vs. `0` false alarms), and labeled ground truth as `downstream_gauge_flood_stage` (`Tier A = 0`).
+  - **Physical Crossing Grouping & Authoritative NOAA `event_id`s:** Preserved waterway type nouns (`Bear Creek` != `Bear Branch`), stripped municipal hardware suffixes (`Master Standpipe`, `Master Arm`, `Slave Arm (W/E)`), and deduplicated historical flood events by `event_id`.
+  - **Source-Tagged Guardian Cache & Expiry Pruning:** Tagged cached hazards with contributing sources (`usgs`, `atx`, `nws`), pruned expired NWS alerts (`expiresAt <= now`) and stale (`> 60m`) sources via `activeCachedHazards()`, and recorded notification cooldowns only after delivery succeeds.
+  - **Route Planner Races, Abort Propagation & Coverage Boundary:** Forwarded `AbortSignal` to `planSafeRoute`, added `routeReqIdRef` counter, cleared route on mode switch, and hardened `assessRouteCoverage()` to flag any out-of-radius excursion.
+  - **Feed State Honesty & Malformed Payload Guards (Round 5):** Prevented loading/failed feeds from displaying `"no closures returned"`, rejected future-dated observations as fresh, aggregated sensor links across all grouped member records (`g.records.some(...)`), and threw errors on malformed HTTP 200 ATXFloods/NWS payloads.
+  - **Synthetic Closure Isolation & iOS Voice / Touch Hardening (Round 6):**
+    * `planRoute` synchronously strips `test-` hazards from `hazardsRef` before routing so a real destination search never detours around a leftover test closure.
+    * Added `endRouteTest()` (`"End test and recheck route"`) and hid `Go with Google Maps` and `Share route summary` whenever `m.mode !== 'live' || Boolean(m.testHazard)`.
+    * Added `if (coords.length < 2) return;` guard in `simulateHazardOnRoute` and preserved `TEST · ` prefix on synthetic route alerts.
+    * Fixed `fallbackSpeechSynthesis` and HTML audio fallback to respect `allowWhenMuted`, deduplicated `prepareAudio()`, and awaited any in-flight `audioPreparation` inside `speak()`.
+    * Enforced `44x44pt` minimum touch target on the Drive HUD passenger override button and an `8pt` drag threshold (`onMoveShouldSetResponder`) on the mobile bottom-sheet header.
+    * Completed Spanish localization across `Pledge.tsx` (`REGLA DE PRECAUCIÓN`), `CockpitScreen.tsx` (`Resumen / Detalles / Evidencia / Todos los 141`, `Hablar / Guardado / Guardar`), and `MapSurface.web.tsx` (`Cruces sin sensor`, `Ver ficha ->`).
+
+================================================================================
+8. VERIFICATION GATE (ALL 184 AUTOMATED TESTS PASSING)
+================================================================================
+
+  - `cd C:\2025AppChallenge\mobile && node node_modules/typescript/bin/tsc --noEmit --pretty false` -> **PASS (0 errors)**
+  - `cd C:\2025AppChallenge\mobile && node node_modules/expo/bin/cli lint` -> **PASS (0 errors, 0 warnings)**
+  - `cd C:\2025AppChallenge\mobile && node node_modules/jest/bin/jest.js --runInBand --watchAll=false` -> **PASS (106 passed across 11 suites)**
+  - `node C:\2025AppChallenge\extension\test.mjs` -> **PASS (19 passed)**
+  - `C:\2025AppChallenge\backend\.venv\Scripts\python.exe -m pytest C:\2025AppChallenge\backend\tests` -> **PASS (59 passed)**
+
+================================================================================
+9. CLAIMS TO AVOID vs. SAFE, HIGH-IMPACT CLAIMS FOR TX-37 JUDGES
+================================================================================
+
+Do NOT say:
+  - "FordCast predicts when a road will flood 65 minutes in advance."
+  - "Our upstream gauge algorithm beat the baseline."
+  - "Every crossing in TX-37 is monitored."
+  - "This route is safe / clear / open / passable."
+  - "Background alerts work inside Expo Go."
+
+DO say:
+  - "Built in Texas-37 for our Austin-area watersheds, FordCast checks the crossings along your trip before you leave."
+  - "It audits a 120-meter corridor around your route against 2,052 mapped Austin-area crossings, groups multi-arm municipal hardware records into physical crossing areas, combines official ATXFloods closures, NWS warnings, USGS creek readings, and nearby NOAA flood history, and explicitly warns you which crossings on your trip have no flood sensor."
+  - "If you plan a trip that leaves the 80-kilometer Austin-area crossing inventory — like driving toward College Station — FordCast warns you that crossing data is incomplete instead of showing a false clean route."
+  - "In our separate Leave-One-Storm-Out replay study across 5 archived Austin floods and 12 proxy cases on two research corridors, the upstream gauge rule caught 4 of 12 downstream reference-gauge flood events with a 65-minute median lead time — matching a simpler nearest-gauge baseline. We report those detections, misses, and baseline numbers directly inside the app."
+
+================================================================================
+10. FINAL PRE-SUBMISSION STUDENT CHECKLIST
+================================================================================
+
+  1. Verify your residential or school address sits inside **TX-37** at `https://www.house.gov/representatives/find-your-representative`.
+  2. Fill in your real `[NAME]`, `[HIGH SCHOOL]`, `[CITY]`, and your genuine personal answer to **Q2 (What inspired you to create this app?)** in `FordCast_CAC_Submission.md`.
+  3. Review `AI_USE.md` so it accurately reflects your own coding, testing, and AI-tool usage.
+  4. Delete Section 0 (`Strategy — read first`) from `FordCast_CAC_Submission.md` before pasting answers into the submission portal.
+  5. Record the ~2:15 demo video following the 4-part TX-37 script in `FordCast_CAC_Submission.md` (Hook -> Live TX-37 Commute Audit & Coverage Check -> Memorial Day 2015 Storm Reroute Demo -> Honest LOSO Science & Safety Pledge).
+  6. Submit before **Monday, October 26, 2026, 9:00 PM ET / 8:00 PM Central**.
+
+END OF CONTEXT WINDOW

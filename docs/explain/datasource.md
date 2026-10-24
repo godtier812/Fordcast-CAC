@@ -1,16 +1,19 @@
-# One-Page Explainer: `backend/fordcast/sources/base.py` & `replay.py`
+# Data access — student review pending
 
-## Purpose
-Guarantees that live polling and historical storm replay share a single `DataSource` interface and that no future observation can ever leak into a past tick.
+Agent-authored implementation: `sources/base.py` and `sources/replay.py`.
 
-## How It Works
-1. **Two Timestamps per Reading (`Reading`):**
-   - Every gauge observation carries both `obs_time` (when the sensor measured the water) and `available_at` (when telemetry delivered the reading to FordCast: `obs_time + delay_min`).
-2. **Strict No-Lookahead Filter (`StormReplaySource.series`):**
-   - At simulated clock time `as_of`, a reading is visible **only** if:
-     - `r.param == parameter_code` (preventing discharge `00060` and stage `00065` from overwriting each other),
-     - `as_of - lookback < r.obs_time <= as_of` (left-open lookback window),
-     - `r.available_at <= as_of` (data-arrival latency filter), and
-     - if `r.obs_time` falls inside a documented gauge `Outage(start, end)` (such as `USGS-08159000` during Halloween 2013), it is withheld until `as_of >= outage.end`.
-3. **Runtime Guard (`assert_no_lookahead`):**
-   - Every `tick()` call executes `assert_no_lookahead(readings, now)` before evaluating any crossing. If any reading has `obs_time > now` or `available_at > now`, `LookaheadError` is raised immediately.
+A Reading separates observation time from arrival time. Live/recorded data retain actual
+receipt times; replay explicitly assumes observation time + delivery delay, withholding
+modeled interruption samples until the interruption ends. The Halloween interruption is
+a robustness assumption; it is not verified original transmission history.
+
+Providers select arrived observations inside a left-open lookback interval. Revisions are
+resolved separately for each parameter and observation time. A per-gauge availability
+index reduces unnecessary scanning. Every tick guards both timestamps against its clock.
+
+The chart is a separate conversion: each grid slot takes only the latest prior observation
+within 20 minutes. It never assigns a later reading to an earlier slot. Its delay is
+conservative for carried-forward samples. Missing slots remain missing.
+
+Explain in your own words: why does arrival time matter? Why do corrected archive values
+not recreate what was provisionally known? Why must chart conversion also be causal?

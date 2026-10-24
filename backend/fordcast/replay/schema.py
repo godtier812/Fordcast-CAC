@@ -43,6 +43,7 @@ class ReplayPipelineMeta(BaseModel):
     latency_sha256: str
     results_sha256: str
     generated_at: str
+    source_sha256: str | None = None
 
 
 class ReplayGaugeOutageWindow(BaseModel):
@@ -74,6 +75,7 @@ class ReplayCrossing(BaseModel):
     tier: Literal["A", "B", "C"]
     initial_state: Literal["no_rise", "unknown", "watch", "avoid", "closed"]
     overtop_stage_ft: float | None = None
+    reference_stage_ft: float | None = None
     target_gauge_id: str | None = None
 
 
@@ -91,6 +93,7 @@ class ReplayLink(BaseModel):
     watch_ft: float | None = None
     channel_dist_km: float | None = None
     flowline: list[tuple[float, float]]
+    geometry_source: Literal["schematic_corridor_connector"] = "schematic_corridor_connector"
 
 
 class ReplayEvent(BaseModel):

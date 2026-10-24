@@ -1,0 +1,17 @@
+{
+  "name": "fordcast-tools",
+  "private": true,
+  "type": "module",
+  "description": "Run-once Mac tools for the FordCast Demo Edition (never imported by the app).",
+  "scripts": {
+    "style": "node make-style.mjs vendor/positron.json > ../mobile/assets/map/fordcast-night.json && node validate-style.mjs ../mobile/assets/map/fordcast-night.json",
+    "markers": "node make-markers.mjs --out ../mobile/assets/map/markers",
+    "measure": "node measure-text.mjs"
+  },
+  "devDependencies": {
+    "@expo-google-fonts/inter": "0.4.2",
+    "@maplibre/maplibre-gl-style-spec": "26.2.1",
+    "@resvg/resvg-js": "2.6.2",
+    "opentype.js": "1.3.4"
+  }
+}

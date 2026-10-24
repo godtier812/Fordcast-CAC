@@ -1,0 +1,113 @@
+{
+  "demo": {
+    "badge": "SIMULADO",
+    "banner": "TORMENTA SIMULADA · datos de demostración · no es en vivo",
+    "banner_spoken": "Tormenta simulada. Datos de demostración. No es en vivo.",
+    "chip": "DEMO",
+    "chip_spoken": "Datos de demostración",
+    "closure_gap": "La cuadrilla vial simulada lo cerró {{x}} min después del primer Evite de FordCast.",
+    "notify": {
+      "subtitle": "Tormenta simulada · datos de demostración"
+    },
+    "pill_running": "SIMULADO · {{time}} hora de la tormenta",
+    "pill_running_spoken": "Tormenta simulada. Hora de la tormenta {{time}}.",
+    "result": "En esta tormenta simulada, FordCast avisó {{x}} min antes de que el agua llegara al camino",
+    "result_honesty": "Datos de medidores simulados; el código de pronóstico es real y se ejecutó en este teléfono. Aviso mediano en los {{n}} cruces que se inundaron en esta tormenta: {{m}} min.",
+    "source": {
+      "road_crew": "Cuadrilla vial simulada"
+    },
+    "window_check_hit": "El agua llegó dentro del intervalo que FordCast mostró primero ({{lo}}–{{hi}} min).",
+    "window_check_miss": "El agua llegó fuera del intervalo que FordCast mostró primero ({{lo}}–{{hi}} min)."
+  },
+  "director": {
+    "no_alert": "No hay alerta a esta hora de la tormenta",
+    "reset": "Restablecer",
+    "take_hint": "Carga esta toma del video.",
+    "title": "Director de demostración"
+  },
+  "drive": {
+    "tts": {
+      "multi_changed_many": "Cambiaron {{count}} cruces adelante.",
+      "multi_changed_one": "Cambió {{count}} cruce adelante.",
+      "multi_changed_other": "Cambiaron {{count}} cruces adelante.",
+      "offline": "FordCast está sin conexión. Esté atento al agua y a las barricadas.",
+      "unknown_ahead": "No hay datos recientes de {{name}}. Esté atento al agua y a las barricadas."
+    }
+  },
+  "reason": {
+    "CLOSURE_LIFTED": "{{source}}: cierre levantado a las {{time}}. Puede quedar agua. Tenga cuidado.",
+    "CLOSURE_LIFTED_spoken": "{{source}} levantó el cierre a las {{time}}. Puede quedar agua. Tenga cuidado.",
+    "DATA_STALE_gauge": "Sin datos recientes de {{gauge}} (últimos: {{age}})",
+    "DATA_STALE_gauge_spoken": "Sin datos recientes de {{gauge}}. Últimos datos {{age}}.",
+    "DATA_STALE_source": "Sin actualización reciente de {{source}} (última: {{age}})",
+    "DATA_STALE_source_spoken": "Sin actualización reciente de {{source}}. Última actualización {{age}}.",
+    "HOLDING": "Mantenemos este aviso mientras baja el agua río arriba",
+    "HOLDING_spoken": "Mantenemos este aviso mientras baja el agua río arriba.",
+    "NO_UPSTREAM_GAUGE": "FordCast no lo monitorea: no hay medidor río arriba",
+    "NO_UPSTREAM_GAUGE_spoken": "FordCast no lo monitorea. No hay medidor río arriba.",
+    "OFFICIAL_CAUTION": "Oficial: {{source}} reporta precaución",
+    "OFFICIAL_CAUTION_spoken": "Oficial: {{source}} reporta precaución.",
+    "OFFICIAL_CLOSED": "Oficial: {{source}} lo reporta cerrado",
+    "OFFICIAL_CLOSED_spoken": "Oficial: {{source}} lo reporta cerrado.",
+    "UPSTREAM_ABOVE_TRIGGER": "{{gauge}}: +{{rise}} pies en los últimos 30 min, río arriba. El agua suele tardar {{tau_lo}}–{{tau_hi}} min en llegar aquí.",
+    "UPSTREAM_ABOVE_TRIGGER_peaked": "{{gauge}} está por encima de su nivel de alerta, río arriba. El agua suele tardar {{tau_lo}}–{{tau_hi}} min en llegar aquí.",
+    "UPSTREAM_ABOVE_TRIGGER_peaked_spoken": "{{gauge}} está por encima de su nivel de alerta, río arriba. El agua suele tardar de {{tau_lo}} a {{tau_hi}} minutos en llegar aquí.",
+    "UPSTREAM_ABOVE_TRIGGER_spoken": "{{gauge}} subió {{rise}} pies en los últimos 30 minutos, río arriba. El agua suele tardar de {{tau_lo}} a {{tau_hi}} minutos en llegar aquí.",
+    "UPSTREAM_RISING": "El agua sube río arriba en {{gauge}}",
+    "UPSTREAM_RISING_spoken": "El agua está subiendo río arriba en {{gauge}}.",
+    "WATER_AT_ROAD": "Sensor en el camino: {{gauge}} muestra agua sobre el camino",
+    "WATER_AT_ROAD_spoken": "El sensor en el camino, {{gauge}}, muestra agua sobre el camino."
+  },
+  "replay": {
+    "gauge_silent": "{{gauge}} dejó de transmitir. Sus lecturas llegaron después, así que FordCast muestra Desconocido aquí.",
+    "simulated_drive": "MANEJO SIMULADO"
+  },
+  "state": {
+    "avoid": {
+      "headline": "Evite · probablemente inundado en {{lo}}–{{hi}} min",
+      "headline_now": "Evite · puede que ya haya agua en el camino",
+      "label": "Evite",
+      "push_body": "Probablemente inundado en {{lo}}–{{hi}} min. Use otra ruta. Nunca maneje en el agua.",
+      "push_body_now": "Puede que ya haya agua en el camino. Use otra ruta. Nunca maneje en el agua.",
+      "push_title": "Evite {{name}}",
+      "tts": "Evite {{name}}. Inundación probable pronto. Tome otra ruta."
+    },
+    "closed": {
+      "body_sensor": "El sensor de este cruce muestra agua sobre el camino. ¡Dé la vuelta, no se ahogue!",
+      "headline": "Cerrado · {{source}}",
+      "label": "Inundado – Cerrado",
+      "official": "OFICIAL",
+      "push_body": "{{source}} lo reporta cerrado. ¡Dé la vuelta, no se ahogue!",
+      "push_title": "Cerrado: {{name}}",
+      "tts": "{{name}} está cerrado. Dé la vuelta. No se ahogue."
+    },
+    "no_rise": {
+      "label": "Sin crecida detectada"
+    },
+    "unknown": {
+      "headline": "Desconocido · sin datos",
+      "headline_not_monitored": "Desconocido · FordCast no lo monitorea",
+      "label": "Desconocido – sin datos",
+      "last_known": "Último estado conocido: {{state}} · {{age}}"
+    },
+    "watch": {
+      "label": "Precaución",
+      "push_body": "El agua sube río arriba. Posible inundación en {{lo}}–{{hi}} min. Planee otra ruta.",
+      "push_body_nowindow": "El agua sube río arriba. Planee otra ruta.",
+      "push_title": "Precaución: {{name}}",
+      "tts": "Atención. El agua está subiendo río arriba de {{name}}. Planee otra ruta."
+    }
+  },
+  "time": {
+    "min_ago_many": "hace {{count}} min",
+    "min_ago_one": "hace {{count}} min",
+    "min_ago_other": "hace {{count}} min"
+  },
+  "update": {
+    "deescalate": {
+      "push_body": "FordCast ya no detecta agua subiendo río arriba. Todavía puede haber agua en el camino. Respete las barricadas.",
+      "push_title": "Actualización: {{name}}",
+      "tts": "Actualización sobre {{name}}. El agua dejó de subir río arriba. Todavía puede haber agua en el camino."
+    }
+  }
+}

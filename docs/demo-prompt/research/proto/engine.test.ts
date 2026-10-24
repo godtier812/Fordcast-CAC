@@ -36,7 +36,8 @@ test('truth isolation: engine never imports the simulator', () => {
 test('hero beats (flash-flood-night)', () => {
   const c = compileScenario(SCENARIOS[1]!); const j = c.events.filter((e) => e.crossingId === 'atx-37');
   expect(j[0]).toMatchObject({ t: 55, state: 'watch' }); expect(j[1]).toMatchObject({ t: 70, state: 'avoid', window: [15, 30] });
-  expect(j.find((e) => e.state === 'closed')!.t).toBe(120); expect(c.onsets.get('atx-37')).toBe(105);
+  expect(j.find((e) => e.state === 'closed')!.t).toBe(120); expect(c.onsets.get('atx-37')).toBe(100);
+  expect(c.hero).toMatchObject({ crossingId: 'atx-37', leadMin: 30, inFirstWindow: true }); expect(c.medianLead).toBe(30);
 });
 test('gauge-silent UNKNOWN (onion-creek-storm)', () => {
   const c = compileScenario(SCENARIOS[2]!); const b = c.events.filter((e) => e.crossingId === 'tc-1626');

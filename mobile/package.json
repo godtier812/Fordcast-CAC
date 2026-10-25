@@ -75,6 +75,7 @@
     "typescript": "~6.0.3"
   },
   "scripts": {
+    "postinstall": "node -e \"const fs=require('fs'),p='node_modules/ws/index.js';if(fs.existsSync(p)){let s=fs.readFileSync(p,'utf8');if(!s.includes('WebSocket.WebSocket')){fs.writeFileSync(p,s.replace('module.exports = WebSocket;','WebSocket.WebSocket = WebSocket;\\nmodule.exports = WebSocket;'))}}if(fs.existsSync('node_modules/@expo/cli/node_modules/ws')&&!fs.existsSync('node_modules/@expo/ws-tunnel/node_modules/ws')){fs.cpSync('node_modules/@expo/cli/node_modules/ws','node_modules/@expo/ws-tunnel/node_modules/ws',{recursive:true})}\"",
     "start": "expo start",
     "android": "expo start --android",
     "ios": "expo start --ios",

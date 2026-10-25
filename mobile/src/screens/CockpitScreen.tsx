@@ -301,7 +301,7 @@ export default function CockpitScreen({
           style={{
             minHeight: 84,
             backgroundColor: SURFACES.dark.elevated1,
-            borderRadius: 16,
+            borderRadius: 10,
             borderWidth: 1,
             borderColor: SURFACES.dark.borderSubtle,
             padding: 14,
@@ -452,7 +452,7 @@ export default function CockpitScreen({
       style={{
         minHeight: 88,
         backgroundColor: SURFACES.dark.glassHud,
-        borderRadius: 16,
+        borderRadius: 10,
         borderWidth: 1,
         borderColor: SURFACES.dark.borderSubtle,
         paddingHorizontal: 14,
@@ -669,7 +669,7 @@ export default function CockpitScreen({
         <View
           style={{
             height: 10,
-            borderRadius: 999,
+            borderRadius: 6,
             backgroundColor: SURFACES.dark.primary,
             borderWidth: 1,
             borderColor: SURFACES.dark.borderSubtle,
@@ -720,7 +720,7 @@ export default function CockpitScreen({
         <View
           style={{
             backgroundColor: SURFACES.dark.elevated1,
-            borderRadius: 16,
+            borderRadius: 10,
             borderWidth: 1,
             borderColor: SURFACES.dark.borderSubtle,
             paddingHorizontal: 16,
@@ -811,7 +811,7 @@ export default function CockpitScreen({
             <View
               style={{
                 backgroundColor: SURFACES.dark.elevated1,
-                borderRadius: 16,
+                borderRadius: 10,
                 borderWidth: 1,
                 borderColor: SURFACES.dark.borderSubtle,
                 padding: 14,
@@ -845,7 +845,7 @@ export default function CockpitScreen({
             <View
               style={{
                 backgroundColor: SURFACES.dark.elevated1,
-                borderRadius: 16,
+                borderRadius: 10,
                 borderWidth: 1,
                 borderColor: SURFACES.dark.borderSubtle,
                 padding: 14,
@@ -930,7 +930,7 @@ export default function CockpitScreen({
             <View
               style={{
                 backgroundColor: SURFACES.dark.elevated1,
-                borderRadius: 16,
+                borderRadius: 10,
                 borderWidth: 1,
                 borderColor: SURFACES.dark.borderSubtle,
                 padding: 14,
@@ -1018,7 +1018,7 @@ export default function CockpitScreen({
             <View
               style={{
                 backgroundColor: SURFACES.dark.elevated1,
-                borderRadius: 16,
+                borderRadius: 10,
                 borderWidth: 1,
                 borderColor: SURFACES.dark.borderSubtle,
                 padding: 14,
@@ -1123,7 +1123,7 @@ export default function CockpitScreen({
         style={{
           minHeight: 48,
           backgroundColor: SURFACES.dark.elevated1,
-          borderRadius: 14,
+          borderRadius: 8,
           borderWidth: 1,
           borderColor: SURFACES.dark.borderSubtle,
           paddingHorizontal: 12,

@@ -191,7 +191,7 @@ export function StateGlyphSvg({
       <View
         style={{
           padding: 4,
-          borderRadius: 999,
+          borderRadius: 6,
           backgroundColor: 'rgba(43, 217, 217, 0.20)',
           borderColor: hex,
         }}

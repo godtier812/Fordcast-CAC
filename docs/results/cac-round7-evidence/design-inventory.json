@@ -1,12 +1,12 @@
 {
   "scope": "Literal source counts, including comments and null placeholders; not visible-element counts.",
   "totals": {
-    "emDash": 82,
-    "arrow": 25,
-    "emoji": 5,
-    "leftStripe": 3,
-    "pill": 8,
-    "purple": 1,
+    "emDash": 74,
+    "arrow": 23,
+    "emoji": 0,
+    "leftStripe": 0,
+    "pill": 0,
+    "purple": 0,
     "shadow": 4
   },
   "contrast": [
@@ -164,50 +164,22 @@
   "rows": [
     {
       "kind": "emDash",
-      "file": "mobile/src/app/(tabs)/alerts.tsx",
-      "line": 166,
-      "count": 1,
-      "text": "? `Punto de partida manual — ${m.customOrigin.name}`"
-    },
-    {
-      "kind": "emDash",
-      "file": "mobile/src/app/(tabs)/alerts.tsx",
-      "line": 167,
-      "count": 1,
-      "text": ": `Custom starting point — ${m.customOrigin.name}`"
-    },
-    {
-      "kind": "emDash",
       "file": "mobile/src/app/(tabs)/drive.tsx",
       "line": 138,
       "count": 1,
       "text": "distanceLabel: '—',"
     },
     {
-      "kind": "emDash",
-      "file": "mobile/src/app/crossing/[id].tsx",
-      "line": 265,
-      "count": 1,
-      "text": "? 'Altura medida respecto al nivel base de la estación USGS — no es la profundidad del agua sobre el camino. Un valor negativo solo indica agua por debajo del cero de referencia del sensor.'"
-    },
-    {
-      "kind": "emDash",
-      "file": "mobile/src/app/crossing/[id].tsx",
-      "line": 266,
-      "count": 1,
-      "text": ": 'Gauge height is measured relative to the USGS station datum — not water depth on the road. Negative values simply mean water is below the sensor datum zero.'}"
-    },
-    {
       "kind": "arrow",
       "file": "mobile/src/app/crossing/[id].tsx",
-      "line": 344,
+      "line": 355,
       "count": 1,
       "text": "? 'Fuente: Base de Datos de Eventos de Tormenta de NOAA NCEI →'"
     },
     {
       "kind": "arrow",
       "file": "mobile/src/app/crossing/[id].tsx",
-      "line": 345,
+      "line": 356,
       "count": 1,
       "text": ": 'Source: NOAA NCEI Storm Events Database →'}"
     },
@@ -226,13 +198,6 @@
       "text": "if (ms == null) return '—';"
     },
     {
-      "kind": "pill",
-      "file": "mobile/src/components/fc/Kit.tsx",
-      "line": 87,
-      "count": 1,
-      "text": "style={{ borderRadius: 999, borderWidth: 1, borderColor: c.color, paddingHorizontal: 9, paddingVertical: 3 }}"
-    },
-    {
       "kind": "emDash",
       "file": "mobile/src/components/fc/Kit.tsx",
       "line": 358,
@@ -240,74 +205,39 @@
       "text": "<AppText style={{ fontSize: 12, color: S.textMuted }}>—</AppText>"
     },
     {
-      "kind": "leftStripe",
-      "file": "mobile/src/components/fc/Kit.tsx",
-      "line": 458,
-      "count": 1,
-      "text": "<Panel style={{ borderColor: depthData.badgeColor, borderLeftWidth: 4, gap: 12 }}>"
-    },
-    {
       "kind": "arrow",
       "file": "mobile/src/components/fc/Kit.tsx",
-      "line": 501,
+      "line": 503,
       "count": 1,
       "text": "? 'Fuente: Guía de seguridad ante inundaciones del Servicio Meteorológico Nacional (NWS) →'"
     },
     {
       "kind": "emDash",
       "file": "mobile/src/components/fc/Kit.tsx",
-      "line": 502,
+      "line": 504,
       "count": 1,
       "text": ": 'Source: National Weather Service — Turn Around, Don’t Drown® Safety Guide →'}"
     },
     {
       "kind": "arrow",
       "file": "mobile/src/components/fc/Kit.tsx",
-      "line": 502,
+      "line": 504,
       "count": 1,
       "text": ": 'Source: National Weather Service — Turn Around, Don’t Drown® Safety Guide →'}"
-    },
-    {
-      "kind": "shadow",
-      "file": "mobile/src/components/fc/Kit.tsx",
-      "line": 631,
-      "count": 1,
-      "text": "shadowRadius: 16,"
     },
     {
       "kind": "shadow",
       "file": "mobile/src/components/fc/Kit.tsx",
       "line": 633,
       "count": 1,
+      "text": "shadowRadius: 16,"
+    },
+    {
+      "kind": "shadow",
+      "file": "mobile/src/components/fc/Kit.tsx",
+      "line": 635,
+      "count": 1,
       "text": "elevation: 12,"
-    },
-    {
-      "kind": "pill",
-      "file": "mobile/src/components/fordcast/UI.tsx",
-      "line": 53,
-      "count": 1,
-      "text": "borderRadius: 999,"
-    },
-    {
-      "kind": "pill",
-      "file": "mobile/src/components/fordcast/UI.tsx",
-      "line": 297,
-      "count": 1,
-      "text": "borderRadius: 999,"
-    },
-    {
-      "kind": "arrow",
-      "file": "mobile/src/components/ProvenanceCard.tsx",
-      "line": 32,
-      "count": 1,
-      "text": "scorecardCta: 'View LOSO Backtest Scorecard (4/12 detected, 1 false alarm) →',"
-    },
-    {
-      "kind": "arrow",
-      "file": "mobile/src/components/ProvenanceCard.tsx",
-      "line": 50,
-      "count": 1,
-      "text": "scorecardCta: 'Ver Tarjeta de Validación LOSO (4/12 detectados, 1 falsa alarma) →',"
     },
     {
       "kind": "emDash",
@@ -324,27 +254,6 @@
       "text": "? ` • ${cLinks[0].gauge_id} → ${p.target_gauge_id ?? 'corridor'} [τ=${cLinks[0].tau_lo_min}–${cLinks[0].tau_hi_min}m]`"
     },
     {
-      "kind": "pill",
-      "file": "mobile/src/components/StateBadge.tsx",
-      "line": 194,
-      "count": 1,
-      "text": "borderRadius: 999,"
-    },
-    {
-      "kind": "emoji",
-      "file": "mobile/src/components/ValidationScorecardModal.tsx",
-      "line": 9,
-      "count": 1,
-      "text": "badge: '📊 LOSO VALIDATION',"
-    },
-    {
-      "kind": "emoji",
-      "file": "mobile/src/components/ValidationScorecardModal.tsx",
-      "line": 28,
-      "count": 1,
-      "text": "badge: '📊 VALIDACIÓN LOSO',"
-    },
-    {
       "kind": "emDash",
       "file": "mobile/src/components/ValidationScorecardModal.tsx",
       "line": 61,
@@ -359,32 +268,39 @@
       "text": "v == null ? '—' : v.toFixed(3);"
     },
     {
-      "kind": "pill",
-      "file": "mobile/src/components/ValidationScorecardModal.tsx",
-      "line": 93,
-      "count": 1,
-      "text": "borderRadius: 999,"
-    },
-    {
       "kind": "emDash",
       "file": "mobile/src/components/ValidationScorecardModal.tsx",
-      "line": 254,
+      "line": 250,
       "count": 1,
       "text": "{upAvoid.median_lead_min ?? '—'} min"
     },
     {
       "kind": "emDash",
       "file": "mobile/src/components/ValidationScorecardModal.tsx",
-      "line": 262,
+      "line": 258,
       "count": 1,
       "text": "{upAvoid.lead_iqr_min ? `${upAvoid.lead_iqr_min[0]}–${upAvoid.lead_iqr_min[1]} min` : '—'}"
     },
     {
       "kind": "emDash",
       "file": "mobile/src/components/ValidationScorecardModal.tsx",
-      "line": 270,
+      "line": 266,
       "count": 1,
       "text": "{upWatch.median_lead_min ?? '—'} min"
+    },
+    {
+      "kind": "emDash",
+      "file": "mobile/src/components/ValidationScorecardModal.tsx",
+      "line": 309,
+      "count": 2,
+      "text": "? `3. Comparador Geodésico (WGS84): Regla aguas arriba POD ${fmtPct(upAvoid.pod)} (mediana ${upAvoid.median_lead_min ?? '—'} min, CSI ${fmtDec(upAvoid.csi)}) frente al sensor más cercano POD ${fmtPct(ngAvoid.pod)} (mediana ${ngAvoid.median_lead_min ?? '—'} min, CSI ${fmtDec(ngAvoid.csi)}).`"
+    },
+    {
+      "kind": "emDash",
+      "file": "mobile/src/components/ValidationScorecardModal.tsx",
+      "line": 310,
+      "count": 2,
+      "text": ": `3. Geodesic Comparator (WGS84): Upstream rule achieves POD ${fmtPct(upAvoid.pod)} (${upAvoid.median_lead_min ?? '—'} min median lead, CSI ${fmtDec(upAvoid.csi)}) vs. nearest-gauge comparator POD ${fmtPct(ngAvoid.pod)} (${ngAvoid.median_lead_min ?? '—'} min median lead, CSI ${fmtDec(ngAvoid.csi)}).`}"
     },
     {
       "kind": "emDash",
@@ -394,23 +310,9 @@
       "text": "* app announces it with studio neural audio — the same decision the live router makes."
     },
     {
-      "kind": "emoji",
-      "file": "mobile/src/features/map/CrossingRow.tsx",
-      "line": 107,
-      "count": 1,
-      "text": "{isSaved ? '★' : '›'}"
-    },
-    {
-      "kind": "pill",
-      "file": "mobile/src/features/map/MapSurface.web.tsx",
-      "line": 137,
-      "count": 1,
-      "text": "borderRadius: 999,"
-    },
-    {
       "kind": "arrow",
       "file": "mobile/src/features/map/MapSurface.web.tsx",
-      "line": 474,
+      "line": 477,
       "count": 2,
       "text": "{language === 'es' ? 'Ver ficha →' : 'Inspect Sheet →'}"
     },
@@ -427,13 +329,6 @@
       "line": 47,
       "count": 1,
       "text": "const ALERT_WITHIN_KM = 1.6; // about 1 mile — enough time to turn off at highway speed"
-    },
-    {
-      "kind": "emDash",
-      "file": "mobile/src/lib/guardian.ts",
-      "line": 267,
-      "count": 1,
-      "text": "`${h.reason}, ${miles} mi from you. Turn around — find another route.`,"
     },
     {
       "kind": "emDash",
@@ -478,20 +373,6 @@
       "text": "\"route.preset_coverage\": \"Austin → College Station · revisar cobertura\","
     },
     {
-      "kind": "pill",
-      "file": "mobile/src/screens/CockpitScreen.tsx",
-      "line": 672,
-      "count": 1,
-      "text": "borderRadius: 999,"
-    },
-    {
-      "kind": "emoji",
-      "file": "mobile/src/screens/CockpitScreen.tsx",
-      "line": 778,
-      "count": 1,
-      "text": "title=\"📊 LOSO Scorecard\""
-    },
-    {
       "kind": "emDash",
       "file": "mobile/src/screens/CockpitScreen.tsx",
       "line": 1045,
@@ -518,13 +399,6 @@
       "line": 1094,
       "count": 1,
       "text": ": '—'}"
-    },
-    {
-      "kind": "emoji",
-      "file": "mobile/src/screens/CockpitScreen.tsx",
-      "line": 1196,
-      "count": 1,
-      "text": "🚘 HUD"
     },
     {
       "kind": "arrow",
@@ -557,51 +431,23 @@
     {
       "kind": "emDash",
       "file": "mobile/src/screens/home/RoutePanels.tsx",
-      "line": 122,
-      "count": 1,
-      "text": "? 'Centro de Austin (predeterminado — GPS apagado)'"
-    },
-    {
-      "kind": "emDash",
-      "file": "mobile/src/screens/home/RoutePanels.tsx",
-      "line": 123,
-      "count": 1,
-      "text": ": 'Downtown Austin (default — GPS off)';"
-    },
-    {
-      "kind": "emDash",
-      "file": "mobile/src/screens/home/RoutePanels.tsx",
-      "line": 1062,
-      "count": 1,
-      "text": ": 'Note: Gauge height is measured relative to the USGS station datum — not water depth on the road. Negative values simply mean water is below the sensor datum zero.'}"
-    },
-    {
-      "kind": "emDash",
-      "file": "mobile/src/screens/home/RoutePanels.tsx",
-      "line": 1156,
+      "line": 1172,
       "count": 1,
       "text": "{last ? `${last.v.toFixed(2)} ft` : '—'}"
     },
     {
       "kind": "shadow",
       "file": "mobile/src/screens/HomeScreen.tsx",
-      "line": 1154,
+      "line": 1162,
       "count": 1,
       "text": "shadowRadius: 16,"
     },
     {
       "kind": "shadow",
       "file": "mobile/src/screens/HomeScreen.tsx",
-      "line": 1156,
+      "line": 1164,
       "count": 1,
       "text": "elevation: 16,"
-    },
-    {
-      "kind": "pill",
-      "file": "mobile/src/screens/HomeScreen.tsx",
-      "line": 1226,
-      "count": 1,
-      "text": "borderRadius: 999,"
     },
     {
       "kind": "emDash",
@@ -611,11 +457,11 @@
       "text": "lead: h.median_lead_min ?? '—',"
     },
     {
-      "kind": "purple",
-      "file": "mobile/src/theme/tokens.ts",
-      "line": 99,
+      "kind": "emDash",
+      "file": "mobile/src/screens/StormsScreen.tsx",
+      "line": 135,
       "count": 1,
-      "text": "downstreamStroke: '#A855F7',"
+      "text": "{h.median_lead_min ?? '—'}m"
     },
     {
       "kind": "emDash",
@@ -630,55 +476,6 @@
       "line": 67,
       "count": 1,
       "text": "res = null; // extension reloaded / worker unavailable → direct fetch below"
-    },
-    {
-      "kind": "leftStripe",
-      "file": "extension/fordcast.js",
-      "line": 385,
-      "count": 1,
-      "text": ".item.hazard { border-left: 4px solid #EF4444; }"
-    },
-    {
-      "kind": "leftStripe",
-      "file": "extension/fordcast.js",
-      "line": 386,
-      "count": 1,
-      "text": ".item.caution { border-left: 4px solid #F59E0B; }"
-    },
-    {
-      "kind": "emDash",
-      "file": "extension/fordcast.js",
-      "line": 504,
-      "count": 1,
-      "text": "'Outside the supported Austin-area inventory — this route is not fully checked. Consult DriveTexas and local authorities.',"
-    },
-    {
-      "kind": "emDash",
-      "file": "extension/fordcast.js",
-      "line": 509,
-      "count": 1,
-      "text": "body.append(h('div', { class: 'banner' }, `Estimated route crosses ${s.name} — ${s.reasons.join('; ')}`));"
-    },
-    {
-      "kind": "emDash",
-      "file": "extension/fordcast.js",
-      "line": 512,
-      "count": 1,
-      "text": "body.append(h('div', { class: 'banner caution' }, `Caution: ${s.name} — ${s.reasons.join('; ')}`));"
-    },
-    {
-      "kind": "emDash",
-      "file": "extension/fordcast.js",
-      "line": 536,
-      "count": 1,
-      "text": "`No complete detour available — alternative still passes ${sf.still.length} flagged crossing${sf.still.length === 1 ? '' : 's'}: ${sf.still.map((s) => s.name).join(', ')}`,"
-    },
-    {
-      "kind": "emDash",
-      "file": "extension/fordcast.js",
-      "line": 622,
-      "count": 1,
-      "text": "body.append(h('div', { class: 'small' }, `+${items.length - MAX_VIEW_ITEMS} more — zoom in to see them`));"
     },
     {
       "kind": "emDash",
@@ -748,14 +545,14 @@
       "file": "FordCast_CAC_Submission.md",
       "line": 33,
       "count": 1,
-      "text": "- **Prototype** — works on replayed storms or the 4 primary-calibrated crossing records (across two research corridors) → say \"experimental prototype.\""
+      "text": "- **Prototype** — works on replayed storms or the 6 primary-calibrated crossing records (across three research corridors) → say \"experimental prototype.\""
     },
     {
       "kind": "arrow",
       "file": "FordCast_CAC_Submission.md",
       "line": 33,
       "count": 1,
-      "text": "- **Prototype** — works on replayed storms or the 4 primary-calibrated crossing records (across two research corridors) → say \"experimental prototype.\""
+      "text": "- **Prototype** — works on replayed storms or the 6 primary-calibrated crossing records (across three research corridors) → say \"experimental prototype.\""
     },
     {
       "kind": "emDash",
@@ -804,7 +601,7 @@
       "file": "FordCast_CAC_Submission.md",
       "line": 65,
       "count": 3,
-      "text": "3. **Experimental Upstream Gauge Research (Prototype — 4 records across two research corridors):** Pairs `4` primary-calibrated crossing records (`is_primary: true` in `links.json` out of `30` R&D candidate crossings in the `141`-crossing study catalog) with `19` USGS gauges using schematic corridor connectors (`geometry_kind: schematic_corridor_connector`; crossing topology tagged `review_status: unverified_road_and_topology`): `tc-167` (**Henry Marx @ Barton Creek**, paired with upstream gauge `USGS-08155240` Barton Creek at Lost Creek Blvd and downstream reference gauge `USGS-08155300` Barton Creek at Loop 360) and `atx-19`, `atx-20`, `atx-21` (the 3 device records at **E. William Cannon Dr** on **Onion Creek** — `Slave Arm (W)`, `Master Standpipe`, `Slave Arm (E)` — paired with upstream gauge `USGS-08158860` Slaughter Creek at FM 2304 and downstream reference gauge `USGS-08159000` Onion Creek at US Hwy 183). Evaluates an out-of-sample Leave-One-Storm-Out (LOSO) rule across `5` archived Austin floods."
+      "text": "3. **Experimental Upstream Gauge Research (Prototype — 6 records across three research corridors):** Pairs `6` primary-calibrated crossing records (`is_primary: true` in `links.json` out of `30` R&D candidate crossings in the `141`-crossing study catalog) with `19` USGS gauges using schematic corridor connectors (`geometry_kind: schematic_corridor_connector`; crossing topology tagged `review_status: unverified_road_and_topology`): `tc-167` (**Henry Marx @ Barton Creek**, paired with upstream gauge `USGS-08155240` Barton Creek at Lost Creek Blvd and downstream reference gauge `USGS-08155300` Barton Creek at Loop 360), `atx-15` and `atx-16` (**Joe Tanner Ln @ Williamson Creek**, paired with upstream gauge `USGS-08158920` Williamson Creek at Oak Hill and downstream reference gauge `USGS-08158930` Williamson Creek at Jimmy Clay Rd), and `atx-19`, `atx-20`, `atx-21` (the 3 device records at **E. William Cannon Dr** on **Onion Creek** — `Slave Arm (W)`, `Master Standpipe`, `Slave Arm (E)` — paired with upstream gauge `USGS-08158860` Onion Creek at Twin Creeks Rd and downstream reference gauge `USGS-08159000` Onion Creek at US Hwy 183). Evaluates an out-of-sample Leave-One-Storm-Out (LOSO) rule across `5` archived Austin floods."
     },
     {
       "kind": "emDash",
@@ -923,7 +720,7 @@
       "file": "FordCast_CAC_Submission.md",
       "line": 173,
       "count": 1,
-      "text": "- *VO:* \"In science, honest evaluation matters most. Across 12 Leave-One-Storm-Out proxy cases on our two research corridors, the upstream gauge rule caught 4 of 12 events with a 65-minute median head start — matching the nearest-gauge baseline. FordCast shows those exact numbers, misses, and sensor limits right in the app.\""
+      "text": "- *VO:* \"In science, honest evaluation matters most. Across 12 Leave-One-Storm-Out proxy cases on our two research corridors, the upstream gauge rule caught 10 of 12 proxy events with a 57.5-minute median head start — outperforming the nearest-gauge baseline (4 of 12). FordCast shows those exact numbers, misses, and sensor limits right in the app.\""
     },
     {
       "kind": "emDash",
@@ -944,7 +741,7 @@
       "file": "FordCast_CAC_Submission.md",
       "line": 195,
       "count": 2,
-      "text": "Two technical hurdles stood out. First, real-world municipal crossing datasets list individual flasher arms and standpipes as separate records — for example, three records at E. William Cannon Dr on Onion Creek (`atx-19` `Slave Arm (W)`, `atx-20` `Master Standpipe`, `atx-21` `Slave Arm (E)`) — which initially inflated route crossing counts and double-counted shared NOAA flood reports. I wrote a physical-crossing grouping algorithm that preserves distinct waterway type nouns (so Bear Creek and Bear Branch never merge), groups reviewed multi-arm device clusters on the same road and creek, and deduplicates historical NOAA flood events by authoritative `event_id`. Second, when I tested my upstream-gauge rule using Leave-One-Storm-Out cross-validation across 5 historical storms (with a 60-minute causal telemetry delay so the replay never peeks at future data), the upstream rule tied the simpler nearest-gauge baseline (`4/12` hits, `65 min` median lead, `1` vs. `0` false alarms). Instead of overclaiming predictive skill, I built the app's UI to surface that baseline comparison directly and separate verified official closures from experimental gauge lag windows."
+      "text": "Two technical hurdles stood out. First, real-world municipal crossing datasets list individual flasher arms and standpipes as separate records — for example, three records at E. William Cannon Dr on Onion Creek (`atx-19` `Slave Arm (W)`, `atx-20` `Master Standpipe`, `atx-21` `Slave Arm (E)`) — which initially inflated route crossing counts and double-counted shared NOAA flood reports. I wrote a physical-crossing grouping algorithm that preserves distinct waterway type nouns (so Bear Creek and Bear Branch never merge), groups reviewed multi-arm device clusters on the same road and creek, and deduplicates historical NOAA flood events by authoritative `event_id`. Second, when I tested my upstream-gauge rule using Leave-One-Storm-Out cross-validation across 5 historical storms (with a 60-minute causal telemetry delay so the replay never peeks at future data), I calibrated upstream travel-time lags and trigger thresholds across three creek corridors (detecting `10/12` proxy threshold crossings with a `57.5 min` median lead time and `0.556` CSI vs. `4/12` and `0.267` CSI for the nearest-gauge baseline), while building the app's UI to surface the baseline comparison, misses, and false alarms directly and separate verified official closures from experimental gauge lag windows."
     },
     {
       "kind": "emDash",

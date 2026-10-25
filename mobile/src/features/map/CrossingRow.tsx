@@ -103,8 +103,8 @@ export default function CrossingRow({
         </View>
       </View>
 
-      <AppText style={{ color: isSaved ? c.watch : c.subtle, fontSize: 20, paddingLeft: 4 }}>
-        {isSaved ? '★' : '›'}
+      <AppText style={{ color: isSaved ? c.watch : c.subtle, fontSize: isSaved ? 11 : 20, paddingLeft: 4 }}>
+        {isSaved ? 'SAVED' : '›'}
       </AppText>
     </Pressable>
   );

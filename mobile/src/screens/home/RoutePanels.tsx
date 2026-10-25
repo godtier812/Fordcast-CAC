@@ -418,7 +418,7 @@ function RouteAuditSummary({
     <View
       style={{
         padding: 14,
-        borderRadius: 14,
+        borderRadius: 8,
         backgroundColor: S.primary,
         borderWidth: 1,
         borderColor: S.borderSubtle,
@@ -820,7 +820,7 @@ function RouteCard({
                 alignItems: 'center',
                 gap: 12,
                 padding: 13,
-                borderRadius: 14,
+                borderRadius: 8,
                 backgroundColor: pressed ? S.elevated2 : S.primary,
                 borderWidth: 1,
                 borderColor: S.borderSubtle,
@@ -1124,7 +1124,7 @@ export function SensorsAndToolsPanel({
                 alignItems: 'center',
                 gap: 14,
                 padding: 14,
-                borderRadius: 16,
+                borderRadius: 10,
                 borderWidth: isSelected ? 2 : 1,
                 borderColor: isSelected ? ACCENT : aboveFlood || rising ? accent : S.borderSubtle,
                 backgroundColor: S.elevated1,

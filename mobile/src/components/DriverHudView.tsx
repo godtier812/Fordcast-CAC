@@ -200,7 +200,7 @@ export default function DriverHudView({
         style={{
           flexGrow: 1,
           marginHorizontal: compact ? 14 : 20,
-          borderRadius: 16,
+          borderRadius: 10,
           borderWidth: 3,
           borderColor: stateHex,
           backgroundColor: '#0B101B',

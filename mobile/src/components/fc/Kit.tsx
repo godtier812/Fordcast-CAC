@@ -84,7 +84,7 @@ export function HazardChips({ status }: { status: CrossingStatus }) {
       {chips.map((c) => (
         <View
           key={c.text}
-          style={{ borderRadius: 999, borderWidth: 1, borderColor: c.color, paddingHorizontal: 9, paddingVertical: 3 }}
+          style={{ borderRadius: 6, borderWidth: 1, borderColor: c.color, paddingHorizontal: 9, paddingVertical: 3 }}
         >
           <AppText style={{ fontSize: 11.5, lineHeight: 15, color: c.color, fontFamily: 'Inter_600SemiBold' }}>
             {c.text}
@@ -256,7 +256,7 @@ export function Panel({ children, style }: PropsWithChildren<{ style?: StyleProp
       style={[
         {
           backgroundColor: S.elevated1,
-          borderRadius: 16,
+          borderRadius: 10,
           borderWidth: 1,
           borderColor: S.borderSubtle,
           padding: 16,
@@ -333,7 +333,7 @@ export const NearbyRow = memo(function NearbyRow({
         gap: 14,
         paddingVertical: 14,
         paddingHorizontal: 14,
-        borderRadius: 16,
+        borderRadius: 10,
         borderWidth: selected ? 2 : 1,
         borderColor: selected ? ACCENT : ds && ds !== 'no_rise' ? color : S.borderSubtle,
         backgroundColor: ds === 'avoid' || ds === 'closed' ? STATE_TOKENS.avoid.darkBg : S.elevated1,
@@ -402,7 +402,7 @@ export function BigStatus({ status }: { status: CrossingStatus }) {
   return (
     <View
       style={{
-        borderRadius: 18,
+        borderRadius: 10,
         borderWidth: 2,
         borderColor: ds ? LOCKED_STATE_HEX[state] : S.borderSubtle,
         backgroundColor: ds ? STATE_TOKENS[state].darkBg : S.elevated1,

@@ -20,16 +20,16 @@ export const PROVENANCE_LADDER_COPY = {
     tierATelemetry: 'calibration_kind: "surveyed_overtop" • requires road-surface validation',
     tierABody:
       'Requires surveyed road-deck overtop elevation AND field-verified road inundation observations. Currently 0 crossings in the public dataset.',
-    tierBTitle: 'TIER B (30 Crossings) · Research Candidates (4 Live Calibrated Links)',
+    tierBTitle: 'TIER B (30 Crossings) · Research Candidates (6 Live Calibrated Links)',
     tierBTelemetry: 'calibration_kind: "empirical_gauge_lag" • road_forecast_verified: false',
     tierBBody:
-      '30 research candidates paired with upstream/downstream USGS stream gauges (4 with live calibrated links). Triggers reflect gauge-to-gauge propagation proxies, not road-surface depth.',
+      '30 research candidates paired with upstream/downstream USGS stream gauges (6 with live calibrated links). Triggers reflect gauge-to-gauge propagation proxies, not road-surface depth.',
     tierCTitle: 'TIER C (111 Crossings) · Unmonitored Municipal Catalog',
     tierCTelemetry: 'calibration_kind: "none" • State locked to unknown ("Not monitored")',
     tierCBody:
       'Cataloged Travis County low-water crossing without a verified upstream USGS gauge pairing. Displayed as Unknown to prevent false reassurance.',
     lagLabel: 'Gauge-to-gauge lag proxy (road unverified)',
-    scorecardCta: 'View LOSO Backtest Scorecard (4/12 detected, 1 false alarm) →',
+    scorecardCta: 'View LOSO Backtest Scorecard (10/12 detected, 83.3% POD)',
     hideScorecardCta: 'Hide LOSO Backtest Scorecard',
   },
   es: {
@@ -38,16 +38,16 @@ export const PROVENANCE_LADDER_COPY = {
     tierATelemetry: 'calibration_kind: "surveyed_overtop" • requiere validación en pavimento',
     tierABody:
       'Requiere elevación topográfica de desborde vial Y observaciones verificadas de inundación en el camino. Actualmente 0 cruces en el catálogo público.',
-    tierBTitle: 'NIVEL B (30 Cruces) · Candidatos de Investigación (4 Vínculos En Vivo)',
+    tierBTitle: 'NIVEL B (30 Cruces) · Candidatos de Investigación (6 Vínculos En Vivo)',
     tierBTelemetry: 'calibration_kind: "empirical_gauge_lag" • road_forecast_verified: false',
     tierBBody:
-      '30 candidatos de investigación asociados a sensores USGS (4 con vínculo calibrado en vivo). Los umbrales reflejan desfases entre sensores, no nivel de agua sobre el pavimento.',
+      '30 candidatos de investigación asociados a sensores USGS (6 con vínculo calibrado en vivo). Los umbrales reflejan desfases entre sensores, no nivel de agua sobre el pavimento.',
     tierCTitle: 'NIVEL C (111 Cruces) · Catálogo Municipal Sin Monitoreo',
     tierCTelemetry: 'calibration_kind: "none" • Estado bloqueado en desconocido ("Sin monitoreo")',
     tierCBody:
       'Cruce catalogado del Condado de Travis sin vinculación verificada con un sensor USGS aguas arriba. Se muestra como Desconocido para evitar falsa tranquilidad.',
     lagLabel: 'Desfase entre sensores (vía no verificada)',
-    scorecardCta: 'Ver Tarjeta de Validación LOSO (4/12 detectados, 1 falsa alarma) →',
+    scorecardCta: 'Ver Tarjeta de Validación LOSO (10/12 detectados, 83.3% POD)',
     hideScorecardCta: 'Ocultar Tarjeta de Validación LOSO',
   },
 } as const;

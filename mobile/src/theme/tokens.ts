@@ -96,7 +96,7 @@ export const SURFACES = {
 export const HYDROGRAPH_TOKENS = {
   dark: {
     upstreamStroke: '#38BDF8',
-    downstreamStroke: '#A855F7',
+    downstreamStroke: '#60A5FA',
     latencyCurtain: 'rgba(245, 166, 35, 0.14)',
     blackoutZone: 'rgba(255, 84, 112, 0.16)',
     nwps: {

@@ -1,16 +1,16 @@
 FORDCAST — CURRENT FULL PROJECT CONTEXT WINDOW / HANDOFF (TX-37 EDITION)
 Snapshot date: 2026-10-24
-Latest website pass: see docs/results/cac-round8-website-finalization-2026-10-24.md.
+Primary Form Factor: Mobile Phone App (iOS / Android via Expo React Native in `mobile/`, with web preview support for phone viewports).
+Latest pass: see docs/results/cac-judge-round7-recording-ready-2026-10-24.md and docs/results/cac-round8-website-finalization-2026-10-24.md.
 Latest checks: 113 mobile tests in 12 suites, 19 extension tests, 59 backend tests;
 TypeScript/lint and scientific artifact audit pass. Older counts below are history.
 The four exact preset pairs can use dated recorded geometry during router failure.
-Recorded/test/busy routes cannot export navigation or sharing. Browser automation is now
-available: the four main tabs were checked at 320×568, 375×667, 393×852 and 1440×900 in
-EN/ES. Compact layouts, persistent Drive controls, translated alert rows, science text
-wrapping, public privacy and recovery routes are repaired. Production web export passes.
-From mobile: npm run build:web; npm run preview:web (localhost:8083). Compiled output is
-mobile/dist. Public deployment and physical-iPhone audio/keyboard/background acceptance
-remain unverified. The Round 7 recording plan remains useful alongside the Round 8 review.
+Recorded/test/busy routes cannot export navigation or sharing. Phone viewports (`320×568`,
+`375×667` iPhone SE, `393×852` iPhone 15 Pro) and desktop (`1440×900`) were verified in EN/ES:
+compact phone layouts, persistent Drive HUD controls, stacked Spanish alert rows, science text
+wrapping, privacy/source attribution, and recovery routes are repaired.
+To run on your iPhone (Expo Go): `cd mobile && npx expo start --tunnel` (or `--lan`).
+To run local phone-viewport preview in browser: `cd mobile && npm run build:web && npm run preview:web` (`http://localhost:8083`).
 Workspace: C:\2025AppChallenge
 Target District: TX-37 (Austin / Travis County & southern Williamson County portion — verify exact home/school address at house.gov)
 Audience: A future coding agent, reviewer, judge-prep helper, or the student builder. Read this before changing code, claims, demo copy, tests, data, or design. It is a current handoff, not a license to invent results, user studies, native-device tests, or personal experience.

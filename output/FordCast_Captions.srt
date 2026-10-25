@@ -1,0 +1,187 @@
+1
+00:00:00,220 --> 00:00:04,280
+Hi everyone, I'm Ashrith Repaka and this is FordCast, a
+
+2
+00:00:04,280 --> 00:00:08,320
+bilingual trip checker for Central Texas drivers approaching low-water
+
+3
+00:00:08,320 --> 00:00:08,800
+crossings.
+
+4
+00:00:10,133 --> 00:00:12,983
+Lake Austin is a part of Texas' Colorado River.
+
+5
+00:00:13,683 --> 00:00:17,543
+In July 2025, swift water and debris prompted waterway
+
+6
+00:00:17,543 --> 00:00:17,923
+restrictions.
+
+7
+00:00:18,823 --> 00:00:22,163
+FordCast helps those drivers check road crossings before leaving.
+
+8
+00:00:23,420 --> 00:00:27,380
+For example, I'll check downtown Austin to Onion
+
+9
+00:00:27,380 --> 00:00:28,020
+Creek Park.
+
+10
+00:00:29,220 --> 00:00:32,520
+As you can see here, FordCast compares the route with
+
+11
+00:00:32,520 --> 00:00:36,320
+2,052 inventory records and groups hardware records
+
+12
+00:00:36,320 --> 00:00:37,480
+into crossing areas.
+
+13
+00:00:38,753 --> 00:00:42,753
+Here are official reports, available creek readings, and nearby
+
+14
+00:00:42,753 --> 00:00:43,553
+flood history.
+
+15
+00:00:44,473 --> 00:00:46,753
+The summary also identifies missing sensor coverage.
+
+16
+00:00:47,533 --> 00:00:49,753
+A missing report never proves that a road is dry.
+
+17
+00:00:51,120 --> 00:00:54,860
+These TypeScript checks compare road names,
+
+18
+00:00:55,560 --> 00:00:57,140
+waterway names, and distance.
+
+19
+00:00:58,260 --> 00:01:01,840
+Grouping the flasher arms keeps multiple hardware records from
+
+20
+00:01:01,840 --> 00:01:03,400
+inflating the crossing count.
+
+21
+00:01:04,733 --> 00:01:08,033
+Now, I'll add a clearly labeled test closure.
+
+22
+00:01:08,793 --> 00:01:12,153
+FordCast requests another route and checks for remaining hazards.
+
+23
+00:01:13,053 --> 00:01:16,233
+Test routes cannot be sent to Google Maps until the test ends.
+
+24
+00:01:17,620 --> 00:01:21,440
+The interface supports both English and Spanish.
+
+25
+00:01:22,020 --> 00:01:25,660
+The drive view offers large repeat, mute, and stop controls.
+
+26
+00:01:25,660 --> 00:01:28,720
+This recording shows the mobile interface in a browser.
+
+27
+00:01:30,167 --> 00:01:33,387
+This is an archived Memorial Day 2015
+
+28
+00:01:33,387 --> 00:01:34,487
+simulation.
+
+29
+00:01:35,407 --> 00:01:39,267
+Historical readings change the crossing's caution state and select a pre
+
+30
+00:01:39,267 --> 00:01:40,107
+-computed alternative.
+
+31
+00:01:40,987 --> 00:01:42,867
+The car position is simulated too.
+
+32
+00:01:44,320 --> 00:01:48,360
+The Python replay checks both observation and availability
+
+33
+00:01:48,360 --> 00:01:48,980
+times.
+
+34
+00:01:49,720 --> 00:01:53,760
+It rejects readings that arrive after its clock, keeping future information
+
+35
+00:01:53,760 --> 00:01:55,320
+out of the historical test.
+
+36
+00:01:56,487 --> 00:02:00,207
+Across 12 downstream gauge reference cases,
+
+37
+00:02:00,927 --> 00:02:04,787
+the upstream rule detected 10, missed 2, and produced
+
+38
+00:02:04,787 --> 00:02:06,027
+6 false alarms.
+
+39
+00:02:07,067 --> 00:02:10,687
+The nearest gauge baseline detected 4 with 3 false alarms,
+
+40
+00:02:11,667 --> 00:02:14,027
+road-flood prediction remains unvalidated.
+
+41
+00:02:15,600 --> 00:02:19,460
+FordCast uses TypeScript, JavaScript, Python, and Expo.
+
+42
+00:02:20,040 --> 00:02:23,720
+AI assistance from Claude Code and Codex was a factor in creating FordCast.
+
+43
+00:02:24,780 --> 00:02:28,800
+My direct contribution was organizing the datasets and checking
+
+44
+00:02:28,800 --> 00:02:32,780
+functionality, while Ashrith was creating a UI that's essential for
+
+45
+00:02:32,780 --> 00:02:34,820
+users to find dangerous water crossings.
+
+46
+00:02:36,167 --> 00:02:39,427
+Next comes road level validation and user testing.
+
+47
+00:02:40,227 --> 00:02:43,587
+Obey official warnings and barricades and never drive into water.

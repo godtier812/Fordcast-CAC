@@ -2,14 +2,14 @@
   "schema": "fordcast.results.v1",
   "generated_by": {
     "command": "uv run --project backend python tools/build_replays.py",
-    "git_sha": "38b8432",
+    "git_sha": "1442754",
     "model_version": "rule-reference-2026.10.18",
     "data_manifest_sha256": "83b8aa1b0d25c5f3a385b987580b40865b4aa450d8cc559dc31b696337242f80",
     "latency_sha256": "544d87a5b0586876d1dcdd9c2f63f01eecb665bfc36648ed58c2b235dbca64ec",
     "python": "3.13",
-    "hero_rule": "tools/select_hero.py@38b8432",
+    "hero_rule": "tools/select_hero.py@1442754",
     "source_sha256": "7726bc8d3f1694c80ec9be83d13b514568c2f130fc2205c37c671e8a0ed0b1d4",
-    "working_tree_dirty": true
+    "working_tree_dirty": false
   },
   "assumptions": {
     "lead_window_min": 180,

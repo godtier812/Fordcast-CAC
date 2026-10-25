@@ -12,10 +12,10 @@ All scored labels are **reference-gauge category proxies**. No road-level floodi
 | C-04 | Real archived storm windows | 5 | docs/results/results.json · storms |
 | C-05 | Proxy reference cases / category onsets | 6 / 12 | docs/results/results.json · storms[].n_crossings / n_onsets |
 | C-06 | Assumed replay delivery delay | 60 minutes; not a measured historical distribution | data/latency/gauge_latency.json · default_delay_min; n=0 |
-| C-07 | Candidate rule: proxy-gauge AVOID H/M/F; POD/FAR/CSI | 4/8/1; 0.333/0.2/0.308 | docs/results/results.json · methods.upstream_rule.avoid.pooled |
-| C-08 | Median lead before a sourced downstream gauge-category threshold (not road flooding) | 65.0 min | docs/results/results.json · methods.upstream_rule.avoid.pooled.median_lead_min |
-| C-09 | True geodesic nearest-gauge rule: proxy AVOID H/M/F; POD/FAR/CSI | 4/8/0; 0.333/0.0/0.333 | docs/results/results.json · methods.nearest_gauge.avoid.pooled |
-| C-10 | Deterministic closest-to-median reference example (no historical pre-registration claim) | {'storm_id': 'memorial-day-2015', 'crossing_id': 'tc-167', 'lead_min': 90.0, 'level': 'avoid', 'onset': '2015-05-24T12:40:00Z', 'first_alert_at': '2015-05-24T11:10:00Z', 'censored': False, 'target_median_lead_min': 65.0, 'rule': 'proxy-reference AVOID hit closest to the overall median lead; ties: catalog order, then crossing id'} | docs/results/results.json · hero; tools/select_hero.py |
+| C-07 | Candidate rule: proxy-gauge AVOID H/M/F; POD/FAR/CSI | 10/2/6; 0.833/0.375/0.556 | docs/results/results.json · methods.upstream_rule.avoid.pooled |
+| C-08 | Median lead before a sourced downstream gauge-category threshold (not road flooding) | 57.5 min | docs/results/results.json · methods.upstream_rule.avoid.pooled.median_lead_min |
+| C-09 | True geodesic nearest-gauge rule: proxy AVOID H/M/F; POD/FAR/CSI | 4/8/3; 0.333/0.429/0.267 | docs/results/results.json · methods.nearest_gauge.avoid.pooled |
+| C-10 | Deterministic closest-to-median reference example (no historical pre-registration claim) | {'storm_id': 'memorial-day-2015', 'crossing_id': 'atx-19', 'lead_min': 50.0, 'level': 'avoid', 'onset': '2015-05-24T15:15:00Z', 'first_alert_at': '2015-05-24T14:25:00Z', 'censored': False, 'target_median_lead_min': 57.5, 'rule': 'proxy-reference AVOID hit closest to the overall median lead; ties: catalog order, then crossing id'} | docs/results/results.json · hero; tools/select_hero.py |
 | C-11 | Modeled delivery interruption | 2013-10-31 11:15Z–13:45Z; historical timing unverified | data/storms/halloween-2013/meta.toml · outages |
 | C-12 | Calm-control exposure | 1.5 days = 36 hours; full 30-day evaluation pending | docs/results/results.json · assumptions.calm_days |
 

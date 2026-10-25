@@ -34,7 +34,7 @@ jest.mock('@/lib/live', () => ({
 
 const now = 1_800_000_000_000;
 const task = (TaskManager.defineTask as jest.Mock).mock.calls[0]![1] as (x: unknown) => Promise<void>;
-const mocked = (x: unknown) => x as jest.Mock<any>;
+const mocked = (x: unknown) => x as jest.Mock<(...args: any[]) => any>;
 
 function cache(ageMin: number, expired: boolean): GuardianCache {
   const evidence = {

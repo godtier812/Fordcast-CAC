@@ -88,7 +88,7 @@ const plan = (name: string, detour = false): RoutePlan => ({
   remaining: [],
   extraMin: 0,
 });
-const mockPlan = planSafeRoute as jest.Mock<any>;
+const mockPlan = planSafeRoute as jest.MockedFunction<typeof planSafeRoute>;
 const monitorHolder: { current: MonitorValue | null } = { current: null };
 let tree: renderer.ReactTestRenderer;
 function Harness({ onVal }: { onVal: (v: MonitorValue) => void }) {

@@ -35,16 +35,16 @@ test('future, missing and stale observations never count as current creek readin
 });
 
 test('an HTTP-success error payload cannot masquerade as no official closures', async () => {
-  jest.spyOn(global, 'fetch').mockResolvedValue({ ok: true, json: async () => ({ error: 'upstream maintenance' }) } as Response);
+  jest.spyOn(globalThis, 'fetch').mockResolvedValue({ ok: true, json: async () => ({ error: 'upstream maintenance' }) } as Response);
   await expect(fetchOfficialClosures()).rejects.toThrow('missing its records');
 });
 
 test('an explicit empty official array is a successful result', async () => {
-  jest.spyOn(global, 'fetch').mockResolvedValue({ ok: true, json: async () => ({ attributes: [] }) } as Response);
+  jest.spyOn(globalThis, 'fetch').mockResolvedValue({ ok: true, json: async () => ({ attributes: [] }) } as Response);
   await expect(fetchOfficialClosures()).resolves.toEqual([]);
 });
 
 test('an HTTP-success malformed weather payload cannot silently remove warnings', async () => {
-  jest.spyOn(global, 'fetch').mockResolvedValue({ ok: true, json: async () => ({ error: 'maintenance' }) } as Response);
+  jest.spyOn(globalThis, 'fetch').mockResolvedValue({ ok: true, json: async () => ({ error: 'maintenance' }) } as Response);
   await expect(fetchWeatherAlerts()).rejects.toThrow('missing its alert records');
 });

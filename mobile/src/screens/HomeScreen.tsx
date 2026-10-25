@@ -5,7 +5,7 @@
  *   2. Route (Everyday Commute Flood Exposure Audit, 1-tap Austin destinations, saved Home/Work, live reroute test)
  *   3. Creeks (19 live stream sensors + emergency 311/ATXfloods/NWS tools)
  */
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { type ComponentRef, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   Animated,
   Pressable,
@@ -690,7 +690,7 @@ export default function HomeScreen() {
   const [directorOpen, setDirectorOpen] = useState(false);
   const [mapFrameHeight, setMapFrameHeight] = useState(height);
   const [headerBottom, setHeaderBottom] = useState(152);
-  const panelScrollRef = useRef<ScrollView>(null);
+  const panelScrollRef = useRef<ComponentRef<typeof ScrollView>>(null);
   const routeComputedAt = m.routePlan?.computedAt;
   useEffect(() => {
     if (routeComputedAt != null) panelScrollRef.current?.scrollTo({ y: 0, animated: false });

@@ -1,15 +1,14 @@
 import { afterEach, expect, jest, test } from '@jest/globals';
 import { planSafeRoute, hazardsOnRoute } from '@/lib/routing';
 import recorded from '../../assets/demo/commute_presets.json';
-const originalFetch = global.fetch;
 afterEach(() => {
-  global.fetch = originalFetch;
+  jest.restoreAllMocks();
 });
 
 test.each(recorded.presets)(
   'router outage retains recorded preset geometry with coverage and hazard checks: $destination.lat',
   async (preset) => {
-    global.fetch = jest.fn<typeof fetch>().mockRejectedValue(new Error('Router unavailable'));
+    jest.spyOn(globalThis, 'fetch').mockRejectedValue(new Error('Router unavailable'));
     const result = await planSafeRoute(preset.origin, preset.destination, 'Preset', []);
     expect(result?.geometrySource).toBe('recorded');
     expect(result!.route.coords.length).toBeGreaterThan(10);
@@ -30,7 +29,7 @@ test.each(recorded.presets)(
 );
 
 test('outage does not invent geometry for an arbitrary destination or aborted request', async () => {
-  global.fetch = jest.fn<typeof fetch>().mockRejectedValue(new Error('Router unavailable'));
+  jest.spyOn(globalThis, 'fetch').mockRejectedValue(new Error('Router unavailable'));
   const p = recorded.presets[0]!;
   expect(await planSafeRoute(p.origin, { lat: 31, lon: -98 }, 'Other', [])).toBeNull();
   const controller = new AbortController();

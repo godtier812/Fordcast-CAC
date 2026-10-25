@@ -1,5 +1,3 @@
-import fs from 'node:fs';
-import path from 'node:path';
 import { describe, expect, jest, test } from '@jest/globals';
 import * as Speech from 'expo-speech';
 import { allowedWindows } from '@/lib/risk';
@@ -22,6 +20,11 @@ import * as webGuardian from '@/lib/guardian.web';
 import { assessRouteCoverage } from '@/lib/routing';
 import { getVoiceMuted, prepareAudio, setVoiceMuted, speak } from '@/lib/voice';
 import type { CrossingStatus } from '@/lib/monitor-context';
+
+declare function require(id: string): any;
+declare const __dirname: string;
+const fs = require('node:fs') as { readFileSync(p: string, enc: string): string };
+const path = require('node:path') as { join(...parts: string[]): string };
 
 const base = (patch: Partial<CrossingStatus> = {}): CrossingStatus => ({
   id: 'atx-probe',

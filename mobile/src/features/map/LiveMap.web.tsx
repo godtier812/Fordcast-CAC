@@ -3,7 +3,7 @@
  * Uses an HTML5 Canvas renderer for the ~1,900 regional background crossings + creek flowlines
  * so 2,000+ crossings pan/zoom at 60fps, while keeping crisp DOM badges for monitored/hazard pins and sensors.
  */
-import { useEffect, useMemo, useRef } from 'react';
+import { type ComponentRef, useEffect, useMemo, useRef } from 'react';
 import { View } from 'react-native';
 import L from 'leaflet';
 import { LOCKED_STATE_HEX, STATE_TOKENS, type CrossingStateKey } from '@/theme/tokens';
@@ -99,7 +99,7 @@ export default function LiveMap({
   fit,
   fitKey,
 }: LiveMapProps) {
-  const hostRef = useRef<View>(null);
+  const hostRef = useRef<ComponentRef<typeof View>>(null);
   const mapRef = useRef<L.Map | null>(null);
   const canvasRef = useRef<L.Canvas | null>(null);
   const creekLayerRef = useRef<L.LayerGroup | null>(null);

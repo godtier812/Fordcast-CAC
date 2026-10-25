@@ -1,0 +1,84 @@
+- button "FordCast Low-water crossing alerts · Austin":
+  - generic: FordCast
+  - generic: Low-water crossing alerts · Austin
+- link "Map":
+  - /url: /
+  - generic: Map
+- link "Storms":
+  - /url: /replay
+  - generic: Storms
+- link "Drive":
+  - /url: /drive
+  - generic: Drive
+- link "Alerts" [active]:
+  - /url: /alerts
+  - generic: Alerts
+- button "Español":
+  - generic: ES · Español
+- button "Settings":
+  - generic: Settings
+- generic: Alerts
+- generic: Get a notification and a spoken warning when a crossing near you starts to flood.
+- generic: Alert setup
+- generic: Location
+- generic: Custom starting point — Downtown Austin
+- button "Turn on":
+  - generic: Turn on
+- generic: Notifications
+- generic: Off · tap to allow
+- button "Turn on":
+  - generic: Turn on
+- generic: Voice warnings
+- generic: On · alerts are read out loud
+- switch "Voice warnings" [checked]
+- generic: Voice style (tap to preview)
+- button "Ava (Warm)":
+  - generic: Ava (Warm)
+- button "Andrew (Calm)":
+  - generic: Andrew (Calm)
+- button "Aria (Clear)":
+  - generic: Aria (Clear)
+- button "Send a test alert":
+  - generic: Send a test alert
+- button "Test voice":
+  - generic: Test voice
+- generic: Alert me about crossings within
+- button "1 mi":
+  - generic: 1 mi
+- button "3 mi":
+  - generic: 3 mi
+- button "5 mi":
+  - generic: 5 mi
+- button "10 mi":
+  - generic: 10 mi
+- generic: 0 watched crossings in range
+- generic: Use with Google Maps
+- generic: Keep navigating with Google Maps. Plan your trip in FordCast and tap “Go with Google Maps” · your route arrives with waypoints that go around flooded crossings.
+- generic: "Web browser limitation: continuous monitoring only runs while this browser tab remains active."
+- generic: On a computer, install the “FordCast for Google Maps” Chrome extension (extension folder in this project). It adds a FordCast panel to google.com/maps that flags closures and flooded crossings on your route and offers a route around them.
+- button "Plan a route":
+  - generic: Plan a route
+- generic: Saved crossings
+- generic: Saved crossings always alert you, no matter how far away.
+- button "Wasson Rd. Sensor not calibrated yet. 4.2 mi away":
+  - generic: —
+  - generic: Wasson Rd
+  - generic: Williamson Creek · 4.2 mi
+  - generic: Sensor not calibrated yet
+  - generic: 10 past flood reports nearby
+- button "E. William Cannon. No rise upstream. 6.1 mi away":
+  - generic: E. William Cannon
+  - generic: Onion Creek · 6.1 mi
+  - generic: No rise upstream
+  - generic: 3 past flood reports nearby
+- button "Slaughter Cr Dr at Trib to Slaughter Cr. Sensor not calibrated yet. 8.4 mi away":
+  - generic: —
+  - generic: Slaughter Cr Dr at Trib to Slaughter Cr
+  - generic: Slaughter Creek · 8.4 mi
+  - generic: Sensor not calibrated yet
+- button "Recent alerts (1)":
+  - generic: Recent alerts (1)
+- button "Flood driving facts":
+  - generic: Flood driving facts
+- generic: Alerts run while FordCast is on your screen. Always-on background alerts need the installed app build.
+- generic: FordCast is a supplementary tool. Obey barricades and official warnings. Never drive into water.

@@ -1,4 +1,4 @@
-import { Stack, ThemeProvider, DarkTheme } from 'expo-router';
+import { Stack, ThemeProvider, DarkTheme, usePathname, type ErrorBoundaryProps } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { ActivityIndicator, View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
@@ -10,20 +10,32 @@ import { Inter_700Bold } from '@expo-google-fonts/inter/700Bold';
 import { PreferencesProvider, usePreferences } from '@/lib/preferences';
 import { theme } from '@/lib/theme';
 import Pledge from '@/features/onboarding/Pledge';
-import { AppText } from '@/components/fordcast/UI';
+import { AppText, Button } from '@/components/fordcast/UI';
 import { AlertBanner } from '@/components/fc/Kit';
 import { MonitorProvider } from '@/lib/monitor';
 // Registers the background "guardian" task at startup (required by expo-task-manager).
 import '@/lib/guardian';
+
+export function ErrorBoundary({ retry }: ErrorBoundaryProps) {
+  return (
+    <View style={{ flex: 1, backgroundColor: theme.bg, padding: 24, justifyContent: 'center', gap: 16 }}>
+      <AppText style={{ fontSize: 28, fontFamily: 'Inter_600SemiBold' }}>FordCast</AppText>
+      <AppText>This view is unavailable. Please retry. / Esta vista no está disponible. Inténtelo de nuevo.</AppText>
+      <AppText>Obey official warnings and barricades. / Respete los avisos oficiales y las barricadas.</AppText>
+      <Button title="Retry / Reintentar" onPress={() => void retry()} />
+    </View>
+  );
+}
 function Routes() {
-  const { ready, pledgeVersion, t, storageError } = usePreferences();
+  const { ready, pledgeVersion, t, language, storageError } = usePreferences();
+  const pathname = usePathname();
   if (!ready)
     return (
       <View style={{ flex: 1, backgroundColor: theme.bg, justifyContent: 'center' }}>
         <ActivityIndicator color={theme.text} />
       </View>
     );
-  if (pledgeVersion !== 1) return <Pledge />;
+  if (pledgeVersion !== 1 && pathname !== '/privacy') return <Pledge />;
   return (
     <MonitorProvider>
       <View style={{ flex: 1 }}>
@@ -53,6 +65,8 @@ function Routes() {
           <Stack.Screen name="settings" options={{ title: t('nav.settings') }} />
           <Stack.Screen name="legend" options={{ title: t('map.legend') }} />
           <Stack.Screen name="lab" options={{ title: t('lab.title') }} />
+          <Stack.Screen name="privacy" options={{ title: language === 'es' ? 'Datos y privacidad' : 'Data and privacy' }} />
+          <Stack.Screen name="+not-found" options={{ title: 'FordCast' }} />
         </Stack>
         <AlertBanner />
       </View>

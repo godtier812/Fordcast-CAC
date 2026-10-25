@@ -347,7 +347,7 @@ export default function ProvenanceCard({
               }}
             >
               <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 6 }}>
-                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, maxWidth: '100%' }}>
                   <Svg width={14} height={14} viewBox="0 0 16 16">
                     <Path
                       d="M8 1.5L14 4.5V11.5L8 14.5L2 11.5V4.5L8 1.5Z"
@@ -363,6 +363,7 @@ export default function ProvenanceCard({
                       fontFamily: 'Inter_600SemiBold',
                       fontWeight: '700',
                       fontSize: 12,
+                      flexShrink: 1,
                       lineHeight: 16,
                       color: isCurrent ? '#F8FAFC' : SURFACES.dark.textSecondary,
                     }}
@@ -377,7 +378,7 @@ export default function ProvenanceCard({
                       { color: rung.accent, fontSize: 10, fontWeight: '700' },
                     ]}
                   >
-                    ● ACTIVE CROSSING TIER
+                    {language === 'es' ? 'NIVEL DEL CRUCE SELECCIONADO' : 'SELECTED CROSSING TIER'}
                   </AppText>
                 )}
               </View>

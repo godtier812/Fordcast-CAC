@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { router } from 'expo-router';
 import { Pressable, View } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
 import {
@@ -10,7 +11,6 @@ import {
   Eyebrow,
   Footer,
   Page,
-  StatusGlyph,
   Title,
   styles,
 } from '@/components/fordcast/UI';
@@ -25,12 +25,11 @@ export default function Pledge() {
   return (
     <Page>
       <View style={[styles.row, { justifyContent: 'space-between', flexWrap: 'wrap' }]}>
-        <View style={styles.row}>
-          <Dip size={52} />
-          <View>
-            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+        <View style={[styles.row, { flex: 1, minWidth: 0 }]}>
+          <Dip size={36} />
+          <View style={{ flex: 1, minWidth: 0 }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
               <Eyebrow color={c.water}>{t('app.name')}</Eyebrow>
-              <Badge label={t('onboarding.pledge.pilot_badge')} color={c.replay} bg={c.replayDim} />
             </View>
             <AppText style={{ color: c.subtle, fontSize: 12, lineHeight: 17 }}>
               {t('onboarding.pledge.subtitle')}
@@ -48,20 +47,15 @@ export default function Pledge() {
       <View
         style={{
           backgroundColor: c.surface,
-          borderRadius: 22,
+          borderRadius: 10,
           borderWidth: 1,
           borderColor: c.borderBright,
-          padding: 24,
+          padding: 18,
           gap: 14,
         }}
       >
         <View style={[styles.row, { justifyContent: 'space-between', flexWrap: 'wrap' }]}>
-          <Badge label={t('onboarding.pledge.required_badge')} color={c.watch} bg={c.watchDim} />
-          <View style={{ flexDirection: 'row', gap: 8 }}>
-            <StatusGlyph state="watch" size={26} />
-            <StatusGlyph state="avoid" size={26} />
-            <StatusGlyph state="unknown" size={26} />
-          </View>
+          <Eyebrow color={c.watch}>{t('onboarding.pledge.required_badge')}</Eyebrow>
         </View>
         <Title>{t('app.tagline')}</Title>
         <AppText style={styles.muted}>{t('onboarding.prototype')}</AppText>
@@ -89,7 +83,7 @@ export default function Pledge() {
               styles.row,
               {
                 padding: 16,
-                borderRadius: 14,
+                borderRadius: 8,
                 borderWidth: 1,
                 borderColor: checked ? c.water : c.border,
                 backgroundColor: checked ? c.waterDim : c.land,
@@ -151,6 +145,7 @@ export default function Pledge() {
           />
         </View>
       </Card>
+      <Button secondary title={language === 'es' ? 'Datos, privacidad y límites' : 'Data, privacy and limits'} onPress={() => router.push('/privacy')} />
       <Footer />
     </Page>
   );

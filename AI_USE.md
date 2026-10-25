@@ -1,5 +1,18 @@
 # AI Use and Authorship Disclosure
 
+## October 24 website finalization
+
+- At the user's request, the agent applied the supplied general website audit to the
+  existing FordCast prototype. Compact map/origin layouts, persistent Drive controls,
+  translated alert rows, science wrapping, privacy/source and recovery routes,
+  production build/preview scripts, copy and documentation changes are agent-authored.
+- The agent inspected the live browser at the requested phone and desktop sizes in
+  English and Spanish, ran the existing verification suites, exported the production
+  website and saved evidence in `docs/results/cac-round8-evidence/`.
+- This work does not establish student authorship, measured user impact, fluent human
+  Spanish review, physical-iPhone acceptance or competition eligibility. The local
+  production preview is not an external deployment or a competition submission.
+
 This document records actual authorship across the repository in accordance with §1.3 and §40.4 of the specification.
 
 ## Autonomous Implementation Record
@@ -30,3 +43,14 @@ This document records actual authorship across the repository in accordance with
   confirmation, official endorsement or competition-policy compliance was established by this pass.
 - Existing scientific results were not recalibrated or rewritten. The student must review the
   implementation, understand the limits and provide truthful personal answers and disclosure.
+
+## October 24 recording-readiness pass
+
+- At the user's request, the agent added dated Valhalla preset geometry for router-outage
+  review, blocked navigation/share exports for recorded routes, serialized native speech
+  preparation, preserved mute preferences during previews, and added regression checks.
+- The agent simplified the study comparison, revised visible copy and shared control
+  geometry, and added a stable Map blur cleanup for the simulated car run.
+- The Round 7 audit, design inventory, patch, production plan and Q&A drafts are agent-authored.
+  The pass did not establish physical-iPhone acceptance, student explain-back, measured
+  community outcomes or eligibility. Browser automation was unavailable in Work settings.

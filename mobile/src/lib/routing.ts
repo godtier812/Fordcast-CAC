@@ -3,6 +3,7 @@
  * exclude specific points — exactly what's needed to route around a flooded crossing.
  */
 import { distanceKm, insideCoverage, type LatLon } from './geo';
+import recordedPresets from '../../assets/demo/commute_presets.json';
 
 export type Route = { coords: LatLon[]; km: number; min: number };
 export type HazardLevel = 'block' | 'caution';
@@ -27,6 +28,9 @@ export type RoutePlan = {
   remaining: RouteHazard[];
   extraMin: number;
   computedAt: number;
+  /** Recorded geometry is review-only and must never be exported for navigation. */
+  geometrySource?: 'live' | 'recorded';
+  geometryCapturedAt?: string;
   /** True when the origin, destination, or route segments leave FordCast's Central Texas crossing inventory footprint. */
   outsideCoverage?: boolean;
   /** Fraction [0, 1] of route coordinates inside FordCast's supported Central Texas coverage footprint. */
@@ -123,28 +127,38 @@ export async function fetchRoute(
   exclude: LatLon[] = [],
   signal?: AbortSignal,
 ): Promise<Route | null> {
-  const res = await fetch(VALHALLA, {
-    method: 'POST',
-    signal,
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      locations: points.map((p) => ({ lat: p.lat, lon: p.lon })),
-      costing: 'auto',
-      exclude_locations: exclude.map((p) => ({ lat: p.lat, lon: p.lon })),
-      directions_options: { units: 'kilometers' },
-    }),
-  });
-  if (res.status === 400) return null; // Valhalla: no route possible with these exclusions
-  if (!res.ok) throw new Error(`Router ${res.status}`);
-  const j = (await res.json()) as {
-    trip?: { legs?: { shape: string }[]; summary?: { length: number; time: number } };
-  };
-  if (!j.trip?.legs?.length || !j.trip.summary) return null;
-  return {
-    coords: j.trip.legs.flatMap((l) => decodePolyline6(l.shape)),
-    km: j.trip.summary.length,
-    min: j.trip.summary.time / 60,
-  };
+  const request = new AbortController();
+  const abort = () => request.abort();
+  if (signal?.aborted) request.abort();
+  signal?.addEventListener('abort', abort);
+  const deadline = setTimeout(abort, 5000);
+  try {
+    const res = await fetch(VALHALLA, {
+      method: 'POST',
+      signal: request.signal,
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        locations: points.map((p) => ({ lat: p.lat, lon: p.lon })),
+        costing: 'auto',
+        exclude_locations: exclude.map((p) => ({ lat: p.lat, lon: p.lon })),
+        directions_options: { units: 'kilometers' },
+      }),
+    });
+    if (res.status === 400) return null; // Valhalla: no route possible with these exclusions
+    if (!res.ok) throw new Error(`Router ${res.status}`);
+    const j = (await res.json()) as {
+      trip?: { legs?: { shape: string }[]; summary?: { length: number; time: number } };
+    };
+    if (!j.trip?.legs?.length || !j.trip.summary) return null;
+    return {
+      coords: j.trip.legs.flatMap((l) => decodePolyline6(l.shape)),
+      km: j.trip.summary.length,
+      min: j.trip.summary.time / 60,
+    };
+  } finally {
+    clearTimeout(deadline);
+    signal?.removeEventListener('abort', abort);
+  }
 }
 
 /** Distance (m) from point p to segment a–b plus position t∈[0,1] along it; equirectangular is accurate at city scale. */
@@ -162,7 +176,10 @@ function segDist(p: LatLon, a: LatLon, b: LatLon): { d: number; t: number } {
   return { d: Math.sqrt(x * x + y * y) * 111_320, t };
 }
 
-export function distanceToRouteM(p: LatLon, coords: LatLon[]): { d: number; index: number; t: number } {
+export function distanceToRouteM(
+  p: LatLon,
+  coords: LatLon[],
+): { d: number; index: number; t: number } {
   let best = { d: Infinity, index: 0, t: 0 };
   for (let i = 0; i + 1 < coords.length; i++) {
     const s = segDist(p, coords[i]!, coords[i + 1]!);
@@ -242,6 +259,51 @@ export async function planSafeRoute(
   signal?: AbortSignal,
   maxCautionDetourMin = 12,
 ): Promise<RoutePlan | null> {
+  try {
+    const plan = await planNetworkRoute(
+      origin,
+      destination,
+      destinationName,
+      hazards,
+      signal,
+      maxCautionDetourMin,
+    );
+    if (plan) return { ...plan, geometrySource: 'live' };
+  } catch (error) {
+    if (signal?.aborted) throw error;
+  }
+  if (signal?.aborted) return null;
+  const same = (a: LatLon, b: LatLon) =>
+    Math.abs(a.lat - b.lat) < 0.000001 && Math.abs(a.lon - b.lon) < 0.000001;
+  const preset = recordedPresets.presets.find(
+    (p) => same(p.origin, origin) && same(p.destination, destination),
+  );
+  if (!preset) return null;
+  const route = { coords: preset.shapes.flatMap(decodePolyline6), km: preset.km, min: preset.min };
+  return {
+    origin,
+    destination,
+    destinationName,
+    route,
+    baseline: route,
+    avoided: [],
+    remaining: hazardsOnRoute(route.coords, hazards),
+    extraMin: 0,
+    computedAt: Date.now(),
+    geometrySource: 'recorded',
+    geometryCapturedAt: recordedPresets.capturedAt,
+    ...assessRouteCoverage(origin, destination, route.coords),
+  };
+}
+
+async function planNetworkRoute(
+  origin: LatLon,
+  destination: LatLon,
+  destinationName: string,
+  hazards: RouteHazard[],
+  signal: AbortSignal | undefined,
+  maxCautionDetourMin: number,
+): Promise<RoutePlan | null> {
   const baseline = await fetchRoute([origin, destination], [], signal);
   if (!baseline) return null;
 
@@ -258,7 +320,8 @@ export async function planSafeRoute(
       for (const h of onRoute) {
         excluded.set(h.id, h);
         excludePts.push(nearestPointOnRoute(h, route.coords));
-        if (!excludePts.some((p) => p.lat === h.lat && p.lon === h.lon)) excludePts.push({ lat: h.lat, lon: h.lon });
+        if (!excludePts.some((p) => p.lat === h.lat && p.lon === h.lon))
+          excludePts.push({ lat: h.lat, lon: h.lon });
       }
       const next = await fetchRoute([origin, destination], excludePts, signal);
       if (!next) break; // no way around these
@@ -294,7 +357,9 @@ export async function planSafeRoute(
  * Google Maps directions link that follows FordCast's route: up to 3 waypoints taken where
  * the safer route strays farthest from the fastest one (Google's mobile limit is 3).
  */
-export function googleMapsUrl(plan: Pick<RoutePlan, 'origin' | 'destination' | 'route' | 'baseline'>): string {
+export function googleMapsUrl(
+  plan: Pick<RoutePlan, 'origin' | 'destination' | 'route' | 'baseline'>,
+): string {
   const f = (p: LatLon) => `${p.lat.toFixed(6)},${p.lon.toFixed(6)}`;
   const base = `https://www.google.com/maps/dir/?api=1&travelmode=driving&origin=${f(plan.origin)}&destination=${f(plan.destination)}`;
   const coords = plan.route.coords;
@@ -315,7 +380,11 @@ export function googleMapsUrl(plan: Pick<RoutePlan, 'origin' | 'destination' | '
 export type Place = { name: string; detail: string; lat: number; lon: number };
 
 /** Address / place search biased to Austin (Photon, OpenStreetMap data) with 10s bounded timeout. */
-export async function searchPlaces(q: string, near: LatLon, signal?: AbortSignal): Promise<Place[]> {
+export async function searchPlaces(
+  q: string,
+  near: LatLon,
+  signal?: AbortSignal,
+): Promise<Place[]> {
   if (q.trim().length < 3) return [];
   const ctrl = new AbortController();
   const timer = setTimeout(() => ctrl.abort(), 10_000);
@@ -328,7 +397,13 @@ export async function searchPlaces(q: string, near: LatLon, signal?: AbortSignal
     const j = (await res.json()) as {
       features?: {
         geometry: { coordinates: [number, number] };
-        properties: { name?: string; street?: string; housenumber?: string; city?: string; state?: string };
+        properties: {
+          name?: string;
+          street?: string;
+          housenumber?: string;
+          city?: string;
+          state?: string;
+        };
       }[];
     };
     return (j.features ?? []).map((f) => {

@@ -115,7 +115,7 @@ export default function MapSurface({
           gap: 8,
         }}
       >
-        <View style={{ gap: 1 }}>
+        <View style={{ gap: 1, maxWidth: '100%', minWidth: 0, flexShrink: 1 }}>
           <AppText style={{ fontFamily: 'Inter_600SemiBold', fontWeight: '700', fontSize: 13 }}>
             {t('map.preview')}
           </AppText>
@@ -132,9 +132,9 @@ export default function MapSurface({
             accessibilityLabel={`${language === 'es' ? 'Cruces sin sensor' : 'Crossings without sensors'} (${tierCFeatures.length}) · ${tierCMode === 'compact' ? (language === 'es' ? 'Resumen' : 'Compact') : (language === 'es' ? 'Detalle' : 'Full')}`}
             onPress={() => setTierCMode((m) => (m === 'compact' ? 'full' : 'compact'))}
             style={{
-              height: 28,
+              minHeight: 44,
               paddingHorizontal: 10,
-              borderRadius: 999,
+              borderRadius: 8,
               backgroundColor: SURFACES.dark.elevated2,
               borderWidth: 1,
               borderColor: LOCKED_STATE_HEX.unknown,
@@ -374,7 +374,7 @@ export default function MapSurface({
       >
         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap' }}>
           <AppText style={[TYPOGRAPHY.chartAxis, { color: SURFACES.dark.textSecondary, fontSize: 10 }]}>
-            TIER B MONITORED CORRIDOR PILLS (26PX TRIPLE-REDUNDANCY) · TAP TO INSPECT
+            {language === 'es' ? 'CANDIDATOS DE ESTUDIO · TOQUE PARA REVISAR' : 'RESEARCH CANDIDATES · TAP TO INSPECT'}
           </AppText>
           {tierCMode === 'full' && tierCFeatures[0] && (
             <StateBadge
@@ -402,10 +402,12 @@ export default function MapSurface({
                 }}
                 style={{
                   flexDirection: 'row',
+                  minHeight: 44,
+                  maxWidth: '100%',
                   alignItems: 'center',
                   gap: 6,
                   paddingRight: 8,
-                  borderRadius: 14,
+                  borderRadius: 8,
                   backgroundColor: isSel ? '#1C2740' : '#131B2E',
                   borderWidth: isSel ? 1.5 : 1,
                   borderColor: isSel ? '#5294FF' : '#23304D',
@@ -417,6 +419,7 @@ export default function MapSurface({
                   style={{
                     fontSize: 11,
                     lineHeight: 14,
+                    flexShrink: 1,
                     color: isSel ? '#F8FAFC' : '#94A3B8',
                     fontFamily: 'Inter_600SemiBold',
                   }}

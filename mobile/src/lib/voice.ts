@@ -113,7 +113,8 @@ function playSoftChime(): void {
   if (Platform.OS !== 'web' || typeof window === 'undefined') return;
   try {
     const AudioCtx =
-      window.AudioContext || (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
+      window.AudioContext ||
+      (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
     if (!AudioCtx) return;
     const ctx = new AudioCtx();
     const now = ctx.currentTime;
@@ -159,7 +160,10 @@ export function cleanForSpeech(raw: string, language: 'en' | 'es'): string {
     .replace(/\bPkwy\b/gi, 'Parkway')
     .replace(/\bHwy\b/gi, 'Highway')
     .replace(/\bnr\b/gi, language === 'es' ? 'cerca de' : 'near')
-    .replace(/(\d+)\s*[–-]\s*(\d+)\s*min\b/gi, language === 'es' ? '$1 a $2 minutos' : '$1 to $2 minutes')
+    .replace(
+      /(\d+)\s*[–-]\s*(\d+)\s*min\b/gi,
+      language === 'es' ? '$1 a $2 minutos' : '$1 to $2 minutes',
+    )
     .replace(/\b(\d+(?:\.\d+)?)\s*mi\b/gi, language === 'es' ? '$1 millas' : '$1 miles')
     .replace(/\b(\d+)\s*min\b/gi, language === 'es' ? '$1 minutos' : '$1 minutes')
     .replace(/[·—–]/g, ', ')
@@ -175,11 +179,15 @@ function resolveClipKey(text: string, explicitKey?: string): string | null {
   if (lower.includes('voice warnings are') || lower.includes('avisos de voz')) return 'voice_test';
   if (lower.includes('only a test') || lower.includes('solo una prueba')) return 'test_alert';
   if (lower === 'you have arrived.' || lower === 'ha llegado.') return 'arrived';
-  if (lower.includes('test flooded crossing') || lower.includes('cruce inundado de prueba')) return 'sim_route';
+  if (lower.includes('test flooded crossing') || lower.includes('cruce inundado de prueba'))
+    return 'sim_route';
   return null;
 }
 
-function pickBestWebSpeechVoice(language: 'en' | 'es', persona: VoicePersonaId): SpeechSynthesisVoice | null {
+function pickBestWebSpeechVoice(
+  language: 'en' | 'es',
+  persona: VoicePersonaId,
+): SpeechSynthesisVoice | null {
   if (typeof window === 'undefined' || !('speechSynthesis' in window)) return null;
   const voices = window.speechSynthesis.getVoices();
   if (!voices.length) return null;
@@ -348,19 +356,13 @@ export function speak(text: string, language: 'en' | 'es', opts?: SpeakOptions):
     }
   }
 
-  const pendingPrep = audioPreparation;
-  void prepareAudio();
-  if (pendingPrep) {
-    void pendingPrep
-      .then(() => {
-        fallbackSpeechSynthesis(cleaned, language, mySession, !!opts?.allowWhenMuted);
-      })
-      .catch(() => {
-        if (mySession === speechSessionId) notifySpeaking(false);
-      });
-  } else {
-    fallbackSpeechSynthesis(cleaned, language, mySession, !!opts?.allowWhenMuted);
-  }
+  void prepareAudio()
+    .then(() => {
+      fallbackSpeechSynthesis(cleaned, language, mySession, !!opts?.allowWhenMuted);
+    })
+    .catch(() => {
+      if (mySession === speechSessionId) notifySpeaking(false);
+    });
 }
 
 export function stopSpeaking(): void {

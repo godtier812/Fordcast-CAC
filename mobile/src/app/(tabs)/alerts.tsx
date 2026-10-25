@@ -1,6 +1,6 @@
 import { useEffect, useState, type ReactNode } from 'react';
 import { router } from 'expo-router';
-import { Platform, Pressable, ScrollView, Switch, View } from 'react-native';
+import { Platform, Pressable, ScrollView, Switch, View, useWindowDimensions } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { AppText } from '@/components/fordcast/UI';
 import { StateGlyphSvg } from '@/components/StateBadge';
@@ -41,8 +41,10 @@ function SetupRow({
   ok: boolean;
   action?: ReactNode;
 }) {
+  const { width } = useWindowDimensions();
+  const narrow = width < 400;
   return (
-    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 6 }}>
+    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 6, flexWrap: narrow ? 'wrap' : 'nowrap' }}>
       <View
         style={{
           width: 40,
@@ -55,13 +57,13 @@ function SetupRow({
       >
         <FcIcon name={icon} size={18} color={ok ? ACCENT : S.textSecondary} />
       </View>
-      <View style={{ flex: 1 }}>
+      <View style={{ flex: 1, minWidth: narrow ? 140 : 0 }}>
         <AppText style={{ fontFamily: 'Inter_600SemiBold', fontSize: 15 }}>{title}</AppText>
         <AppText style={{ fontSize: 13, lineHeight: 18, color: ok ? S.textSecondary : LOCKED_STATE_HEX.watch }}>
           {status}
         </AppText>
       </View>
-      {action}
+      {action ? <View style={narrow ? { width: '100%', alignItems: 'flex-end' } : undefined}>{action}</View> : null}
     </View>
   );
 }
@@ -163,8 +165,8 @@ export default function Alerts() {
       ? t('alerts.location_on')
       : m.customOrigin
         ? language === 'es'
-          ? `Punto de partida manual — ${m.customOrigin.name}`
-          : `Custom starting point — ${m.customOrigin.name}`
+          ? `Punto de partida manual · ${m.customOrigin.name}`
+          : `Custom starting point · ${m.customOrigin.name}`
         : m.locationPermission === 'denied'
           ? t('alerts.location_denied')
           : t('alerts.location_off');
@@ -183,10 +185,6 @@ export default function Alerts() {
 
   const triggerPreview = (targetPersona?: VoicePersonaId) => {
     if (targetPersona) setVoicePersona(targetPersona);
-    if (!m.settings.voiceAlerts) {
-      setVoiceMuted(false);
-      m.updateSettings({ voiceAlerts: true });
-    }
     setPreviewPlayed(true);
     speak(t('alerts.voice_test_phrase'), language, {
       force: true,

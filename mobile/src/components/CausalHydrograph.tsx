@@ -346,7 +346,7 @@ export default function CausalHydrograph({
             gap: 6,
           }}
         >
-          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, flexWrap: 'wrap', maxWidth: '100%' }}>
             <AppText
               style={[
                 TYPOGRAPHY.chartAxis,

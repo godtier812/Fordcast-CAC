@@ -3,6 +3,13 @@
 > **Entry district:** TX-37 *(Austin / Travis County & neighboring Williamson County portion — verify eligibility using your actual home or school address; pilot coverage is a separate question)* · **Builder:** [NAME], 9th grade, Python + TypeScript/React Native · **National deadline:** **Mon Oct 26, 2026, 9:00 PM ET / 8:00 PM Central**, checked October 22 on the [official registration page](https://www.congressionalappchallenge.us/students/student-registration/). An earlier district-page discrepancy remains unresolved; verify the submission portal and do not rely on a later date.
 > Everything in `[brackets]` = fill in with **your real** personal details before submitting.
 
+> **October 24 recording note:** The detailed shoot plan and honest Q&A are in
+> `docs/results/cac-judge-round7-recording-ready-2026-10-24.md`. Preset geometry can fall
+> back to a dated recording when Valhalla is unavailable; that mode blocks external
+> navigation and sharing. Describe it as recorded geometry, never as a current detour.
+> The first-person technical answers below are drafts: replace authorship statements
+> with the student's actual contribution, consistent with `AI_USE.md`.
+
 **App name:** **FordCast** — *ford* (a low-water crossing) + *forecast*. **Tagline:** **"Check the crossings on your trip."**
 
 ---

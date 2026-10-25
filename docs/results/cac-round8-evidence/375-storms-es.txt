@@ -1,0 +1,106 @@
+- generic: Aprenda de inundaciones reales
+- generic: Cinco tormentas reales de Austin reconstruidas con registros de sensores USGS. Ejecute una como simulacro para ver lo que FordCast le habría dicho.
+- generic: ¿Qué tan bien funciona?
+- generic: En 5 tormentas pasadas, la regla de FordCast avisó “Evite” antes de que el sensor río abajo llegara a nivel de inundación en 4 de 12 casos · una mediana de 65 minutos antes. No detectó 8 y dio 1 falsa alarma. Aún no se ha comparado con inundaciones reales del camino, así que nunca dependa solo de ella.
+- generic: COMPARACIÓN CON LÍNEA BASE DE SENSOR MÁS CERCANO (LOSO)
+- generic: "Aguas arriba: 4/12 detectados · 8 omitidos · 1 falsa alarma Sensor más cercano: 4/12 detectados · 8 omitidos · 0 falsas alarmas La regla aguas arriba no superó la referencia."
+- generic: "Anticipación mediana: 65 min hasta el nivel de referencia del sensor. No se validó la predicción de inundación en el camino."
+- generic: "Evaluado de forma justa: cada tormenta se prueba con ajustes aprendidos solo de las otras tormentas."
+- generic: SELECCIONA UNA TORMENTA ARCHIVADA
+- button "Inundación de Halloween 2013":
+  - generic: Inundación de Halloween 2013
+- button "Inundación del Día de los Caídos 2015":
+  - generic: Inundación del Día de los Caídos 2015
+- button "Inundación de Todos los Santos 2015":
+  - generic: Inundación de Todos los Santos 2015
+- button "Lluvia de octubre de 2018 (Control)":
+  - generic: Lluvia de octubre de 2018 (Control)
+- button "Crecida rápida urbana de julio de 2025":
+  - generic: Crecida rápida urbana de julio de 2025
+- generic: Inundación del Día de los Caídos 2015
+- generic: 23 de mayo de 2015 · Observaciones USGS archivadas
+- generic: 1 cruce llegó a Evite
+- generic: Una inundación de fin de semana festivo en los condados de Hays y Travis. Barton y Onion Creek subieron rápido.
+- generic: Las lecturas de una tormenta archivada controlan este recorrido ilustrativo. Un umbral experimental muestra una ruta alternativa precalculada.
+- button "Demostración de desvío":
+  - generic: Demostración de desvío
+- button "Ejecutar simulacro":
+  - generic: Ejecutar simulacro
+- button "Ver la ciencia":
+  - generic: Ver la ciencia
+- generic: Cruces con inundaciones frecuentes (1996–2026)
+- generic: Cruces con más reportes documentados de inundaciones repentinas y rescates vehiculares cercanos.
+- button "Wasson Rd. Sensor aún sin calibrar. a 4.2 mi":
+  - generic: —
+  - generic: Wasson Rd
+  - generic: Williamson Creek · 4.2 mi
+  - generic: Sensor aún sin calibrar
+  - generic: 10 reportes de inundación cercanos
+- button "Spicewood Springs Rd. Sensor aún sin calibrar. a 8.3 mi":
+  - generic: —
+  - generic: Spicewood Springs Rd
+  - generic: Bull Creek · 8.3 mi
+  - generic: Sensor aún sin calibrar
+  - generic: 13 reportes de inundación cercanos
+- button "Spicewood Springs Rd at Bull Creek -- Crossing 2. Sin sensor. a 8.8 mi":
+  - generic: —
+  - generic: Spicewood Springs Rd at Bull Creek -- Crossing 2
+  - generic: Bull Creek -- Crossing 2 · 8.8 mi
+  - generic: Sin sensor
+  - generic: 13 reportes de inundación cercanos
+- button "Old Spicewood Springs Rd. Sensor aún sin calibrar. a 8.1 mi":
+  - generic: —
+  - generic: Old Spicewood Springs Rd
+  - generic: Bull Creek · 8.1 mi
+  - generic: Sensor aún sin calibrar
+  - generic: 13 reportes de inundación cercanos
+- button "Spicewood Springs Rd at Bull Creek -- Crossing 3. Sin sensor. a 9.2 mi":
+  - generic: —
+  - generic: Spicewood Springs Rd at Bull Creek -- Crossing 3
+  - generic: Bull Creek -- Crossing 3 · 9.2 mi
+  - generic: Sin sensor
+  - generic: 11 reportes de inundación cercanos
+- button "Spicewood Springs Rd. Sensor aún sin calibrar. a 9.9 mi":
+  - generic: —
+  - generic: Spicewood Springs Rd
+  - generic: Bull Creek · 9.9 mi
+  - generic: Sensor aún sin calibrar
+  - generic: 11 reportes de inundación cercanos
+- button "Spicewood Springs Rd at Bull Creek -- Crossing 5. Sin sensor. a 9.9 mi":
+  - generic: —
+  - generic: Spicewood Springs Rd at Bull Creek -- Crossing 5
+  - generic: Bull Creek -- Crossing 5 · 9.9 mi
+  - generic: Sin sensor
+  - generic: 11 reportes de inundación cercanos
+- button "Spicewood Springs Rd at Bull Creek -- Crossing 4. Sin sensor. a 9.4 mi":
+  - generic: —
+  - generic: Spicewood Springs Rd at Bull Creek -- Crossing 4
+  - generic: Bull Creek -- Crossing 4 · 9.4 mi
+  - generic: Sin sensor
+  - generic: 10 reportes de inundación cercanos
+- generic: Guía de profundidad de agua del NWS
+- generic: Qué le hace el agua en movimiento a un auto
+- generic: Seleccione la profundidad del agua sobre el camino para ver los umbrales de peligro del Servicio Meteorológico Nacional.
+- button "6 pulg. (Tobillo / Banqueta)":
+  - generic: 6 pulg. (Tobillo / Banqueta)
+- button "12 pulg. (Llanta / Rodilla)":
+  - generic: 12 pulg. (Llanta / Rodilla)
+- button "24 pulg. (Puerta / Defensa)":
+  - generic: 24 pulg. (Puerta / Defensa)
+- generic: "Autos de pasajeros: Un pie de agua en movimiento hace flotar muchos vehículos, perdiendo tracción y dirección."
+- generic: "Crossovers y camionetas: La flotabilidad levanta el chasis mientras la corriente empuja el vehículo hacia el cauce."
+- generic: "Peligro extremo: Nunca intente caminar ni manejar en 12 pulgadas de agua en movimiento."
+- 'link "Fuente: Guía de seguridad ante inundaciones del Servicio Meteorológico Nacional (NWS) →"':
+  - generic: "Fuente: Guía de seguridad ante inundaciones del Servicio Meteorológico Nacional (NWS) →"
+- link "Mapa":
+  - /url: /
+  - generic: Mapa
+- link "Tormentas" [active]:
+  - /url: /replay
+  - generic: Tormentas
+- link "Manejar":
+  - /url: /drive
+  - generic: Manejar
+- link "Alertas":
+  - /url: /alerts
+  - generic: Alertas

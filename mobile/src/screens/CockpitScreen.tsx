@@ -339,7 +339,7 @@ export default function CockpitScreen({
                 }}
               >
                 <AppText style={{ fontSize: 12, fontFamily: 'Inter_600SemiBold' }}>
-                  {language === 'es' ? '🔊 Leer' : '🔊 Speak'}
+                  {language === 'es' ? 'Leer estado' : 'Read state'}
                 </AppText>
               </Pressable>
               <Pressable
@@ -364,7 +364,7 @@ export default function CockpitScreen({
                     fontFamily: 'Inter_600SemiBold',
                   }}
                 >
-                  {isSaved ? (language === 'es' ? '★ Guardado' : '★ Saved') : language === 'es' ? '☆ Guardar' : '☆ Save'}
+                  {isSaved ? (language === 'es' ? 'Guardado' : 'Saved') : language === 'es' ? 'Guardar' : 'Save'}
                 </AppText>
               </Pressable>
               <Pressable
@@ -474,11 +474,11 @@ export default function CockpitScreen({
           <Pressable
             role="button"
             accessibilityRole="button"
-            accessibilityLabel={t('replay.previous')}
+            accessibilityLabel={language === 'es' ? 'Retroceder 15 minutos' : 'Back 15 minutes'}
             disabled={stepIdx === 0}
             onPress={() => stepByMinutes(-15)}
             style={{
-              height: 36,
+              minHeight: 44,
               paddingHorizontal: 10,
               borderRadius: 8,
               backgroundColor: SURFACES.dark.elevated2,
@@ -502,7 +502,7 @@ export default function CockpitScreen({
               setPlaying(!playing);
             }}
             style={{
-              height: 36,
+              minHeight: 44,
               paddingHorizontal: 14,
               borderRadius: 8,
               backgroundColor: HYDROGRAPH_TOKENS.dark.downstreamStroke,
@@ -517,11 +517,11 @@ export default function CockpitScreen({
           <Pressable
             role="button"
             accessibilityRole="button"
-            accessibilityLabel={t('replay.next')}
+            accessibilityLabel={language === 'es' ? 'Avanzar 15 minutos' : 'Forward 15 minutes'}
             disabled={stepIdx >= totalSteps - 1}
             onPress={() => stepByMinutes(15)}
             style={{
-              height: 36,
+              minHeight: 44,
               paddingHorizontal: 10,
               borderRadius: 8,
               backgroundColor: SURFACES.dark.elevated2,
@@ -546,7 +546,7 @@ export default function CockpitScreen({
               setStepIdx(prev);
             }}
             style={{
-              height: 36,
+              minHeight: 44,
               paddingHorizontal: 9,
               borderRadius: 8,
               backgroundColor: SURFACES.dark.elevated1,
@@ -570,7 +570,7 @@ export default function CockpitScreen({
               setStepIdx(next);
             }}
             style={{
-              height: 36,
+              minHeight: 44,
               paddingHorizontal: 9,
               borderRadius: 8,
               backgroundColor: SURFACES.dark.elevated1,
@@ -593,7 +593,7 @@ export default function CockpitScreen({
               setStepIdx(0);
             }}
             style={{
-              height: 36,
+              minHeight: 44,
               paddingHorizontal: 9,
               borderRadius: 8,
               backgroundColor: SURFACES.dark.elevated1,
@@ -618,7 +618,7 @@ export default function CockpitScreen({
               accessibilityLabel={`${s}×`}
               onPress={() => setSpeed(s)}
               style={{
-                height: 30,
+                minHeight: 44,
                 paddingHorizontal: 8,
                 borderRadius: 6,
                 backgroundColor:
@@ -697,8 +697,9 @@ export default function CockpitScreen({
             {t('replay.reading', { index: stepIdx + 1, count: totalSteps, time: stamp(simT) })}
           </AppText>
           <AppText style={[TYPOGRAPHY.chartAxis, { color: SURFACES.dark.textSecondary, fontSize: 10 }]}>
-            🛑 {summaryCounts.avoidCount} Avoid • ⚠️ {summaryCounts.watchCount} Watch • ?{' '}
-            {summaryCounts.unknownCount} Unknown
+            {language === 'es'
+              ? `${summaryCounts.avoidCount} Evite · ${summaryCounts.watchCount} Precaución · ${summaryCounts.unknownCount} Sin datos`
+              : `${summaryCounts.avoidCount} Avoid · ${summaryCounts.watchCount} Watch · ${summaryCounts.unknownCount} Unknown`}
           </AppText>
         </View>
       </View>
@@ -774,7 +775,7 @@ export default function CockpitScreen({
             <Button
               compact
               secondary
-              title="📊 LOSO Scorecard"
+              title={language === 'es' ? 'Resultados LOSO' : 'LOSO scorecard'}
               onPress={() => setShowScorecardModal((v) => !v)}
             />
             <Button
@@ -1121,20 +1122,21 @@ export default function CockpitScreen({
         testID="mobile-top-glass-header"
         style={{
           minHeight: 48,
-          backgroundColor: SURFACES.dark.glassHud,
+          backgroundColor: SURFACES.dark.elevated1,
           borderRadius: 14,
           borderWidth: 1,
           borderColor: SURFACES.dark.borderSubtle,
           paddingHorizontal: 12,
           paddingVertical: 8,
           flexDirection: 'row',
+          flexWrap: 'wrap',
           alignItems: 'center',
           justifyContent: 'space-between',
           gap: 8,
         }}
       >
         {/* Left: Storm Selector Pill */}
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ flex: 1.4 }}>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ width: '100%' }}>
           <View style={{ flexDirection: 'row', gap: 6 }}>
             {replayIndex.storms.map((s) => (
               <Chip
@@ -1156,7 +1158,7 @@ export default function CockpitScreen({
           onPress={() => setLanguage(language === 'en' ? 'es' : 'en')}
           style={{
             width: 68,
-            height: 36,
+            minHeight: 44,
             borderRadius: 10,
             backgroundColor: SURFACES.dark.elevated2,
             borderWidth: 1,
@@ -1182,7 +1184,7 @@ export default function CockpitScreen({
           }}
           style={{
             width: 86,
-            height: 36,
+            minHeight: 44,
             borderRadius: 10,
             backgroundColor: SURFACES.dark.elevated2,
             borderWidth: 1.5,
@@ -1192,7 +1194,7 @@ export default function CockpitScreen({
           }}
         >
           <AppText style={{ fontSize: 11, fontFamily: 'Inter_600SemiBold', color: '#F8FAFC' }}>
-            🚘 HUD
+            {language === 'es' ? 'Manejar' : 'Drive'}
           </AppText>
         </Pressable>
       </View>
@@ -1335,8 +1337,8 @@ export default function CockpitScreen({
           >
             <AppText style={[TYPOGRAPHY.chartAxis, { color: SURFACES.dark.textSecondary }]}>
               {language === 'es'
-                ? `30 con sensor • 111 sin sensor · [🛑 ${summaryCounts.avoidCount} Evite] [⚠️ ${summaryCounts.watchCount} Precaución]`
-                : `30 Monitored • 111 Unmonitored · [🛑 ${summaryCounts.avoidCount} Avoid] [⚠️ ${summaryCounts.watchCount} Watch]`}
+                ? `30 candidatos de investigación · 111 sin sensor · ${summaryCounts.avoidCount} Evite · ${summaryCounts.watchCount} Precaución`
+                : `30 research candidates · 111 without sensors · ${summaryCounts.avoidCount} Avoid · ${summaryCounts.watchCount} Watch`}
             </AppText>
             <View style={{ flexDirection: 'row', gap: 6, flexWrap: 'wrap' }}>
               {(

@@ -1,0 +1,30 @@
+- generic: ● EN VIVO · ATXFLOODS + NWS + USGS
+- generic: a 6.1 mi · Onion Creek
+- generic: E. William Cannon
+- button "English":
+  - generic: ES | EN
+- generic: Sin crecida río arriba
+- generic: Aviso de FordCast. E. William Cannon. No se detecta crecida río arriba. ¡Dé la vuelta, no se ahogue!
+- button "Anterior":
+  - generic: Anterior
+- button "Siguiente":
+  - generic: Siguiente
+- generic: ¡Dé la vuelta, no se ahogue!
+- button "Repetir":
+  - generic: Repetir
+- button "Silenciar":
+  - generic: Silenciar
+- button "Detener":
+  - generic: Detener
+- link "Mapa":
+  - /url: /
+  - generic: Mapa
+- link "Tormentas":
+  - /url: /replay
+  - generic: Tormentas
+- link "Manejar":
+  - /url: /drive
+  - generic: Manejar
+- link "Alertas":
+  - /url: /alerts
+  - generic: Alertas

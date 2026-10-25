@@ -1,0 +1,34 @@
+PASS src/__tests__/round4-demo-probes.test.tsx (34.413 s)
+PASS src/__tests__/round6-provider-probes.test.tsx
+FAIL src/__tests__/round2-probes.test.ts
+  ● round 2 & round 3 adversarial audit › setVoiceMuted blocks forced automatic speech at the speech engine and restores when unmuted
+
+    expect(jest.fn()).toHaveBeenCalledTimes(expected)
+
+    Expected number of calls: 1
+    Received number of calls: 0
+
+      215 |       expect(getVoiceMuted()).toBe(false);
+      216 |       speak('Unmuted active alert phrase', 'en', { force: true });
+    > 217 |       expect(speakSpy).toHaveBeenCalledTimes(1);
+          |                        ^
+      218 |     } finally {
+      219 |       setVoiceMuted(false);
+      220 |       speakSpy.mockRestore();
+
+      at Object.toHaveBeenCalledTimes (src/__tests__/round2-probes.test.ts:217:24)
+
+PASS src/__tests__/components.test.tsx
+PASS src/__tests__/routing.test.ts
+PASS src/__tests__/contracts.test.ts
+PASS src/__tests__/round6-ios-voice-probes.test.ts
+PASS src/__tests__/route-evidence.test.ts
+PASS src/__tests__/replay-controls.test.ts
+PASS src/__tests__/round4-guardian-probes.test.ts
+PASS src/__tests__/live.test.ts
+
+Test Suites: 1 failed, 10 passed, 11 total
+Tests:       1 failed, 106 passed, 107 total
+Snapshots:   0 total
+Time:        45.016 s, estimated 57 s
+Ran all test suites.

@@ -1,0 +1,84 @@
+- button "FordCast Alertas de cruces bajos · Austin":
+  - generic: FordCast
+  - generic: Alertas de cruces bajos · Austin
+- link "Mapa":
+  - /url: /
+  - generic: Mapa
+- link "Tormentas":
+  - /url: /replay
+  - generic: Tormentas
+- link "Manejar":
+  - /url: /drive
+  - generic: Manejar
+- link "Alertas":
+  - /url: /alerts
+  - generic: Alertas
+- button "English" [active]:
+  - generic: EN · English
+- button "Ajustes":
+  - generic: Ajustes
+- generic: Alertas
+- generic: Reciba una notificación y un aviso de voz cuando un cruce cerca de usted empiece a inundarse.
+- generic: Configuración
+- generic: Ubicación
+- generic: Punto de partida manual — Downtown Austin
+- button "Activar":
+  - generic: Activar
+- generic: Notificaciones
+- generic: Desactivadas · toque para permitir
+- button "Activar":
+  - generic: Activar
+- generic: Avisos de voz
+- generic: Activados · las alertas se leen en voz alta
+- switch "Avisos de voz" [checked]
+- generic: Estilo de voz (toque para escuchar)
+- button "Ava (Cálida)":
+  - generic: Ava (Cálida)
+- button "Andrew (Serena)":
+  - generic: Andrew (Serena)
+- button "Aria (Clara)":
+  - generic: Aria (Clara)
+- button "Enviar alerta de prueba":
+  - generic: Enviar alerta de prueba
+- button "Probar voz":
+  - generic: Probar voz
+- generic: Avisarme de cruces a menos de
+- button "1 mi":
+  - generic: 1 mi
+- button "3 mi":
+  - generic: 3 mi
+- button "5 mi":
+  - generic: 5 mi
+- button "10 mi":
+  - generic: 10 mi
+- generic: 0 cruces vigilados dentro del rango
+- generic: Usar con Google Maps
+- generic: Siga navegando con Google Maps. Planee su viaje en FordCast y toque “Ir con Google Maps” · su ruta llega con puntos que rodean los cruces inundados.
+- generic: "Límite en navegador web: el monitoreo continuo solo funciona mientras esta pestaña permanece activa."
+- generic: En una computadora, instale la extensión de Chrome “FordCast for Google Maps” (carpeta extension del proyecto). Agrega un panel de FordCast a google.com/maps que marca cierres y cruces inundados en su ruta y ofrece una ruta alternativa.
+- button "Planear una ruta":
+  - generic: Planear una ruta
+- generic: Cruces guardados
+- generic: Los cruces guardados siempre le avisan, sin importar la distancia.
+- button "Wasson Rd. Sensor aún sin calibrar. a 4.2 mi":
+  - generic: —
+  - generic: Wasson Rd
+  - generic: Williamson Creek · 4.2 mi
+  - generic: Sensor aún sin calibrar
+  - generic: 10 reportes de inundación cercanos
+- button "E. William Cannon. Sin crecida río arriba. a 6.1 mi":
+  - generic: E. William Cannon
+  - generic: Onion Creek · 6.1 mi
+  - generic: Sin crecida río arriba
+  - generic: 3 reportes de inundación cercanos
+- button "Slaughter Cr Dr at Trib to Slaughter Cr. Sensor aún sin calibrar. a 8.4 mi":
+  - generic: —
+  - generic: Slaughter Cr Dr at Trib to Slaughter Cr
+  - generic: Slaughter Creek · 8.4 mi
+  - generic: Sensor aún sin calibrar
+- button "Alertas recientes (1)":
+  - generic: Alertas recientes (1)
+- button "Datos sobre manejar en inundaciones":
+  - generic: Datos sobre manejar en inundaciones
+- generic: Las alertas funcionan mientras FordCast está en pantalla. Las alertas en segundo plano requieren la app instalada.
+- generic: FordCast es una herramienta complementaria. Obedezca las barricadas y las alertas oficiales. Nunca maneje en el agua.

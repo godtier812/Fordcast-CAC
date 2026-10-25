@@ -1,0 +1,113 @@
+- button "FordCast Low-water crossing alerts · Austin":
+  - generic: FordCast
+  - generic: Low-water crossing alerts · Austin
+- link "Map":
+  - /url: /
+  - generic: Map
+- link "Storms" [active]:
+  - /url: /replay
+  - generic: Storms
+- link "Drive":
+  - /url: /drive
+  - generic: Drive
+- link "Alerts":
+  - /url: /alerts
+  - generic: Alerts
+- button "Español":
+  - generic: ES · Español
+- button "Settings":
+  - generic: Settings
+- generic: Learn from real floods
+- generic: Five real Austin storms rebuilt from USGS sensor records. Run one as a drill to see exactly what FordCast would have told you.
+- generic: How well does it work?
+- generic: Across 5 past storms, FordCast's upstream-sensor rule warned “Avoid” before the downstream river sensor hit flood stage in 4 of 12 cases · a median of 65 minutes early. It missed 8 and gave 1 false alarm. It hasn't been checked against real road flooding yet, so never rely on it alone.
+- generic: "BASELINE COMPARISON: UPSTREAM RULE VS. NEAREST GAUGE (LOSO)"
+- generic: "Upstream: 4/12 detected · 8 missed · 1 false alarm Nearest gauge: 4/12 detected · 8 missed · 0 false alarms The upstream rule did not beat the baseline."
+- generic: "Median lead: 65 min before reference-gauge stage. Road-flood prediction remains unvalidated."
+- generic: "Scored fairly: each storm is tested using settings learned only from the other storms."
+- generic: SELECT AN ARCHIVED STORM
+- button "Halloween Flood 2013":
+  - generic: Halloween Flood 2013
+- button "Memorial Day Flood 2015":
+  - generic: Memorial Day Flood 2015
+- button "All Saints Flood 2015":
+  - generic: All Saints Flood 2015
+- button "October 2018 Highland Lakes Rain (Control)":
+  - generic: October 2018 Highland Lakes Rain (Control)
+- button "July 2025 Urban Flash Rise":
+  - generic: July 2025 Urban Flash Rise
+- generic: Memorial Day Flood 2015
+- generic: May 23, 2015 · Archived USGS observations
+- generic: 1 crossing reached Avoid
+- generic: A holiday-weekend flood that swept through Hays and Travis counties. Barton and Onion Creeks rose fast.
+- generic: Archived storm readings drive this illustrated trip. An experimental trigger shows a precomputed alternative route.
+- button "Storm reroute demo":
+  - generic: Storm reroute demo
+- button "Run as drill":
+  - generic: Run as drill
+- button "View the science":
+  - generic: View the science
+- generic: Frequent flood spots (1996–2026)
+- generic: Crossings with the most documented flash-flood reports and vehicle rescues nearby.
+- button "Wasson Rd. Sensor not calibrated yet. 4.2 mi away":
+  - generic: —
+  - generic: Wasson Rd
+  - generic: Williamson Creek · 4.2 mi
+  - generic: Sensor not calibrated yet
+  - generic: 10 past flood reports nearby
+- button "Spicewood Springs Rd. Sensor not calibrated yet. 8.3 mi away":
+  - generic: —
+  - generic: Spicewood Springs Rd
+  - generic: Bull Creek · 8.3 mi
+  - generic: Sensor not calibrated yet
+  - generic: 13 past flood reports nearby
+- button "Spicewood Springs Rd at Bull Creek -- Crossing 2. No sensor. 8.8 mi away":
+  - generic: —
+  - generic: Spicewood Springs Rd at Bull Creek -- Crossing 2
+  - generic: Bull Creek -- Crossing 2 · 8.8 mi
+  - generic: No sensor
+  - generic: 13 past flood reports nearby
+- button "Old Spicewood Springs Rd. Sensor not calibrated yet. 8.1 mi away":
+  - generic: —
+  - generic: Old Spicewood Springs Rd
+  - generic: Bull Creek · 8.1 mi
+  - generic: Sensor not calibrated yet
+  - generic: 13 past flood reports nearby
+- button "Spicewood Springs Rd at Bull Creek -- Crossing 3. No sensor. 9.2 mi away":
+  - generic: —
+  - generic: Spicewood Springs Rd at Bull Creek -- Crossing 3
+  - generic: Bull Creek -- Crossing 3 · 9.2 mi
+  - generic: No sensor
+  - generic: 11 past flood reports nearby
+- button "Spicewood Springs Rd. Sensor not calibrated yet. 9.9 mi away":
+  - generic: —
+  - generic: Spicewood Springs Rd
+  - generic: Bull Creek · 9.9 mi
+  - generic: Sensor not calibrated yet
+  - generic: 11 past flood reports nearby
+- button "Spicewood Springs Rd at Bull Creek -- Crossing 5. No sensor. 9.9 mi away":
+  - generic: —
+  - generic: Spicewood Springs Rd at Bull Creek -- Crossing 5
+  - generic: Bull Creek -- Crossing 5 · 9.9 mi
+  - generic: No sensor
+  - generic: 11 past flood reports nearby
+- button "Spicewood Springs Rd at Bull Creek -- Crossing 4. No sensor. 9.4 mi away":
+  - generic: —
+  - generic: Spicewood Springs Rd at Bull Creek -- Crossing 4
+  - generic: Bull Creek -- Crossing 4 · 9.4 mi
+  - generic: No sensor
+  - generic: 10 past flood reports nearby
+- generic: National Weather Service Flood Depth Guide
+- generic: What Moving Water Does to a Car
+- generic: Select a water depth on the road to see National Weather Service Turn Around, Don't Drown® hazard thresholds.
+- button "6 in (Ankle / Curb)":
+  - generic: 6 in (Ankle / Curb)
+- button "12 in (Tire / Knee)":
+  - generic: 12 in (Tire / Knee)
+- button "24 in (Door / Bumper)":
+  - generic: 24 in (Door / Bumper)
+- generic: "Passenger cars: A foot of moving water will float many vehicles, causing tires to lose traction and steering control."
+- generic: "Crossovers & light trucks: Buoyancy lifts the chassis while moving current pushes the vehicle sideways toward the channel."
+- generic: "Extreme danger: Never attempt to walk or drive through 12 inches of moving floodwater."
+- 'link "Source: National Weather Service — Turn Around, Don’t Drown® Safety Guide →"':
+  - generic: "Source: National Weather Service — Turn Around, Don’t Drown® Safety Guide →"

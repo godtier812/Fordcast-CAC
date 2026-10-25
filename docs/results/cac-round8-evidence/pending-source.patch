@@ -1,0 +1,2816 @@
+diff --git a/AI_USE.md b/AI_USE.md
+index 4df29b0..e6db543 100644
+--- a/AI_USE.md
++++ b/AI_USE.md
+@@ -1,5 +1,18 @@
+ # AI Use and Authorship Disclosure
+ 
++## October 24 website finalization
++
++- At the user's request, the agent applied the supplied general website audit to the
++  existing FordCast prototype. Compact map/origin layouts, persistent Drive controls,
++  translated alert rows, science wrapping, privacy/source and recovery routes,
++  production build/preview scripts, copy and documentation changes are agent-authored.
++- The agent inspected the live browser at the requested phone and desktop sizes in
++  English and Spanish, ran the existing verification suites, exported the production
++  website and saved evidence in `docs/results/cac-round8-evidence/`.
++- This work does not establish student authorship, measured user impact, fluent human
++  Spanish review, physical-iPhone acceptance or competition eligibility. The local
++  production preview is not an external deployment or a competition submission.
++
+ This document records actual authorship across the repository in accordance with §1.3 and §40.4 of the specification.
+ 
+ ## Autonomous Implementation Record
+@@ -30,3 +43,14 @@ This document records actual authorship across the repository in accordance with
+   confirmation, official endorsement or competition-policy compliance was established by this pass.
+ - Existing scientific results were not recalibrated or rewritten. The student must review the
+   implementation, understand the limits and provide truthful personal answers and disclosure.
++
++## October 24 recording-readiness pass
++
++- At the user's request, the agent added dated Valhalla preset geometry for router-outage
++  review, blocked navigation/share exports for recorded routes, serialized native speech
++  preparation, preserved mute preferences during previews, and added regression checks.
++- The agent simplified the study comparison, revised visible copy and shared control
++  geometry, and added a stable Map blur cleanup for the simulated car run.
++- The Round 7 audit, design inventory, patch, production plan and Q&A drafts are agent-authored.
++  The pass did not establish physical-iPhone acceptance, student explain-back, measured
++  community outcomes or eligibility. Browser automation was unavailable in Work settings.
+diff --git a/README.md b/README.md
+index 8ffa144..65ef968 100644
+--- a/README.md
++++ b/README.md
+@@ -1,15 +1,16 @@
+ # FordCast — Know Before It Crosses
+ 
+-A bilingual Central Texas flood-awareness research prototype for the Congressional App
+-Challenge. The vision is earlier, crossing-specific caution from truly upstream evidence.
+-The current build demonstrates that workflow with archived observations and explicitly
+-scoped reference-gauge experiments. **Road-level forecast skill is unverified.**
++A bilingual Central Texas trip-checking prototype for the Congressional App Challenge.
++Plan an Austin-area trip and inspect nearby low-water-crossing records, official closure
++reports, available creek readings, flood history and gaps in the evidence. A separate
++research view replays five historical USGS storms. **Road-level forecast skill is unverified.**
+ 
+-The app includes a searchable inventory of 141 public records, five real historical USGS
+-storm archives, causal hydrographs, EN/ES copy, local saved preferences, test-alert text
+-previews, and a simulated voice HUD. Current status remains Unknown while live telemetry
+-is disconnected. It is a supplementary tool: obey official warnings and barricades and
+-never drive into water.
++The current website combines 2,052 inventory records, groups nearby hardware records on
++a route, checks public ATXFloods/NWS/USGS sources, requests Valhalla routes, and can send
++suggested waypoints to Google Maps. Failed or stale evidence stays explicit. Four preset
++trips have dated recorded geometry for review during router outages; that fallback blocks
++external navigation and sharing. The app is supplementary: obey official warnings and
++barricades, and never drive into water.
+ 
+ ## Evidence and current limits
+ 
+@@ -28,9 +29,17 @@ never drive into water.
+   not verified historical transmission timing. The observation chart never moves future
+   readings to earlier slots.
+ - The 36-hour calm control is a smoke check. The planned 30-day calm evaluation is pending.
+-- Live ingestion, hosted jobs, actual routing and push/background delivery are unconnected.
+-  Watch toggles save preferences locally. Test alerts show text only. HUD positions and
+-  speeds are simulated; they are not a route or a live driver-safety system.
++- Browser live-source requests and routing are implemented; public-service availability
++  is outside this project's control. Hosted backend jobs and production push delivery
++  have not been established. An inactive web tab cannot provide continuous monitoring.
++- The 141-record research catalog contains 30 candidates and 111 records without gauge
++  links; only four records across two research corridors have primary-calibrated links.
++  The 2,052-record route inventory is a separate footprint, not a count of monitored roads.
++- The upstream rule detected 4/12 gauge-reference cases, missed eight and gave one false
++  alarm. The nearest-gauge baseline detected 4/12 with zero false alarms. The upstream
++  rule did not beat the baseline; neither result validates road flooding.
++- Saved preferences are local. Archived car positions and test closures are simulated;
++  labelled demonstrations block external navigation. Physical-iPhone acceptance remains pending.
+ 
+ ## Run locally
+ 
+@@ -50,9 +59,27 @@ For the local API, from the repository root in a separate terminal:
+ uv run --project backend uvicorn fordcast.api.app:app --app-dir backend --host 127.0.0.1 --port 8000
+ ```
+ 
+-The primary offline app reads bundled artifacts. The API returns offline Unknown without
+-an ingested snapshot. Web uses an inventory overview; MapLibre street tiles require a
+-native development build. Native exports do not establish real-device acceptance.
++The research views read bundled artifacts. The API returns offline Unknown without an
++ingested snapshot. The main website uses Leaflet street tiles and direct public-source
++requests; its separate science view uses an inventory diagram. Native exports do not
++establish real-device acceptance.
++
++## Production website
++
++```powershell
++Set-Location mobile
++npm run build:web
++npm run preview:web
++```
++
++The compiled site is in `mobile/dist`; its local preview is `http://localhost:8083`.
++The preview serves direct links such as `/privacy`, `/lab` and unknown routes through
++the app shell. Production hosting must provide the same single-page history fallback.
++`mobile/public/_redirects` supplies that rule for hosts that support Netlify-style redirects.
++No external deployment or submission is implied by a successful local build.
++
++See the [final website review](docs/results/cac-round8-website-finalization-2026-10-24.md)
++for implemented fixes, screenshots, test results and remaining acceptance limits.
+ 
+ ## Reproduce and verify
+ 
+diff --git a/mobile/package.json b/mobile/package.json
+index 1ddc99b..9e78443 100644
+--- a/mobile/package.json
++++ b/mobile/package.json
+@@ -79,6 +79,8 @@
+     "android": "expo start --android",
+     "ios": "expo start --ios",
+     "web": "expo start --web",
++    "build:web": "expo export --platform web --output-dir dist",
++    "preview:web": "node ../tools/serve_web.mjs",
+     "lint": "expo lint",
+     "typecheck": "tsc --noEmit",
+     "test": "jest --runInBand",
+diff --git a/mobile/src/__tests__/round2-probes.test.ts b/mobile/src/__tests__/round2-probes.test.ts
+index 3aaa3e7..bc44c30 100644
+--- a/mobile/src/__tests__/round2-probes.test.ts
++++ b/mobile/src/__tests__/round2-probes.test.ts
+@@ -20,7 +20,7 @@ import {
+ } from '@/lib/guardian';
+ import * as webGuardian from '@/lib/guardian.web';
+ import { assessRouteCoverage } from '@/lib/routing';
+-import { getVoiceMuted, setVoiceMuted, speak } from '@/lib/voice';
++import { getVoiceMuted, prepareAudio, setVoiceMuted, speak } from '@/lib/voice';
+ import type { CrossingStatus } from '@/lib/monitor-context';
+ 
+ const base = (patch: Partial<CrossingStatus> = {}): CrossingStatus => ({
+@@ -203,7 +203,7 @@ describe('round 2 & round 3 adversarial audit', () => {
+     expect(fgHazards[0]?.source).toBe('nws');
+   });
+ 
+-  test('setVoiceMuted blocks forced automatic speech at the speech engine and restores when unmuted', () => {
++  test('setVoiceMuted blocks forced automatic speech at the speech engine and restores when unmuted', async () => {
+     const speakSpy = jest.spyOn(Speech, 'speak').mockImplementation(() => {});
+     try {
+       setVoiceMuted(true);
+@@ -214,6 +214,8 @@ describe('round 2 & round 3 adversarial audit', () => {
+       setVoiceMuted(false);
+       expect(getVoiceMuted()).toBe(false);
+       speak('Unmuted active alert phrase', 'en', { force: true });
++      await prepareAudio();
++      await Promise.resolve();
+       expect(speakSpy).toHaveBeenCalledTimes(1);
+     } finally {
+       setVoiceMuted(false);
+diff --git a/mobile/src/__tests__/round6-ios-voice-probes.test.ts b/mobile/src/__tests__/round6-ios-voice-probes.test.ts
+index eb58661..9a86c71 100644
+--- a/mobile/src/__tests__/round6-ios-voice-probes.test.ts
++++ b/mobile/src/__tests__/round6-ios-voice-probes.test.ts
+@@ -23,9 +23,13 @@ afterEach(() => {
+   jest.clearAllMocks();
+ });
+ 
+-test('an explicit native voice preview can play while automatic voice alerts remain muted', () => {
++test('an explicit native voice preview waits for setup and plays while automatic voice alerts remain muted', async () => {
+   setVoiceMuted(true);
+   speak('Preview only. Never drive into water.', 'en', { force: true, allowWhenMuted: true });
++  expect(Speech.speak).not.toHaveBeenCalled();
++  mockReady();
++  await prepareAudio();
++  await Promise.resolve();
+   expect(Speech.speak).toHaveBeenCalledTimes(1);
+ });
+ 
+@@ -40,3 +44,10 @@ test('native speech waits for the audio-session preparation promise before playb
+   }
+   expect(Speech.speak).toHaveBeenCalledTimes(1);
+ });
++
++test('stopping a pending native utterance prevents it from playing after setup', async () => {
++  speak('Simulation. Never drive into water.', 'es', { force: true });
++  stopSpeaking();
++  await Promise.resolve();
++  expect(Speech.speak).not.toHaveBeenCalled();
++});
+diff --git a/mobile/src/__tests__/round6-provider-probes.test.tsx b/mobile/src/__tests__/round6-provider-probes.test.tsx
+index d58da84..6405f57 100644
+--- a/mobile/src/__tests__/round6-provider-probes.test.tsx
++++ b/mobile/src/__tests__/round6-provider-probes.test.tsx
+@@ -155,6 +155,17 @@ test('starting a different normal trip removes the simulated closure from the pr
+   expect(monitorHolder.current?.testHazard).toBeNull();
+ });
+ 
++test('recorded preset geometry displays its limitation and cannot launch or share navigation', async () => {
++  mockPlan.mockResolvedValue({ ...plan('Recorded preset'), geometrySource: 'recorded', geometryCapturedAt: '2026-10-24T00:00:00Z' });
++  await mount();
++  await act(async () => { await monitorHolder.current!.planRoute(dest('Recorded preset')); });
++  const exports = tree.root.findAll(n => n.props.accessibilityRole === 'button' &&
++    [en['route.open_google'], en['route.share']].includes(n.props.accessibilityLabel));
++  expect(exports).toHaveLength(0);
++  const notices = tree.root.findAll(n => typeof n.props.children === 'string' && n.props.children.includes('Recorded geometry'));
++  expect(notices.length).toBeGreaterThan(0);
++});
++
+ test('a simulated closure cannot produce a real Google Maps handoff after the test detour completes, until endRouteTest is called', async () => {
+   mockPlan.mockResolvedValue(plan('A'));
+   await mount();
+@@ -175,10 +186,15 @@ test('a simulated closure cannot produce a real Google Maps handoff after the te
+   );
+   expect(handoffWhileTesting).toHaveLength(0);
+ 
+-  mockPlan.mockResolvedValue(plan('A', false));
+-  await act(async () => {
+-    await monitorHolder.current!.endRouteTest();
+-  });
++  let finishReset!: (value: RoutePlan) => void;
++  mockPlan.mockImplementation(() => new Promise<RoutePlan>(resolve => { finishReset = resolve; }));
++  let reset!: Promise<void>;
++  act(() => { reset = monitorHolder.current!.endRouteTest(); });
++  expect(monitorHolder.current?.routeBusy).toBe(true);
++  const exportsDuringReset = tree.root.findAll(n => n.props.accessibilityRole === 'button' &&
++    [en['route.open_google'], en['route.share']].includes(n.props.accessibilityLabel));
++  expect(exportsDuringReset).toHaveLength(0);
++  await act(async () => { finishReset(plan('A', false)); await reset; });
+   expect(monitorHolder.current?.testHazard).toBeNull();
+   const handoffAfterReset = tree.root.findAll(
+     (n) =>
+diff --git a/mobile/src/app/(tabs)/_layout.web.tsx b/mobile/src/app/(tabs)/_layout.web.tsx
+index b31a651..58e90b2 100644
+--- a/mobile/src/app/(tabs)/_layout.web.tsx
++++ b/mobile/src/app/(tabs)/_layout.web.tsx
+@@ -4,7 +4,7 @@ import { Pressable, StyleSheet, View, useWindowDimensions } from 'react-native';
+ import Svg, { Circle, Path } from 'react-native-svg';
+ import { usePreferences } from '@/lib/preferences';
+ import { theme as c } from '@/lib/theme';
+-import { AppText, Badge, Dip } from '@/components/fordcast/UI';
++import { AppText, Dip } from '@/components/fordcast/UI';
+ 
+ function TabIcon({
+   name,
+@@ -72,8 +72,8 @@ export default function WebTabs() {
+       { name: 'alerts', href: '/alerts', icon: 'alerts', label: t('nav.alerts') },
+     ] as const;
+     return (
+-      <Tabs style={{ flex: 1, backgroundColor: c.bg }}>
+-        <TabSlot />
++      <Tabs style={{ flex: 1, minHeight: 0, overflow: 'hidden', backgroundColor: c.bg }}>
++        <View style={{ flex: 1, minHeight: 0, overflow: 'hidden' }}><TabSlot style={{ flex: 1, minHeight: 0 }} /></View>
+         <TabList style={s.bottomBar}>
+           {items.map((it) => {
+             const active = isActive(it.href);
+@@ -90,7 +90,7 @@ export default function WebTabs() {
+   }
+ 
+   return (
+-    <Tabs style={{ flex: 1, backgroundColor: c.bg }}>
++    <Tabs style={{ flex: 1, minHeight: 0, overflow: 'hidden', backgroundColor: c.bg }}>
+       <TabList style={s.headerBar}>
+         <Pressable
+           accessibilityRole="button"
+@@ -103,7 +103,6 @@ export default function WebTabs() {
+               <AppText style={{ fontFamily: 'Inter_600SemiBold', fontSize: 18, lineHeight: 22 }}>
+                 FordCast
+               </AppText>
+-              <Badge label="EXPERIMENTAL" color={c.watch} bg={c.watchDim} />
+             </View>
+             <AppText style={{ color: c.subtle, fontSize: 11, lineHeight: 15 }}>
+               {t('home.tagline')}
+@@ -165,7 +164,7 @@ export default function WebTabs() {
+           </Pressable>
+         </View>
+       </TabList>
+-      <TabSlot />
++      <View style={{ flex: 1, minHeight: 0, overflow: 'hidden' }}><TabSlot style={{ flex: 1, minHeight: 0 }} /></View>
+     </Tabs>
+   );
+ }
+@@ -209,7 +208,7 @@ const s = StyleSheet.create({
+     flexDirection: 'row',
+     alignItems: 'center',
+     gap: 7,
+-    minHeight: 38,
++    minHeight: 44,
+     paddingVertical: 7,
+     paddingHorizontal: 14,
+     borderRadius: 10,
+@@ -237,6 +236,8 @@ const s = StyleSheet.create({
+     color: c.water,
+   },
+   utilBtn: {
++    minHeight: 44,
++    justifyContent: 'center',
+     paddingVertical: 7,
+     paddingHorizontal: 12,
+     borderRadius: 10,
+diff --git a/mobile/src/app/(tabs)/alerts.tsx b/mobile/src/app/(tabs)/alerts.tsx
+index d882096..02503f3 100644
+--- a/mobile/src/app/(tabs)/alerts.tsx
++++ b/mobile/src/app/(tabs)/alerts.tsx
+@@ -1,6 +1,6 @@
+ import { useEffect, useState, type ReactNode } from 'react';
+ import { router } from 'expo-router';
+-import { Platform, Pressable, ScrollView, Switch, View } from 'react-native';
++import { Platform, Pressable, ScrollView, Switch, View, useWindowDimensions } from 'react-native';
+ import { SafeAreaView } from 'react-native-safe-area-context';
+ import { AppText } from '@/components/fordcast/UI';
+ import { StateGlyphSvg } from '@/components/StateBadge';
+@@ -41,8 +41,10 @@ function SetupRow({
+   ok: boolean;
+   action?: ReactNode;
+ }) {
++  const { width } = useWindowDimensions();
++  const narrow = width < 400;
+   return (
+-    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 6 }}>
++    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 6, flexWrap: narrow ? 'wrap' : 'nowrap' }}>
+       <View
+         style={{
+           width: 40,
+@@ -55,13 +57,13 @@ function SetupRow({
+       >
+         <FcIcon name={icon} size={18} color={ok ? ACCENT : S.textSecondary} />
+       </View>
+-      <View style={{ flex: 1 }}>
++      <View style={{ flex: 1, minWidth: narrow ? 140 : 0 }}>
+         <AppText style={{ fontFamily: 'Inter_600SemiBold', fontSize: 15 }}>{title}</AppText>
+         <AppText style={{ fontSize: 13, lineHeight: 18, color: ok ? S.textSecondary : LOCKED_STATE_HEX.watch }}>
+           {status}
+         </AppText>
+       </View>
+-      {action}
++      {action ? <View style={narrow ? { width: '100%', alignItems: 'flex-end' } : undefined}>{action}</View> : null}
+     </View>
+   );
+ }
+@@ -163,8 +165,8 @@ export default function Alerts() {
+       ? t('alerts.location_on')
+       : m.customOrigin
+         ? language === 'es'
+-          ? `Punto de partida manual — ${m.customOrigin.name}`
+-          : `Custom starting point — ${m.customOrigin.name}`
++          ? `Punto de partida manual · ${m.customOrigin.name}`
++          : `Custom starting point · ${m.customOrigin.name}`
+         : m.locationPermission === 'denied'
+           ? t('alerts.location_denied')
+           : t('alerts.location_off');
+@@ -183,10 +185,6 @@ export default function Alerts() {
+ 
+   const triggerPreview = (targetPersona?: VoicePersonaId) => {
+     if (targetPersona) setVoicePersona(targetPersona);
+-    if (!m.settings.voiceAlerts) {
+-      setVoiceMuted(false);
+-      m.updateSettings({ voiceAlerts: true });
+-    }
+     setPreviewPlayed(true);
+     speak(t('alerts.voice_test_phrase'), language, {
+       force: true,
+diff --git a/mobile/src/app/_layout.tsx b/mobile/src/app/_layout.tsx
+index ef7ddae..5c7947e 100644
+--- a/mobile/src/app/_layout.tsx
++++ b/mobile/src/app/_layout.tsx
+@@ -1,4 +1,4 @@
+-import { Stack, ThemeProvider, DarkTheme } from 'expo-router';
++import { Stack, ThemeProvider, DarkTheme, usePathname, type ErrorBoundaryProps } from 'expo-router';
+ import { StatusBar } from 'expo-status-bar';
+ import { ActivityIndicator, View } from 'react-native';
+ import { GestureHandlerRootView } from 'react-native-gesture-handler';
+@@ -10,20 +10,32 @@ import { Inter_700Bold } from '@expo-google-fonts/inter/700Bold';
+ import { PreferencesProvider, usePreferences } from '@/lib/preferences';
+ import { theme } from '@/lib/theme';
+ import Pledge from '@/features/onboarding/Pledge';
+-import { AppText } from '@/components/fordcast/UI';
++import { AppText, Button } from '@/components/fordcast/UI';
+ import { AlertBanner } from '@/components/fc/Kit';
+ import { MonitorProvider } from '@/lib/monitor';
+ // Registers the background "guardian" task at startup (required by expo-task-manager).
+ import '@/lib/guardian';
++
++export function ErrorBoundary({ retry }: ErrorBoundaryProps) {
++  return (
++    <View style={{ flex: 1, backgroundColor: theme.bg, padding: 24, justifyContent: 'center', gap: 16 }}>
++      <AppText style={{ fontSize: 28, fontFamily: 'Inter_600SemiBold' }}>FordCast</AppText>
++      <AppText>This view is unavailable. Please retry. / Esta vista no está disponible. Inténtelo de nuevo.</AppText>
++      <AppText>Obey official warnings and barricades. / Respete los avisos oficiales y las barricadas.</AppText>
++      <Button title="Retry / Reintentar" onPress={() => void retry()} />
++    </View>
++  );
++}
+ function Routes() {
+-  const { ready, pledgeVersion, t, storageError } = usePreferences();
++  const { ready, pledgeVersion, t, language, storageError } = usePreferences();
++  const pathname = usePathname();
+   if (!ready)
+     return (
+       <View style={{ flex: 1, backgroundColor: theme.bg, justifyContent: 'center' }}>
+         <ActivityIndicator color={theme.text} />
+       </View>
+     );
+-  if (pledgeVersion !== 1) return <Pledge />;
++  if (pledgeVersion !== 1 && pathname !== '/privacy') return <Pledge />;
+   return (
+     <MonitorProvider>
+       <View style={{ flex: 1 }}>
+@@ -53,6 +65,8 @@ function Routes() {
+           <Stack.Screen name="settings" options={{ title: t('nav.settings') }} />
+           <Stack.Screen name="legend" options={{ title: t('map.legend') }} />
+           <Stack.Screen name="lab" options={{ title: t('lab.title') }} />
++          <Stack.Screen name="privacy" options={{ title: language === 'es' ? 'Datos y privacidad' : 'Data and privacy' }} />
++          <Stack.Screen name="+not-found" options={{ title: 'FordCast' }} />
+         </Stack>
+         <AlertBanner />
+       </View>
+diff --git a/mobile/src/app/settings.tsx b/mobile/src/app/settings.tsx
+index 4bef247..10a9bcb 100644
+--- a/mobile/src/app/settings.tsx
++++ b/mobile/src/app/settings.tsx
+@@ -38,7 +38,8 @@ export default function Settings() {
+           <AppText style={styles.muted}>{t(`settings.${key}_body`)}</AppText>
+         </Card>
+       ))}
+-      <Eyebrow>{t('common.prototype')} · 0.1.0</Eyebrow>
++      <Button secondary title={language === 'es' ? 'Datos, privacidad y límites' : 'Data, privacy and limits'} onPress={() => router.push('/privacy')} />
++      <Eyebrow>{t('common.prototype')} · 1.0.0</Eyebrow>
+       <Button secondary title={t('storms.science')} onPress={() => router.push('/lab')} />
+       <Button secondary title={t('settings.intro')} onPress={resetPledge} />
+       <Footer />
+diff --git a/mobile/src/components/CausalHydrograph.tsx b/mobile/src/components/CausalHydrograph.tsx
+index 1eb40c8..aa19caa 100644
+--- a/mobile/src/components/CausalHydrograph.tsx
++++ b/mobile/src/components/CausalHydrograph.tsx
+@@ -346,7 +346,7 @@ export default function CausalHydrograph({
+             gap: 6,
+           }}
+         >
+-          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
++          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, flexWrap: 'wrap', maxWidth: '100%' }}>
+             <AppText
+               style={[
+                 TYPOGRAPHY.chartAxis,
+diff --git a/mobile/src/components/DriverHudView.tsx b/mobile/src/components/DriverHudView.tsx
+index c9d4a94..b42a3d9 100644
+--- a/mobile/src/components/DriverHudView.tsx
++++ b/mobile/src/components/DriverHudView.tsx
+@@ -1,4 +1,4 @@
+-import { Pressable, View } from 'react-native';
++import { Pressable, ScrollView, View, useWindowDimensions } from 'react-native';
+ import Svg, { Rect } from 'react-native-svg';
+ import { AppText } from '@/components/fordcast/UI';
+ import { StateGlyphSvg } from '@/components/StateBadge';
+@@ -62,6 +62,8 @@ export default function DriverHudView({
+   onPassengerOverride?: () => void;
+ }) {
+   const { t, language, setLanguage } = usePreferences();
++  const { width, height } = useWindowDimensions();
++  const compact = width < 420 || height < 740;
+   const stateHex = LOCKED_STATE_HEX[state];
+   const stateToken = STATE_TOKENS[state];
+   const isZeroLowerBound = window != null && window[0] === 0;
+@@ -71,25 +73,25 @@ export default function DriverHudView({
+       testID="driver-hud-view"
+       style={{
+         flex: 1,
++        minHeight: 0,
+         overflow: 'hidden',
+         backgroundColor: '#070B12',
+-        justifyContent: 'space-between',
+-        paddingVertical: 14,
++        paddingVertical: compact ? 8 : 14,
+       }}
+     >
++      <ScrollView style={{ flex: 1, minHeight: 0 }} contentContainerStyle={{ flexGrow: 1, gap: 12, paddingBottom: 12 }}>
+       {/* ZONE 1: Top Status & Corridor Bar (12% Height, paddingHorizontal: 20) */}
+       <View
+         style={{
+-          minHeight: '12%',
+-          paddingHorizontal: 20,
+-          flexDirection: 'row',
+-          alignItems: 'center',
++          paddingHorizontal: compact ? 14 : 20,
++          flexDirection: compact ? 'column' : 'row',
++          alignItems: compact ? 'stretch' : 'center',
+           justifyContent: 'space-between',
+           gap: 12,
+         }}
+       >
+         <View style={{ flex: 1, gap: 2 }}>
+-          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
++          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+             <View
+               style={{
+                 backgroundColor: '#131B2E',
+@@ -135,7 +137,7 @@ export default function DriverHudView({
+           </AppText>
+         </View>
+ 
+-        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
++        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, justifyContent: 'flex-end' }}>
+           {onToggleSpeedSim && (
+             <Pressable
+               role="button"
+@@ -196,23 +198,23 @@ export default function DriverHudView({
+       {/* ZONE 2: Massive Triple-Redundancy Hero Card (48% Height) */}
+       <View
+         style={{
+-          minHeight: '44%',
+-          marginHorizontal: 20,
+-          borderRadius: 20,
++          flexGrow: 1,
++          marginHorizontal: compact ? 14 : 20,
++          borderRadius: 10,
+           borderWidth: 3,
+           borderColor: stateHex,
+           backgroundColor: '#0B101B',
+-          paddingHorizontal: 20,
+-          paddingVertical: 18,
++          paddingHorizontal: compact ? 12 : 20,
++          paddingVertical: compact ? 12 : 18,
+           justifyContent: 'center',
+           alignItems: 'center',
+-          gap: 14,
++          gap: compact ? 8 : 14,
+         }}
+       >
+         <View
+           style={{
+-            width: 96,
+-            height: 96,
++            width: compact ? 60 : 96,
++            height: compact ? 60 : 96,
+             borderRadius: 48,
+             backgroundColor: stateToken.darkBg,
+             borderWidth: 3,
+@@ -221,7 +223,7 @@ export default function DriverHudView({
+             alignItems: 'center',
+           }}
+         >
+-          <StateGlyphSvg state={state} size={64} />
++          <StateGlyphSvg state={state} size={compact ? 40 : 64} />
+         </View>
+ 
+         <AppText
+@@ -233,6 +235,7 @@ export default function DriverHudView({
+             {
+               color: '#F8FAFC',
+               textAlign: 'center',
++              ...(compact ? { fontSize: 28, lineHeight: 34 } : {}),
+             },
+           ]}
+         >
+@@ -264,6 +267,8 @@ export default function DriverHudView({
+                 style={{
+                   paddingHorizontal: 12,
+                   paddingVertical: 6,
++                  minHeight: 44,
++                  justifyContent: 'center',
+                   borderRadius: 8,
+                   backgroundColor: '#131B2E',
+                   borderWidth: 1,
+@@ -284,6 +289,8 @@ export default function DriverHudView({
+                 style={{
+                   paddingHorizontal: 12,
+                   paddingVertical: 6,
++                  minHeight: 44,
++                  justifyContent: 'center',
+                   borderRadius: 8,
+                   backgroundColor: '#131B2E',
+                   borderWidth: 1,
+@@ -330,8 +337,7 @@ export default function DriverHudView({
+       {/* ZONE 3: Glanceable Arrival Bucket / t('state.now') Alert (20% Height) */}
+       <View
+         style={{
+-          minHeight: '18%',
+-          marginHorizontal: 20,
++          marginHorizontal: compact ? 14 : 20,
+           justifyContent: 'center',
+         }}
+       >
+@@ -344,7 +350,7 @@ export default function DriverHudView({
+             accessibilityLiveRegion="assertive"
+             style={{
+               minHeight: 72,
+-              borderRadius: 16,
++              borderRadius: 10,
+               backgroundColor: '#380D1A',
+               borderWidth: 3,
+               borderColor: '#FF5470',
+@@ -383,7 +389,7 @@ export default function DriverHudView({
+           <View
+             style={{
+               height: 64,
+-              borderRadius: 16,
++              borderRadius: 10,
+               backgroundColor: stateToken.darkBg,
+               borderWidth: 2,
+               borderColor: stateHex,
+@@ -405,7 +411,7 @@ export default function DriverHudView({
+           <View
+             style={{
+               height: 64,
+-              borderRadius: 16,
++              borderRadius: 10,
+               backgroundColor: '#131B2E',
+               borderWidth: 1.5,
+               borderColor: '#23304D',
+@@ -425,15 +431,16 @@ export default function DriverHudView({
+           </View>
+         )}
+       </View>
++      </ScrollView>
+ 
+       {/* ZONE 4: Tactile Bottom Audio & Exit Deck (20% Height) */}
+       <View
+         style={{
+-          minHeight: '18%',
+-          paddingHorizontal: 20,
++          paddingHorizontal: compact ? 14 : 20,
+           flexDirection: 'row',
+           alignItems: 'center',
+-          gap: 16,
++          gap: compact ? 8 : 16,
++          paddingTop: 8,
+         }}
+       >
+         <Pressable
+@@ -442,27 +449,29 @@ export default function DriverHudView({
+           accessibilityLabel={t('drive.repeat')}
+           onPress={onRepeatVoice}
+           style={({ pressed }) => ({
+-            flex: 1.2,
+-            minHeight: 72,
+-            borderRadius: 18,
++            flex: 1,
++            minWidth: 0,
++            minHeight: compact ? 56 : 72,
++            borderRadius: 8,
+             backgroundColor: '#F8FAFC',
+             flexDirection: 'row',
+             justifyContent: 'center',
+             alignItems: 'center',
+             gap: 10,
+-            paddingHorizontal: 14,
++            paddingHorizontal: compact ? 6 : 14,
+             opacity: pressed ? 0.8 : 1,
+           })}
+         >
+-          <WaveformSvg active={!muted} />
++          {!compact && <WaveformSvg active={!muted} />}
+           <AppText
+             style={{
+               fontFamily: 'Inter_600SemiBold',
+               fontWeight: '700',
+-              fontSize: 16,
++              fontSize: compact ? 12 : 16,
+               lineHeight: 20,
+               color: '#070B12',
+-              textTransform: 'uppercase',
++              flexShrink: 1,
++              textAlign: 'center',
+             }}
+           >
+             {t('drive.repeat')}
+@@ -475,9 +484,11 @@ export default function DriverHudView({
+           accessibilityLabel={t(muted ? 'drive.unmute' : 'drive.mute')}
+           onPress={onToggleMute}
+           style={({ pressed }) => ({
+-            minHeight: 72,
+-            paddingHorizontal: 16,
+-            borderRadius: 18,
++            flex: 1,
++            minWidth: 0,
++            minHeight: compact ? 56 : 72,
++            paddingHorizontal: compact ? 6 : 16,
++            borderRadius: 8,
+             backgroundColor: '#131B2E',
+             borderWidth: 1.5,
+             borderColor: '#23304D',
+@@ -490,10 +501,11 @@ export default function DriverHudView({
+             style={{
+               fontFamily: 'Inter_600SemiBold',
+               fontWeight: '700',
+-              fontSize: 14,
++              fontSize: compact ? 12 : 14,
+               lineHeight: 18,
+               color: '#F8FAFC',
+-              textTransform: 'uppercase',
++              flexShrink: 1,
++              textAlign: 'center',
+             }}
+           >
+             {t(muted ? 'drive.unmute' : 'drive.mute')}
+@@ -507,14 +519,15 @@ export default function DriverHudView({
+           onPress={onExitHud}
+           style={({ pressed }) => ({
+             flex: 1,
+-            minHeight: 72,
+-            borderRadius: 18,
++            minWidth: 0,
++            minHeight: compact ? 56 : 72,
++            borderRadius: 8,
+             backgroundColor: '#1C2740',
+             borderWidth: 2,
+             borderColor: '#5294FF',
+             justifyContent: 'center',
+             alignItems: 'center',
+-            paddingHorizontal: 14,
++            paddingHorizontal: compact ? 6 : 14,
+             opacity: pressed ? 0.8 : 1,
+           })}
+         >
+@@ -522,10 +535,11 @@ export default function DriverHudView({
+             style={{
+               fontFamily: 'Inter_600SemiBold',
+               fontWeight: '700',
+-              fontSize: 16,
++              fontSize: compact ? 12 : 16,
+               lineHeight: 20,
+               color: '#F8FAFC',
+-              textTransform: 'uppercase',
++              flexShrink: 1,
++              textAlign: 'center',
+             }}
+           >
+             {t('drive.stop_sim')}
+diff --git a/mobile/src/components/ProvenanceCard.tsx b/mobile/src/components/ProvenanceCard.tsx
+index ab75e6e..4426530 100644
+--- a/mobile/src/components/ProvenanceCard.tsx
++++ b/mobile/src/components/ProvenanceCard.tsx
+@@ -347,7 +347,7 @@ export default function ProvenanceCard({
+               }}
+             >
+               <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 6 }}>
+-                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
++                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, maxWidth: '100%' }}>
+                   <Svg width={14} height={14} viewBox="0 0 16 16">
+                     <Path
+                       d="M8 1.5L14 4.5V11.5L8 14.5L2 11.5V4.5L8 1.5Z"
+@@ -363,6 +363,7 @@ export default function ProvenanceCard({
+                       fontFamily: 'Inter_600SemiBold',
+                       fontWeight: '700',
+                       fontSize: 12,
++                      flexShrink: 1,
+                       lineHeight: 16,
+                       color: isCurrent ? '#F8FAFC' : SURFACES.dark.textSecondary,
+                     }}
+@@ -377,7 +378,7 @@ export default function ProvenanceCard({
+                       { color: rung.accent, fontSize: 10, fontWeight: '700' },
+                     ]}
+                   >
+-                    ● ACTIVE CROSSING TIER
++                    {language === 'es' ? 'NIVEL DEL CRUCE SELECCIONADO' : 'SELECTED CROSSING TIER'}
+                   </AppText>
+                 )}
+               </View>
+diff --git a/mobile/src/components/ValidationScorecardModal.tsx b/mobile/src/components/ValidationScorecardModal.tsx
+index 834299f..aeae482 100644
+--- a/mobile/src/components/ValidationScorecardModal.tsx
++++ b/mobile/src/components/ValidationScorecardModal.tsx
+@@ -6,7 +6,7 @@ import { HYDROGRAPH_TOKENS, LOCKED_STATE_HEX, SURFACES, TYPOGRAPHY } from '@/the
+ 
+ export const SCORECARD_COPY = {
+   en: {
+-    badge: '📊 LOSO VALIDATION',
++    badge: 'LOSO VALIDATION',
+     title: 'Leave-One-Storm-Out (LOSO) Cross-Validation Scorecard',
+     subtitle:
+       'Empirical gauge-lag parameters for each storm fold are calibrated strictly on the remaining historical storms to prevent in-sample overfitting.',
+@@ -25,7 +25,7 @@ export const SCORECARD_COPY = {
+       '3. Comparator Parity: Against the true WGS84 geodesic nearest gauge, both the upstream rule and nearest-gauge comparator achieve a 65.0 min median lead time (POD 33.3%).',
+   },
+   es: {
+-    badge: '📊 VALIDACIÓN LOSO',
++    badge: 'VALIDACIÓN LOSO',
+     title: 'Tarjeta de Validación Cruzada Leave-One-Storm-Out (LOSO)',
+     subtitle:
+       'Los parámetros empíricos de desfase para cada tormenta se calibran estrictamente con las tormentas históricas restantes para evitar el sobreajuste.',
+@@ -67,7 +67,7 @@ export default function ValidationScorecardModal({
+       testID="validation-scorecard"
+       style={{
+         backgroundColor: SURFACES.dark.elevated1,
+-        borderRadius: 16,
++        borderRadius: 10,
+         borderWidth: 1,
+         borderColor: SURFACES.dark.borderSubtle,
+         padding: 16,
+@@ -87,11 +87,7 @@ export default function ValidationScorecardModal({
+           <View
+             style={{
+               alignSelf: 'flex-start',
+-              backgroundColor: 'rgba(56, 189, 248, 0.14)',
+-              borderColor: HYDROGRAPH_TOKENS.dark.upstreamStroke,
+-              borderWidth: 1,
+-              borderRadius: 999,
+-              paddingHorizontal: 9,
++              maxWidth: '100%',
+               paddingVertical: 2,
+             }}
+           >
+@@ -118,11 +114,11 @@ export default function ValidationScorecardModal({
+           <Pressable
+             role="button"
+             accessibilityRole="button"
+-            accessibilityLabel="Close scorecard"
++            accessibilityLabel={language === 'es' ? 'Cerrar resultados' : 'Close scorecard'}
+             onPress={onClose}
+             style={{
+-              width: 36,
+-              height: 36,
++              width: 44,
++              height: 44,
+               borderRadius: 10,
+               backgroundColor: SURFACES.dark.elevated2,
+               borderWidth: 1,
+diff --git a/mobile/src/components/fc/Kit.tsx b/mobile/src/components/fc/Kit.tsx
+index f4d1c1c..39b60f8 100644
+--- a/mobile/src/components/fc/Kit.tsx
++++ b/mobile/src/components/fc/Kit.tsx
+@@ -128,7 +128,7 @@ export function Segmented<T extends string>({
+             onPress={() => onChange(o.value)}
+             style={{
+               flex: 1,
+-              minHeight: 38,
++              minHeight: 44,
+               borderRadius: 9,
+               alignItems: 'center',
+               justifyContent: 'center',
+@@ -176,9 +176,10 @@ export function Chip({
+         alignItems: 'center',
+         gap: 6,
+         paddingHorizontal: 13,
+-        minHeight: 34,
++        minHeight: 44,
+         justifyContent: 'center',
+-        borderRadius: 999,
++        borderRadius: 8,
++        maxWidth: '100%',
+         borderWidth: 1,
+         borderColor: active ? color : S.borderSubtle,
+         backgroundColor: active ? ACCENT_DIM : S.elevated1,
+@@ -191,6 +192,8 @@ export function Chip({
+           lineHeight: 17,
+           fontFamily: 'Inter_600SemiBold',
+           color: active ? S.textPrimary : S.textSecondary,
++          flexShrink: 1,
++          paddingVertical: 8,
+         }}
+       >
+         {label}
+@@ -223,7 +226,8 @@ export function ActionButton({
+       onPress={onPress}
+       style={({ pressed }) => [
+         {
+-          minHeight: compact ? 40 : 48,
++          minHeight: compact ? 44 : 48,
++          maxWidth: '100%',
+           paddingHorizontal: compact ? 14 : 18,
+           borderRadius: 12,
+           backgroundColor: bg,
+@@ -239,7 +243,7 @@ export function ActionButton({
+       ]}
+     >
+       {icon ? <FcIcon name={icon} size={compact ? 14 : 16} color={fg} /> : null}
+-      <AppText style={{ fontFamily: 'Inter_600SemiBold', fontSize: compact ? 14 : 15, lineHeight: 19, color: fg }}>
++      <AppText style={{ flexShrink: 1, paddingVertical: 8, fontFamily: 'Inter_600SemiBold', fontSize: compact ? 14 : 15, lineHeight: 19, color: fg }}>
+         {label}
+       </AppText>
+     </Pressable>
+@@ -252,7 +256,7 @@ export function Panel({ children, style }: PropsWithChildren<{ style?: StyleProp
+       style={[
+         {
+           backgroundColor: S.elevated1,
+-          borderRadius: 16,
++          borderRadius: 10,
+           borderWidth: 1,
+           borderColor: S.borderSubtle,
+           padding: 16,
+@@ -451,7 +455,7 @@ export function FloodPhysicsCard() {
+   }[depthIn];
+ 
+   return (
+-    <Panel style={{ borderColor: depthData.badgeColor, borderLeftWidth: 4, gap: 12 }}>
++    <Panel style={{ borderColor: depthData.badgeColor, gap: 12 }}>
+       <View style={{ gap: 4 }}>
+         <AppText style={{ fontFamily: 'Inter_700Bold', fontSize: 17, lineHeight: 22 }}>
+           {t('physics.title')}
+diff --git a/mobile/src/components/fordcast/UI.tsx b/mobile/src/components/fordcast/UI.tsx
+index 2affbb8..d15191f 100644
+--- a/mobile/src/components/fordcast/UI.tsx
++++ b/mobile/src/components/fordcast/UI.tsx
+@@ -155,6 +155,7 @@ export function Button({
+       <AppText
+         style={{
+           color: secondary ? c.text : c.bg,
++          flexShrink: 1,
+           fontFamily: 'Inter_600SemiBold',
+           fontSize: compact ? 13 : 15,
+           lineHeight: compact ? 18 : 20,
+@@ -242,7 +243,7 @@ export const styles = StyleSheet.create({
+     maxWidth: 1080,
+     alignSelf: 'center',
+   },
+-  body: { color: c.text, fontSize: 15, lineHeight: 23, fontFamily: 'Inter_400Regular' },
++  body: { color: c.text, fontSize: 15, lineHeight: 23, fontFamily: 'Inter_400Regular', maxWidth: '100%' },
+   title: {
+     fontSize: 32,
+     lineHeight: 38,
+@@ -266,6 +267,7 @@ export const styles = StyleSheet.create({
+     gap: 12,
+   },
+   button: {
++    maxWidth: '100%',
+     minHeight: 46,
+     justifyContent: 'center',
+     alignItems: 'center',
+@@ -277,7 +279,7 @@ export const styles = StyleSheet.create({
+     backgroundColor: c.water,
+   },
+   buttonCompact: {
+-    minHeight: 36,
++    minHeight: 44,
+     paddingVertical: 7,
+     paddingHorizontal: 13,
+     borderRadius: 10,
+@@ -291,7 +293,7 @@ export const styles = StyleSheet.create({
+     flexDirection: 'row',
+     alignItems: 'center',
+     gap: 7,
+-    minHeight: 36,
++    minHeight: 44,
+     paddingVertical: 7,
+     paddingHorizontal: 13,
+     borderRadius: 999,
+diff --git a/mobile/src/features/map/MapSurface.web.tsx b/mobile/src/features/map/MapSurface.web.tsx
+index 227d236..39a6bb1 100644
+--- a/mobile/src/features/map/MapSurface.web.tsx
++++ b/mobile/src/features/map/MapSurface.web.tsx
+@@ -115,7 +115,7 @@ export default function MapSurface({
+           gap: 8,
+         }}
+       >
+-        <View style={{ gap: 1 }}>
++        <View style={{ gap: 1, maxWidth: '100%', minWidth: 0, flexShrink: 1 }}>
+           <AppText style={{ fontFamily: 'Inter_600SemiBold', fontWeight: '700', fontSize: 13 }}>
+             {t('map.preview')}
+           </AppText>
+@@ -132,9 +132,9 @@ export default function MapSurface({
+             accessibilityLabel={`${language === 'es' ? 'Cruces sin sensor' : 'Crossings without sensors'} (${tierCFeatures.length}) · ${tierCMode === 'compact' ? (language === 'es' ? 'Resumen' : 'Compact') : (language === 'es' ? 'Detalle' : 'Full')}`}
+             onPress={() => setTierCMode((m) => (m === 'compact' ? 'full' : 'compact'))}
+             style={{
+-              height: 28,
++              minHeight: 44,
+               paddingHorizontal: 10,
+-              borderRadius: 999,
++              borderRadius: 8,
+               backgroundColor: SURFACES.dark.elevated2,
+               borderWidth: 1,
+               borderColor: LOCKED_STATE_HEX.unknown,
+@@ -374,7 +374,7 @@ export default function MapSurface({
+       >
+         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+           <AppText style={[TYPOGRAPHY.chartAxis, { color: SURFACES.dark.textSecondary, fontSize: 10 }]}>
+-            TIER B MONITORED CORRIDOR PILLS (26PX TRIPLE-REDUNDANCY) · TAP TO INSPECT
++            {language === 'es' ? 'CANDIDATOS DE ESTUDIO · TOQUE PARA REVISAR' : 'RESEARCH CANDIDATES · TAP TO INSPECT'}
+           </AppText>
+           {tierCMode === 'full' && tierCFeatures[0] && (
+             <StateBadge
+@@ -402,10 +402,12 @@ export default function MapSurface({
+                 }}
+                 style={{
+                   flexDirection: 'row',
++                  minHeight: 44,
++                  maxWidth: '100%',
+                   alignItems: 'center',
+                   gap: 6,
+                   paddingRight: 8,
+-                  borderRadius: 14,
++                  borderRadius: 8,
+                   backgroundColor: isSel ? '#1C2740' : '#131B2E',
+                   borderWidth: isSel ? 1.5 : 1,
+                   borderColor: isSel ? '#5294FF' : '#23304D',
+@@ -417,6 +419,7 @@ export default function MapSurface({
+                   style={{
+                     fontSize: 11,
+                     lineHeight: 14,
++                    flexShrink: 1,
+                     color: isSel ? '#F8FAFC' : '#94A3B8',
+                     fontFamily: 'Inter_600SemiBold',
+                   }}
+diff --git a/mobile/src/features/onboarding/Pledge.tsx b/mobile/src/features/onboarding/Pledge.tsx
+index 8f05907..b696cf6 100644
+--- a/mobile/src/features/onboarding/Pledge.tsx
++++ b/mobile/src/features/onboarding/Pledge.tsx
+@@ -1,4 +1,5 @@
+ import { useState } from 'react';
++import { router } from 'expo-router';
+ import { Pressable, View } from 'react-native';
+ import Svg, { Path } from 'react-native-svg';
+ import {
+@@ -10,7 +11,6 @@ import {
+   Eyebrow,
+   Footer,
+   Page,
+-  StatusGlyph,
+   Title,
+   styles,
+ } from '@/components/fordcast/UI';
+@@ -25,12 +25,11 @@ export default function Pledge() {
+   return (
+     <Page>
+       <View style={[styles.row, { justifyContent: 'space-between', flexWrap: 'wrap' }]}>
+-        <View style={styles.row}>
+-          <Dip size={52} />
+-          <View>
+-            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
++        <View style={[styles.row, { flex: 1, minWidth: 0 }]}>
++          <Dip size={36} />
++          <View style={{ flex: 1, minWidth: 0 }}>
++            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+               <Eyebrow color={c.water}>{t('app.name')}</Eyebrow>
+-              <Badge label={t('onboarding.pledge.pilot_badge')} color={c.replay} bg={c.replayDim} />
+             </View>
+             <AppText style={{ color: c.subtle, fontSize: 12, lineHeight: 17 }}>
+               {t('onboarding.pledge.subtitle')}
+@@ -48,20 +47,15 @@ export default function Pledge() {
+       <View
+         style={{
+           backgroundColor: c.surface,
+-          borderRadius: 22,
++          borderRadius: 10,
+           borderWidth: 1,
+           borderColor: c.borderBright,
+-          padding: 24,
++          padding: 18,
+           gap: 14,
+         }}
+       >
+         <View style={[styles.row, { justifyContent: 'space-between', flexWrap: 'wrap' }]}>
+-          <Badge label={t('onboarding.pledge.required_badge')} color={c.watch} bg={c.watchDim} />
+-          <View style={{ flexDirection: 'row', gap: 8 }}>
+-            <StatusGlyph state="watch" size={26} />
+-            <StatusGlyph state="avoid" size={26} />
+-            <StatusGlyph state="unknown" size={26} />
+-          </View>
++          <Eyebrow color={c.watch}>{t('onboarding.pledge.required_badge')}</Eyebrow>
+         </View>
+         <Title>{t('app.tagline')}</Title>
+         <AppText style={styles.muted}>{t('onboarding.prototype')}</AppText>
+@@ -89,7 +83,7 @@ export default function Pledge() {
+               styles.row,
+               {
+                 padding: 16,
+-                borderRadius: 14,
++                borderRadius: 8,
+                 borderWidth: 1,
+                 borderColor: checked ? c.water : c.border,
+                 backgroundColor: checked ? c.waterDim : c.land,
+@@ -151,6 +145,7 @@ export default function Pledge() {
+           />
+         </View>
+       </Card>
++      <Button secondary title={language === 'es' ? 'Datos, privacidad y límites' : 'Data, privacy and limits'} onPress={() => router.push('/privacy')} />
+       <Footer />
+     </Page>
+   );
+diff --git a/mobile/src/lib/routing.ts b/mobile/src/lib/routing.ts
+index 6067064..8aea738 100644
+--- a/mobile/src/lib/routing.ts
++++ b/mobile/src/lib/routing.ts
+@@ -3,6 +3,7 @@
+  * exclude specific points — exactly what's needed to route around a flooded crossing.
+  */
+ import { distanceKm, insideCoverage, type LatLon } from './geo';
++import recordedPresets from '../../assets/demo/commute_presets.json';
+ 
+ export type Route = { coords: LatLon[]; km: number; min: number };
+ export type HazardLevel = 'block' | 'caution';
+@@ -27,6 +28,9 @@ export type RoutePlan = {
+   remaining: RouteHazard[];
+   extraMin: number;
+   computedAt: number;
++  /** Recorded geometry is review-only and must never be exported for navigation. */
++  geometrySource?: 'live' | 'recorded';
++  geometryCapturedAt?: string;
+   /** True when the origin, destination, or route segments leave FordCast's Central Texas crossing inventory footprint. */
+   outsideCoverage?: boolean;
+   /** Fraction [0, 1] of route coordinates inside FordCast's supported Central Texas coverage footprint. */
+@@ -123,28 +127,38 @@ export async function fetchRoute(
+   exclude: LatLon[] = [],
+   signal?: AbortSignal,
+ ): Promise<Route | null> {
+-  const res = await fetch(VALHALLA, {
+-    method: 'POST',
+-    signal,
+-    headers: { 'Content-Type': 'application/json' },
+-    body: JSON.stringify({
+-      locations: points.map((p) => ({ lat: p.lat, lon: p.lon })),
+-      costing: 'auto',
+-      exclude_locations: exclude.map((p) => ({ lat: p.lat, lon: p.lon })),
+-      directions_options: { units: 'kilometers' },
+-    }),
+-  });
+-  if (res.status === 400) return null; // Valhalla: no route possible with these exclusions
+-  if (!res.ok) throw new Error(`Router ${res.status}`);
+-  const j = (await res.json()) as {
+-    trip?: { legs?: { shape: string }[]; summary?: { length: number; time: number } };
+-  };
+-  if (!j.trip?.legs?.length || !j.trip.summary) return null;
+-  return {
+-    coords: j.trip.legs.flatMap((l) => decodePolyline6(l.shape)),
+-    km: j.trip.summary.length,
+-    min: j.trip.summary.time / 60,
+-  };
++  const request = new AbortController();
++  const abort = () => request.abort();
++  if (signal?.aborted) request.abort();
++  signal?.addEventListener('abort', abort);
++  const deadline = setTimeout(abort, 5000);
++  try {
++    const res = await fetch(VALHALLA, {
++      method: 'POST',
++      signal: request.signal,
++      headers: { 'Content-Type': 'application/json' },
++      body: JSON.stringify({
++        locations: points.map((p) => ({ lat: p.lat, lon: p.lon })),
++        costing: 'auto',
++        exclude_locations: exclude.map((p) => ({ lat: p.lat, lon: p.lon })),
++        directions_options: { units: 'kilometers' },
++      }),
++    });
++    if (res.status === 400) return null; // Valhalla: no route possible with these exclusions
++    if (!res.ok) throw new Error(`Router ${res.status}`);
++    const j = (await res.json()) as {
++      trip?: { legs?: { shape: string }[]; summary?: { length: number; time: number } };
++    };
++    if (!j.trip?.legs?.length || !j.trip.summary) return null;
++    return {
++      coords: j.trip.legs.flatMap((l) => decodePolyline6(l.shape)),
++      km: j.trip.summary.length,
++      min: j.trip.summary.time / 60,
++    };
++  } finally {
++    clearTimeout(deadline);
++    signal?.removeEventListener('abort', abort);
++  }
+ }
+ 
+ /** Distance (m) from point p to segment a–b plus position t∈[0,1] along it; equirectangular is accurate at city scale. */
+@@ -162,7 +176,10 @@ function segDist(p: LatLon, a: LatLon, b: LatLon): { d: number; t: number } {
+   return { d: Math.sqrt(x * x + y * y) * 111_320, t };
+ }
+ 
+-export function distanceToRouteM(p: LatLon, coords: LatLon[]): { d: number; index: number; t: number } {
++export function distanceToRouteM(
++  p: LatLon,
++  coords: LatLon[],
++): { d: number; index: number; t: number } {
+   let best = { d: Infinity, index: 0, t: 0 };
+   for (let i = 0; i + 1 < coords.length; i++) {
+     const s = segDist(p, coords[i]!, coords[i + 1]!);
+@@ -241,6 +258,51 @@ export async function planSafeRoute(
+   hazards: RouteHazard[],
+   signal?: AbortSignal,
+   maxCautionDetourMin = 12,
++): Promise<RoutePlan | null> {
++  try {
++    const plan = await planNetworkRoute(
++      origin,
++      destination,
++      destinationName,
++      hazards,
++      signal,
++      maxCautionDetourMin,
++    );
++    if (plan) return { ...plan, geometrySource: 'live' };
++  } catch (error) {
++    if (signal?.aborted) throw error;
++  }
++  if (signal?.aborted) return null;
++  const same = (a: LatLon, b: LatLon) =>
++    Math.abs(a.lat - b.lat) < 0.000001 && Math.abs(a.lon - b.lon) < 0.000001;
++  const preset = recordedPresets.presets.find(
++    (p) => same(p.origin, origin) && same(p.destination, destination),
++  );
++  if (!preset) return null;
++  const route = { coords: preset.shapes.flatMap(decodePolyline6), km: preset.km, min: preset.min };
++  return {
++    origin,
++    destination,
++    destinationName,
++    route,
++    baseline: route,
++    avoided: [],
++    remaining: hazardsOnRoute(route.coords, hazards),
++    extraMin: 0,
++    computedAt: Date.now(),
++    geometrySource: 'recorded',
++    geometryCapturedAt: recordedPresets.capturedAt,
++    ...assessRouteCoverage(origin, destination, route.coords),
++  };
++}
++
++async function planNetworkRoute(
++  origin: LatLon,
++  destination: LatLon,
++  destinationName: string,
++  hazards: RouteHazard[],
++  signal: AbortSignal | undefined,
++  maxCautionDetourMin: number,
+ ): Promise<RoutePlan | null> {
+   const baseline = await fetchRoute([origin, destination], [], signal);
+   if (!baseline) return null;
+@@ -258,7 +320,8 @@ export async function planSafeRoute(
+       for (const h of onRoute) {
+         excluded.set(h.id, h);
+         excludePts.push(nearestPointOnRoute(h, route.coords));
+-        if (!excludePts.some((p) => p.lat === h.lat && p.lon === h.lon)) excludePts.push({ lat: h.lat, lon: h.lon });
++        if (!excludePts.some((p) => p.lat === h.lat && p.lon === h.lon))
++          excludePts.push({ lat: h.lat, lon: h.lon });
+       }
+       const next = await fetchRoute([origin, destination], excludePts, signal);
+       if (!next) break; // no way around these
+@@ -294,7 +357,9 @@ export async function planSafeRoute(
+  * Google Maps directions link that follows FordCast's route: up to 3 waypoints taken where
+  * the safer route strays farthest from the fastest one (Google's mobile limit is 3).
+  */
+-export function googleMapsUrl(plan: Pick<RoutePlan, 'origin' | 'destination' | 'route' | 'baseline'>): string {
++export function googleMapsUrl(
++  plan: Pick<RoutePlan, 'origin' | 'destination' | 'route' | 'baseline'>,
++): string {
+   const f = (p: LatLon) => `${p.lat.toFixed(6)},${p.lon.toFixed(6)}`;
+   const base = `https://www.google.com/maps/dir/?api=1&travelmode=driving&origin=${f(plan.origin)}&destination=${f(plan.destination)}`;
+   const coords = plan.route.coords;
+@@ -315,7 +380,11 @@ export function googleMapsUrl(plan: Pick<RoutePlan, 'origin' | 'destination' | '
+ export type Place = { name: string; detail: string; lat: number; lon: number };
+ 
+ /** Address / place search biased to Austin (Photon, OpenStreetMap data) with 10s bounded timeout. */
+-export async function searchPlaces(q: string, near: LatLon, signal?: AbortSignal): Promise<Place[]> {
++export async function searchPlaces(
++  q: string,
++  near: LatLon,
++  signal?: AbortSignal,
++): Promise<Place[]> {
+   if (q.trim().length < 3) return [];
+   const ctrl = new AbortController();
+   const timer = setTimeout(() => ctrl.abort(), 10_000);
+@@ -328,7 +397,13 @@ export async function searchPlaces(q: string, near: LatLon, signal?: AbortSignal
+     const j = (await res.json()) as {
+       features?: {
+         geometry: { coordinates: [number, number] };
+-        properties: { name?: string; street?: string; housenumber?: string; city?: string; state?: string };
++        properties: {
++          name?: string;
++          street?: string;
++          housenumber?: string;
++          city?: string;
++          state?: string;
++        };
+       }[];
+     };
+     return (j.features ?? []).map((f) => {
+diff --git a/mobile/src/lib/voice.ts b/mobile/src/lib/voice.ts
+index 3053b9e..84954fe 100644
+--- a/mobile/src/lib/voice.ts
++++ b/mobile/src/lib/voice.ts
+@@ -113,7 +113,8 @@ function playSoftChime(): void {
+   if (Platform.OS !== 'web' || typeof window === 'undefined') return;
+   try {
+     const AudioCtx =
+-      window.AudioContext || (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
++      window.AudioContext ||
++      (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
+     if (!AudioCtx) return;
+     const ctx = new AudioCtx();
+     const now = ctx.currentTime;
+@@ -159,7 +160,10 @@ export function cleanForSpeech(raw: string, language: 'en' | 'es'): string {
+     .replace(/\bPkwy\b/gi, 'Parkway')
+     .replace(/\bHwy\b/gi, 'Highway')
+     .replace(/\bnr\b/gi, language === 'es' ? 'cerca de' : 'near')
+-    .replace(/(\d+)\s*[–-]\s*(\d+)\s*min\b/gi, language === 'es' ? '$1 a $2 minutos' : '$1 to $2 minutes')
++    .replace(
++      /(\d+)\s*[–-]\s*(\d+)\s*min\b/gi,
++      language === 'es' ? '$1 a $2 minutos' : '$1 to $2 minutes',
++    )
+     .replace(/\b(\d+(?:\.\d+)?)\s*mi\b/gi, language === 'es' ? '$1 millas' : '$1 miles')
+     .replace(/\b(\d+)\s*min\b/gi, language === 'es' ? '$1 minutos' : '$1 minutes')
+     .replace(/[·—–]/g, ', ')
+@@ -175,11 +179,15 @@ function resolveClipKey(text: string, explicitKey?: string): string | null {
+   if (lower.includes('voice warnings are') || lower.includes('avisos de voz')) return 'voice_test';
+   if (lower.includes('only a test') || lower.includes('solo una prueba')) return 'test_alert';
+   if (lower === 'you have arrived.' || lower === 'ha llegado.') return 'arrived';
+-  if (lower.includes('test flooded crossing') || lower.includes('cruce inundado de prueba')) return 'sim_route';
++  if (lower.includes('test flooded crossing') || lower.includes('cruce inundado de prueba'))
++    return 'sim_route';
+   return null;
+ }
+ 
+-function pickBestWebSpeechVoice(language: 'en' | 'es', persona: VoicePersonaId): SpeechSynthesisVoice | null {
++function pickBestWebSpeechVoice(
++  language: 'en' | 'es',
++  persona: VoicePersonaId,
++): SpeechSynthesisVoice | null {
+   if (typeof window === 'undefined' || !('speechSynthesis' in window)) return null;
+   const voices = window.speechSynthesis.getVoices();
+   if (!voices.length) return null;
+@@ -348,19 +356,13 @@ export function speak(text: string, language: 'en' | 'es', opts?: SpeakOptions):
+     }
+   }
+ 
+-  const pendingPrep = audioPreparation;
+-  void prepareAudio();
+-  if (pendingPrep) {
+-    void pendingPrep
+-      .then(() => {
+-        fallbackSpeechSynthesis(cleaned, language, mySession, !!opts?.allowWhenMuted);
+-      })
+-      .catch(() => {
+-        if (mySession === speechSessionId) notifySpeaking(false);
+-      });
+-  } else {
+-    fallbackSpeechSynthesis(cleaned, language, mySession, !!opts?.allowWhenMuted);
+-  }
++  void prepareAudio()
++    .then(() => {
++      fallbackSpeechSynthesis(cleaned, language, mySession, !!opts?.allowWhenMuted);
++    })
++    .catch(() => {
++      if (mySession === speechSessionId) notifySpeaking(false);
++    });
+ }
+ 
+ export function stopSpeaking(): void {
+diff --git a/mobile/src/locales/en.json b/mobile/src/locales/en.json
+index ac570c8..3dcca85 100644
+--- a/mobile/src/locales/en.json
++++ b/mobile/src/locales/en.json
+@@ -65,7 +65,7 @@
+   "crossing.saved": "Saved crossing",
+   "crossing.remove": "Remove from saved",
+   "crossing.watch_opt_in": "Save Watch preference (local preview)",
+-  "crossing.watch_enabled": "Watch preference saved locally (preview only — live push not connected)",
++  "crossing.watch_enabled": "Watch preference saved locally (preview only · live push not connected)",
+   "crossing.why": "Why this status?",
+   "crossing.upstream_links": "Calibrated gauge relationships · research",
+   "crossing.travel_time": "Experimental gauge lag: {{tau_lo}}–{{tau_hi}} min · assumed corridor distance {{dist}} km",
+@@ -130,17 +130,17 @@
+   "drive.next_crossing": "Next",
+   "drive.prev_crossing": "Previous",
+   "drive.speed_sim": "Simulated speed: {{mph}} mph",
+-  "drive.lockout_active": "Moving fast — buttons locked.",
++  "drive.lockout_active": "Moving fast · buttons locked.",
+   "drive.passenger_override": "I'm a passenger",
+   "drive.spoken_banner": "Simulated voice preview",
+   "alerts.title": "Alerts",
+-  "alerts.body": "Get a notification and a spoken warning when a crossing near you starts to flood.",
++  "alerts.body": "Set up voice and notification warnings for reported closures, weather alerts and upstream creek rises near your trip.",
+   "alerts.empty": "Keep your regular crossings close.",
+   "alerts.empty_body": "Save a crossing from its detail screen to find it here.",
+   "alerts.browse": "Browse crossings",
+   "alerts.test_call": "Show test alert preview",
+   "alerts.test_title": "TEST ALERT (not a real flood)",
+-  "alerts.test": "TEST: Avoid {{crossing}} — simulated warning. Likely within {{lo}}–{{hi}} min. Preview only; no real flood or delivery.",
++  "alerts.test": "TEST: Avoid {{crossing}} · simulated warning. Likely within {{lo}}–{{hi}} min. Preview only; no real flood or delivery.",
+   "alerts.recent_title": "Alert preview log",
+   "settings.title": "Make it yours.",
+   "settings.language": "Language",
+@@ -204,14 +204,14 @@
+   "home.headline_alert_many": "{{count}} crossings near you need attention",
+   "home.headline_alert_body": "Tap a crossing to see why. Take another route if it says Avoid.",
+   "home.headline_quiet": "No rising water detected near you",
+-  "home.headline_quiet_body": "{{count}} watched crossings within {{radius}} mi. Sensors can miss local flash floods — always obey barricades.",
++  "home.headline_quiet_body": "{{count}} watched crossings within {{radius}} mi. Sensors can miss local flash floods · always obey barricades.",
+   "home.headline_none": "No FordCast-watched crossings within {{radius}} mi",
+   "home.headline_none_body": "The closest one FordCast watches is {{name}} ({{dist}}). You can widen your alert distance in Alerts.",
+   "home.headline_nodata": "Live sensor data unavailable",
+   "home.headline_nodata_body": "Treat every crossing as unknown. Check ATXfloods.com and follow barricades.",
+   "home.location_off": "Turn on location to see crossings near you",
+   "home.location_off_body": "Showing downtown Austin for now.",
+-  "home.location_outside": "You're outside the Austin area — showing downtown Austin.",
++  "home.location_outside": "You're outside the Austin area · showing downtown Austin.",
+   "home.location_demo": "Demo location: downtown Austin.",
+   "home.turn_on": "Turn on",
+   "home.filter_near": "Near me",
+@@ -225,7 +225,7 @@
+   "home.search": "Search road, creek, or crossing",
+   "home.empty": "No crossings match.",
+   "home.recenter": "My location",
+-  "home.drill_intro": "Replays a real past flood as if it's happening right now — same map, alerts, and voice warnings.",
++  "home.drill_intro": "Replays a real past flood as if it's happening right now · same map, alerts, and voice warnings.",
+   "home.drill_play": "Play",
+   "home.drill_pause": "Pause",
+   "home.drill_restart": "Restart",
+@@ -234,7 +234,7 @@
+   "home.show_more": "Show more",
+   "home.show_less": "Show less",
+   "home.tagline": "Low-water crossing alerts · Austin",
+-  "explain.no_rise": "The sensor upstream isn't rising. That does not mean the road is dry — heavy local rain can still flood it.",
++  "explain.no_rise": "The sensor upstream isn't rising. That does not mean the road is dry · heavy local rain can still flood it.",
+   "explain.watch": "Water is rising at the sensor upstream. Flooding here is possible. Be ready to take another route.",
+   "explain.avoid": "The upstream sensor passed its warning level. Flood water is likely to reach this crossing soon. Take another route.",
+   "explain.closed": "Water is at the road or officials closed it. Never drive into water.",
+@@ -270,16 +270,16 @@
+   "alert.test_body": "This is only a test. In a real alert you would hear which crossing to avoid.",
+   "alerts.setup": "Alert setup",
+   "alerts.location": "Location",
+-  "alerts.location_on": "On — alerts for crossings near you",
+-  "alerts.location_off": "Off — using downtown Austin",
+-  "alerts.location_denied": "Blocked — allow it in your phone's Settings",
++  "alerts.location_on": "On · alerts for crossings near you",
++  "alerts.location_off": "Off · using downtown Austin",
++  "alerts.location_denied": "Blocked · allow it in your phone's Settings",
+   "alerts.notifications": "Notifications",
+   "alerts.notif_on": "On",
+-  "alerts.notif_off": "Off — tap to allow",
+-  "alerts.notif_denied": "Blocked — allow it in Settings",
+-  "alerts.notif_unsupported": "Not available here — you'll still get in-app alerts",
++  "alerts.notif_off": "Off · tap to allow",
++  "alerts.notif_denied": "Blocked · allow it in Settings",
++  "alerts.notif_unsupported": "Not available here · you'll still get in-app alerts",
+   "alerts.voice": "Voice warnings",
+-  "alerts.voice_on": "On — alerts are read out loud",
++  "alerts.voice_on": "On · alerts are read out loud",
+   "alerts.voice_off": "Off",
+   "alerts.voice_hint": "Can't hear it? Turn up media volume. On iOS app builds, audio is configured to play in silent mode; web browsers follow tab and system mute.",
+   "alerts.test_voice": "Test voice",
+@@ -305,9 +305,9 @@
+   "storms.blurb.memorial-day-2015": "A holiday-weekend flood that swept through Hays and Travis counties. Barton and Onion Creeks rose fast.",
+   "storms.blurb.halloween-2015": "Two years later, more than 10 inches of rain hit parts of the area in hours. Many crossings flooded at once.",
+   "storms.blurb.oct-2018": "Heavy rain upstream in the Highland Lakes. A test of whether FordCast stays quiet when local creeks barely move.",
+-  "storms.blurb.july-2025": "A quick urban downpour. A test of fast rises that sensors may catch late — or not at all.",
++  "storms.blurb.july-2025": "A quick urban downpour. A test of fast rises that sensors may catch late · or not at all.",
+   "storms.track_title": "How well does it work?",
+-  "storms.track_body": "Across {{storms}} past storms, FordCast's upstream-sensor rule warned “Avoid” before the downstream river sensor hit flood stage in {{hits}} of {{total}} cases — a median of {{lead}} minutes early. It missed {{missed}} and gave {{fa}} false alarm. It hasn't been checked against real road flooding yet, so never rely on it alone.",
++  "storms.track_body": "Across {{storms}} past storms, FordCast's upstream-sensor rule warned “Avoid” before the downstream river sensor hit flood stage in {{hits}} of {{total}} cases · a median of {{lead}} minutes early. It missed {{missed}} and gave {{fa}} false alarm. It hasn't been checked against real road flooding yet, so never rely on it alone.",
+   "storms.track_note": "Scored fairly: each storm is tested using settings learned only from the other storms.",
+   "storms.alerts_seen": "{{count}} crossings reached Avoid",
+   "lab.title": "Science view",
+@@ -316,7 +316,7 @@
+   "drive.badge_live": "LIVE · ATXFLOODS + NWS + USGS",
+   "drive.badge_drill": "STORM DRILL",
+   "drive.badge_sim": "SIMULATION",
+-  "drive.tips": "Tip: turn your volume up. Mount your phone — never hold it while driving.",
++  "drive.tips": "Tip: turn your volume up. Mount your phone · never hold it while driving.",
+   "state.uncalibrated": "Sensor not calibrated yet",
+   "explain.uncalibrated": "There's a USGS sensor upstream, but FordCast hasn't learned yet how fast water travels from it to this crossing, so it won't guess. Watch for barricades and check ATXfloods.com.",
+   "home.legend_dot": "No status (no calibrated sensor)",
+@@ -366,15 +366,15 @@
+   "route.avoids_one": "Avoids 1 hazard (+{{min}} min)",
+   "route.avoids_many": "Avoids {{count}} hazards (+{{min}} min)",
+   "route.none_reported": "No hazards returned by available sources. Conditions can change.",
+-  "route.avoided_item": "Goes around {{name}} — {{reason}}",
+-  "route.caution_item": "On your route: {{name}} — {{reason}}",
++  "route.avoided_item": "Goes around {{name}} · {{reason}}",
++  "route.caution_item": "On your route: {{name}} · {{reason}}",
+   "route.no_way_title": "No way around {{name}}",
+   "route.no_way_body": "{{reason}}. Don't drive through. Wait for the water to go down or pick another destination.",
+   "route.reroute_title": "Rerouting around {{name}}",
+   "route.reroute_body": "{{reason}}. Your new route adds about {{min}} min.",
+   "route.sensors_down": "Live sensor data is unavailable, so this route was only checked against official closures and weather warnings.",
+   "route.atx_down": "Couldn't reach ATXfloods, so official closures weren't checked.",
+-  "route.night_tip": "It's dark. Floodwater is very hard to judge at night — if you see water on the road, turn around.",
++  "route.night_tip": "It's dark. Floodwater is very hard to judge at night · if you see water on the road, turn around.",
+   "route.open_google": "Go with Google Maps",
+   "route.clear": "Remove route",
+   "route.google_note": "Google Maps gets waypoints that follow this route, but may still pick a nearby road. FordCast keeps watching and alerts you if something changes.",
+@@ -384,7 +384,7 @@
+   "trip.sim_label": "SIMULATED DRIVE · STORM TIME 1 MIN PER SECOND",
+   "trip.status_driving": "Driving · {{dist}} to go",
+   "trip.status_rerouted": "Rerouted around {{name}} · +{{min}} min",
+-  "trip.status_caution": "Caution at {{name}} — detour too long, staying alert",
++  "trip.status_caution": "Caution at {{name}} · detour too long, staying alert",
+   "trip.status_arrived": "Arrived",
+   "trip.watching": "FordCast is watching {{name}} on this route.",
+   "trip.reroute_title": "Rerouting around {{name}}",
+@@ -400,12 +400,12 @@
+   "trip.stop": "Stop demo",
+   "trip.replay": "Replay",
+   "companion.title": "Use with Google Maps",
+-  "companion.body": "Keep navigating with Google Maps. Plan your trip in FordCast and tap “Go with Google Maps” — your route arrives with waypoints that go around flooded crossings.",
++  "companion.body": "Plan your trip in FordCast, then send suggested waypoints around reported hazards to Google Maps. Google Maps may choose a different road; check its route and obey official closures.",
+   "companion.guardian": "Guardian mode",
+-  "companion.guardian_on": "On — FordCast runs in the background and warns you about a mile before a flooded or closed crossing, even while you navigate with Google Maps.",
+-  "companion.guardian_off": "Off — turn on to get warnings while you use Google Maps, Waze or Apple Maps.",
++  "companion.guardian_on": "On · FordCast runs in the background and warns you about a mile before a flooded or closed crossing, even while you navigate with Google Maps.",
++  "companion.guardian_off": "Off · turn on to get warnings while you use Google Maps, Waze or Apple Maps.",
+   "companion.guardian_denied": "Needs “Allow all the time” location permission. Change it in your phone’s Settings.",
+-  "companion.expo_go": "Guardian mode needs the installed FordCast app — Expo Go can't track location in the background. Route handoff to Google Maps works here.",
++  "companion.expo_go": "Guardian mode needs the installed FordCast app · Expo Go can't track location in the background. Route handoff to Google Maps works here.",
+   "companion.extension": "On a computer, install the “FordCast for Google Maps” Chrome extension (extension folder in this project). It adds a FordCast panel to google.com/maps that flags closures and flooded crossings on your route and offers a route around them.",
+   "companion.plan": "Plan a route",
+   "safety.title": "Flood driving facts",
+@@ -416,7 +416,7 @@
+   "safety.f5": "Never drive around a barricade. Turn around, don’t drown.",
+   "safety.source": "Source: National Weather Service “Turn Around Don’t Drown”.",
+   "route.simulate": "Test: put a flooded crossing on my route",
+-  "route.simulate_note": "TEST hazard added ahead on your route — watch FordCast reroute. Remove the route to reset.",
++  "route.simulate_note": "TEST closure on this route. External navigation is disabled. End the test to recheck current evidence.",
+   "route.test_name": "Test flooded crossing",
+   "route.test_reason": "TEST – simulated flooding",
+   "home.tab_explore": "Crossings",
+@@ -453,8 +453,8 @@
+   "sensors.action_stage": "Caution level: {{ft}} ft",
+   "sensors.flood_stage": "Flood level: {{ft}} ft",
+   "sensors.tools_title": "Emergency & community links",
+-  "sensors.tool_311": "Austin 311 — Report water on road",
+-  "sensors.tool_atx": "ATXfloods — Official county closures",
++  "sensors.tool_311": "Austin 311 · Report water on road",
++  "sensors.tool_atx": "ATXfloods · Official county closures",
+   "sensors.tool_nws": "Weather Service flood warnings",
+   "storms.car_demo": "Storm reroute demo",
+   "storms.hotspots_title": "Frequent flood spots (1996–2026)",
+@@ -497,7 +497,7 @@
+   "onboarding.pledge.subtitle": "Check the crossings on your trip",
+   "onboarding.pledge.required_badge": "Before your first trip",
+   "onboarding.pledge.acknowledged_badge": "{{count}} of 3 acknowledged",
+-  "crossing.stale_reading_label": "Last available reading — not current",
++  "crossing.stale_reading_label": "Last available reading · not current",
+   "route.google_note_base": "Google Maps receives suggested waypoints and may choose a different road.",
+   "route.google_note_web": "Background crossing alerts are unavailable in web browsers. Recheck official conditions before leaving.",
+   "route.google_note_expo_go": "Background crossing alerts are unavailable in Expo Go. Recheck official conditions before leaving.",
+diff --git a/mobile/src/locales/es.json b/mobile/src/locales/es.json
+index eb23aeb..22afa26 100644
+--- a/mobile/src/locales/es.json
++++ b/mobile/src/locales/es.json
+@@ -130,17 +130,17 @@
+   "drive.next_crossing": "Siguiente",
+   "drive.prev_crossing": "Anterior",
+   "drive.speed_sim": "Velocidad simulada: {{mph}} mph",
+-  "drive.lockout_active": "En movimiento — botones bloqueados.",
++  "drive.lockout_active": "En movimiento · botones bloqueados.",
+   "drive.passenger_override": "Soy pasajero",
+   "drive.spoken_banner": "Vista previa de voz simulada",
+   "alerts.title": "Alertas",
+-  "alerts.body": "Reciba una notificación y un aviso de voz cuando un cruce cerca de usted empiece a inundarse.",
++  "alerts.body": "Configure avisos de voz y notificaciones sobre cierres reportados, alertas meteorológicas y crecidas aguas arriba cerca de su trayecto.",
+   "alerts.empty": "Tenga sus cruces habituales a mano.",
+   "alerts.empty_body": "Guarde un cruce desde su pantalla de detalles para encontrarlo aquí.",
+   "alerts.browse": "Explorar cruces",
+   "alerts.test_call": "Mostrar vista previa de alerta de prueba",
+   "alerts.test_title": "ALERTA DE PRUEBA (no es una inundación real)",
+-  "alerts.test": "PRUEBA: Evite {{crossing}} — aviso simulado. Posiblemente dentro de {{lo}}–{{hi}} min. Solo vista previa; no es una inundación ni entrega real.",
++  "alerts.test": "PRUEBA: Evite {{crossing}} · aviso simulado. Posiblemente dentro de {{lo}}–{{hi}} min. Solo vista previa; no es una inundación ni entrega real.",
+   "alerts.recent_title": "Registro de alertas de prueba",
+   "settings.title": "A su manera.",
+   "settings.language": "Idioma",
+@@ -204,14 +204,14 @@
+   "home.headline_alert_many": "{{count}} cruces cerca de usted requieren atención",
+   "home.headline_alert_body": "Toque un cruce para ver por qué. Tome otra ruta si dice Evite.",
+   "home.headline_quiet": "No se detecta agua subiendo cerca de usted",
+-  "home.headline_quiet_body": "{{count}} cruces vigilados a menos de {{radius}} mi. Los sensores pueden no detectar crecidas locales — siempre respete las barricadas.",
++  "home.headline_quiet_body": "{{count}} cruces vigilados a menos de {{radius}} mi. Los sensores pueden no detectar crecidas locales · siempre respete las barricadas.",
+   "home.headline_none": "No hay cruces vigilados por FordCast a menos de {{radius}} mi",
+   "home.headline_none_body": "El más cercano que vigila FordCast es {{name}} ({{dist}}). Puede ampliar la distancia en Alertas.",
+   "home.headline_nodata": "Datos en vivo no disponibles",
+   "home.headline_nodata_body": "Trate cada cruce como desconocido. Consulte ATXfloods.com y siga las barricadas.",
+   "home.location_off": "Active la ubicación para ver cruces cerca de usted",
+   "home.location_off_body": "Mostrando el centro de Austin por ahora.",
+-  "home.location_outside": "Está fuera del área de Austin — mostrando el centro de Austin.",
++  "home.location_outside": "Está fuera del área de Austin · mostrando el centro de Austin.",
+   "home.location_demo": "Ubicación de prueba: centro de Austin.",
+   "home.turn_on": "Activar",
+   "home.filter_near": "Cerca",
+@@ -225,7 +225,7 @@
+   "home.search": "Buscar camino, arroyo o cruce",
+   "home.empty": "Ningún cruce coincide.",
+   "home.recenter": "Mi ubicación",
+-  "home.drill_intro": "Reproduce una inundación real como si estuviera pasando ahora — mismo mapa, alertas y avisos de voz.",
++  "home.drill_intro": "Reproduce una inundación real como si estuviera pasando ahora · mismo mapa, alertas y avisos de voz.",
+   "home.drill_play": "Reproducir",
+   "home.drill_pause": "Pausa",
+   "home.drill_restart": "Reiniciar",
+@@ -234,7 +234,7 @@
+   "home.show_more": "Ver más",
+   "home.show_less": "Ver menos",
+   "home.tagline": "Alertas de cruces bajos · Austin",
+-  "explain.no_rise": "El sensor río arriba no está subiendo. Eso no significa que el camino esté seco — la lluvia local aún puede inundarlo.",
++  "explain.no_rise": "El sensor río arriba no está subiendo. Eso no significa que el camino esté seco · la lluvia local aún puede inundarlo.",
+   "explain.watch": "El agua está subiendo en el sensor río arriba. Es posible que se inunde aquí. Esté listo para tomar otra ruta.",
+   "explain.avoid": "El sensor río arriba pasó su nivel de alerta. Es probable que el agua llegue pronto a este cruce. Tome otra ruta.",
+   "explain.closed": "Hay agua en el camino o las autoridades lo cerraron. Nunca maneje sobre el agua.",
+@@ -270,16 +270,16 @@
+   "alert.test_body": "Esto es solo una prueba. En una alerta real escucharía qué cruce evitar.",
+   "alerts.setup": "Configuración",
+   "alerts.location": "Ubicación",
+-  "alerts.location_on": "Activada — alertas de cruces cerca de usted",
+-  "alerts.location_off": "Desactivada — usando el centro de Austin",
+-  "alerts.location_denied": "Bloqueada — permítala en la Configuración del teléfono",
++  "alerts.location_on": "Activada · alertas de cruces cerca de usted",
++  "alerts.location_off": "Desactivada · usando el centro de Austin",
++  "alerts.location_denied": "Bloqueada · permítala en la Configuración del teléfono",
+   "alerts.notifications": "Notificaciones",
+   "alerts.notif_on": "Activadas",
+-  "alerts.notif_off": "Desactivadas — toque para permitir",
+-  "alerts.notif_denied": "Bloqueadas — permítalas en Configuración",
+-  "alerts.notif_unsupported": "No disponible aquí — aún verá alertas en la app",
++  "alerts.notif_off": "Desactivadas · toque para permitir",
++  "alerts.notif_denied": "Bloqueadas · permítalas en Configuración",
++  "alerts.notif_unsupported": "No disponible aquí · aún verá alertas en la app",
+   "alerts.voice": "Avisos de voz",
+-  "alerts.voice_on": "Activados — las alertas se leen en voz alta",
++  "alerts.voice_on": "Activados · las alertas se leen en voz alta",
+   "alerts.voice_off": "Desactivados",
+   "alerts.voice_hint": "¿No lo escucha? Suba el volumen multimedia. En la app de iOS el audio suena en modo silencio; en navegadores web depende del silencio de la pestaña.",
+   "alerts.test_voice": "Probar voz",
+@@ -305,9 +305,9 @@
+   "storms.blurb.memorial-day-2015": "Una inundación de fin de semana festivo en los condados de Hays y Travis. Barton y Onion Creek subieron rápido.",
+   "storms.blurb.halloween-2015": "Dos años después, más de 10 pulgadas de lluvia cayeron en horas. Muchos cruces se inundaron a la vez.",
+   "storms.blurb.oct-2018": "Lluvia fuerte río arriba en los Highland Lakes. Prueba de si FordCast se mantiene callado cuando los arroyos locales apenas suben.",
+-  "storms.blurb.july-2025": "Un aguacero urbano rápido. Prueba de crecidas rápidas que los sensores pueden detectar tarde — o no detectar.",
++  "storms.blurb.july-2025": "Un aguacero urbano rápido. Prueba de crecidas rápidas que los sensores pueden detectar tarde · o no detectar.",
+   "storms.track_title": "¿Qué tan bien funciona?",
+-  "storms.track_body": "En {{storms}} tormentas pasadas, la regla de FordCast avisó “Evite” antes de que el sensor río abajo llegara a nivel de inundación en {{hits}} de {{total}} casos — una mediana de {{lead}} minutos antes. No detectó {{missed}} y dio {{fa}} falsa alarma. Aún no se ha comparado con inundaciones reales del camino, así que nunca dependa solo de ella.",
++  "storms.track_body": "En {{storms}} tormentas pasadas, la regla de FordCast avisó “Evite” antes de que el sensor río abajo llegara a nivel de inundación en {{hits}} de {{total}} casos · una mediana de {{lead}} minutos antes. No detectó {{missed}} y dio {{fa}} falsa alarma. Aún no se ha comparado con inundaciones reales del camino, así que nunca dependa solo de ella.",
+   "storms.track_note": "Evaluado de forma justa: cada tormenta se prueba con ajustes aprendidos solo de las otras tormentas.",
+   "storms.alerts_seen": "{{count}} cruces llegaron a Evite",
+   "lab.title": "Vista científica",
+@@ -316,7 +316,7 @@
+   "drive.badge_live": "EN VIVO · ATXFLOODS + NWS + USGS",
+   "drive.badge_drill": "SIMULACRO",
+   "drive.badge_sim": "SIMULACIÓN",
+-  "drive.tips": "Consejo: suba el volumen. Fije su teléfono — nunca lo sostenga mientras maneja.",
++  "drive.tips": "Consejo: suba el volumen. Fije su teléfono · nunca lo sostenga mientras maneja.",
+   "state.uncalibrated": "Sensor aún sin calibrar",
+   "explain.uncalibrated": "Hay un sensor USGS río arriba, pero FordCast aún no ha aprendido qué tan rápido viaja el agua de ahí a este cruce, así que no adivina. Esté atento a las barricadas y consulte ATXfloods.com.",
+   "home.legend_dot": "Sin estado (sin sensor calibrado)",
+@@ -366,15 +366,15 @@
+   "route.avoids_one": "Evita 1 peligro (+{{min}} min)",
+   "route.avoids_many": "Evita {{count}} peligros (+{{min}} min)",
+   "route.none_reported": "Las fuentes disponibles no reportaron peligros. Las condiciones pueden cambiar.",
+-  "route.avoided_item": "Rodea {{name}} — {{reason}}",
+-  "route.caution_item": "En su ruta: {{name}} — {{reason}}",
++  "route.avoided_item": "Rodea {{name}} · {{reason}}",
++  "route.caution_item": "En su ruta: {{name}} · {{reason}}",
+   "route.no_way_title": "No hay forma de rodear {{name}}",
+   "route.no_way_body": "{{reason}}. No lo cruce. Espere a que baje el agua o elija otro destino.",
+   "route.reroute_title": "Desviando alrededor de {{name}}",
+   "route.reroute_body": "{{reason}}. Su nueva ruta agrega unos {{min}} min.",
+   "route.sensors_down": "Los datos de sensores no están disponibles; esta ruta solo se revisó con cierres oficiales y avisos del clima.",
+   "route.atx_down": "No se pudo conectar con ATXfloods; no se revisaron cierres oficiales.",
+-  "route.night_tip": "Está oscuro. Es muy difícil juzgar el agua de noche — si ve agua en el camino, dé la vuelta.",
++  "route.night_tip": "Está oscuro. Es muy difícil juzgar el agua de noche · si ve agua en el camino, dé la vuelta.",
+   "route.open_google": "Ir con Google Maps",
+   "route.clear": "Quitar ruta",
+   "route.google_note": "Google Maps recibe puntos que siguen esta ruta, pero puede elegir una calle cercana. FordCast sigue vigilando y le avisa si algo cambia.",
+@@ -384,7 +384,7 @@
+   "trip.sim_label": "MANEJO SIMULADO · TIEMPO DE TORMENTA 1 MIN POR SEGUNDO",
+   "trip.status_driving": "Manejando · faltan {{dist}}",
+   "trip.status_rerouted": "Desviado alrededor de {{name}} · +{{min}} min",
+-  "trip.status_caution": "Precaución en {{name}} — desvío muy largo, alerta",
++  "trip.status_caution": "Precaución en {{name}} · desvío muy largo, alerta",
+   "trip.status_arrived": "Llegó",
+   "trip.watching": "FordCast vigila {{name}} en esta ruta.",
+   "trip.reroute_title": "Desviando alrededor de {{name}}",
+@@ -400,12 +400,12 @@
+   "trip.stop": "Detener",
+   "trip.replay": "Repetir",
+   "companion.title": "Usar con Google Maps",
+-  "companion.body": "Siga navegando con Google Maps. Planee su viaje en FordCast y toque “Ir con Google Maps” — su ruta llega con puntos que rodean los cruces inundados.",
++  "companion.body": "Planee su viaje en FordCast y envíe a Google Maps puntos sugeridos para rodear peligros reportados. Google Maps puede elegir otro camino; revise su ruta y respete los cierres oficiales.",
+   "companion.guardian": "Modo guardián",
+-  "companion.guardian_on": "Activado — FordCast funciona en segundo plano y le avisa una milla antes de un cruce inundado o cerrado, aunque esté navegando con Google Maps.",
+-  "companion.guardian_off": "Desactivado — actívelo para recibir avisos mientras usa Google Maps, Waze o Apple Maps.",
++  "companion.guardian_on": "Activado · FordCast funciona en segundo plano y le avisa una milla antes de un cruce inundado o cerrado, aunque esté navegando con Google Maps.",
++  "companion.guardian_off": "Desactivado · actívelo para recibir avisos mientras usa Google Maps, Waze o Apple Maps.",
+   "companion.guardian_denied": "Necesita el permiso de ubicación “Permitir siempre”. Cámbielo en la Configuración del teléfono.",
+-  "companion.expo_go": "El modo guardián necesita la app FordCast instalada — Expo Go no puede usar la ubicación en segundo plano. Enviar la ruta a Google Maps sí funciona aquí.",
++  "companion.expo_go": "El modo guardián necesita la app FordCast instalada · Expo Go no puede usar la ubicación en segundo plano. Enviar la ruta a Google Maps sí funciona aquí.",
+   "companion.extension": "En una computadora, instale la extensión de Chrome “FordCast for Google Maps” (carpeta extension del proyecto). Agrega un panel de FordCast a google.com/maps que marca cierres y cruces inundados en su ruta y ofrece una ruta alternativa.",
+   "companion.plan": "Planear una ruta",
+   "safety.title": "Datos sobre manejar en inundaciones",
+@@ -416,7 +416,7 @@
+   "safety.f5": "Nunca rodee una barricada. Dé la vuelta, no se ahogue.",
+   "safety.source": "Fuente: Servicio Meteorológico Nacional, “Turn Around Don’t Drown”.",
+   "route.simulate": "Prueba: poner un cruce inundado en mi ruta",
+-  "route.simulate_note": "Peligro de PRUEBA agregado en su ruta — vea cómo FordCast lo desvía. Quite la ruta para reiniciar.",
++  "route.simulate_note": "Cierre de PRUEBA en esta ruta. Navegación externa desactivada. Finalice la prueba para revisar la evidencia actual.",
+   "route.test_name": "Cruce inundado de prueba",
+   "route.test_reason": "PRUEBA – inundación simulada",
+   "home.tab_explore": "Cruces",
+@@ -453,8 +453,8 @@
+   "sensors.action_stage": "Nivel de precaución: {{ft}} pies",
+   "sensors.flood_stage": "Nivel de inundación: {{ft}} pies",
+   "sensors.tools_title": "Enlaces de emergencia y comunidad",
+-  "sensors.tool_311": "Austin 311 — Reportar agua en el camino",
+-  "sensors.tool_atx": "ATXfloods — Cierres oficiales del condado",
++  "sensors.tool_311": "Austin 311 · Reportar agua en el camino",
++  "sensors.tool_atx": "ATXfloods · Cierres oficiales del condado",
+   "sensors.tool_nws": "Avisos de inundación del Servicio Meteorológico",
+   "storms.car_demo": "Demostración de desvío",
+   "storms.hotspots_title": "Cruces con inundaciones frecuentes (1996–2026)",
+@@ -497,7 +497,7 @@
+   "onboarding.pledge.subtitle": "Revisa los cruces de tu trayecto",
+   "onboarding.pledge.required_badge": "Antes de tu primer trayecto",
+   "onboarding.pledge.acknowledged_badge": "{{count}} de 3 confirmadas",
+-  "crossing.stale_reading_label": "Última lectura disponible — no es actual",
++  "crossing.stale_reading_label": "Última lectura disponible · no es actual",
+   "route.google_note_base": "Google Maps recibe puntos sugeridos y puede elegir un camino diferente.",
+   "route.google_note_web": "Las alertas de cruces en segundo plano no están disponibles en navegadores web. Vuelve a revisar las condiciones oficiales antes de salir.",
+   "route.google_note_expo_go": "Las alertas de cruces en segundo plano no están disponibles en Expo Go. Vuelve a revisar las condiciones oficiales antes de salir.",
+diff --git a/mobile/src/screens/CockpitScreen.tsx b/mobile/src/screens/CockpitScreen.tsx
+index 72df95a..1b1313b 100644
+--- a/mobile/src/screens/CockpitScreen.tsx
++++ b/mobile/src/screens/CockpitScreen.tsx
+@@ -339,7 +339,7 @@ export default function CockpitScreen({
+                 }}
+               >
+                 <AppText style={{ fontSize: 12, fontFamily: 'Inter_600SemiBold' }}>
+-                  {language === 'es' ? '🔊 Leer' : '🔊 Speak'}
++                  {language === 'es' ? 'Leer estado' : 'Read state'}
+                 </AppText>
+               </Pressable>
+               <Pressable
+@@ -364,7 +364,7 @@ export default function CockpitScreen({
+                     fontFamily: 'Inter_600SemiBold',
+                   }}
+                 >
+-                  {isSaved ? (language === 'es' ? '★ Guardado' : '★ Saved') : language === 'es' ? '☆ Guardar' : '☆ Save'}
++                  {isSaved ? (language === 'es' ? 'Guardado' : 'Saved') : language === 'es' ? 'Guardar' : 'Save'}
+                 </AppText>
+               </Pressable>
+               <Pressable
+@@ -474,11 +474,11 @@ export default function CockpitScreen({
+           <Pressable
+             role="button"
+             accessibilityRole="button"
+-            accessibilityLabel={t('replay.previous')}
++            accessibilityLabel={language === 'es' ? 'Retroceder 15 minutos' : 'Back 15 minutes'}
+             disabled={stepIdx === 0}
+             onPress={() => stepByMinutes(-15)}
+             style={{
+-              height: 36,
++              minHeight: 44,
+               paddingHorizontal: 10,
+               borderRadius: 8,
+               backgroundColor: SURFACES.dark.elevated2,
+@@ -502,7 +502,7 @@ export default function CockpitScreen({
+               setPlaying(!playing);
+             }}
+             style={{
+-              height: 36,
++              minHeight: 44,
+               paddingHorizontal: 14,
+               borderRadius: 8,
+               backgroundColor: HYDROGRAPH_TOKENS.dark.downstreamStroke,
+@@ -517,11 +517,11 @@ export default function CockpitScreen({
+           <Pressable
+             role="button"
+             accessibilityRole="button"
+-            accessibilityLabel={t('replay.next')}
++            accessibilityLabel={language === 'es' ? 'Avanzar 15 minutos' : 'Forward 15 minutes'}
+             disabled={stepIdx >= totalSteps - 1}
+             onPress={() => stepByMinutes(15)}
+             style={{
+-              height: 36,
++              minHeight: 44,
+               paddingHorizontal: 10,
+               borderRadius: 8,
+               backgroundColor: SURFACES.dark.elevated2,
+@@ -546,7 +546,7 @@ export default function CockpitScreen({
+               setStepIdx(prev);
+             }}
+             style={{
+-              height: 36,
++              minHeight: 44,
+               paddingHorizontal: 9,
+               borderRadius: 8,
+               backgroundColor: SURFACES.dark.elevated1,
+@@ -570,7 +570,7 @@ export default function CockpitScreen({
+               setStepIdx(next);
+             }}
+             style={{
+-              height: 36,
++              minHeight: 44,
+               paddingHorizontal: 9,
+               borderRadius: 8,
+               backgroundColor: SURFACES.dark.elevated1,
+@@ -593,7 +593,7 @@ export default function CockpitScreen({
+               setStepIdx(0);
+             }}
+             style={{
+-              height: 36,
++              minHeight: 44,
+               paddingHorizontal: 9,
+               borderRadius: 8,
+               backgroundColor: SURFACES.dark.elevated1,
+@@ -618,7 +618,7 @@ export default function CockpitScreen({
+               accessibilityLabel={`${s}×`}
+               onPress={() => setSpeed(s)}
+               style={{
+-                height: 30,
++                minHeight: 44,
+                 paddingHorizontal: 8,
+                 borderRadius: 6,
+                 backgroundColor:
+@@ -697,8 +697,9 @@ export default function CockpitScreen({
+             {t('replay.reading', { index: stepIdx + 1, count: totalSteps, time: stamp(simT) })}
+           </AppText>
+           <AppText style={[TYPOGRAPHY.chartAxis, { color: SURFACES.dark.textSecondary, fontSize: 10 }]}>
+-            🛑 {summaryCounts.avoidCount} Avoid • ⚠️ {summaryCounts.watchCount} Watch • ?{' '}
+-            {summaryCounts.unknownCount} Unknown
++            {language === 'es'
++              ? `${summaryCounts.avoidCount} Evite · ${summaryCounts.watchCount} Precaución · ${summaryCounts.unknownCount} Sin datos`
++              : `${summaryCounts.avoidCount} Avoid · ${summaryCounts.watchCount} Watch · ${summaryCounts.unknownCount} Unknown`}
+           </AppText>
+         </View>
+       </View>
+@@ -774,7 +775,7 @@ export default function CockpitScreen({
+             <Button
+               compact
+               secondary
+-              title="📊 LOSO Scorecard"
++              title={language === 'es' ? 'Resultados LOSO' : 'LOSO scorecard'}
+               onPress={() => setShowScorecardModal((v) => !v)}
+             />
+             <Button
+@@ -1121,20 +1122,21 @@ export default function CockpitScreen({
+         testID="mobile-top-glass-header"
+         style={{
+           minHeight: 48,
+-          backgroundColor: SURFACES.dark.glassHud,
++          backgroundColor: SURFACES.dark.elevated1,
+           borderRadius: 14,
+           borderWidth: 1,
+           borderColor: SURFACES.dark.borderSubtle,
+           paddingHorizontal: 12,
+           paddingVertical: 8,
+           flexDirection: 'row',
++          flexWrap: 'wrap',
+           alignItems: 'center',
+           justifyContent: 'space-between',
+           gap: 8,
+         }}
+       >
+         {/* Left: Storm Selector Pill */}
+-        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ flex: 1.4 }}>
++        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ width: '100%' }}>
+           <View style={{ flexDirection: 'row', gap: 6 }}>
+             {replayIndex.storms.map((s) => (
+               <Chip
+@@ -1156,7 +1158,7 @@ export default function CockpitScreen({
+           onPress={() => setLanguage(language === 'en' ? 'es' : 'en')}
+           style={{
+             width: 68,
+-            height: 36,
++            minHeight: 44,
+             borderRadius: 10,
+             backgroundColor: SURFACES.dark.elevated2,
+             borderWidth: 1,
+@@ -1182,7 +1184,7 @@ export default function CockpitScreen({
+           }}
+           style={{
+             width: 86,
+-            height: 36,
++            minHeight: 44,
+             borderRadius: 10,
+             backgroundColor: SURFACES.dark.elevated2,
+             borderWidth: 1.5,
+@@ -1192,7 +1194,7 @@ export default function CockpitScreen({
+           }}
+         >
+           <AppText style={{ fontSize: 11, fontFamily: 'Inter_600SemiBold', color: '#F8FAFC' }}>
+-            🚘 HUD
++            {language === 'es' ? 'Manejar' : 'Drive'}
+           </AppText>
+         </Pressable>
+       </View>
+@@ -1335,8 +1337,8 @@ export default function CockpitScreen({
+           >
+             <AppText style={[TYPOGRAPHY.chartAxis, { color: SURFACES.dark.textSecondary }]}>
+               {language === 'es'
+-                ? `30 con sensor • 111 sin sensor · [🛑 ${summaryCounts.avoidCount} Evite] [⚠️ ${summaryCounts.watchCount} Precaución]`
+-                : `30 Monitored • 111 Unmonitored · [🛑 ${summaryCounts.avoidCount} Avoid] [⚠️ ${summaryCounts.watchCount} Watch]`}
++                ? `30 candidatos de investigación · 111 sin sensor · ${summaryCounts.avoidCount} Evite · ${summaryCounts.watchCount} Precaución`
++                : `30 research candidates · 111 without sensors · ${summaryCounts.avoidCount} Avoid · ${summaryCounts.watchCount} Watch`}
+             </AppText>
+             <View style={{ flexDirection: 'row', gap: 6, flexWrap: 'wrap' }}>
+               {(
+diff --git a/mobile/src/screens/HomeScreen.tsx b/mobile/src/screens/HomeScreen.tsx
+index d6bc077..ee2319f 100644
+--- a/mobile/src/screens/HomeScreen.tsx
++++ b/mobile/src/screens/HomeScreen.tsx
+@@ -5,7 +5,7 @@
+  *   2. Route (Everyday Commute Flood Exposure Audit, 1-tap Austin destinations, saved Home/Work, live reroute test)
+  *   3. Creeks (19 live stream sensors + emergency 311/ATXfloods/NWS tools)
+  */
+-import { useEffect, useMemo, useRef, useState } from 'react';
++import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+ import {
+   Animated,
+   Pressable,
+@@ -14,7 +14,7 @@ import {
+   View,
+   useWindowDimensions,
+ } from 'react-native';
+-import { router } from 'expo-router';
++import { router, useFocusEffect } from 'expo-router';
+ import { SafeAreaView } from 'react-native-safe-area-context';
+ import { AppText, Dip } from '@/components/fordcast/UI';
+ import StateBadge from '@/components/StateBadge';
+@@ -129,14 +129,10 @@ function TopControls({
+     <View style={{ gap: 8 }}>
+       {compact ? (
+         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+-          <Dip size={28} />
++          <Dip size={24} />
+           <View style={{ flex: 1 }}>
+-            <AppText style={{ fontFamily: 'Inter_700Bold', fontSize: 17, lineHeight: 21 }}>FordCast</AppText>
+-            <AppText numberOfLines={1} style={{ fontSize: 11, lineHeight: 14, color: S.textSecondary }}>
+-              {t('home.tagline')}
+-            </AppText>
++            <AppText numberOfLines={1} style={{ fontFamily: 'Inter_700Bold', fontSize: 16, lineHeight: 21, letterSpacing: -0.4 }}>FordCast</AppText>
+           </View>
+-          {directorToggle}
+           {voiceToggle}
+           <Pressable
+             accessibilityRole="button"
+@@ -224,10 +220,10 @@ function TopControls({
+ }
+ 
+ const pill = {
+-  minWidth: 36,
+-  height: 36,
+-  paddingHorizontal: 10,
+-  borderRadius: 11,
++  minWidth: 44,
++  height: 44,
++  paddingHorizontal: 8,
++  borderRadius: 8,
+   borderWidth: 1,
+   borderColor: S.borderSubtle,
+   backgroundColor: S.elevated1,
+@@ -274,7 +270,7 @@ function ModeSubTabs({
+             onPress={() => onChange(it.key)}
+             style={{
+               flex: 1,
+-              minHeight: 38,
++              minHeight: 44,
+               borderRadius: 10,
+               flexDirection: 'row',
+               alignItems: 'center',
+@@ -286,7 +282,6 @@ function ModeSubTabs({
+               borderColor: active ? ACCENT : 'transparent',
+             }}
+           >
+-            <FcIcon name={it.icon} size={14} color={active ? ACCENT : S.textSecondary} />
+             <AppText
+               numberOfLines={1}
+               style={{
+@@ -451,7 +446,7 @@ function Headline({
+     color = LOCKED_STATE_HEX.no_rise;
+   }
+   return (
+-    <Panel style={{ borderColor: color, borderLeftWidth: 5, gap: 10 }}>
++    <Panel style={{ borderColor: color, gap: 10 }}>
+       {/* Primary above-the-fold actions first so mobile users never have to scroll to check a route or run the demo */}
+       {m.mode === 'live' && !m.routePlan ? (
+         <View style={{ flexDirection: 'row', gap: 8, flexWrap: 'wrap' }}>
+@@ -580,7 +575,7 @@ function SelectedCard({
+   );
+ }
+ 
+-function CrossingList({ onPick, selectedId }: { onPick: (id: string) => void; selectedId: string | null }) {
++function CrossingList({ onPick, selectedId, onSearchFocus }: { onPick: (id: string) => void; selectedId: string | null; onSearchFocus?: () => void }) {
+   const { t, saved } = usePreferences();
+   const m = useMonitor();
+   const [filter, setFilter] = useState<Filter>('near');
+@@ -616,6 +611,7 @@ function CrossingList({ onPick, selectedId }: { onPick: (id: string) => void; se
+   return (
+     <View style={{ gap: 10 }}>
+       <TextInput
++        onFocus={onSearchFocus}
+         value={query}
+         onChangeText={setQuery}
+         placeholder={t('home.search')}
+@@ -692,13 +688,23 @@ export default function HomeScreen() {
+   const [zoomStep, setZoomStep] = useState<{ seq: number; delta: number }>({ seq: 0, delta: 0 });
+   const [sheet, setSheet] = useState<'peek' | 'half' | 'full'>('peek');
+   const [directorOpen, setDirectorOpen] = useState(false);
++  const [mapFrameHeight, setMapFrameHeight] = useState(height);
++  const [headerBottom, setHeaderBottom] = useState(152);
++  const panelScrollRef = useRef<ScrollView>(null);
++  const routeComputedAt = m.routePlan?.computedAt;
++  useEffect(() => {
++    if (routeComputedAt != null) panelScrollRef.current?.scrollTo({ y: 0, animated: false });
++  }, [routeComputedAt]);
+   const trip = useTripDemo();
++  const stopTripRef = useRef(trip.stop);
++  useEffect(() => { stopTripRef.current = trip.stop; }, [trip.stop]);
++  useFocusEffect(useCallback(() => () => stopTripRef.current(), []));
+ 
+   // Smooth spring animation for mobile bottom sheet height.
+   // 305px peek height keeps subtabs + Headline + primary action buttons + TripCard Stop controls visible above the fold.
+-  const peekH = 305;
+-  const halfH = Math.round(height * 0.54);
+-  const fullH = Math.round(height * 0.85);
++  const peekH = Math.min(305, Math.round(mapFrameHeight * 0.5));
++  const halfH = Math.round(mapFrameHeight * 0.54);
++  const fullH = Math.round(mapFrameHeight * 0.88);
+   const targetH = sheet === 'peek' ? peekH : sheet === 'half' ? halfH : fullH;
+   const [animH] = useState(() => new Animated.Value(peekH));
+   const dragStartY = useRef<number | null>(null);
+@@ -890,7 +896,7 @@ export default function HomeScreen() {
+       ) : null}
+ 
+       {m.homeTab === 'route' ? (
+-        <RoutePlanner />
++        <RoutePlanner onSearchFocus={() => { if (!wide) setSheet('full'); }} />
+       ) : m.homeTab === 'sensors' ? (
+         <SensorsAndToolsPanel
+           selectedGaugeId={selectedGaugeId}
+@@ -919,7 +925,7 @@ export default function HomeScreen() {
+               }}
+             />
+           )}
+-          <CrossingList onPick={pick} selectedId={selectedId} />
++          <CrossingList onPick={pick} selectedId={selectedId} onSearchFocus={() => { if (!wide) setSheet('full'); }} />
+         </>
+       )}
+     </>
+@@ -1004,10 +1010,11 @@ export default function HomeScreen() {
+   );
+ 
+   const mapControls = (
+-    <View style={{ gap: 8, alignItems: 'center' }}>
++    <View style={{ flexDirection: wide ? 'column' : 'row', gap: 8, alignItems: 'center' }}>
+       <View
+         style={{
+-          borderRadius: 16,
++          flexDirection: wide ? 'column' : 'row',
++          borderRadius: 8,
+           backgroundColor: 'rgba(19, 28, 43, 0.94)',
+           borderWidth: 1,
+           borderColor: S.borderSubtle,
+@@ -1020,7 +1027,7 @@ export default function HomeScreen() {
+           onPress={() => setZoomStep((z) => ({ seq: z.seq + 1, delta: 1.5 }))}
+           style={{
+             width: 44,
+-            height: 42,
++            height: 44,
+             alignItems: 'center',
+             justifyContent: 'center',
+             borderBottomWidth: 1,
+@@ -1035,7 +1042,7 @@ export default function HomeScreen() {
+           onPress={() => setZoomStep((z) => ({ seq: z.seq + 1, delta: -1.5 }))}
+           style={{
+             width: 44,
+-            height: 42,
++            height: 44,
+             alignItems: 'center',
+             justifyContent: 'center',
+           }}
+@@ -1076,6 +1083,7 @@ export default function HomeScreen() {
+     return (
+       <View style={{ flex: 1, flexDirection: 'row', backgroundColor: S.primary }}>
+         <ScrollView
++          ref={panelScrollRef}
+           style={{ width: 430, maxWidth: 430, borderRightWidth: 1, borderColor: S.borderSubtle }}
+           contentContainerStyle={{ padding: 16, gap: 14, paddingBottom: 40 }}
+         >
+@@ -1094,10 +1102,11 @@ export default function HomeScreen() {
+   }
+ 
+   return (
+-    <View style={{ flex: 1, backgroundColor: S.primary }}>
++    <View onLayout={e => setMapFrameHeight(e.nativeEvent.layout.height)} style={{ flex: 1, backgroundColor: S.primary }}>
+       <View style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }}>{map}</View>
+       <SafeAreaView edges={['top']} pointerEvents="box-none" style={{ position: 'absolute', top: 0, left: 0, right: 0 }}>
+         <View
++          onLayout={e => setHeaderBottom(e.nativeEvent.layout.y + e.nativeEvent.layout.height)}
+           style={{
+             marginHorizontal: 10,
+             marginTop: 8,
+@@ -1128,8 +1137,8 @@ export default function HomeScreen() {
+         </View>
+       </SafeAreaView>
+ 
+-      {sheet !== 'full' ? (
+-        <Animated.View style={{ position: 'absolute', right: 14, bottom: Animated.add(animH, 12) }}>
++      {sheet !== 'full' && !layersOpen && mapFrameHeight - targetH - headerBottom >= 60 ? (
++        <Animated.View style={{ position: 'absolute', right: 14, top: headerBottom + 8 }}>
+           {mapControls}
+         </Animated.View>
+       ) : null}
+@@ -1187,6 +1196,7 @@ export default function HomeScreen() {
+           </View>
+         ) : null}
+         <ScrollView
++          ref={panelScrollRef}
+           keyboardShouldPersistTaps="handled"
+           keyboardDismissMode="interactive"
+           contentContainerStyle={{ paddingHorizontal: 14, paddingBottom: 32, gap: 12 }}
+@@ -1219,8 +1229,8 @@ function MapLayerChip({
+         flexDirection: 'row',
+         gap: 6,
+         paddingHorizontal: 11,
+-        height: 32,
+-        borderRadius: 999,
++        minHeight: 44,
++        borderRadius: 8,
+         alignItems: 'center',
+         justifyContent: 'center',
+         backgroundColor: active ? 'rgba(27, 39, 58, 0.94)' : 'rgba(19, 28, 43, 0.88)',
+diff --git a/mobile/src/screens/StormsScreen.tsx b/mobile/src/screens/StormsScreen.tsx
+index 8cc3d4f..92545ce 100644
+--- a/mobile/src/screens/StormsScreen.tsx
++++ b/mobile/src/screens/StormsScreen.tsx
+@@ -9,9 +9,18 @@ import { ScrollView, View } from 'react-native';
+ import { SafeAreaView } from 'react-native-safe-area-context';
+ import { AppText } from '@/components/fordcast/UI';
+ import { FcIcon } from '@/components/fc/Icons';
+-import { ACCENT, ActionButton, Chip, cleanName, FloodPhysicsCard, NearbyRow, Panel, SectionLabel } from '@/components/fc/Kit';
++import {
++  ACCENT,
++  ActionButton,
++  Chip,
++  cleanName,
++  FloodPhysicsCard,
++  NearbyRow,
++  Panel,
++  SectionLabel,
++} from '@/components/fc/Kit';
+ import { tripFor } from '@/features/demo/useTripDemo';
+-import { floodHistory, replayIndex, replays, results } from '@/lib/data';
++import { replayIndex, replays, results } from '@/lib/data';
+ import { groupPhysicalCrossings } from '@/lib/danger';
+ import { useMonitor } from '@/lib/monitor-context';
+ import { usePreferences, type CopyKey } from '@/lib/preferences';
+@@ -40,16 +49,23 @@ export default function StormsScreen() {
+   }, [m.statuses]);
+ 
+   const activeEntry =
+-    replayIndex.storms.find((s) => s.id === selectedStormId) ?? replayIndex.storms[1] ?? replayIndex.storms[0]!;
++    replayIndex.storms.find((s) => s.id === selectedStormId) ??
++    replayIndex.storms[1] ??
++    replayIndex.storms[0]!;
+   const doc = replays[activeEntry.id]!;
+   const stormName = language === 'es' ? doc.storm.name_es : doc.storm.name_en;
+-  const stormDate = new Date(doc.storm.start).toLocaleDateString(language === 'es' ? 'es-US' : 'en-US', {
+-    month: 'long',
+-    day: 'numeric',
+-    year: 'numeric',
+-    timeZone: 'America/Chicago',
+-  });
+-  const avoidCount = new Set(doc.events.filter((e) => e.state === 'avoid').map((e) => e.crossing_id)).size;
++  const stormDate = new Date(doc.storm.start).toLocaleDateString(
++    language === 'es' ? 'es-US' : 'en-US',
++    {
++      month: 'long',
++      day: 'numeric',
++      year: 'numeric',
++      timeZone: 'America/Chicago',
++    },
++  );
++  const avoidCount = new Set(
++    doc.events.filter((e) => e.state === 'avoid').map((e) => e.crossing_id),
++  ).size;
+   const blurbKey = `storms.blurb.${activeEntry.id}` as CopyKey;
+   const demo = tripFor(activeEntry.id);
+ 
+@@ -65,14 +81,20 @@ export default function StormsScreen() {
+           alignSelf: 'center',
+         }}
+       >
+-        <AppText style={{ fontFamily: 'Inter_700Bold', fontSize: 28, lineHeight: 34 }}>{t('storms.title')}</AppText>
+-        <AppText style={{ fontSize: 15, lineHeight: 22, color: S.textSecondary }}>{t('storms.body')}</AppText>
++        <AppText style={{ fontFamily: 'Inter_700Bold', fontSize: 28, lineHeight: 34 }}>
++          {t('storms.title')}
++        </AppText>
++        <AppText style={{ fontSize: 15, lineHeight: 22, color: S.textSecondary }}>
++          {t('storms.body')}
++        </AppText>
+ 
+         {/* Honest Study Scorecard & Regional Context Side-by-Side */}
+         <Panel style={{ borderColor: ACCENT, gap: 12 }}>
+           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+             <FcIcon name="shield" size={18} color={ACCENT} />
+-            <AppText style={{ fontFamily: 'Inter_700Bold', fontSize: 17 }}>{t('storms.track_title')}</AppText>
++            <AppText style={{ fontFamily: 'Inter_700Bold', fontSize: 17 }}>
++              {t('storms.track_title')}
++            </AppText>
+           </View>
+           <AppText style={{ fontSize: 13.5, lineHeight: 20, color: S.textSecondary }}>
+             {t('storms.track_body', {
+@@ -84,28 +106,6 @@ export default function StormsScreen() {
+               fa: h.F,
+             })}
+           </AppText>
+-          <View style={{ flexDirection: 'row', gap: 8, flexWrap: 'wrap' }}>
+-            <StatCell
+-              value={`${h.H}/${h.H + h.M}`}
+-              label={language === 'es' ? 'Eventos detectados (8 omitidos)' : 'Detected events (8 missed)'}
+-              color={ACCENT}
+-            />
+-            <StatCell
+-              value={`${h.median_lead_min ?? '—'} min`}
+-              label={t('storms.stat_lead')}
+-              color={LOCKED_STATE_HEX.watch}
+-            />
+-            <StatCell
+-              value={`${h.F}`}
+-              label={language === 'es' ? 'Falsas alarmas (regla aguas arriba)' : 'False alarms (upstream rule)'}
+-              color={LOCKED_STATE_HEX.avoid}
+-            />
+-            <StatCell
+-              value={`${floodHistory.total_events_in_area}`}
+-              label={t('storms.stat_events')}
+-              color="#38BDF8"
+-            />
+-          </View>
+           <View
+             style={{
+               padding: 10,
+@@ -116,18 +116,39 @@ export default function StormsScreen() {
+               gap: 4,
+             }}
+           >
+-            <AppText style={{ fontSize: 11.5, fontFamily: 'Inter_700Bold', color: S.textSecondary, letterSpacing: 0.4 }}>
++            <AppText
++              style={{
++                fontSize: 11.5,
++                fontFamily: 'Inter_700Bold',
++                color: S.textSecondary,
++                letterSpacing: 0.4,
++              }}
++            >
+               {language === 'es'
+                 ? 'COMPARACIÓN CON LÍNEA BASE DE SENSOR MÁS CERCANO (LOSO)'
+                 : 'BASELINE COMPARISON: UPSTREAM RULE VS. NEAREST GAUGE (LOSO)'}
+             </AppText>
+-            <AppText style={{ fontSize: 12.5, lineHeight: 18, color: S.textSecondary, fontVariant: ['tabular-nums'] }}>
++            <AppText
++              style={{
++                fontSize: 16,
++                lineHeight: 23,
++                color: S.textPrimary,
++                fontVariant: ['tabular-nums'],
++              }}
++            >
++              {language === 'es'
++                ? `Aguas arriba: ${h.H}/${h.H + h.M} detectados · ${h.M} omitidos · ${h.F} falsa alarma\nSensor más cercano: ${nearBase.H}/${nearBase.H + nearBase.M} detectados · ${nearBase.M} omitidos · ${nearBase.F} falsas alarmas\nLa regla aguas arriba no superó la referencia.`
++                : `Upstream: ${h.H}/${h.H + h.M} detected · ${h.M} missed · ${h.F} false alarm\nNearest gauge: ${nearBase.H}/${nearBase.H + nearBase.M} detected · ${nearBase.M} missed · ${nearBase.F} false alarms\nThe upstream rule did not beat the baseline.`}
++            </AppText>
++            <AppText style={{ fontSize: 13, lineHeight: 19, color: S.textSecondary }}>
+               {language === 'es'
+-                ? `Regla aguas arriba: ${h.H}/${h.H + h.M} aciertos · ${h.median_lead_min ?? '—'} min anticipación mediana · ${h.F} falsa(s) alarma(s).\nLínea base (sensor más cercano): ${nearBase.H}/${nearBase.H + nearBase.M} aciertos · ${nearBase.median_lead_min ?? '—'} min anticipación mediana · ${nearBase.F} falsas alarmas.\nResultado: En este conjunto pequeño de 12 eventos proxy, el emparejamiento aguas arriba no superó al sensor más cercano.`
+-                : `Upstream rule: ${h.H}/${h.H + h.M} hits · ${h.median_lead_min ?? '—'} min median lead · ${h.F} false alarm.\nNearest-gauge baseline: ${nearBase.H}/${nearBase.H + nearBase.M} hits · ${nearBase.median_lead_min ?? '—'} min median lead · ${nearBase.F} false alarms.\nTakeaway: On this small 12-event proxy sample, upstream pairing did not outperform the nearest-gauge baseline.`}
++                ? `Anticipación mediana: ${h.median_lead_min} min hasta el nivel de referencia del sensor. No se validó la predicción de inundación en el camino.`
++                : `Median lead: ${h.median_lead_min} min before reference-gauge stage. Road-flood prediction remains unvalidated.`}
+             </AppText>
+           </View>
+-          <AppText style={{ fontSize: 12.5, lineHeight: 18, color: S.textMuted }}>{t('storms.track_note')}</AppText>
++          <AppText style={{ fontSize: 12.5, lineHeight: 18, color: S.textMuted }}>
++            {t('storms.track_note')}
++          </AppText>
+         </Panel>
+ 
+         {/* Compact Storm Selector + Focused Active Storm Card */}
+@@ -152,12 +173,22 @@ export default function StormsScreen() {
+           })}
+         </View>
+ 
+-        <Panel style={{ borderColor: ACCENT, borderLeftWidth: 4, gap: 12 }}>
+-          <View style={{ flexDirection: 'row', justifyContent: 'space-between', gap: 8, flexWrap: 'wrap' }}>
++        <Panel style={{ borderColor: ACCENT, gap: 12 }}>
++          <View
++            style={{
++              flexDirection: 'row',
++              justifyContent: 'space-between',
++              gap: 8,
++              flexWrap: 'wrap',
++            }}
++          >
+             <View style={{ flex: 1, minWidth: 200 }}>
+-              <AppText style={{ fontFamily: 'Inter_700Bold', fontSize: 19, lineHeight: 25 }}>{stormName}</AppText>
++              <AppText style={{ fontFamily: 'Inter_700Bold', fontSize: 19, lineHeight: 25 }}>
++                {stormName}
++              </AppText>
+               <AppText style={{ fontSize: 13, color: S.textMuted }}>
+-                {stormDate} · {language === 'es' ? 'Observaciones USGS archivadas' : 'Archived USGS observations'}
++                {stormDate} ·{' '}
++                {language === 'es' ? 'Observaciones USGS archivadas' : 'Archived USGS observations'}
+               </AppText>
+             </View>
+             <AppText
+@@ -168,14 +199,22 @@ export default function StormsScreen() {
+                 color: avoidCount ? LOCKED_STATE_HEX.avoid : S.textSecondary,
+               }}
+             >
+-              {t('storms.alerts_seen', { count: avoidCount })}
++              {avoidCount === 1 ? (language === 'es' ? '1 cruce llegó a Evite' : '1 crossing reached Avoid') : t('storms.alerts_seen', { count: avoidCount })}
+             </AppText>
+           </View>
+           <AppText style={{ fontSize: 14.5, lineHeight: 21 }}>{t(blurbKey)}</AppText>
+           {demo ? (
+             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+               <FcIcon name="car" size={15} color="#7DD3FC" />
+-              <AppText style={{ flex: 1, fontSize: 12.5, lineHeight: 18, color: '#7DD3FC', fontFamily: 'Inter_600SemiBold' }}>
++              <AppText
++                style={{
++                  flex: 1,
++                  fontSize: 12.5,
++                  lineHeight: 18,
++                  color: '#7DD3FC',
++                  fontFamily: 'Inter_600SemiBold',
++                }}
++              >
+                 {t('trip.body', { name: cleanName(demo.crossingName) })}
+               </AppText>
+             </View>
+@@ -211,7 +250,9 @@ export default function StormsScreen() {
+         </Panel>
+ 
+         <SectionLabel>{t('storms.hotspots_title')}</SectionLabel>
+-        <AppText style={{ fontSize: 13.5, lineHeight: 19, color: S.textSecondary }}>{t('storms.hotspots_body')}</AppText>
++        <AppText style={{ fontSize: 13.5, lineHeight: 19, color: S.textSecondary }}>
++          {t('storms.hotspots_body')}
++        </AppText>
+         <View style={{ gap: 8 }}>
+           {hotspots.map((g) => (
+             <NearbyRow
+@@ -228,25 +269,3 @@ export default function StormsScreen() {
+     </SafeAreaView>
+   );
+ }
+-
+-function StatCell({ value, label, color }: { value: string; label: string; color: string }) {
+-  return (
+-    <View
+-      style={{
+-        flex: 1,
+-        minWidth: 135,
+-        padding: 12,
+-        borderRadius: 12,
+-        backgroundColor: S.primary,
+-        borderWidth: 1,
+-        borderColor: S.borderSubtle,
+-        gap: 2,
+-      }}
+-    >
+-      <AppText style={{ fontFamily: 'Inter_700Bold', fontSize: 21, color, fontVariant: ['tabular-nums'] }}>
+-        {value}
+-      </AppText>
+-      <AppText style={{ fontSize: 12, lineHeight: 16, color: S.textSecondary }}>{label}</AppText>
+-    </View>
+-  );
+-}
+diff --git a/mobile/src/screens/home/RoutePanels.tsx b/mobile/src/screens/home/RoutePanels.tsx
+index 9e3ada7..4f2e110 100644
+--- a/mobile/src/screens/home/RoutePanels.tsx
++++ b/mobile/src/screens/home/RoutePanels.tsx
+@@ -84,8 +84,8 @@ function isNight(): boolean {
+   return h >= 19 || h < 7;
+ }
+ 
+-function OriginSelector({ compact = false }: { compact?: boolean }) {
+-  const { t, language } = usePreferences();
++function OriginSelector({ compact = false, onSearchFocus }: { compact?: boolean; onSearchFocus?: () => void }) {
++  const { language } = usePreferences();
+   const m = useMonitor();
+   const [editingOrigin, setEditingOrigin] = useState(false);
+   const [originQuery, setOriginQuery] = useState('');
+@@ -119,8 +119,8 @@ function OriginSelector({ compact = false }: { compact?: boolean }) {
+       : m.customOrigin
+         ? m.customOrigin.name
+         : es
+-          ? 'Centro de Austin (predeterminado — GPS apagado)'
+-          : 'Downtown Austin (default — GPS off)';
++          ? 'Centro de Austin · GPS apagado'
++          : 'Downtown Austin · GPS off';
+ 
+   return (
+     <View
+@@ -133,28 +133,26 @@ function OriginSelector({ compact = false }: { compact?: boolean }) {
+         gap: 8,
+       }}
+     >
+-      <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 8 }}>
++      <View style={{ gap: 10 }}>
+         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, flex: 1 }}>
+           <FcIcon name="pin" size={14} color={ACCENT} />
+           <View style={{ flex: 1 }}>
+             <AppText style={{ fontSize: 11, color: S.textMuted, fontFamily: 'Inter_600SemiBold' }}>
+               {es ? 'PUNTO DE PARTIDA' : 'STARTING POINT'}
+             </AppText>
+-            <AppText numberOfLines={1} style={{ fontSize: 13.5, fontFamily: 'Inter_600SemiBold', color: S.textPrimary }}>
++            <AppText style={{ fontSize: 13.5, fontFamily: 'Inter_600SemiBold', color: S.textPrimary }}>
+               {originLabel}
+             </AppText>
+           </View>
+         </View>
+-        <View style={{ flexDirection: 'row', gap: 6 }}>
+-          {m.locationSource !== 'gps' ? (
++        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 6 }}>
+             <Chip
+-              label={editingOrigin ? (es ? 'Cerrar' : 'Close') : es ? 'Cambiar inicio' : 'Change start'}
++              label={editingOrigin ? (es ? 'Listo' : 'Done') : es ? 'Cambiar inicio' : 'Change start'}
+               active={editingOrigin}
+               onPress={() => setEditingOrigin((v) => !v)}
+             />
+-          ) : null}
+           {m.locationSource !== 'gps' ? (
+-            <Chip label={t('home.turn_on')} icon="target" active={false} onPress={() => void m.requestLocation()} />
++            <Chip label={es ? 'Usar GPS' : 'Use GPS'} icon="target" active={false} onPress={() => void m.requestLocation()} />
+           ) : null}
+         </View>
+       </View>
+@@ -182,13 +180,14 @@ function OriginSelector({ compact = false }: { compact?: boolean }) {
+             })}
+           </View>
+           <TextInput
++            onFocus={onSearchFocus}
+             value={originQuery}
+             onChangeText={setOriginQuery}
+             placeholder={es ? 'O busca otra dirección de salida…' : 'Or search another starting address…'}
+             placeholderTextColor={S.textMuted}
+             accessibilityLabel={es ? 'Buscar punto de partida' : 'Search starting point'}
+             style={{
+-              minHeight: 38,
++              minHeight: 44,
+               borderRadius: 10,
+               borderWidth: 1,
+               borderColor: S.borderSubtle,
+@@ -228,7 +227,7 @@ function OriginSelector({ compact = false }: { compact?: boolean }) {
+   );
+ }
+ 
+-export function RoutePlanner() {
++export function RoutePlanner({ onSearchFocus }: { onSearchFocus?: () => void } = {}) {
+   const { t } = usePreferences();
+   const m = useMonitor();
+   const [q, setQ] = useState('');
+@@ -277,7 +276,7 @@ export function RoutePlanner() {
+   }, [q, m.location]);
+ 
+   if (m.routePlan) {
+-    return <RouteCard savedPlaces={savedPlaces} onSavePlace={saveCommutePlace} />;
++    return <RouteCard savedPlaces={savedPlaces} onSavePlace={saveCommutePlace} onSearchFocus={onSearchFocus} />;
+   }
+ 
+   return (
+@@ -288,9 +287,10 @@ export function RoutePlanner() {
+           <AppText style={{ fontFamily: 'Inter_700Bold', fontSize: 17 }}>{t('route.where_to')}</AppText>
+         </View>
+ 
+-        <OriginSelector />
++        <OriginSelector onSearchFocus={onSearchFocus} />
+ 
+         <TextInput
++          onFocus={onSearchFocus}
+           value={q}
+           onChangeText={setQ}
+           placeholder={t('route.search')}
+@@ -307,9 +307,9 @@ export function RoutePlanner() {
+             fontSize: 15,
+           }}
+         />
+-        {m.routeBusy ? (
+-          <AppText style={{ color: '#7DD3FC', fontFamily: 'Inter_600SemiBold' }}>{t('route.checking')}</AppText>
+-        ) : null}
++        <View style={{ minHeight: 24 }} accessibilityLiveRegion="polite">
++          {m.routeBusy ? <AppText style={{ color: '#7DD3FC', fontFamily: 'Inter_600SemiBold' }}>{t('route.checking')}</AppText> : null}
++        </View>
+         {m.routeError ? <AppText style={{ color: LOCKED_STATE_HEX.watch }}>{t('route.error')}</AppText> : null}
+         {searchError ? <AppText style={{ color: LOCKED_STATE_HEX.watch }}>{t('route.search_error')}</AppText> : null}
+         {results.map((r) => (
+@@ -474,9 +474,11 @@ function TripEvidenceExplainer() {
+ function RouteCard({
+   savedPlaces,
+   onSavePlace,
++  onSearchFocus,
+ }: {
+   savedPlaces: SavedPlaces;
+   onSavePlace: (slot: 'home' | 'work', place: Place) => void;
++  onSearchFocus?: () => void;
+ }) {
+   const { t, language } = usePreferences();
+   const m = useMonitor();
+@@ -561,7 +563,14 @@ function RouteCard({
+ 
+   return (
+     <View style={{ gap: 12 }}>
+-      <Panel style={{ borderColor: blocked.length ? LOCKED_STATE_HEX.avoid : ACCENT, borderLeftWidth: 5, gap: 12 }}>
++      <Panel style={{ borderColor: blocked.length ? LOCKED_STATE_HEX.avoid : ACCENT, gap: 12 }}>
++        {plan.geometrySource === 'recorded' ? (
++          <AppText accessibilityRole="alert" style={{ color: LOCKED_STATE_HEX.watch, fontSize: 14, lineHeight: 20 }}>
++            {es
++              ? `Geometría grabada · ${plan.geometryCapturedAt?.slice(0, 10)}. El servicio de rutas no respondió. Solo revisión; no se calculó un desvío actual. La disponibilidad de fuentes se muestra abajo.`
++              : `Recorded geometry · ${plan.geometryCapturedAt?.slice(0, 10)}. Routing service unavailable. Review only; no current detour was calculated. Source availability is shown below.`}
++          </AppText>
++        ) : null}
+         <View style={{ flexDirection: 'row', gap: 8, alignItems: 'flex-start' }}>
+           <View style={{ flex: 1 }}>
+             <AppText style={{ fontSize: 11.5, color: S.textMuted, fontFamily: 'Inter_600SemiBold', letterSpacing: 0.6 }}>
+@@ -577,7 +586,7 @@ function RouteCard({
+           </Pressable>
+         </View>
+ 
+-        <OriginSelector compact />
++        <OriginSelector compact onSearchFocus={onSearchFocus} />
+ 
+         <RouteAuditSummary
+           groups={audit.groups}
+@@ -836,7 +845,7 @@ function RouteCard({
+       {/* Navigation handoff follows the crossing evidence. */}
+       <Panel style={{ gap: 10 }}>
+         <View style={{ flexDirection: 'row', gap: 8, flexWrap: 'wrap' }}>
+-          {m.mode === 'live' && !m.testHazard && blocked.length === 0 ? (
++          {m.mode === 'live' && !m.testHazard && !m.routeBusy && !m.routeError && plan.geometrySource !== 'recorded' && blocked.length === 0 ? (
+             <ActionButton
+               icon="arrow-right"
+               label={t('route.open_google')}
+@@ -850,7 +859,7 @@ function RouteCard({
+               }}
+             />
+           ) : null}
+-          {m.mode === 'live' && !m.testHazard ? (
++          {m.mode === 'live' && !m.testHazard && !m.routeBusy && !m.routeError && plan.geometrySource !== 'recorded' ? (
+             <ActionButton
+               kind="secondary"
+               icon="share"
+@@ -901,7 +910,7 @@ function RouteCard({
+         <Pressable
+           accessibilityRole="button"
+           onPress={() => setShowTestingTools((v) => !v)}
+-          style={{ paddingTop: 2 }}
++          style={{ minHeight: 44, justifyContent: 'center' }}
+         >
+           <AppText style={{ fontSize: 12, color: S.textMuted, fontFamily: 'Inter_600SemiBold' }}>
+             {showTestingTools
+@@ -909,8 +918,8 @@ function RouteCard({
+                 ? 'Ocultar herramientas de prueba de desvío'
+                 : 'Hide reroute test tools'
+               : es
+-                ? 'Probar desvío con cierre simulado →'
+-                : 'Test rerouting with a simulated closure →'}
++                ? 'Probar desvío con cierre simulado'
++                : 'Test rerouting with a simulated closure'}
+           </AppText>
+         </Pressable>
+         {showTestingTools ? (
+@@ -983,11 +992,11 @@ export function TripCard({ trip }: { trip: ReturnType<typeof useTripDemo> }) {
+   const color =
+     r.phase === 'rerouted' || r.phase === 'arrived' ? '#7DD3FC' : r.phase === 'driving' ? S.textPrimary : LOCKED_STATE_HEX.watch;
+   return (
+-    <Panel style={{ borderColor: ACCENT, borderLeftWidth: 5, padding: 12, gap: 8 }}>
+-      <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', gap: 8 }}>
++    <Panel style={{ borderColor: ACCENT, padding: 12, gap: 8 }}>
++      <View style={{ flexDirection: 'column', alignItems: 'stretch', gap: 6 }}>
+         <AppText
+           style={{
+-            flex: 1,
++            flexShrink: 1,
+             fontSize: 11,
+             lineHeight: 15,
+             color: '#9B8AFB',
+@@ -997,7 +1006,7 @@ export function TripCard({ trip }: { trip: ReturnType<typeof useTripDemo> }) {
+         >
+           {t('trip.archived_sim_header', { storm: stormTitle })}
+         </AppText>
+-        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, flexShrink: 0 }}>
++        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
+           <Chip
+             icon="target"
+             label={trip.followCar ? t('trip.camera_following') : t('trip.camera_free')}
+diff --git a/mobile/src/app/privacy.tsx b/mobile/src/app/privacy.tsx
+new file mode 100644
+index 0000000..9673c55
+--- /dev/null
++++ b/mobile/src/app/privacy.tsx
+@@ -0,0 +1,47 @@
++import { Link, router } from 'expo-router';
++import { View } from 'react-native';
++import { AppText, Button, Page, Title, styles } from '@/components/fordcast/UI';
++import { usePreferences } from '@/lib/preferences';
++import { theme } from '@/lib/theme';
++
++export default function Privacy() {
++  const { language } = usePreferences();
++  const es = language === 'es';
++  const sections = es ? [
++    ['Límites de uso', 'FordCast es un prototipo complementario del área de Austin. Respete las barricadas y los avisos oficiales. Nunca maneje hacia el agua. La investigación con sensores no valida la inundación del camino.'],
++    ['En este dispositivo', 'El idioma, los cruces guardados, el reconocimiento del aviso y las preferencias se guardan localmente. El registro visible de alertas pertenece a la sesión. No se necesita una cuenta. Puede quitar cruces guardados y cambiar permisos en Ajustes.'],
++    ['Solicitudes a otros servicios', 'Buscar direcciones envía el texto y coordenadas de referencia a Photon. Planear rutas envía el origen y destino a Valhalla. El mapa solicita teselas a proveedores externos, incluyendo Esri y OpenStreetMap. Las consultas de lluvia usan Open-Meteo. Las voces web pueden solicitar audio a Google. Esos servicios reciben datos de solicitud y la dirección de red.'],
++    ['Ubicación y avisos', 'La ubicación requiere permiso del dispositivo. El monitoreo de fondo requiere una compilación compatible y permisos adicionales. Una pestaña web no ofrece monitoreo continuo cuando está inactiva. Cambie o revoque permisos desde el navegador o sistema operativo.'],
++    ['Archivo y conectividad', 'Las tormentas archivadas son simulaciones identificadas. La geometría grabada de las rutas es solo para revisión cuando el servicio falla; no calcula un desvío actual. Las fuentes actuales y teselas pueden requerir conexión.'],
++  ] : [
++    ['Use and limits', 'FordCast is a supplementary Austin-area prototype. Obey barricades and official warnings. Never drive into water. Its gauge research does not validate road flooding.'],
++    ['On this device', 'Language, saved crossings, notice acknowledgement and preferences are stored locally. The visible alert log belongs to the session. No account is required. Remove saved crossings and change permissions in Settings.'],
++    ['Requests to other services', 'Address searches send search text and reference coordinates to Photon. Trip planning sends the origin and destination to Valhalla. The map requests tiles from external providers, including Esri and OpenStreetMap. Rain queries use Open-Meteo. Web voices may request audio from Google. Those services receive request data and your network address.'],
++    ['Location and notifications', 'Location requires device permission. Background monitoring requires a compatible build and additional permissions. An inactive web tab does not provide continuous monitoring. Change or revoke permissions in your browser or operating system.'],
++    ['Archives and connectivity', 'Archived storms are labelled simulations. Recorded trip geometry is review-only during a routing outage and does not calculate a current detour. Current sources and map tiles may still require a connection.'],
++  ];
++  return (
++    <Page>
++      <Button secondary title={es ? 'Volver a FordCast' : 'Return to FordCast'} onPress={() => router.replace('/')} />
++      <Title>{es ? 'Datos, privacidad y límites' : 'Data, privacy and limits'}</Title>
++      <AppText style={styles.footer}>{es ? 'Revisión: 24 de octubre de 2026' : 'Reviewed October 24, 2026'}</AppText>
++      {sections.map(([title, body]) => (
++        <View key={title} style={{ gap: 8 }}>
++          <AppText style={styles.heading}>{title}</AppText>
++          <AppText style={styles.muted}>{body}</AppText>
++        </View>
++      ))}
++      <AppText style={styles.heading}>{es ? 'Fuentes y atribución' : 'Sources and attribution'}</AppText>
++      {[
++        ['ATXFloods', 'https://www.atxfloods.com/'],
++        ['USGS Water Data', 'https://waterdata.usgs.gov/'],
++        ['National Weather Service', 'https://www.weather.gov/'],
++        ['NOAA Storm Events', 'https://www.ncdc.noaa.gov/stormevents/'],
++        ['OpenStreetMap contributors', 'https://www.openstreetmap.org/copyright'],
++        ['Valhalla', 'https://valhalla.github.io/valhalla/'],
++      ].map(([label, url]) => (
++        <Link key={url} href={url as `https://${string}`} style={{ color: theme.link, minHeight: 44, paddingVertical: 10, fontSize: 15 }}>{label}</Link>
++      ))}
++    </Page>
++  );
++}
+diff --git a/mobile/src/app/+not-found.tsx b/mobile/src/app/+not-found.tsx
+new file mode 100644
+index 0000000..804033c
+--- /dev/null
++++ b/mobile/src/app/+not-found.tsx
+@@ -0,0 +1,16 @@
++import { router } from 'expo-router';
++import { AppText, Button, Page, Title, styles } from '@/components/fordcast/UI';
++import { usePreferences } from '@/lib/preferences';
++
++export default function NotFound() {
++  const { language } = usePreferences();
++  const es = language === 'es';
++  return (
++    <Page>
++      <AppText style={styles.eyebrow}>FORDCAST · 404</AppText>
++      <Title>{es ? 'No encontramos esta página' : 'Page not found'}</Title>
++      <AppText style={styles.muted}>{es ? 'El enlace puede haber cambiado. Vuelva al mapa para revisar un viaje.' : 'This link may have changed. Return to the map to check a trip.'}</AppText>
++      <Button title={es ? 'Volver al mapa' : 'Return to map'} onPress={() => router.replace('/')} />
++    </Page>
++  );
++}
+diff --git a/mobile/public/_redirects b/mobile/public/_redirects
+new file mode 100644
+index 0000000..7797f7c
+--- /dev/null
++++ b/mobile/public/_redirects
+@@ -0,0 +1 @@
++/* /index.html 200
+diff --git a/tools/serve_web.mjs b/tools/serve_web.mjs
+new file mode 100644
+index 0000000..89c361e
+--- /dev/null
++++ b/tools/serve_web.mjs
+@@ -0,0 +1,37 @@
++// Local preview of Expo's exported single-page website, including deep links.
++import { createServer } from 'node:http';
++import { readFile, stat } from 'node:fs/promises';
++import { extname, resolve, sep } from 'node:path';
++import { fileURLToPath } from 'node:url';
++
++const root = resolve(fileURLToPath(new URL('../mobile/dist/', import.meta.url)));
++const port = Number(process.env.PORT || 8083);
++const mime = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.css': 'text/css; charset=utf-8', '.json': 'application/json', '.png': 'image/png', '.jpg': 'image/jpeg', '.svg': 'image/svg+xml', '.ico': 'image/x-icon', '.ttf': 'font/ttf', '.woff2': 'font/woff2', '.mp3': 'audio/mpeg' };
++
++await stat(resolve(root, 'index.html')).catch(() => {
++  throw new Error('Build the website first: cd mobile && npm run build:web');
++});
++createServer(async (req, res) => {
++  if (req.method !== 'GET' && req.method !== 'HEAD') {
++    res.writeHead(405, { Allow: 'GET, HEAD' }).end();
++    return;
++  }
++  try {
++    const pathname = decodeURIComponent(new URL(req.url, 'http://localhost').pathname);
++    let file = resolve(root, `.${pathname}`);
++    if (file !== root && !file.startsWith(root + sep)) {
++      res.writeHead(403).end();
++      return;
++    }
++    const info = await stat(file).catch(() => null);
++    if (!info?.isFile()) {
++      if (extname(pathname)) { res.writeHead(404).end('Asset not found'); return; }
++      file = resolve(root, 'index.html');
++    }
++    const body = await readFile(file);
++    res.writeHead(200, { 'Content-Type': mime[extname(file)] || 'application/octet-stream', 'Content-Length': body.length, 'Cache-Control': 'no-cache', 'X-Content-Type-Options': 'nosniff' });
++    res.end(req.method === 'HEAD' ? undefined : body);
++  } catch {
++    res.writeHead(400).end('Request unavailable');
++  }
++}).listen(port, '127.0.0.1', () => console.log(`FordCast production preview: http://localhost:${port}`));
+diff --git a/mobile/assets/demo/commute_presets.json b/mobile/assets/demo/commute_presets.json
+new file mode 100644
+index 0000000..4381c71
+--- /dev/null
++++ b/mobile/assets/demo/commute_presets.json
+@@ -0,0 +1,67 @@
++{
++  "source": "Valhalla / OpenStreetMap",
++  "capturedAt": "2026-10-24T20:35:08.068Z",
++  "purpose": "Recorded geometry for review during router outages. No live detour or navigation guarantee.",
++  "presets": [
++    {
++      "origin": {
++        "lat": 30.2672,
++        "lon": -97.7431
++      },
++      "destination": {
++        "lat": 30.1755,
++        "lon": -97.7429
++      },
++      "shapes": [
++        "}sjvx@lpwlyDvCx@jEjA~b@lLfJdCzCz@zEpAxb@jL~HvBxA`@rA\\jBh@~Ab@jo@fQxCv@fDx@nNxD`G~AdUhGvEpAzAiIbAuFjFqYpGu]PaAz@qEn@oDlFmYtF}Z|@qEdAqFtBuLzByLfF}XZgB^oBv@iEVuAjCsNt@cE^oB|@}EbBiJrBcLhHm`@lAsGlA}G`CmMP_AVuA`@uBl@iDlDoRxBwLfEsUv@eE`EmTrB}KdEaUl@eDzCx@~Q~EfL|Cpe@fM~J~@vCHnF[dEK`D@vF^pE`@hOpAxG`@xIN|K?pM]pg@}AnZiAxJ{@br@iHvm@qFbXiCxq@kHzoB}VhtDue@nW_Dna@cFn{@iKpOiBxu@oFlL_@fMKjIBtIAdVl@jO|@fJv@~OzApOxBnNlDrQdExMzDnO~DlV|IxTbLfm@v[`e@dTjZbPz{@`d@|dCnnAp|BfnA|ZzO|[xOfjAfk@j{Abv@|hEhvBzkEvvBloBp`Arj@n[p\\tNfkAfi@zzAnr@ph@bX`]jQruArq@f~BnkAhS|K`|Alv@f}@`e@`|@xe@`aDx`BzkAzs@|dAlp@lxAbeA~{Cb`Clj@tb@jBtA|]rV|EtD`KpHf~FdoErb@h\\lGhLtTvRpKfJbPjMnN~M|MhKjHrGnj@zb@nf@db@zDnFpMvJbXfSlFhE`c@lZvR`OnYnT`GpEzR|NtB~AhHfGjAuCXo@v@aBhS}b@v@cBhAaCdEgJnBgEdDkHjGyNvPs^zE{NrCwL|@wDbFcTlAgF`AaF~CyOdEySzIqc@vJmf@hCoMzAyHb@sBLs@pCkNjA{FxBqI`CyHjCsHXaAz@wClAyEfA_F~@aFfAgGl@_E@Ef@oEd@eG^iEb@cEv@kFhHy^`FoVzN}s@~Hk`@zDsRhQo|@tFkU`@oAtEqO`DeIbAiCfAqCnEmLld@{kAtEyJnE{HzFsHhNwOxM_SrDgHbCuEby@sbBhB}CbAgBrDoFr@}@lDsEvGmGhGyGbJ{KbBqB~k@k{@zKuOfIqLjHuKtFkI`HaNbDmHbDsIdR_m@jAuDfAkDdAkDhPoh@tE}NnGkSjC{HtKi^fAqE|@sDx@sEl@sDhC}Q`@mCtAiG~@gElCmIr@oBzAgElB}E`CgEtDqGlCmDrAwAfCiCf@i@pCkCxR}Q~KeJnMoKrcAyw@xOsL`JsF~n@{_@n[sRxG{Eh_@iZzdFgqElQaLxDgBzG_D~P{G~CmA`F_Bnc@gOfSyGtTuGhCw@qAyGqC|@ocAf\\eT~GkJjDoG~BkP`JkN~IoO`MaHjGgzDtkD}PrO{RpN"
++      ],
++      "km": 15.011,
++      "min": 14.28575
++    },
++    {
++      "origin": {
++        "lat": 30.2449,
++        "lon": -97.8017
++      },
++      "destination": {
++        "lat": 30.2849,
++        "lon": -97.7341
++      },
++      "shapes": [
++        "iu~tx@d}jpyDg\\rMy^dNiRfH_PtH_CfAoPhIyc@bYiK~C}G`BqFHkAMiJ_AoSaGk`@{UsY_NgPoFq]oKmTs@c`@mEgh@}E}d@{Eub@kKo~@aVkb@iKk[sJmVqJqS}IqRqKePsJePwLkOyN}M_OkL}MmJ{LqIiMoJsOkHyLiHyO{lCkcGgoDa{Hak@qnAuLoXkIuSgHsR_FsNsEmNmFmRcFgS}`@oiBgNok@_DmKuDeNsBsHyAiF{AeF{AcF}AcFwBcHiOse@wNab@wOw`@aOm]gVgi@kQi^aNyWmNwXioBoiDmOgVaMkQ}PqTwQkTwQmRsU}SmLoJmoButAm`@qVm{@kh@i~@}m@}aDszBwZgPy]gScXeNml@eXan@mVeNoFyQmHiEiBwDcBeEoBgEuB}DsBcEwB}\\{QaZ_Pwk@e[_WeNaWcNea@qT_]_RcRaKsJmFuJsFmm@a^og@eZmJyFmx@}f@y[mSiYiOcd@sSo[cMqj@wRk`@_LqDcDoCsCmBeCmAyC}@sDk@kEBmEn@qE~AyDbBkCbBuAfB{@rCs@nCa@tCDjKtA|Ep@|IpAfANpEg@dBoEjD}I|Nma@`G{NrHmOjGyIbCaD~DoEdDyCfEaEhI}EnYgQlYiRxD}CjDkE~DqF~CeH`BgGjAcHl@yH@aHQaIc@iHOiHVgGTmApAkHpBgLxAiInGw\\rFwYfBaLz@yGVkH|Ayb@fA{ZRoGJ{BrAia@`AcZz@{SnBem@dBql@DyAdBuj@FwBHuC~Ask@b@qO`DuaAL}CVaIJ{C`@eMz@aWHeCDgALcE\\oKJcDR}G`@}Nd@}NjA_^DeAJcDl@{QJgDTaGViHd@gM~@kYT{GiEG}OU_GSaW}@eLa@wPm@wTeAkJc@aBGmEYPyGr@aUjA}^UmAi@gEB}DBy@HyB`@wKh@}PLiEZsJFuBD}@L_EPmCB}DHoCDcABeAN{ErAad@Bk@LaEHoC|@c[j@aQb@kONkEHkDPiGT_I^{Cx@{GZqHh@eNvAiXd@qLNkDPeEXgHP}EXeH|BfBpBX|CElC]nDcDdI_CtCmArIoDpHwFzL{K~DyCpByAzGuFzBkBpCqBpDgBdEuAbFgA~AMjDY~ACtACtCCrC@tA@hJDnd@PrKd@rKbA~H|@pANlFn@vANv@JzBVhFl@fBThBTfUtCQ|E]vJ"
++      ],
++      "km": 10.643,
++      "min": 10.4162
++    },
++    {
++      "origin": {
++        "lat": 30.3694,
++        "lon": -97.7867
++      },
++      "destination": {
++        "lat": 30.4021,
++        "lon": -97.7259
++      },
++      "shapes": [
++        "_yq|x@d|loyDwP`e@uFoBwNjNuPeTwrAqaB}C{DgCeDwW}\\o_@_e@suBijCycBqwBcj@er@sx@kcAo\\eb@kaA{lA{pAubBmM}PaRyYmJwPqLyX_n@y_B}P_d@_CgGqP}b@kTcj@}cAmiCeJcUaM_XyH{NoCiFeDoFaBoC}d@mt@uo@g_Aa}@srAaIsO{H}RwDmM}CsOc@yAoCwOgBcP]wNh@csABkFEaF~A}~CDgNDcOBqrA_@yi@qCahAcJgrBuGoaBiHmcB}B}\\}Bc\\gBcQcCqP{CyQgEqQ}EsOmEaQs@aCsAmFaZuiAiBeIgAeEmE{PmIm\\cAgEiBuH}Fs]eFs^UqBgDg[[sCk@mHqCu]s@eUWcQIeFJm`@@gEFeLDoCXeSPuLn@_UtA{\\xBiYbE}^zMulAhBiP^_D`A{If@yE]wB[iBZcDd@_EpI}s@d@kEcZeGkX{GoXuBoa@mGmWiDyYcCcb@wBe|@_J}Ys@sb@qHgd@aJy^wIa[gI_TsGsUcIcX_KqSyIcYuMqVaM_UcMqPuJ_\\sS_^yWoOwLiXoTi\\wYcf@sc@a^y^uNeNoHmIuO_R{C}JgTo[kSc_@mUah@{GaOee@qaAaDaL}m@_oA}LgYd@cG`AqDlBoDhB}A|BiA`GmBvMiElBf@|@TvBx@tCjC`Lvl@hBhGtC~GpC`H`FjJzCrEbFxCxTtIxY|JfIdCrC|@jJtCfA^xDpA]nA_FfR{DrLiDdKe@rArC`B`W`Oz@n@lEfDrBzAhDfApDh@tCv@tB~BbClCjVh]hB|AtCdA"
++      ],
++      "km": 9.066,
++      "min": 9.342016666666666
++    },
++    {
++      "origin": {
++        "lat": 30.2672,
++        "lon": -97.7431
++      },
++      "destination": {
++        "lat": 30.628,
++        "lon": -96.3344
++      },
++      "shapes": [
++        "}sjvx@lpwlyDvCx@jEjA~b@lLfJdCzCz@zEpAxb@jL~HvBxA`@rA\\jBh@~Ab@jo@fQxCv@fDx@nNxD`G~AdUhGvEpAzAiIbAuFjFqYpGu]PaAz@qEn@oDlFmYtF}Z|@qEdAqFtBuLzByLfF}XZgB^oBv@iEVuAjCsNt@cE^oB|@}EbBiJrBcLhHm`@lAsGlA}G`CmMP_AVuA`@uBl@iDlDoRxBwLfEsUv@eE`EmTrB}KdEaUl@eDd@eCXcRl@aFzAyFNo@~AiGv@uCfB{GkN{AuC[gDc@kP^eHYuBQuBSagAuOqGmAgIw@yM_AeVmGcBe@eVaGcaAsWauCiv@y`E{fAgZuIw_Baa@e\\_Hqv@qOuEcAq`@_IqGwAcM}B}XyGgWwG}z@oX_hBqr@aKcBiDuAw`@sO{QoH_ZiNsIiEq[_QaFyCg`Ami@ccBo`AanA_s@}wAmz@mOoI_r@k]g^eSye@aXs_CoqAwMmHmWwN{gGshDuNuHgu@u`@iaBy{@mmBacAodB}}@cVmM}HqEeBaAczAa{@oHsEmfCuvAqh@oYiTwLugC}xA{Z_Q}Y}N_w@a`@k]uNepAud@_k@qPmPiEc[uGco@eMsAWuHmAuHmA{m@kGmImFsX_CaUaBuGm@kJgAk^_FwPeCkMaBiUuB{_@wCm^mCkRuAuk@aEcLkAgFy@sCk@uDeA{G}CuLgJkGaIoD{FsE_MiAaFoAgJk@uKg@oUxDmiB`F{kCt@cZzBoe@v@k`@^_FxDmg@`D{f@lC{g@tA_ZhDk_AzByp@dCop@vAim@IkTToa@Eu_@a@cc@u@}d@iEg~A}Bew@sH_`C{A_b@kBy_@aDs_@}Da_@wCsWsOuw@cIa^ahAgqEiLwg@uG_Xi]otAsf@mwBqNam@yf@gnBiIoa@o]{xAiQo}@aSyjAoO}mAgTyaCwGc_AqDmr@}DgaAmGywBkBam@qGkpBgF{fBq@iTmBaq@eKk{CeBik@eJadD}Bc~@{MuaEaBcc@eAwWcAaZuD}fAuAyr@gGirCkFuwBgo@u}TO{DmGooB}Bes@wDw|@gH}r@iNefAgI{j@kWewAaeCyrNwnAghHmJse@oOom@oKgc@gdAiwDi_C_sIoNyg@gUky@s@gC_[eiAug@_jB}Nqh@yjCemJyNck@sY}uAgNss@sMes@oI_n@wGse@sBuOwAqKqImu@yDgf@iE_e@mQ_qAwEs]oEcd@{Fgq@{Fwt@eCqRcPekAcVuuAgJal@aIii@{[{aCiV_jBkOwrAu@qGo@gFkTkgBmAwM_AqJeC}WiAcQyA}YoAo\\e@{ZEkEo@mb@_@uXc@c\\WsTC{DG_HKoI[cTm@qa@e@_h@c@u`@]qg@i@wdAcAeaB{@wsA{AsiCCwD?eGS_UGsJKwQKqe@g@ue@gAcwBI_Z}@kwAcAi~AO}XEuEOiXScf@_@c`AI}Pq@wdBq@gwAGoMYkl@Og]Yin@i@ybAmAgnCO_SAaf@s@wVIyKc@al@GcHUoYa@o[YsTm@m_@_@oSYcRGkEq@{e@wFkoDw@wc@y@ohBoFmvC{@uz@_A_|@oHmiEqHiyFcKseHMmKg@_b@qAudAmBsiAoAe`AiC_qB{@ep@yCu}BYuUyD}nEg@qj@k@ap@c@sk@u@_wA]yh@EwJoBaxBsBa_Ce@}o@q@mx@Ygg@iBkiB_@a^G}MSi\\qAubCs@}pAaA}gB_AaeBQ}ZBmD?gCF__B@wzA?yi@Dmd@F_j@?_gE?kg@?om@?_k@Dga@?gCA_s@KqjFIohBCuxEFszAc@aiAoB{yAeLorHYsRqEs}CmAwy@eKwlHm@ab@cAeaAs@cdA?gKKyoEl@okD^_vB`@w~BLczARc{ANi}@@oHf@clCAmSRedC@ygA^wqB@akAH_SbAk`FR{n@Laf@JohBLkqA@{HCcTHcx@@iw@Lco@Re[TmU@iBXue@hCed@zEqe@|Go^zDkQpBgJrCaLfByGnCqIpCuIdLkXrJ}P`HkMxA}BpMkRxDgFtDaFbKsLbQmPZ[bKaKbGaGhAiA~L_MtRkRbNoMzEuEbC{BdA_A~RgRbGwF~IqItFiFlEeE`H{Ihd@uc@zTy[tg@ig@hm@ql@zxAywAhOcOzg@eg@va@ea@dIaIh]{\\dFaF`LyKde@sd@hR}QhOyOpDsD|EoFnHaH`HiIjMuPvFuInFyIxKaS`GqL|FaNdGgOlEcNrEqOrAwElDqO|C{MzHg_@bEaVnImf@nGe[hDwOlAuHrAkI|EeIdm@_gD~Xu}A`Ncu@lJ}d@~Lsp@|Igi@fEeUpA}GbBmIbUwiAdKih@dWqvA`Hg^xLen@pU{kAx@eEfOqv@n@aDvt@}~D`Zu~AtZmbBlWwuA`Hg_@lQi~@~q@ooD|k@g|CpVcoAh@oCdSkdA`Q_}@vOwy@zJuh@hKuj@rTukA`l@mwC~Lyp@pSueAnFiThK}]|K{`@l`AuqCdHoV~u@ctBly@cbCnEsM~Nyb@fWyq@|K_YzKa\\vRwb@vNe[`Vob@nVyc@je@io@~GkJbn@gz@|Zeb@dtDmeFrC}D|NeStt@gcAdXaZt{CcrDbzBwlChlA}`Brn@{gAtWkg@bz@w~A~F}KxQg^jXmg@t\\}o@tqCkjFdkDaiGrWqn@hU}q@jI{WzSi_AnQyjAjQyrAhHsi@xEal@tCkm@jAem@N{SlA_jCfBunAb@{{BxBmiDj@uf@h@ob@fBaf@~Dos@lCe`@zVkyBzhAsqIvHwm@bIs_@~Okl@xFmRnSae@nVwe@|PgWrK_RfWq^~v@qiAprAwjBbnBkqC~bCmkDbVwZxe@ad@~QwN|PeL~\\eUdhDkpBdiCa~AzOyJpj@_]fz@si@lhBqkAjbCk_Bdg@o\\pbAyo@ns@}d@vwBgvAbuBgxAbdEwnCjn@}[bgByw@t_@mO`vAuh@|mBet@~kBiq@j_@aNdMsEjbE}yApqDerAleAql@hl@ci@xe@gj@nt@emAbm@uhAlwAmlC|iAivBhy@w{A`U}g@nw@e{BdT{v@~Pwo@nuDuvN~`Ag_E|jAarElCqKlxAczF|DmNzLqc@l{@qgDjc@wdB~YyfAraAswClDqKhr@otBrI{VbQoi@fOuc@vKe\\nUiq@tCqInMo`@|Ogf@zSsn@tr@cuB|tAkfE|AuExeBugFjpAiyDrCoInj@abBf\\kbAhi@a_Btg@e{Ab_AetCh]acAdw@s_CjXgz@bSqq@zR}t@dOam@ft@caCpQm[rHqLlKyPrf@aq@tPiTpMsRiMoWyBoEcYel@uNs[yMwYcIqSmJ}UuAoE}DeTcEuUcD}UaCgVgAoRqDuw@wHwaBaJooBeDus@}IgfBw@mUaEanAwC{gAwDgdAqA{]{Bu]uD}_@eFab@uFs\\wGe\\gPas@iIa^cm@gjCwCcOyBeLcFw\\cEa]k@uFwAiR}AgZq@iZImZXmZxCkt@dCoi@fBu_@fDkt@^yQVe]Ii]c@wUoAg^kAeSi@yIqCk\\gc@abFyJucA}OkvAkLcbAka@qkDgOisAoF_]uGq\\}Hc\\_Jm[qCoIs@cBckA}pCc`BosDwFoMit@keBahAagCq{@woBiOga@mBgGkGyR_Ju[}He\\uFuYoFc]iEm]{B}UkDgi@WmFwAq`@oCwhA_FoaCgCq`A]yMyE_i@wHep@{Isg@qN{j@uLcc@aBkEeMc\\k^}~@sw@kmBwsAkfDqa@qlAuLwd@{Egc@{Bab@PyPBuBxJsiB|Cwk@rLizBdFciAvMkuD|A{a@\\_JlAc_@lJ{vCrEawArCg|@hIgsBbE}nAhHslBnHugCrGsdBjFgvArB_s@rCyy@|Bqp@t@mTX}HFgB|Aw`@l@uOj@qNdC}y@JsIBuK[kV}@sSmCun@aFwjAgGowA{EsqAMaDMoB}AmUqCuXcEmYsEm[oKg|@oWakBcDwUwDwX{Kmv@mO}lA_XqmB_Fa[sFsd@iFoh@sL}eAiImr@uHyu@_Iel@aCgQcDg]cDe]gD}UiEoUkD_OaAaE_F_QySeo@_HwSgf@m}AsJ{ZyMgc@uIg^aEoPiNek@ePwp@yEgQs]mqAac@eeBgOsk@gCqJmBwGuDeMoCoIub@ksAoSin@_E_L_Mm]}G{WyBqK{BwKoEaYwNybAyHek@a@sCuE}YW_ByEeUiCsJ}WobA_IaS{KqU{JuQwK{PyOyPuPsOyFwEsk@cc@gf@g`@sR{MeSwLy}@cg@c~Aoy@kI{Hu_@e\\qUuYiCcD{n@{r@_AgA}DsEkt@{z@iNePm`@}d@_c@{g@yPmS}MiNab@}b@mJyIys@}p@wM}L_RgQc]}[wCqCgFuEix@at@aCwBmp@km@wUeScDoCm\\_YiTiR}r@an@ub@w^oL_KwfAaaAch@{c@ilAedAu^g]u@s@gb@aa@g_Bk_Bg{@g}@mBqBgu@_x@eQaRgBiBid@qe@qgA{iAgrAinAu}@wz@aMsLkL{Ku_CswB{LaJmMaI}M_HkN_GwN{EwH{AsaAuSm}@ePaa@cHoCk@e\\oD_eCyUyUqAaRg@eFEsXB}Ul@aVvA}UbCwUlDeSlD}uA|Vc`@xGk`@hFg]fDuVlAyV`@gKAcGAyEI_Us@wGc@}_@_Dw_@mEyUiDiReEaRkF{HmCyG_CoAi@wNiG}EcC{IoEgSyLoIaGc~@qk@_aAqn@q|BmyAkcDiuBaXaQcq@sb@mt@oe@g}CcqBce@aZouCanBgRoLcIqF}HoFkb@c[cGwEmYgVuXiWe[k[kZm\\iJ_LKK{MaPu]ge@mhBadCo{@ikAmi@st@y\\qd@gYc`@q[se@eRiZwCmFcDgIoZmh@wSqb@{Pc`@qQed@ki@w|A{aCgbHiD_JsKeYq@eBsMa[gSob@iTsa@mUu`@iZ_g@}W}c@a_BsiCeQsY}_@go@cDoFyk@y_AwTo^}HiMiOsV{sAc{By{@kvA}bAedByRkZwHaNmxAqiCeW{d@m_AycBem@cfA_Zqf@gW{_@eGkI_PqT_Y}]mWaZiXcYw[qZi_@c\\wKwIeXiTcLeIsMkJuEwCyToNyf@uXec@wUeP{HeoB{aAsiBs~@ePeIyK{GuFaD}RiNiRmOqQmP{PkQaWyYgLwOgKuPqFiKyFmK{DkHwKqUyJgVyI}Vqr@caCgM_b@mNka@wAoD}La[c_@u{@q@}A{Q}_@yRc_@wSk^s_@{l@mSuYmTwXeUwWab@{d@yX}XuYyWmTgR_|BmsBouAwnAo}BurB}~@{y@ss@ip@uhAwbAy|@ox@caCqvBcKgJa|CyoC{l@ij@meAk_Au`CmvBiC_CaLaKyp@}l@uz@qu@eYsW{Zg[sWuYuUg[{Te\\kE}GwRi^gE}HaDgH{C}GuMyYuW}n@{]{{@uAgDsj@esA{]e{@_oA_{Cig@_mAm^o~@kmAgvCcW_n@_U{i@cuAwfDas@mdBgZ_t@ab@icAydDabImv@}jBcmAmuC}`Au`Cca@s`AowAolDgSqg@iL{WeX}h@{Tqb@}Usa@}Vw`@g^sh@gHiJaMiPgWoZ{c@cg@yZg[u[eZuXcR{rBikBmlAudAyc@wg@sq@}p@ki@{l@yzBstBi`B{vA{dB{{Ay_@}\\sxA}qAa]qYihC{xBiz@gl@qkA{r@qxCshBwt@_d@uu@ya@gcDqzAo]yRm|Aq}@chE{hCgm@i^w{@oe@ma@wNi]cJgL}Ckq@eKsfBeUwfAwN}m@gLiUkF}eAeZykEilAmlBgh@iPqFo^mMy\\kOqXaPqU_Rsg@m^uzBipBufAw_AehF{mEce@e`@of@sb@y~BkpB}h@oe@ceAiaA{fAymAw{@i}@{Zs[cxBw`CaoAwyA_pBqvBuoBq`Cw~A{lBg|@}~@ek@_h@qeBqpAyRqN}L}Igi@ma@kEeDyUwQ{TcU_VkVobAiy@yb@a[iMgJq_Amu@uvCo|B_hAir@{pCkwBamBcwAcl@me@}z@wr@e|@iq@}{@mz@mqAaqA_h@ii@a~CuyCw^s^mkB_kBeVmUgcBqbBwyBiyBgbAgaAk^ua@mkBmiBuTqTsjDmiDauCyqCchDihDe`Bk`BqyB{vBcZiZaaAa}@uUoXyrCweD}LmN_Q}Rgp@_y@yv@_|@sf@uh@sLsOua@{m@kHqJ{RoZeY{f@aCoEmVid@gLqX}CgHoX_m@qOea@aDaKkVsv@im@efCmT_fAqBsIkl@efCoNej@o_@iaAad@gw@_T}YgFqFiM_N{l@cm@qo@mq@uLyLk\\a^k_@ae@eVub@qMcVqWkl@ih@oaAwa@y~@qc@yz@yRwb@iBaE}JiSma@wz@kd@i{@qF}JwHcMsTo]mPuS}X{\\mVmX{OsRcDkDcCiCeCuCce@mi@os@ey@cAkAgGiHe[k^aiAqqAkg@_n@iEqFei@_o@}AkBmLgNaIoJcPgQmHaIcGuGyGaIgb@mg@mk@gj@c~@}v@ej@qb@gzBmdBmpA_bAg|@kq@gv@wl@e]}Zal@wl@oiAamAib@mc@gi@}k@gx@_|@mn@ao@qm@go@{JoKqkDquDqj@mj@auBi}Ba|@s~@{aCkgCsoB_sB{pAiuA}p@st@cb@kk@ec@mo@ya@kr@eSec@kOg\\_k@q|AwWcy@cTas@eaAc~CoXi|@meAehDm~@msCuf@eaByp@ouBka@yjAsa@i`Au_@yx@m^ap@}l@qiAi^qt@uUed@ig@eaAs_@mu@q~EgqJmaCelEwhBohDaeAeiB}yA}mCwbAijBok@efAcReg@uNkh@{[ovAw\\{uBcf@gtCet@ylE_Mgv@ko@yfEcJqa@ks@ujEy_@gbCoZshByOq_A{yA{aJ}Fi]cKc[mSmm@uSed@oAmCqnA{mCapDm}HcbBosDsUym@eOsh@eWafAoI}c@}Hii@mEi_@sDsb@iEew@kSasDuL}~B}HmvAiE_z@wHabBuK}sAgHiu@iL_s@_Y_iAgRsl@aS{f@aWmg@urAakB_vAojB{PaUoj@en@{oAshA}j@y]meAog@{l@{Tkj@_QsUkEsw@{NaWcDukAkOsmAiPyV{Ce~@mJgfC_[aqD{d@aOmBgb@iHwV}FgTiHyVmLeUqHgIsGcJgHcL}KwKwLmNoQaMuP{M{WcLkWwo@mbB}{@e_CkP_c@wI}ZuHwZyEkVoDgTcCoQuIis@_T}rBoIgw@qFu}A}Cad@iGox@oVmpCqHer@yMqnAoh@y{EiXwoCeLcoA_v@_fHcn@{{Fa}@aiIuRijBqt@eaHm@{HkDgf@}PatCiJ{kAiLurAaSgsBuD{_@kWo~BaHyn@sFeg@}|@}oIcVuxBaA_J}NcsAyEmt@sKq|De@kpAH_VZ{Tn@cV~AeXjCaYxD}VlGeYrFaTjGwRtH}QhIoQdIwNdJqN`MyPpMcOd^m\\rv@ip@zpBgaBr_Amv@vz@ws@bQcQnHuIpJsL~QmW`MyRrKeRhMgXht@q_BheAg~Brz@akBt]ov@fYkn@xuAktC|EiKha@}y@pcAaiB~MgWrPa^`v@ybBjIwQ~{@wmBlP_]bJgQhLsSxLkShKkPhKwOlU_\\~MiQpw@caAlxBwkCnbBksBnJoLh{Eg~FxS}T`XgX`TsRfc@__@~b@u^jUeTdQmQzRqT~[ga@xL{OpX{^fc@mm@rO{VnO}XpoAwaCxLcTxJgP`RmWbQoUpIcLdgDkqElKqOlf@ut@pwBgdDtWm`@nYya@|Ys`@dc@gl@lUa[fPaSzEaFnGwGvNaNd|@kr@vOgOxP_RrOmShP{Vz`@oq@xN_WhN_TjMoQdyAynBbXea@jVq`@rUgb@vVsf@zSef@f^y`A~b@yiA|ZibAnS_u@bQ_q@h@{AhUcp@hw@wrBtXmx@|[{x@|Vuq@lO{d@rSaz@`Qmv@nh@kvBtHa\\hZkpA~Q_y@lRiz@bDuOdCwNfBgPx@qQ\\yPC}Os@gPkBmQkC_RwC{NoEyO_FsM{EoKwI}OgJmMiJyKwL{Lmp@ui@}M_MkTcV{`@ad@q{AyfCyv@qqAej@__AiVoa@yYwf@ySk]sEuH}n@_cAcWia@eh@_{@sRq[kHaOcFaL}BeDgCyCmGqEcGcDaEeB}CgAyAk@oBaAqCcBsC{BqDaEwC{EcHkMuFaJ_GuImQ}U_RsUkDyDkCsBaDuCoD{DeBwC{AgDa@gAuAwDwAaGcDeK}AqDkBaEuFoHoGgFsJyIqC{CgEuEyJkGo]qa@w\\u`@iUuXaGgHcg@mm@yy@_cAq]ib@uRiUiJ}Kon@ku@oXg\\}KyM}Za_@iTgXcPaSUgEyIgK_R_UaFqA_PqRua@yf@oHqO{Q}Teg@om@mPoRaSsSqOuOuTaSyFoFmNcNeNgPyY{_@kH}KqOsVwFqJyLyRyAuD{Q_Y}[_b@}EgFaFmFmj@um@{WoZo@s@s@w@m[g_@sLuNyBoC{CmDuQoTaDyDaLsMyQmTsCwDkDgE}b@qh@gEgFqMoOo@u@sDkEgD}DsRkU{PcSa`@ye@s@}@gC}CwDcFeEyE_OwPidCgrCkW{YqCsDox@w~@_]g_@c]w_@gLoM_@c@kB_CmEiFaDcDwM{MjAkBj@}@tBvB"
++      ],
++      "km": 172.51,
++      "min": 109.86091666666667
++    }
++  ]
++}
+diff --git a/mobile/src/__tests__/round7-routing-fallback.test.ts b/mobile/src/__tests__/round7-routing-fallback.test.ts
+new file mode 100644
+index 0000000..c2dad5c
+--- /dev/null
++++ b/mobile/src/__tests__/round7-routing-fallback.test.ts
+@@ -0,0 +1,41 @@
++import { afterEach, expect, jest, test } from '@jest/globals';
++import { planSafeRoute, hazardsOnRoute } from '@/lib/routing';
++import recorded from '../../assets/demo/commute_presets.json';
++const originalFetch = global.fetch;
++afterEach(() => {
++  global.fetch = originalFetch;
++});
++
++test.each(recorded.presets)(
++  'router outage retains recorded preset geometry with coverage and hazard checks: $destination.lat',
++  async (preset) => {
++    global.fetch = jest.fn<typeof fetch>().mockRejectedValue(new Error('Router unavailable'));
++    const result = await planSafeRoute(preset.origin, preset.destination, 'Preset', []);
++    expect(result?.geometrySource).toBe('recorded');
++    expect(result!.route.coords.length).toBeGreaterThan(10);
++    expect(result?.outsideCoverage).toBe(preset.destination.lon > -97);
++    const point = result!.route.coords[10]!;
++    const hazard = {
++      ...point,
++      id: 'closure',
++      name: 'Closure',
++      reason: 'Official closure',
++      level: 'block' as const,
++    };
++    const blocked = await planSafeRoute(preset.origin, preset.destination, 'Preset', [hazard]);
++    expect(blocked?.avoided).toEqual([]);
++    expect(hazardsOnRoute(blocked!.route.coords, [hazard])).toHaveLength(1);
++    expect(blocked?.remaining[0]?.id).toBe('closure');
++  },
++);
++
++test('outage does not invent geometry for an arbitrary destination or aborted request', async () => {
++  global.fetch = jest.fn<typeof fetch>().mockRejectedValue(new Error('Router unavailable'));
++  const p = recorded.presets[0]!;
++  expect(await planSafeRoute(p.origin, { lat: 31, lon: -98 }, 'Other', [])).toBeNull();
++  const controller = new AbortController();
++  controller.abort();
++  await expect(
++    planSafeRoute(p.origin, p.destination, 'Preset', [], controller.signal),
++  ).rejects.toThrow();
++});

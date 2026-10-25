@@ -1,0 +1,200 @@
+- button "1.0ft":
+  - generic: 1.0ft
+- button "1.9ft":
+  - generic: 1.9ft
+- button "1.6ft":
+  - generic: 1.6ft
+- button "1.7ft":
+  - generic: 1.7ft
+- button "1.4ft":
+  - generic: 1.4ft
+- button "0.8ft":
+  - generic: 0.8ft
+- button "1.0ft":
+  - generic: 1.0ft
+- button "13.1ft":
+  - generic: 13.1ft
+- button "0.3ft":
+  - generic: 0.3ft
+- button "4.0ft":
+  - generic: 4.0ft
+- button "1.0ft":
+  - generic: 1.0ft
+- button "2.5ft":
+  - generic: 2.5ft
+- button "6.6ft":
+  - generic: 6.6ft
+- button "3.3ft":
+  - generic: 3.3ft
+- button "-0.2ft":
+  - generic: "-0.2ft"
+- button "Williamson Creek at Oak Hill":
+- button "1.9ft":
+  - generic: 1.9ft
+- button "4.7ft":
+  - generic: 4.7ft
+- button "4.3ft":
+  - generic: 4.3ft
+- button "–":
+  - generic: –
+- button "–":
+  - generic: –
+- button "–":
+  - generic: –
+- button "–":
+  - generic: –
+- button "✕":
+  - generic: ✕
+- button "✕":
+  - generic: ✕
+- button "✕":
+  - generic: ✕
+- link "Leaflet":
+  - /url: https://leafletjs.com
+  - text: Leaflet
+- text: "| Tiles © Esri, HERE, Garmin, © OpenStreetMap contributors · USGS · NWS · ATXfloods"
+- generic: FordCast
+- button "Mute voice warnings":
+- button "Español" [active]:
+  - generic: ES
+- button "Settings":
+- tablist:
+  - tab "Live now":
+    - generic: Live now
+  - tab "Storm drill":
+    - generic: Storm drill
+- button "Live · 18 creek sensors active · just now":
+  - generic: Live · 18 creek sensors active · just now
+- button "Map layers":
+  - generic: Map layers
+- button "Zoom in":
+- button "Zoom out":
+- button "My location":
+- button "Show more":
+  - generic: Show more
+- tablist:
+  - tab "Crossings":
+    - generic: Crossings
+  - tab "Route":
+    - generic: Route
+  - tab "Creeks":
+    - generic: Creeks
+- button "Check my trip":
+  - generic: Check my trip
+- button "Storm reroute demo":
+  - generic: Storm reroute demo
+- button "Turn on":
+  - generic: Turn on
+- generic: No sensor-calibrated crossings within 3 mi of downtown Austin (GPS off)
+- generic: The closest one FordCast watches is E. William Cannon (6.1 mi). You can widen your alert distance in Alerts.
+- generic: 4 / 30
+- generic: Research links
+- generic: "19"
+- generic: Creek sensors
+- generic: 2,052
+- generic: Inventory records
+- textbox "Search road, creek, or crossing"
+- button "Near me":
+  - generic: Near me
+- button "Needs attention":
+  - generic: Needs attention
+- button "Watched (4 / 30)":
+  - generic: Watched (4 / 30)
+- button "Past floods":
+  - generic: Past floods
+- button "Saved":
+  - generic: Saved
+- button "All 2052":
+  - generic: All 2052
+- button "Waller at 8th Street. Official low-water crossing. 0.4 mi away":
+  - generic: —
+  - generic: Waller at 8th Street
+  - generic: City of Austin · 0.4 mi
+  - generic: Official low-water crossing
+- button "Red River at 12th. Official low-water crossing. 0.6 mi away":
+  - generic: —
+  - generic: Red River at 12th
+  - generic: City of Austin · 0.6 mi
+  - generic: Official low-water crossing
+- button "W 9th St and N Lamar Blvd. Official low-water crossing. 0.7 mi away":
+  - generic: —
+  - generic: W 9th St and N Lamar Blvd
+  - generic: City of Austin · 0.7 mi
+  - generic: Official low-water crossing
+- button "Shoal Creek at Lamar (downtown). Official low-water crossing. 0.8 mi away":
+  - generic: —
+  - generic: Shoal Creek at Lamar (downtown)
+  - generic: City of Austin · 0.8 mi
+  - generic: Official low-water crossing
+- button "Barton Springs Road. Official low-water crossing. 1.3 mi away":
+  - generic: —
+  - generic: Barton Springs Road
+  - generic: Central Texas · 1.3 mi
+  - generic: Official low-water crossing
+- 'button "Water Rescue #3. Official low-water crossing. 2.0 mi away"':
+  - generic: —
+  - generic: "Water Rescue #3"
+  - generic: City of Austin · 2.0 mi
+  - generic: Official low-water crossing
+- button "Hemphill at W 32nd. Official low-water crossing. 2.1 mi away":
+  - generic: —
+  - generic: Hemphill at W 32nd
+  - generic: City of Austin · 2.1 mi
+  - generic: Official low-water crossing
+- button "Woodview Mobile Home Park. Official low-water crossing. 2.2 mi away":
+  - generic: —
+  - generic: Woodview Mobile Home Park
+  - generic: City of Austin · 2.2 mi
+  - generic: Official low-water crossing
+- button "2400-blk Rollingwood Dr. Official low-water crossing. 2.3 mi away":
+  - generic: —
+  - generic: 2400-blk Rollingwood Dr
+  - generic: Travis County · 2.3 mi
+  - generic: Official low-water crossing
+- button "Dellana Lane at Bee Cave Road. Official low-water crossing. 2.5 mi away":
+  - generic: —
+  - generic: Dellana Lane at Bee Cave Road
+  - generic: Rollingwood · 2.5 mi
+  - generic: Official low-water crossing
+- button "Edgegrove Dr at Bee Caves Rd. Official low-water crossing. 2.7 mi away":
+  - generic: —
+  - generic: Edgegrove Dr at Bee Caves Rd
+  - generic: Travis County · 2.7 mi
+  - generic: Official low-water crossing
+- button "800 Block of Edgegrove Drive at Bee Cave Road. Official low-water crossing. 2.8 mi away":
+  - generic: —
+  - generic: 800 Block of Edgegrove Drive at Bee Cave Road
+  - generic: Rollingwood · 2.8 mi
+  - generic: Official low-water crossing
+- button "800-blk Edgegrove Dr. Official low-water crossing. 2.8 mi away":
+  - generic: —
+  - generic: 800-blk Edgegrove Dr
+  - generic: Travis County · 2.8 mi
+  - generic: Official low-water crossing
+- button "2900-blk Bee Caves Rd. Official low-water crossing. 2.9 mi away":
+  - generic: —
+  - generic: 2900-blk Bee Caves Rd
+  - generic: Travis County · 2.9 mi
+  - generic: Official low-water crossing
+- button "2900 Block of Bee Cave Road (RM2244) at the Finish Line Car Wash. Official low-water crossing. 2.9 mi away":
+  - generic: —
+  - generic: 2900 Block of Bee Cave Road (RM2244) at the Finish Line Car Wash
+  - generic: Rollingwood · 2.9 mi
+  - generic: Official low-water crossing
+- button "Waller Creek and E 45th St. Official low-water crossing. 3.0 mi away":
+  - generic: —
+  - generic: Waller Creek and E 45th St
+  - generic: City of Austin · 3.0 mi
+  - generic: Official low-water crossing
+- link "Map":
+  - /url: /
+  - generic: Map
+- link "Storms":
+  - /url: /replay
+  - generic: Storms
+- link "Drive":
+  - /url: /drive
+  - generic: Drive
+- link "Alerts":
+  - /url: /alerts
+  - generic: Alerts

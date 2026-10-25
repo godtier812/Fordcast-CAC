@@ -128,7 +128,7 @@ export function Segmented<T extends string>({
             onPress={() => onChange(o.value)}
             style={{
               flex: 1,
-              minHeight: 38,
+              minHeight: 44,
               borderRadius: 9,
               alignItems: 'center',
               justifyContent: 'center',
@@ -176,9 +176,10 @@ export function Chip({
         alignItems: 'center',
         gap: 6,
         paddingHorizontal: 13,
-        minHeight: 34,
+        minHeight: 44,
         justifyContent: 'center',
-        borderRadius: 999,
+        borderRadius: 8,
+        maxWidth: '100%',
         borderWidth: 1,
         borderColor: active ? color : S.borderSubtle,
         backgroundColor: active ? ACCENT_DIM : S.elevated1,
@@ -191,6 +192,8 @@ export function Chip({
           lineHeight: 17,
           fontFamily: 'Inter_600SemiBold',
           color: active ? S.textPrimary : S.textSecondary,
+          flexShrink: 1,
+          paddingVertical: 8,
         }}
       >
         {label}
@@ -223,7 +226,8 @@ export function ActionButton({
       onPress={onPress}
       style={({ pressed }) => [
         {
-          minHeight: compact ? 40 : 48,
+          minHeight: compact ? 44 : 48,
+          maxWidth: '100%',
           paddingHorizontal: compact ? 14 : 18,
           borderRadius: 12,
           backgroundColor: bg,
@@ -239,7 +243,7 @@ export function ActionButton({
       ]}
     >
       {icon ? <FcIcon name={icon} size={compact ? 14 : 16} color={fg} /> : null}
-      <AppText style={{ fontFamily: 'Inter_600SemiBold', fontSize: compact ? 14 : 15, lineHeight: 19, color: fg }}>
+      <AppText style={{ flexShrink: 1, paddingVertical: 8, fontFamily: 'Inter_600SemiBold', fontSize: compact ? 14 : 15, lineHeight: 19, color: fg }}>
         {label}
       </AppText>
     </Pressable>
@@ -252,7 +256,7 @@ export function Panel({ children, style }: PropsWithChildren<{ style?: StyleProp
       style={[
         {
           backgroundColor: S.elevated1,
-          borderRadius: 16,
+          borderRadius: 10,
           borderWidth: 1,
           borderColor: S.borderSubtle,
           padding: 16,
@@ -451,7 +455,7 @@ export function FloodPhysicsCard() {
   }[depthIn];
 
   return (
-    <Panel style={{ borderColor: depthData.badgeColor, borderLeftWidth: 4, gap: 12 }}>
+    <Panel style={{ borderColor: depthData.badgeColor, gap: 12 }}>
       <View style={{ gap: 4 }}>
         <AppText style={{ fontFamily: 'Inter_700Bold', fontSize: 17, lineHeight: 22 }}>
           {t('physics.title')}

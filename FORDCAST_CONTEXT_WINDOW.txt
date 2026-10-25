@@ -1,5 +1,16 @@
 FORDCAST — CURRENT FULL PROJECT CONTEXT WINDOW / HANDOFF (TX-37 EDITION)
 Snapshot date: 2026-10-24
+Latest website pass: see docs/results/cac-round8-website-finalization-2026-10-24.md.
+Latest checks: 113 mobile tests in 12 suites, 19 extension tests, 59 backend tests;
+TypeScript/lint and scientific artifact audit pass. Older counts below are history.
+The four exact preset pairs can use dated recorded geometry during router failure.
+Recorded/test/busy routes cannot export navigation or sharing. Browser automation is now
+available: the four main tabs were checked at 320×568, 375×667, 393×852 and 1440×900 in
+EN/ES. Compact layouts, persistent Drive controls, translated alert rows, science text
+wrapping, public privacy and recovery routes are repaired. Production web export passes.
+From mobile: npm run build:web; npm run preview:web (localhost:8083). Compiled output is
+mobile/dist. Public deployment and physical-iPhone audio/keyboard/background acceptance
+remain unverified. The Round 7 recording plan remains useful alongside the Round 8 review.
 Workspace: C:\2025AppChallenge
 Target District: TX-37 (Austin / Travis County & southern Williamson County portion — verify exact home/school address at house.gov)
 Audience: A future coding agent, reviewer, judge-prep helper, or the student builder. Read this before changing code, claims, demo copy, tests, data, or design. It is a current handoff, not a license to invent results, user studies, native-device tests, or personal experience.
@@ -123,7 +134,7 @@ Experimental Gauge Study (`mobile/assets/results/results.json`):
 6. ARCHITECTURE AND CODEBASE MAP
 ================================================================================
 
-Mobile / Web App (`C:\2025AppChallenge\mobile`, Expo SDK 54 / React Native 0.81.5 / React 19.1):
+Mobile / Web App (`C:\2025AppChallenge\mobile`, Expo SDK 57.0.30 / React Native 0.86.3 / React 19.2.3):
   - `src/app/_layout.tsx` — Root layout, Inter font loading, `PreferencesProvider`, `Pledge` onboarding gate, `MonitorProvider`, `AlertBanner`.
   - `src/app/(tabs)/_layout.tsx` & `_layout.web.tsx` — 4-tab navigation (`Map`, `Drive`, `Storms`, `Alerts`).
   - `src/app/(tabs)/index.tsx` -> `src/screens/HomeScreen.tsx` — Map screen, top control bar, 3-state mobile bottom sheet (`peek`/`half`/`full` with 8pt drag threshold and 44pt tap target), desktop sidebar, `DemoDirectorBar`.
@@ -137,7 +148,7 @@ Mobile / Web App (`C:\2025AppChallenge\mobile`, Expo SDK 54 / React Native 0.81.
   - `src/lib/live.ts` — USGS OGC API v1 parser (`parseUsgsFeatures`), 30-min rise rate (`rise30`), causal `evaluateCrossing`, `LIVE_STALE_MIN = 80`.
   - `src/lib/hazards.ts` — Live ATXFloods (`fetchOfficialClosures`), NWS active alerts (`fetchNwsFloodAlerts`), and Open-Meteo precipitation adapters with strict malformed-payload validation.
   - `src/lib/danger.ts` — `groupPhysicalCrossings()` (preserves distinct waterway type nouns like Creek vs. Branch, groups multi-arm hardware within 320 m, unions NOAA `event_id`s), `effectiveCrossingState()`, `selectDriveTargets()`.
-  - `src/lib/routing.ts` — Valhalla route planner, `crossingsAlongPolyline(line, 120)`, `assessRouteCoverage(line)` (80 km Austin center), `googleMapsUrl()` (up to 3 max-deviation detour waypoints), `COMMUTE_PAIR_PRESETS`.
+  - `src/lib/routing.ts` — Valhalla route planner, `hazardsOnRoute`, `assessRouteCoverage(origin, destination, coords)` (80 km Austin center), `googleMapsUrl()` (up to 3 max-deviation detour waypoints) and dated preset fallback. `COMMUTE_PAIR_PRESETS` lives in `screens/home/RoutePanels.tsx`.
   - `src/lib/route-evidence.ts` — Pure helper `routeEvidence()` computing official closure status (`loading`/`unavailable`/`closed`/`none`), fresh vs. linked sensor counts across all grouped member records, and historical flood report summaries.
   - `src/lib/guardian.ts`, `guardian.web.ts`, `guardian-cache.ts` — Background/foreground hazard cache with per-source tagging (`usgs`, `atx`, `nws`), 60-minute stale pruning, NWS `expiresAt` pruning, and post-delivery notification cooldown recording.
   - `src/lib/voice.ts` — Speech queue with iOS silent-switch audio session preparation (`prepareAudio` deduplicated and serialized before `speak`), `allowWhenMuted` preview override, Edge neural TTS + native `expo-speech` fallback.
@@ -169,12 +180,12 @@ Python Backend & Offline Reproducibility Tools (`C:\2025AppChallenge\backend` & 
     * Completed Spanish localization across `Pledge.tsx` (`REGLA DE PRECAUCIÓN`), `CockpitScreen.tsx` (`Resumen / Detalles / Evidencia / Todos los 141`, `Hablar / Guardado / Guardar`), and `MapSurface.web.tsx` (`Cruces sin sensor`, `Ver ficha ->`).
 
 ================================================================================
-8. VERIFICATION GATE (ALL 184 AUTOMATED TESTS PASSING)
+8. VERIFICATION GATE (191 AUTOMATED TESTS PASSING)
 ================================================================================
 
   - `cd C:\2025AppChallenge\mobile && node node_modules/typescript/bin/tsc --noEmit --pretty false` -> **PASS (0 errors)**
   - `cd C:\2025AppChallenge\mobile && node node_modules/expo/bin/cli lint` -> **PASS (0 errors, 0 warnings)**
-  - `cd C:\2025AppChallenge\mobile && node node_modules/jest/bin/jest.js --runInBand --watchAll=false` -> **PASS (106 passed across 11 suites)**
+  - `cd C:\2025AppChallenge\mobile && node node_modules/jest/bin/jest.js --runInBand --watchAll=false` -> **PASS (113 passed across 12 suites)**
   - `node C:\2025AppChallenge\extension\test.mjs` -> **PASS (19 passed)**
   - `C:\2025AppChallenge\backend\.venv\Scripts\python.exe -m pytest C:\2025AppChallenge\backend\tests` -> **PASS (59 passed)**
 

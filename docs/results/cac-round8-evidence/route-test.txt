@@ -1,0 +1,165 @@
+- button "FordCast Low-water crossing alerts · Austin":
+  - generic: FordCast
+  - generic: Low-water crossing alerts · Austin
+- link "Map":
+  - /url: /
+  - generic: Map
+- link "Storms":
+  - /url: /replay
+  - generic: Storms
+- link "Drive":
+  - /url: /drive
+  - generic: Drive
+- link "Alerts":
+  - /url: /alerts
+  - generic: Alerts
+- button "Español":
+  - generic: ES · Español
+- button "Settings":
+  - generic: Settings
+- tablist:
+  - tab "Live now":
+    - generic: Live now
+  - tab "Storm drill":
+    - generic: Storm drill
+- button "Recording controls":
+- button "Mute voice warnings":
+- button "Live · 18 creek sensors active · 2 min ago":
+  - generic: Live · 18 creek sensors active · 2 min ago
+- generic: "Starting point: Downtown Austin"
+- tablist:
+  - tab "Crossings":
+    - generic: Crossings
+  - tab "Route":
+    - generic: Route
+  - tab "Creeks":
+    - generic: Creeks
+- generic: ROUTE TO
+- generic: Onion Creek Park
+- generic: 3 crossing groups · 5 source records · 1 linked to creek sensors
+- button "Remove route":
+- generic: STARTING POINT
+- generic: Downtown Austin
+- button "Change start":
+  - generic: Change start
+- button "Use GPS":
+  - generic: Use GPS
+- generic: "Official reports: no closures returned"
+- generic: "Creek readings: 1/1 available"
+- generic: "Nearby history: 5 NOAA events within 2 km"
+- generic: History is not available for every inventory record; zero matches does not mean no past flooding.
+- generic: Missing readings and unmonitored crossings do not tell us whether a road is dry.
+- generic: Route checked for reported hazards
+- generic: 16 min
+- generic: 9.2 mi
+- generic: Direct route
+- generic: 14 min
+- generic: 1 reported hazards
+- button "Source details":
+  - generic: Source details
+- generic: Avoids 1 hazard (+2 min)
+- generic: Goes around Test flooded crossing · TEST – simulated flooding
+- generic: It's dark. Floodwater is very hard to judge at night · if you see water on the road, turn around.
+- generic: Crossings on this trip
+- generic: 3 crossing groups within 120 m of this route. 5 distinct NOAA flood events reported within 2 km of these crossings.
+- button "East William Cannon and Pleasant Valley":
+  - generic: East William Cannon and Pleasant Valley
+  - generic: City of Austin · Official low-water crossing
+- button "E. William Cannon":
+  - generic: E. William Cannon
+  - generic: Onion Creek · No rise upstream · 3 source records · 3 nearby NOAA reports
+- button "E William Cannon Drive":
+  - generic: E William Cannon Drive
+  - generic: City of Austin · Official low-water crossing
+- button "Why check crossings before leaving?":
+  - generic: Why check crossings before leaving?
+- button "Set Home":
+  - generic: Set Home
+- button "Set Work":
+  - generic: Set Work
+- generic: Google Maps receives suggested waypoints and may choose a different road. Background crossing alerts are unavailable in web browsers. Recheck official conditions before leaving.
+- button "Hide reroute test tools":
+  - generic: Hide reroute test tools
+- generic: TEST closure on this route. External navigation is disabled. End the test to recheck current evidence.
+- button "End test and recheck route":
+  - generic: End test and recheck route
+- button "1.0ft":
+  - generic: 1.0ft
+- button "1.9ft":
+  - generic: 1.9ft
+- button "1.6ft":
+  - generic: 1.6ft
+- button "1.7ft":
+  - generic: 1.7ft
+- button "1.4ft":
+  - generic: 1.4ft
+- button "0.8ft":
+  - generic: 0.8ft
+- button "1.0ft":
+  - generic: 1.0ft
+- button "13.1ft":
+  - generic: 13.1ft
+- button "0.3ft":
+  - generic: 0.3ft
+- button "4.0ft":
+  - generic: 4.0ft
+- button "1.0ft":
+  - generic: 1.0ft
+- button "2.5ft":
+  - generic: 2.5ft
+- button "6.6ft":
+  - generic: 6.6ft
+- button "3.3ft":
+  - generic: 3.3ft
+- button "-0.2ft":
+  - generic: "-0.2ft"
+- button "Williamson Creek at Oak Hill":
+- button "1.9ft":
+  - generic: 1.9ft
+- button "4.7ft":
+  - generic: 4.7ft
+- button "4.3ft":
+  - generic: 4.3ft
+- button "–":
+  - generic: –
+- button "–":
+  - generic: –
+- button "–":
+  - generic: –
+- button "–":
+  - generic: –
+- button "✕":
+  - generic: ✕
+- button "✕":
+  - generic: ✕
+- button "✕":
+  - generic: ✕
+- button "✕":
+  - generic: ✕
+- button:
+- link "Leaflet":
+  - /url: https://leafletjs.com
+  - text: Leaflet
+- text: "| Tiles © Esri, HERE, Garmin, © OpenStreetMap contributors · USGS · NWS · ATXfloods"
+- button "All crossings (2052)":
+  - generic: All crossings (2052)
+- button "Creek sensors":
+  - generic: Creek sensors
+- button "Creeks":
+  - generic: Creeks
+- button "Zoom in":
+- button "Zoom out":
+- button "My location":
+- generic "Avoid – flooding likely":
+  - generic: Avoid – flooding likely
+- generic "Watch – water rising":
+  - generic: Watch – water rising
+- generic "No rise upstream":
+  - generic: No rise upstream
+- generic "No data right now":
+  - generic: No data right now
+- generic: No status (no calibrated sensor)
+- alert:
+  - generic: TEST · Rerouting around Test flooded crossing
+  - generic: TEST – simulated flooding. Your new route adds about 2 min.
+  - button "Dismiss":

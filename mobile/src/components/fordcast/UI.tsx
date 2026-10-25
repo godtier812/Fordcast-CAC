@@ -155,6 +155,7 @@ export function Button({
       <AppText
         style={{
           color: secondary ? c.text : c.bg,
+          flexShrink: 1,
           fontFamily: 'Inter_600SemiBold',
           fontSize: compact ? 13 : 15,
           lineHeight: compact ? 18 : 20,
@@ -242,7 +243,7 @@ export const styles = StyleSheet.create({
     maxWidth: 1080,
     alignSelf: 'center',
   },
-  body: { color: c.text, fontSize: 15, lineHeight: 23, fontFamily: 'Inter_400Regular' },
+  body: { color: c.text, fontSize: 15, lineHeight: 23, fontFamily: 'Inter_400Regular', maxWidth: '100%' },
   title: {
     fontSize: 32,
     lineHeight: 38,
@@ -266,6 +267,7 @@ export const styles = StyleSheet.create({
     gap: 12,
   },
   button: {
+    maxWidth: '100%',
     minHeight: 46,
     justifyContent: 'center',
     alignItems: 'center',
@@ -277,7 +279,7 @@ export const styles = StyleSheet.create({
     backgroundColor: c.water,
   },
   buttonCompact: {
-    minHeight: 36,
+    minHeight: 44,
     paddingVertical: 7,
     paddingHorizontal: 13,
     borderRadius: 10,
@@ -291,7 +293,7 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 7,
-    minHeight: 36,
+    minHeight: 44,
     paddingVertical: 7,
     paddingHorizontal: 13,
     borderRadius: 999,

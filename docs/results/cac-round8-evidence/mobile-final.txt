@@ -1,0 +1,18 @@
+PASS src/__tests__/round4-demo-probes.test.tsx (37.989 s)
+PASS src/__tests__/round6-provider-probes.test.tsx (7.366 s)
+PASS src/__tests__/round2-probes.test.ts
+PASS src/__tests__/contracts.test.ts
+PASS src/__tests__/routing.test.ts
+PASS src/__tests__/components.test.tsx
+PASS src/__tests__/round7-routing-fallback.test.ts
+PASS src/__tests__/route-evidence.test.ts
+PASS src/__tests__/round4-guardian-probes.test.ts
+PASS src/__tests__/live.test.ts
+PASS src/__tests__/replay-controls.test.ts
+PASS src/__tests__/round6-ios-voice-probes.test.ts
+
+Test Suites: 12 passed, 12 total
+Tests:       113 passed, 113 total
+Snapshots:   0 total
+Time:        63.305 s
+Ran all test suites.

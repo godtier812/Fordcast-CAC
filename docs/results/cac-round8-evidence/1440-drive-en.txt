@@ -1,0 +1,33 @@
+- button "FordCast Low-water crossing alerts · Austin":
+  - generic: FordCast
+  - generic: Low-water crossing alerts · Austin
+- link "Map":
+  - /url: /
+  - generic: Map
+- link "Storms":
+  - /url: /replay
+  - generic: Storms
+- link "Drive":
+  - /url: /drive
+  - generic: Drive
+- link "Alerts":
+  - /url: /alerts
+  - generic: Alerts
+- button "Español":
+  - generic: ES · Español
+- button "Settings":
+  - generic: Settings
+- generic: ● LIVE · ATXFLOODS + NWS + USGS · ROUTE
+- generic: 6.1 mi away · Onion Creek
+- generic: E. William Cannon
+- button "Español":
+  - generic: EN | ES
+- generic: No rise upstream
+- generic: FordCast update. E. William Cannon. No rise detected upstream. Turn around, don't drown.
+- generic: Turn around, don't drown.
+- button "Repeat":
+  - generic: Repeat
+- button "Mute":
+  - generic: Mute
+- button "Stop":
+  - generic: Stop

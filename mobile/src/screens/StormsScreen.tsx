@@ -9,9 +9,18 @@ import { ScrollView, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { AppText } from '@/components/fordcast/UI';
 import { FcIcon } from '@/components/fc/Icons';
-import { ACCENT, ActionButton, Chip, cleanName, FloodPhysicsCard, NearbyRow, Panel, SectionLabel } from '@/components/fc/Kit';
+import {
+  ACCENT,
+  ActionButton,
+  Chip,
+  cleanName,
+  FloodPhysicsCard,
+  NearbyRow,
+  Panel,
+  SectionLabel,
+} from '@/components/fc/Kit';
 import { tripFor } from '@/features/demo/useTripDemo';
-import { floodHistory, replayIndex, replays, results } from '@/lib/data';
+import { replayIndex, replays, results } from '@/lib/data';
 import { groupPhysicalCrossings } from '@/lib/danger';
 import { useMonitor } from '@/lib/monitor-context';
 import { usePreferences, type CopyKey } from '@/lib/preferences';
@@ -40,16 +49,23 @@ export default function StormsScreen() {
   }, [m.statuses]);
 
   const activeEntry =
-    replayIndex.storms.find((s) => s.id === selectedStormId) ?? replayIndex.storms[1] ?? replayIndex.storms[0]!;
+    replayIndex.storms.find((s) => s.id === selectedStormId) ??
+    replayIndex.storms[1] ??
+    replayIndex.storms[0]!;
   const doc = replays[activeEntry.id]!;
   const stormName = language === 'es' ? doc.storm.name_es : doc.storm.name_en;
-  const stormDate = new Date(doc.storm.start).toLocaleDateString(language === 'es' ? 'es-US' : 'en-US', {
-    month: 'long',
-    day: 'numeric',
-    year: 'numeric',
-    timeZone: 'America/Chicago',
-  });
-  const avoidCount = new Set(doc.events.filter((e) => e.state === 'avoid').map((e) => e.crossing_id)).size;
+  const stormDate = new Date(doc.storm.start).toLocaleDateString(
+    language === 'es' ? 'es-US' : 'en-US',
+    {
+      month: 'long',
+      day: 'numeric',
+      year: 'numeric',
+      timeZone: 'America/Chicago',
+    },
+  );
+  const avoidCount = new Set(
+    doc.events.filter((e) => e.state === 'avoid').map((e) => e.crossing_id),
+  ).size;
   const blurbKey = `storms.blurb.${activeEntry.id}` as CopyKey;
   const demo = tripFor(activeEntry.id);
 
@@ -65,14 +81,20 @@ export default function StormsScreen() {
           alignSelf: 'center',
         }}
       >
-        <AppText style={{ fontFamily: 'Inter_700Bold', fontSize: 28, lineHeight: 34 }}>{t('storms.title')}</AppText>
-        <AppText style={{ fontSize: 15, lineHeight: 22, color: S.textSecondary }}>{t('storms.body')}</AppText>
+        <AppText style={{ fontFamily: 'Inter_700Bold', fontSize: 28, lineHeight: 34 }}>
+          {t('storms.title')}
+        </AppText>
+        <AppText style={{ fontSize: 15, lineHeight: 22, color: S.textSecondary }}>
+          {t('storms.body')}
+        </AppText>
 
         {/* Honest Study Scorecard & Regional Context Side-by-Side */}
         <Panel style={{ borderColor: ACCENT, gap: 12 }}>
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
             <FcIcon name="shield" size={18} color={ACCENT} />
-            <AppText style={{ fontFamily: 'Inter_700Bold', fontSize: 17 }}>{t('storms.track_title')}</AppText>
+            <AppText style={{ fontFamily: 'Inter_700Bold', fontSize: 17 }}>
+              {t('storms.track_title')}
+            </AppText>
           </View>
           <AppText style={{ fontSize: 13.5, lineHeight: 20, color: S.textSecondary }}>
             {t('storms.track_body', {
@@ -84,28 +106,6 @@ export default function StormsScreen() {
               fa: h.F,
             })}
           </AppText>
-          <View style={{ flexDirection: 'row', gap: 8, flexWrap: 'wrap' }}>
-            <StatCell
-              value={`${h.H}/${h.H + h.M}`}
-              label={language === 'es' ? 'Eventos detectados (8 omitidos)' : 'Detected events (8 missed)'}
-              color={ACCENT}
-            />
-            <StatCell
-              value={`${h.median_lead_min ?? '—'} min`}
-              label={t('storms.stat_lead')}
-              color={LOCKED_STATE_HEX.watch}
-            />
-            <StatCell
-              value={`${h.F}`}
-              label={language === 'es' ? 'Falsas alarmas (regla aguas arriba)' : 'False alarms (upstream rule)'}
-              color={LOCKED_STATE_HEX.avoid}
-            />
-            <StatCell
-              value={`${floodHistory.total_events_in_area}`}
-              label={t('storms.stat_events')}
-              color="#38BDF8"
-            />
-          </View>
           <View
             style={{
               padding: 10,
@@ -116,18 +116,39 @@ export default function StormsScreen() {
               gap: 4,
             }}
           >
-            <AppText style={{ fontSize: 11.5, fontFamily: 'Inter_700Bold', color: S.textSecondary, letterSpacing: 0.4 }}>
+            <AppText
+              style={{
+                fontSize: 11.5,
+                fontFamily: 'Inter_700Bold',
+                color: S.textSecondary,
+                letterSpacing: 0.4,
+              }}
+            >
               {language === 'es'
                 ? 'COMPARACIÓN CON LÍNEA BASE DE SENSOR MÁS CERCANO (LOSO)'
                 : 'BASELINE COMPARISON: UPSTREAM RULE VS. NEAREST GAUGE (LOSO)'}
             </AppText>
-            <AppText style={{ fontSize: 12.5, lineHeight: 18, color: S.textSecondary, fontVariant: ['tabular-nums'] }}>
+            <AppText
+              style={{
+                fontSize: 16,
+                lineHeight: 23,
+                color: S.textPrimary,
+                fontVariant: ['tabular-nums'],
+              }}
+            >
               {language === 'es'
-                ? `Regla aguas arriba: ${h.H}/${h.H + h.M} aciertos · ${h.median_lead_min ?? '—'} min anticipación mediana · ${h.F} falsa(s) alarma(s).\nLínea base (sensor más cercano): ${nearBase.H}/${nearBase.H + nearBase.M} aciertos · ${nearBase.median_lead_min ?? '—'} min anticipación mediana · ${nearBase.F} falsas alarmas.\nResultado: En este conjunto pequeño de 12 eventos proxy, el emparejamiento aguas arriba no superó al sensor más cercano.`
-                : `Upstream rule: ${h.H}/${h.H + h.M} hits · ${h.median_lead_min ?? '—'} min median lead · ${h.F} false alarm.\nNearest-gauge baseline: ${nearBase.H}/${nearBase.H + nearBase.M} hits · ${nearBase.median_lead_min ?? '—'} min median lead · ${nearBase.F} false alarms.\nTakeaway: On this small 12-event proxy sample, upstream pairing did not outperform the nearest-gauge baseline.`}
+                ? `Aguas arriba: ${h.H}/${h.H + h.M} detectados · ${h.M} omitidos · ${h.F} falsa alarma\nSensor más cercano: ${nearBase.H}/${nearBase.H + nearBase.M} detectados · ${nearBase.M} omitidos · ${nearBase.F} falsas alarmas\nLa regla aguas arriba no superó la referencia.`
+                : `Upstream: ${h.H}/${h.H + h.M} detected · ${h.M} missed · ${h.F} false alarm\nNearest gauge: ${nearBase.H}/${nearBase.H + nearBase.M} detected · ${nearBase.M} missed · ${nearBase.F} false alarms\nThe upstream rule did not beat the baseline.`}
+            </AppText>
+            <AppText style={{ fontSize: 13, lineHeight: 19, color: S.textSecondary }}>
+              {language === 'es'
+                ? `Anticipación mediana: ${h.median_lead_min} min hasta el nivel de referencia del sensor. No se validó la predicción de inundación en el camino.`
+                : `Median lead: ${h.median_lead_min} min before reference-gauge stage. Road-flood prediction remains unvalidated.`}
             </AppText>
           </View>
-          <AppText style={{ fontSize: 12.5, lineHeight: 18, color: S.textMuted }}>{t('storms.track_note')}</AppText>
+          <AppText style={{ fontSize: 12.5, lineHeight: 18, color: S.textMuted }}>
+            {t('storms.track_note')}
+          </AppText>
         </Panel>
 
         {/* Compact Storm Selector + Focused Active Storm Card */}
@@ -152,12 +173,22 @@ export default function StormsScreen() {
           })}
         </View>
 
-        <Panel style={{ borderColor: ACCENT, borderLeftWidth: 4, gap: 12 }}>
-          <View style={{ flexDirection: 'row', justifyContent: 'space-between', gap: 8, flexWrap: 'wrap' }}>
+        <Panel style={{ borderColor: ACCENT, gap: 12 }}>
+          <View
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              gap: 8,
+              flexWrap: 'wrap',
+            }}
+          >
             <View style={{ flex: 1, minWidth: 200 }}>
-              <AppText style={{ fontFamily: 'Inter_700Bold', fontSize: 19, lineHeight: 25 }}>{stormName}</AppText>
+              <AppText style={{ fontFamily: 'Inter_700Bold', fontSize: 19, lineHeight: 25 }}>
+                {stormName}
+              </AppText>
               <AppText style={{ fontSize: 13, color: S.textMuted }}>
-                {stormDate} · {language === 'es' ? 'Observaciones USGS archivadas' : 'Archived USGS observations'}
+                {stormDate} ·{' '}
+                {language === 'es' ? 'Observaciones USGS archivadas' : 'Archived USGS observations'}
               </AppText>
             </View>
             <AppText
@@ -168,14 +199,22 @@ export default function StormsScreen() {
                 color: avoidCount ? LOCKED_STATE_HEX.avoid : S.textSecondary,
               }}
             >
-              {t('storms.alerts_seen', { count: avoidCount })}
+              {avoidCount === 1 ? (language === 'es' ? '1 cruce llegó a Evite' : '1 crossing reached Avoid') : t('storms.alerts_seen', { count: avoidCount })}
             </AppText>
           </View>
           <AppText style={{ fontSize: 14.5, lineHeight: 21 }}>{t(blurbKey)}</AppText>
           {demo ? (
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
               <FcIcon name="car" size={15} color="#7DD3FC" />
-              <AppText style={{ flex: 1, fontSize: 12.5, lineHeight: 18, color: '#7DD3FC', fontFamily: 'Inter_600SemiBold' }}>
+              <AppText
+                style={{
+                  flex: 1,
+                  fontSize: 12.5,
+                  lineHeight: 18,
+                  color: '#7DD3FC',
+                  fontFamily: 'Inter_600SemiBold',
+                }}
+              >
                 {t('trip.body', { name: cleanName(demo.crossingName) })}
               </AppText>
             </View>
@@ -211,7 +250,9 @@ export default function StormsScreen() {
         </Panel>
 
         <SectionLabel>{t('storms.hotspots_title')}</SectionLabel>
-        <AppText style={{ fontSize: 13.5, lineHeight: 19, color: S.textSecondary }}>{t('storms.hotspots_body')}</AppText>
+        <AppText style={{ fontSize: 13.5, lineHeight: 19, color: S.textSecondary }}>
+          {t('storms.hotspots_body')}
+        </AppText>
         <View style={{ gap: 8 }}>
           {hotspots.map((g) => (
             <NearbyRow
@@ -226,27 +267,5 @@ export default function StormsScreen() {
         <FloodPhysicsCard />
       </ScrollView>
     </SafeAreaView>
-  );
-}
-
-function StatCell({ value, label, color }: { value: string; label: string; color: string }) {
-  return (
-    <View
-      style={{
-        flex: 1,
-        minWidth: 135,
-        padding: 12,
-        borderRadius: 12,
-        backgroundColor: S.primary,
-        borderWidth: 1,
-        borderColor: S.borderSubtle,
-        gap: 2,
-      }}
-    >
-      <AppText style={{ fontFamily: 'Inter_700Bold', fontSize: 21, color, fontVariant: ['tabular-nums'] }}>
-        {value}
-      </AppText>
-      <AppText style={{ fontSize: 12, lineHeight: 16, color: S.textSecondary }}>{label}</AppText>
-    </View>
   );
 }

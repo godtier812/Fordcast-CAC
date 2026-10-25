@@ -262,8 +262,8 @@ export default function CrossingDetail() {
             ) : null}
             <AppText style={{ fontSize: 12, lineHeight: 17, color: S.textMuted }}>
               {language === 'es'
-                ? 'Altura medida respecto al nivel base de la estación USGS — no es la profundidad del agua sobre el camino. Un valor negativo solo indica agua por debajo del cero de referencia del sensor.'
-                : 'Gauge height is measured relative to the USGS station datum — not water depth on the road. Negative values simply mean water is below the sensor datum zero.'}
+                ? 'Altura medida respecto al nivel base de la estación USGS, no es la profundidad del agua sobre el camino. Un valor negativo solo indica agua por debajo del cero de referencia del sensor.'
+                : 'Gauge height is measured relative to the USGS station datum, not water depth on the road. Negative values simply mean water is below the sensor datum zero.'}
             </AppText>
             {rows.length > 1 ? (
               <>

@@ -155,6 +155,17 @@ test('starting a different normal trip removes the simulated closure from the pr
   expect(monitorHolder.current?.testHazard).toBeNull();
 });
 
+test('recorded preset geometry displays its limitation and cannot launch or share navigation', async () => {
+  mockPlan.mockResolvedValue({ ...plan('Recorded preset'), geometrySource: 'recorded', geometryCapturedAt: '2026-10-24T00:00:00Z' });
+  await mount();
+  await act(async () => { await monitorHolder.current!.planRoute(dest('Recorded preset')); });
+  const exports = tree.root.findAll(n => n.props.accessibilityRole === 'button' &&
+    [en['route.open_google'], en['route.share']].includes(n.props.accessibilityLabel));
+  expect(exports).toHaveLength(0);
+  const notices = tree.root.findAll(n => typeof n.props.children === 'string' && n.props.children.includes('Recorded geometry'));
+  expect(notices.length).toBeGreaterThan(0);
+});
+
 test('a simulated closure cannot produce a real Google Maps handoff after the test detour completes, until endRouteTest is called', async () => {
   mockPlan.mockResolvedValue(plan('A'));
   await mount();
@@ -175,10 +186,15 @@ test('a simulated closure cannot produce a real Google Maps handoff after the te
   );
   expect(handoffWhileTesting).toHaveLength(0);
 
-  mockPlan.mockResolvedValue(plan('A', false));
-  await act(async () => {
-    await monitorHolder.current!.endRouteTest();
-  });
+  let finishReset!: (value: RoutePlan) => void;
+  mockPlan.mockImplementation(() => new Promise<RoutePlan>(resolve => { finishReset = resolve; }));
+  let reset!: Promise<void>;
+  act(() => { reset = monitorHolder.current!.endRouteTest(); });
+  expect(monitorHolder.current?.routeBusy).toBe(true);
+  const exportsDuringReset = tree.root.findAll(n => n.props.accessibilityRole === 'button' &&
+    [en['route.open_google'], en['route.share']].includes(n.props.accessibilityLabel));
+  expect(exportsDuringReset).toHaveLength(0);
+  await act(async () => { finishReset(plan('A', false)); await reset; });
   expect(monitorHolder.current?.testHazard).toBeNull();
   const handoffAfterReset = tree.root.findAll(
     (n) =>

@@ -5,7 +5,7 @@
  *   2. Route (Everyday Commute Flood Exposure Audit, 1-tap Austin destinations, saved Home/Work, live reroute test)
  *   3. Creeks (19 live stream sensors + emergency 311/ATXfloods/NWS tools)
  */
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   Animated,
   Pressable,
@@ -14,7 +14,7 @@ import {
   View,
   useWindowDimensions,
 } from 'react-native';
-import { router } from 'expo-router';
+import { router, useFocusEffect } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { AppText, Dip } from '@/components/fordcast/UI';
 import StateBadge from '@/components/StateBadge';
@@ -129,14 +129,10 @@ function TopControls({
     <View style={{ gap: 8 }}>
       {compact ? (
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-          <Dip size={28} />
+          <Dip size={24} />
           <View style={{ flex: 1 }}>
-            <AppText style={{ fontFamily: 'Inter_700Bold', fontSize: 17, lineHeight: 21 }}>FordCast</AppText>
-            <AppText numberOfLines={1} style={{ fontSize: 11, lineHeight: 14, color: S.textSecondary }}>
-              {t('home.tagline')}
-            </AppText>
+            <AppText numberOfLines={1} style={{ fontFamily: 'Inter_700Bold', fontSize: 16, lineHeight: 21, letterSpacing: -0.4 }}>FordCast</AppText>
           </View>
-          {directorToggle}
           {voiceToggle}
           <Pressable
             accessibilityRole="button"
@@ -224,10 +220,10 @@ function TopControls({
 }
 
 const pill = {
-  minWidth: 36,
-  height: 36,
-  paddingHorizontal: 10,
-  borderRadius: 11,
+  minWidth: 44,
+  height: 44,
+  paddingHorizontal: 8,
+  borderRadius: 8,
   borderWidth: 1,
   borderColor: S.borderSubtle,
   backgroundColor: S.elevated1,
@@ -274,7 +270,7 @@ function ModeSubTabs({
             onPress={() => onChange(it.key)}
             style={{
               flex: 1,
-              minHeight: 38,
+              minHeight: 44,
               borderRadius: 10,
               flexDirection: 'row',
               alignItems: 'center',
@@ -286,7 +282,6 @@ function ModeSubTabs({
               borderColor: active ? ACCENT : 'transparent',
             }}
           >
-            <FcIcon name={it.icon} size={14} color={active ? ACCENT : S.textSecondary} />
             <AppText
               numberOfLines={1}
               style={{
@@ -451,7 +446,7 @@ function Headline({
     color = LOCKED_STATE_HEX.no_rise;
   }
   return (
-    <Panel style={{ borderColor: color, borderLeftWidth: 5, gap: 10 }}>
+    <Panel style={{ borderColor: color, gap: 10 }}>
       {/* Primary above-the-fold actions first so mobile users never have to scroll to check a route or run the demo */}
       {m.mode === 'live' && !m.routePlan ? (
         <View style={{ flexDirection: 'row', gap: 8, flexWrap: 'wrap' }}>
@@ -580,7 +575,7 @@ function SelectedCard({
   );
 }
 
-function CrossingList({ onPick, selectedId }: { onPick: (id: string) => void; selectedId: string | null }) {
+function CrossingList({ onPick, selectedId, onSearchFocus }: { onPick: (id: string) => void; selectedId: string | null; onSearchFocus?: () => void }) {
   const { t, saved } = usePreferences();
   const m = useMonitor();
   const [filter, setFilter] = useState<Filter>('near');
@@ -616,6 +611,7 @@ function CrossingList({ onPick, selectedId }: { onPick: (id: string) => void; se
   return (
     <View style={{ gap: 10 }}>
       <TextInput
+        onFocus={onSearchFocus}
         value={query}
         onChangeText={setQuery}
         placeholder={t('home.search')}
@@ -692,13 +688,23 @@ export default function HomeScreen() {
   const [zoomStep, setZoomStep] = useState<{ seq: number; delta: number }>({ seq: 0, delta: 0 });
   const [sheet, setSheet] = useState<'peek' | 'half' | 'full'>('peek');
   const [directorOpen, setDirectorOpen] = useState(false);
+  const [mapFrameHeight, setMapFrameHeight] = useState(height);
+  const [headerBottom, setHeaderBottom] = useState(152);
+  const panelScrollRef = useRef<ScrollView>(null);
+  const routeComputedAt = m.routePlan?.computedAt;
+  useEffect(() => {
+    if (routeComputedAt != null) panelScrollRef.current?.scrollTo({ y: 0, animated: false });
+  }, [routeComputedAt]);
   const trip = useTripDemo();
+  const stopTripRef = useRef(trip.stop);
+  useEffect(() => { stopTripRef.current = trip.stop; }, [trip.stop]);
+  useFocusEffect(useCallback(() => () => stopTripRef.current(), []));
 
   // Smooth spring animation for mobile bottom sheet height.
   // 305px peek height keeps subtabs + Headline + primary action buttons + TripCard Stop controls visible above the fold.
-  const peekH = 305;
-  const halfH = Math.round(height * 0.54);
-  const fullH = Math.round(height * 0.85);
+  const peekH = Math.min(305, Math.round(mapFrameHeight * 0.5));
+  const halfH = Math.round(mapFrameHeight * 0.54);
+  const fullH = Math.round(mapFrameHeight * 0.88);
   const targetH = sheet === 'peek' ? peekH : sheet === 'half' ? halfH : fullH;
   const [animH] = useState(() => new Animated.Value(peekH));
   const dragStartY = useRef<number | null>(null);
@@ -890,7 +896,7 @@ export default function HomeScreen() {
       ) : null}
 
       {m.homeTab === 'route' ? (
-        <RoutePlanner />
+        <RoutePlanner onSearchFocus={() => { if (!wide) setSheet('full'); }} />
       ) : m.homeTab === 'sensors' ? (
         <SensorsAndToolsPanel
           selectedGaugeId={selectedGaugeId}
@@ -919,7 +925,7 @@ export default function HomeScreen() {
               }}
             />
           )}
-          <CrossingList onPick={pick} selectedId={selectedId} />
+          <CrossingList onPick={pick} selectedId={selectedId} onSearchFocus={() => { if (!wide) setSheet('full'); }} />
         </>
       )}
     </>
@@ -1004,10 +1010,11 @@ export default function HomeScreen() {
   );
 
   const mapControls = (
-    <View style={{ gap: 8, alignItems: 'center' }}>
+    <View style={{ flexDirection: wide ? 'column' : 'row', gap: 8, alignItems: 'center' }}>
       <View
         style={{
-          borderRadius: 16,
+          flexDirection: wide ? 'column' : 'row',
+          borderRadius: 8,
           backgroundColor: 'rgba(19, 28, 43, 0.94)',
           borderWidth: 1,
           borderColor: S.borderSubtle,
@@ -1020,7 +1027,7 @@ export default function HomeScreen() {
           onPress={() => setZoomStep((z) => ({ seq: z.seq + 1, delta: 1.5 }))}
           style={{
             width: 44,
-            height: 42,
+            height: 44,
             alignItems: 'center',
             justifyContent: 'center',
             borderBottomWidth: 1,
@@ -1035,7 +1042,7 @@ export default function HomeScreen() {
           onPress={() => setZoomStep((z) => ({ seq: z.seq + 1, delta: -1.5 }))}
           style={{
             width: 44,
-            height: 42,
+            height: 44,
             alignItems: 'center',
             justifyContent: 'center',
           }}
@@ -1076,6 +1083,7 @@ export default function HomeScreen() {
     return (
       <View style={{ flex: 1, flexDirection: 'row', backgroundColor: S.primary }}>
         <ScrollView
+          ref={panelScrollRef}
           style={{ width: 430, maxWidth: 430, borderRightWidth: 1, borderColor: S.borderSubtle }}
           contentContainerStyle={{ padding: 16, gap: 14, paddingBottom: 40 }}
         >
@@ -1094,10 +1102,11 @@ export default function HomeScreen() {
   }
 
   return (
-    <View style={{ flex: 1, backgroundColor: S.primary }}>
+    <View onLayout={e => setMapFrameHeight(e.nativeEvent.layout.height)} style={{ flex: 1, backgroundColor: S.primary }}>
       <View style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }}>{map}</View>
       <SafeAreaView edges={['top']} pointerEvents="box-none" style={{ position: 'absolute', top: 0, left: 0, right: 0 }}>
         <View
+          onLayout={e => setHeaderBottom(e.nativeEvent.layout.y + e.nativeEvent.layout.height)}
           style={{
             marginHorizontal: 10,
             marginTop: 8,
@@ -1128,8 +1137,8 @@ export default function HomeScreen() {
         </View>
       </SafeAreaView>
 
-      {sheet !== 'full' ? (
-        <Animated.View style={{ position: 'absolute', right: 14, bottom: Animated.add(animH, 12) }}>
+      {sheet !== 'full' && !layersOpen && mapFrameHeight - targetH - headerBottom >= 60 ? (
+        <Animated.View style={{ position: 'absolute', right: 14, top: headerBottom + 8 }}>
           {mapControls}
         </Animated.View>
       ) : null}
@@ -1187,6 +1196,7 @@ export default function HomeScreen() {
           </View>
         ) : null}
         <ScrollView
+          ref={panelScrollRef}
           keyboardShouldPersistTaps="handled"
           keyboardDismissMode="interactive"
           contentContainerStyle={{ paddingHorizontal: 14, paddingBottom: 32, gap: 12 }}
@@ -1219,8 +1229,8 @@ function MapLayerChip({
         flexDirection: 'row',
         gap: 6,
         paddingHorizontal: 11,
-        height: 32,
-        borderRadius: 999,
+        minHeight: 44,
+        borderRadius: 8,
         alignItems: 'center',
         justifyContent: 'center',
         backgroundColor: active ? 'rgba(27, 39, 58, 0.94)' : 'rgba(19, 28, 43, 0.88)',

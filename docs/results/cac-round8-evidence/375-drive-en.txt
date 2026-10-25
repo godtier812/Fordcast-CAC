@@ -1,0 +1,30 @@
+- generic: ● LIVE · ATXFLOODS + NWS + USGS
+- generic: 6.1 mi away · Onion Creek
+- generic: E. William Cannon
+- button "Español":
+  - generic: EN | ES
+- generic: No rise upstream
+- generic: FordCast update. E. William Cannon. No rise detected upstream. Turn around, don't drown.
+- button "Previous":
+  - generic: Previous
+- button "Next":
+  - generic: Next
+- generic: Turn around, don't drown.
+- button "Repeat":
+  - generic: Repeat
+- button "Mute":
+  - generic: Mute
+- button "Stop":
+  - generic: Stop
+- link "Map":
+  - /url: /
+  - generic: Map
+- link "Storms":
+  - /url: /replay
+  - generic: Storms
+- link "Drive":
+  - /url: /drive
+  - generic: Drive
+- link "Alerts":
+  - /url: /alerts
+  - generic: Alerts

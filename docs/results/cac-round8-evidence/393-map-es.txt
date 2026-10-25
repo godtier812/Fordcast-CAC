@@ -1,0 +1,200 @@
+- button "1.0ft":
+  - generic: 1.0ft
+- button "1.9ft":
+  - generic: 1.9ft
+- button "1.6ft":
+  - generic: 1.6ft
+- button "1.7ft":
+  - generic: 1.7ft
+- button "1.4ft":
+  - generic: 1.4ft
+- button "0.8ft":
+  - generic: 0.8ft
+- button "1.0ft":
+  - generic: 1.0ft
+- button "13.1ft":
+  - generic: 13.1ft
+- button "0.3ft":
+  - generic: 0.3ft
+- button "4.0ft":
+  - generic: 4.0ft
+- button "1.0ft":
+  - generic: 1.0ft
+- button "2.5ft":
+  - generic: 2.5ft
+- button "6.6ft":
+  - generic: 6.6ft
+- button "3.3ft":
+  - generic: 3.3ft
+- button "-0.2ft":
+  - generic: "-0.2ft"
+- button "Williamson Creek at Oak Hill":
+- button "1.9ft":
+  - generic: 1.9ft
+- button "4.7ft":
+  - generic: 4.7ft
+- button "4.3ft":
+  - generic: 4.3ft
+- button "–":
+  - generic: –
+- button "–":
+  - generic: –
+- button "–":
+  - generic: –
+- button "–":
+  - generic: –
+- button "✕":
+  - generic: ✕
+- button "✕":
+  - generic: ✕
+- button "✕":
+  - generic: ✕
+- link "Leaflet":
+  - /url: https://leafletjs.com
+  - text: Leaflet
+- text: "| Tiles © Esri, HERE, Garmin, © OpenStreetMap contributors · USGS · NWS · ATXfloods"
+- generic: FordCast
+- button "Silenciar avisos de voz":
+- button "English" [active]:
+  - generic: EN
+- button "Ajustes":
+- tablist:
+  - tab "En vivo":
+    - generic: En vivo
+  - tab "Simulacro":
+    - generic: Simulacro
+- button "En vivo · 18 sensores de arroyo activos · hace 1 min":
+  - generic: En vivo · 18 sensores de arroyo activos · hace 1 min
+- button "Capas del mapa":
+  - generic: Capas del mapa
+- button "Acercar mapa":
+- button "Alejar mapa":
+- button "Mi ubicación":
+- button "Ver más":
+  - generic: Ver más
+- tablist:
+  - tab "Cruces":
+    - generic: Cruces
+  - tab "Ruta":
+    - generic: Ruta
+  - tab "Arroyos":
+    - generic: Arroyos
+- button "Revisar mi viaje":
+  - generic: Revisar mi viaje
+- button "Demostración de desvío":
+  - generic: Demostración de desvío
+- button "Activar":
+  - generic: Activar
+- generic: Sin cruces calibrados por sensor a menos de 3 mi de el centro de Austin (GPS apagado)
+- generic: El más cercano que vigila FordCast es E. William Cannon (6.1 mi). Puede ampliar la distancia en Alertas.
+- generic: 4 / 30
+- generic: Vínculos de estudio
+- generic: "19"
+- generic: Sensores de arroyo
+- generic: 2,052
+- generic: Registros del inventario
+- textbox "Buscar camino, arroyo o cruce"
+- button "Cerca":
+  - generic: Cerca
+- button "Requiere atención":
+  - generic: Requiere atención
+- button "Vigilados (4 / 30)":
+  - generic: Vigilados (4 / 30)
+- button "Inundaciones previas":
+  - generic: Inundaciones previas
+- button "Guardados":
+  - generic: Guardados
+- button "Todos (2052)":
+  - generic: Todos (2052)
+- button "Waller at 8th Street. Cruce bajo oficial. a 0.4 mi":
+  - generic: —
+  - generic: Waller at 8th Street
+  - generic: City of Austin · 0.4 mi
+  - generic: Cruce bajo oficial
+- button "Red River at 12th. Cruce bajo oficial. a 0.6 mi":
+  - generic: —
+  - generic: Red River at 12th
+  - generic: City of Austin · 0.6 mi
+  - generic: Cruce bajo oficial
+- button "W 9th St and N Lamar Blvd. Cruce bajo oficial. a 0.7 mi":
+  - generic: —
+  - generic: W 9th St and N Lamar Blvd
+  - generic: City of Austin · 0.7 mi
+  - generic: Cruce bajo oficial
+- button "Shoal Creek at Lamar (downtown). Cruce bajo oficial. a 0.8 mi":
+  - generic: —
+  - generic: Shoal Creek at Lamar (downtown)
+  - generic: City of Austin · 0.8 mi
+  - generic: Cruce bajo oficial
+- button "Barton Springs Road. Cruce bajo oficial. a 1.3 mi":
+  - generic: —
+  - generic: Barton Springs Road
+  - generic: Central Texas · 1.3 mi
+  - generic: Cruce bajo oficial
+- 'button "Water Rescue #3. Cruce bajo oficial. a 2.0 mi"':
+  - generic: —
+  - generic: "Water Rescue #3"
+  - generic: City of Austin · 2.0 mi
+  - generic: Cruce bajo oficial
+- button "Hemphill at W 32nd. Cruce bajo oficial. a 2.1 mi":
+  - generic: —
+  - generic: Hemphill at W 32nd
+  - generic: City of Austin · 2.1 mi
+  - generic: Cruce bajo oficial
+- button "Woodview Mobile Home Park. Cruce bajo oficial. a 2.2 mi":
+  - generic: —
+  - generic: Woodview Mobile Home Park
+  - generic: City of Austin · 2.2 mi
+  - generic: Cruce bajo oficial
+- button "2400-blk Rollingwood Dr. Cruce bajo oficial. a 2.3 mi":
+  - generic: —
+  - generic: 2400-blk Rollingwood Dr
+  - generic: Travis County · 2.3 mi
+  - generic: Cruce bajo oficial
+- button "Dellana Lane at Bee Cave Road. Cruce bajo oficial. a 2.5 mi":
+  - generic: —
+  - generic: Dellana Lane at Bee Cave Road
+  - generic: Rollingwood · 2.5 mi
+  - generic: Cruce bajo oficial
+- button "Edgegrove Dr at Bee Caves Rd. Cruce bajo oficial. a 2.7 mi":
+  - generic: —
+  - generic: Edgegrove Dr at Bee Caves Rd
+  - generic: Travis County · 2.7 mi
+  - generic: Cruce bajo oficial
+- button "800 Block of Edgegrove Drive at Bee Cave Road. Cruce bajo oficial. a 2.8 mi":
+  - generic: —
+  - generic: 800 Block of Edgegrove Drive at Bee Cave Road
+  - generic: Rollingwood · 2.8 mi
+  - generic: Cruce bajo oficial
+- button "800-blk Edgegrove Dr. Cruce bajo oficial. a 2.8 mi":
+  - generic: —
+  - generic: 800-blk Edgegrove Dr
+  - generic: Travis County · 2.8 mi
+  - generic: Cruce bajo oficial
+- button "2900-blk Bee Caves Rd. Cruce bajo oficial. a 2.9 mi":
+  - generic: —
+  - generic: 2900-blk Bee Caves Rd
+  - generic: Travis County · 2.9 mi
+  - generic: Cruce bajo oficial
+- button "2900 Block of Bee Cave Road (RM2244) at the Finish Line Car Wash. Cruce bajo oficial. a 2.9 mi":
+  - generic: —
+  - generic: 2900 Block of Bee Cave Road (RM2244) at the Finish Line Car Wash
+  - generic: Rollingwood · 2.9 mi
+  - generic: Cruce bajo oficial
+- button "Waller Creek and E 45th St. Cruce bajo oficial. a 3.0 mi":
+  - generic: —
+  - generic: Waller Creek and E 45th St
+  - generic: City of Austin · 3.0 mi
+  - generic: Cruce bajo oficial
+- link "Mapa":
+  - /url: /
+  - generic: Mapa
+- link "Tormentas":
+  - /url: /replay
+  - generic: Tormentas
+- link "Manejar":
+  - /url: /drive
+  - generic: Manejar
+- link "Alertas":
+  - /url: /alerts
+  - generic: Alertas

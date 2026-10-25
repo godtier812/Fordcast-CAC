@@ -1,0 +1,99 @@
+- button:
+- button:
+- button "–":
+  - generic: –
+- button "–":
+  - generic: –
+- button "!":
+  - generic: "!"
+- button "4.7ft":
+  - generic: 4.7ft
+- button "16.8ft":
+  - generic: 16.8ft
+- button "7.7ft":
+  - generic: 7.7ft
+- button "7.8ft":
+  - generic: 7.8ft
+- button "10.7ft":
+  - generic: 10.7ft
+- button "4.6ft":
+  - generic: 4.6ft
+- button "3.9ft":
+  - generic: 3.9ft
+- button "10.3ft":
+  - generic: 10.3ft
+- button "3.1ft":
+  - generic: 3.1ft
+- button "10.3ft":
+  - generic: 10.3ft
+- button "16.3ft":
+  - generic: 16.3ft
+- button "5.4ft":
+  - generic: 5.4ft
+- button "12.8ft":
+  - generic: 12.8ft
+- button "5.4ft":
+  - generic: 5.4ft
+- button "2.6ft":
+  - generic: 2.6ft
+- button "6.5ft":
+  - generic: 6.5ft
+- button "4.4ft":
+  - generic: 4.4ft
+- button "10.0ft":
+  - generic: 10.0ft
+- button "9.8ft":
+  - generic: 9.8ft
+- link "Leaflet":
+  - /url: https://leafletjs.com
+  - text: Leaflet
+- text: "| Tiles © Esri, HERE, Garmin, © OpenStreetMap contributors · USGS · NWS · ATXfloods"
+- generic: FordCast
+- button "Mute voice warnings":
+- button "Español":
+  - generic: ES
+- button "Settings":
+- tablist:
+  - tab "Live now":
+    - generic: Live now
+  - tab "Storm drill":
+    - generic: Storm drill
+- button "Storm drill · Memorial Day Flood 2015 · Sun 6:15 AM":
+  - generic: Storm drill · Memorial Day Flood 2015 · Sun 6:15 AM
+- button "Map layers":
+  - generic: Map layers
+- button "Zoom in":
+- button "Zoom out":
+- button "My location":
+- button "Show more":
+  - generic: Show more
+- generic: Archived simulation · Memorial Day Flood 2015
+- button "Following car":
+  - generic: Following car
+- button "Stop demo":
+  - generic: Stop demo
+- generic: Rerouted around Henry Marx at Barton Creek · +9 min
+- generic: FordCast is watching Henry Marx at Barton Creek on this route.
+- tablist:
+  - tab "Crossings":
+    - generic: Crossings
+  - tab "Route":
+    - generic: Route
+  - tab "Creeks":
+    - generic: Creeks
+- link "Map":
+  - /url: /
+  - generic: Map
+- link "Storms":
+  - /url: /replay
+  - generic: Storms
+- link "Drive":
+  - /url: /drive
+  - generic: Drive
+- link "Alerts":
+  - /url: /alerts
+  - generic: Alerts
+- alert:
+  - generic: DRILL · Avoid Henry Marx @ Barton Creek
+  - generic: Water may already be on the road (8.6 mi from you). Take another route.
+  - button "Dismiss":

@@ -382,8 +382,8 @@
     .summary { margin-bottom: 6px; }
     .muted { color: #94A3B8; }
     .item { border: 1px solid #23304D; border-radius: 8px; padding: 7px 9px; margin: 6px 0; background: #111827; }
-    .item.hazard { border-left: 4px solid #EF4444; }
-    .item.caution { border-left: 4px solid #F59E0B; }
+    .item.hazard { border-color: #EF4444; }
+    .item.caution { border-color: #F59E0B; }
     .item .name { font-weight: 600; }
     .item .why { color: #E2E8F0; font-size: 12px; }
     .item .det { color: #94A3B8; font-size: 11px; }
@@ -501,15 +501,15 @@
         h(
           'div',
           { class: 'banner caution' },
-          'Outside the supported Austin-area inventory — this route is not fully checked. Consult DriveTexas and local authorities.',
+          'Outside the supported Austin-area inventory: this route is not fully checked. Consult DriveTexas and local authorities.',
         ),
       );
     }
     for (const s of r.hazards || []) {
-      body.append(h('div', { class: 'banner' }, `Estimated route crosses ${s.name} — ${s.reasons.join('; ')}`));
+      body.append(h('div', { class: 'banner' }, `Estimated route crosses ${s.name}: ${s.reasons.join('; ')}`));
     }
     for (const s of r.cautions || []) {
-      body.append(h('div', { class: 'banner caution' }, `Caution: ${s.name} — ${s.reasons.join('; ')}`));
+      body.append(h('div', { class: 'banner caution' }, `Caution: ${s.name}: ${s.reasons.join('; ')}`));
     }
     if (r.hazards && r.hazards.length) {
       const sf = r.safer;
@@ -533,7 +533,7 @@
               ? h(
                   'div',
                   { class: 'err' },
-                  `No complete detour available — alternative still passes ${sf.still.length} flagged crossing${sf.still.length === 1 ? '' : 's'}: ${sf.still.map((s) => s.name).join(', ')}`,
+                  `No complete detour available; alternative still passes ${sf.still.length} flagged crossing${sf.still.length === 1 ? '' : 's'}: ${sf.still.map((s) => s.name).join(', ')}`,
                 )
               : h('a', { class: 'cta', href: sf.url }, 'Open alternative in Google Maps'),
           ),
@@ -619,7 +619,7 @@
     if (otherEvents.length) body.append(h('div', { class: 'small' }, `${otherEvents.join(', ')} in this area`));
     for (const x of items.slice(0, MAX_VIEW_ITEMS)) body.append(siteCard(x.s, x.d));
     if (items.length > MAX_VIEW_ITEMS) {
-      body.append(h('div', { class: 'small' }, `+${items.length - MAX_VIEW_ITEMS} more — zoom in to see them`));
+      body.append(h('div', { class: 'small' }, `+${items.length - MAX_VIEW_ITEMS} more; zoom in to see them`));
     }
     if (watchedInView) {
       body.append(

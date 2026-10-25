@@ -6,7 +6,7 @@ import { HYDROGRAPH_TOKENS, LOCKED_STATE_HEX, SURFACES, TYPOGRAPHY } from '@/the
 
 export const SCORECARD_COPY = {
   en: {
-    badge: '📊 LOSO VALIDATION',
+    badge: 'LOSO VALIDATION',
     title: 'Leave-One-Storm-Out (LOSO) Cross-Validation Scorecard',
     subtitle:
       'Empirical gauge-lag parameters for each storm fold are calibrated strictly on the remaining historical storms to prevent in-sample overfitting.',
@@ -25,7 +25,7 @@ export const SCORECARD_COPY = {
       '3. Comparator Parity: Against the true WGS84 geodesic nearest gauge, both the upstream rule and nearest-gauge comparator achieve a 65.0 min median lead time (POD 33.3%).',
   },
   es: {
-    badge: '📊 VALIDACIÓN LOSO',
+    badge: 'VALIDACIÓN LOSO',
     title: 'Tarjeta de Validación Cruzada Leave-One-Storm-Out (LOSO)',
     subtitle:
       'Los parámetros empíricos de desfase para cada tormenta se calibran estrictamente con las tormentas históricas restantes para evitar el sobreajuste.',
@@ -67,7 +67,7 @@ export default function ValidationScorecardModal({
       testID="validation-scorecard"
       style={{
         backgroundColor: SURFACES.dark.elevated1,
-        borderRadius: 16,
+        borderRadius: 10,
         borderWidth: 1,
         borderColor: SURFACES.dark.borderSubtle,
         padding: 16,
@@ -87,11 +87,7 @@ export default function ValidationScorecardModal({
           <View
             style={{
               alignSelf: 'flex-start',
-              backgroundColor: 'rgba(56, 189, 248, 0.14)',
-              borderColor: HYDROGRAPH_TOKENS.dark.upstreamStroke,
-              borderWidth: 1,
-              borderRadius: 999,
-              paddingHorizontal: 9,
+              maxWidth: '100%',
               paddingVertical: 2,
             }}
           >
@@ -118,11 +114,11 @@ export default function ValidationScorecardModal({
           <Pressable
             role="button"
             accessibilityRole="button"
-            accessibilityLabel="Close scorecard"
+            accessibilityLabel={language === 'es' ? 'Cerrar resultados' : 'Close scorecard'}
             onPress={onClose}
             style={{
-              width: 36,
-              height: 36,
+              width: 44,
+              height: 44,
               borderRadius: 10,
               backgroundColor: SURFACES.dark.elevated2,
               borderWidth: 1,

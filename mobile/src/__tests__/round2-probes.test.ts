@@ -20,7 +20,7 @@ import {
 } from '@/lib/guardian';
 import * as webGuardian from '@/lib/guardian.web';
 import { assessRouteCoverage } from '@/lib/routing';
-import { getVoiceMuted, setVoiceMuted, speak } from '@/lib/voice';
+import { getVoiceMuted, prepareAudio, setVoiceMuted, speak } from '@/lib/voice';
 import type { CrossingStatus } from '@/lib/monitor-context';
 
 const base = (patch: Partial<CrossingStatus> = {}): CrossingStatus => ({
@@ -203,7 +203,7 @@ describe('round 2 & round 3 adversarial audit', () => {
     expect(fgHazards[0]?.source).toBe('nws');
   });
 
-  test('setVoiceMuted blocks forced automatic speech at the speech engine and restores when unmuted', () => {
+  test('setVoiceMuted blocks forced automatic speech at the speech engine and restores when unmuted', async () => {
     const speakSpy = jest.spyOn(Speech, 'speak').mockImplementation(() => {});
     try {
       setVoiceMuted(true);
@@ -214,6 +214,8 @@ describe('round 2 & round 3 adversarial audit', () => {
       setVoiceMuted(false);
       expect(getVoiceMuted()).toBe(false);
       speak('Unmuted active alert phrase', 'en', { force: true });
+      await prepareAudio();
+      await Promise.resolve();
       expect(speakSpy).toHaveBeenCalledTimes(1);
     } finally {
       setVoiceMuted(false);

@@ -1,0 +1,97 @@
+- button:
+- button:
+- button "–":
+  - generic: –
+- button "–":
+  - generic: –
+- button "!":
+  - generic: "!"
+- button "4.7ft":
+  - generic: 4.7ft
+- button "15.7ft":
+  - generic: 15.7ft
+- button "8.2ft":
+  - generic: 8.2ft
+- button "8.3ft":
+  - generic: 8.3ft
+- button "11.0ft":
+  - generic: 11.0ft
+- button "4.2ft":
+  - generic: 4.2ft
+- button "5.5ft":
+  - generic: 5.5ft
+- button "10.7ft":
+  - generic: 10.7ft
+- button "2.5ft":
+  - generic: 2.5ft
+- button "11.8ft":
+  - generic: 11.8ft
+- button "14.5ft":
+  - generic: 14.5ft
+- button "5.7ft":
+  - generic: 5.7ft
+- button "14.8ft":
+  - generic: 14.8ft
+- button "5.7ft":
+  - generic: 5.7ft
+- button "2.8ft":
+  - generic: 2.8ft
+- button "6.3ft":
+  - generic: 6.3ft
+- button "4.3ft":
+  - generic: 4.3ft
+- button "10.7ft":
+  - generic: 10.7ft
+- button "10.7ft":
+  - generic: 10.7ft
+- link "Leaflet":
+  - /url: https://leafletjs.com
+  - text: Leaflet
+- text: "| Tiles © Esri, HERE, Garmin, © OpenStreetMap contributors · USGS · NWS · ATXfloods"
+- generic: FordCast
+- button "Mute voice warnings":
+- button "Español":
+  - generic: ES
+- button "Settings":
+- tablist:
+  - tab "Live now":
+    - generic: Live now
+  - tab "Storm drill":
+    - generic: Storm drill
+- button "Storm drill · Memorial Day Flood 2015 · Sun 6:57 AM":
+  - generic: Storm drill · Memorial Day Flood 2015 · Sun 6:57 AM
+- button "Map layers":
+  - generic: Map layers
+- button "Zoom in":
+- button "Zoom out":
+- button "My location":
+- button "Show more":
+  - generic: Show more
+- generic: Archived simulation · Memorial Day Flood 2015
+- button "Following car":
+  - generic: Following car
+- button "Stop demo":
+  - generic: Stop demo
+- generic: Arrived
+- generic: "Real outcome: FordCast's warning came about 90 minutes before the river sensor downstream reached flood stage."
+- button "Replay":
+  - generic: Replay
+- tablist:
+  - tab "Crossings":
+    - generic: Crossings
+  - tab "Route":
+    - generic: Route
+  - tab "Creeks":
+    - generic: Creeks
+- link "Map":
+  - /url: /
+  - generic: Map
+- link "Storms":
+  - /url: /replay
+  - generic: Storms
+- link "Drive":
+  - /url: /drive
+  - generic: Drive
+- link "Alerts":
+  - /url: /alerts
+  - generic: Alerts

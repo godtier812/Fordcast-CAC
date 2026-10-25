@@ -1,15 +1,16 @@
 # FordCast — Know Before It Crosses
 
-A bilingual Central Texas flood-awareness research prototype for the Congressional App
-Challenge. The vision is earlier, crossing-specific caution from truly upstream evidence.
-The current build demonstrates that workflow with archived observations and explicitly
-scoped reference-gauge experiments. **Road-level forecast skill is unverified.**
+A bilingual Central Texas trip-checking prototype for the Congressional App Challenge.
+Plan an Austin-area trip and inspect nearby low-water-crossing records, official closure
+reports, available creek readings, flood history and gaps in the evidence. A separate
+research view replays five historical USGS storms. **Road-level forecast skill is unverified.**
 
-The app includes a searchable inventory of 141 public records, five real historical USGS
-storm archives, causal hydrographs, EN/ES copy, local saved preferences, test-alert text
-previews, and a simulated voice HUD. Current status remains Unknown while live telemetry
-is disconnected. It is a supplementary tool: obey official warnings and barricades and
-never drive into water.
+The current website combines 2,052 inventory records, groups nearby hardware records on
+a route, checks public ATXFloods/NWS/USGS sources, requests Valhalla routes, and can send
+suggested waypoints to Google Maps. Failed or stale evidence stays explicit. Four preset
+trips have dated recorded geometry for review during router outages; that fallback blocks
+external navigation and sharing. The app is supplementary: obey official warnings and
+barricades, and never drive into water.
 
 ## Evidence and current limits
 
@@ -28,9 +29,17 @@ never drive into water.
   not verified historical transmission timing. The observation chart never moves future
   readings to earlier slots.
 - The 36-hour calm control is a smoke check. The planned 30-day calm evaluation is pending.
-- Live ingestion, hosted jobs, actual routing and push/background delivery are unconnected.
-  Watch toggles save preferences locally. Test alerts show text only. HUD positions and
-  speeds are simulated; they are not a route or a live driver-safety system.
+- Browser live-source requests and routing are implemented; public-service availability
+  is outside this project's control. Hosted backend jobs and production push delivery
+  have not been established. An inactive web tab cannot provide continuous monitoring.
+- The 141-record research catalog contains 30 candidates and 111 records without gauge
+  links; only four records across two research corridors have primary-calibrated links.
+  The 2,052-record route inventory is a separate footprint, not a count of monitored roads.
+- The upstream rule detected 4/12 gauge-reference cases, missed eight and gave one false
+  alarm. The nearest-gauge baseline detected 4/12 with zero false alarms. The upstream
+  rule did not beat the baseline; neither result validates road flooding.
+- Saved preferences are local. Archived car positions and test closures are simulated;
+  labelled demonstrations block external navigation. Physical-iPhone acceptance remains pending.
 
 ## Run locally
 
@@ -50,9 +59,27 @@ For the local API, from the repository root in a separate terminal:
 uv run --project backend uvicorn fordcast.api.app:app --app-dir backend --host 127.0.0.1 --port 8000
 ```
 
-The primary offline app reads bundled artifacts. The API returns offline Unknown without
-an ingested snapshot. Web uses an inventory overview; MapLibre street tiles require a
-native development build. Native exports do not establish real-device acceptance.
+The research views read bundled artifacts. The API returns offline Unknown without an
+ingested snapshot. The main website uses Leaflet street tiles and direct public-source
+requests; its separate science view uses an inventory diagram. Native exports do not
+establish real-device acceptance.
+
+## Production website
+
+```powershell
+Set-Location mobile
+npm run build:web
+npm run preview:web
+```
+
+The compiled site is in `mobile/dist`; its local preview is `http://localhost:8083`.
+The preview serves direct links such as `/privacy`, `/lab` and unknown routes through
+the app shell. Production hosting must provide the same single-page history fallback.
+`mobile/public/_redirects` supplies that rule for hosts that support Netlify-style redirects.
+No external deployment or submission is implied by a successful local build.
+
+See the [final website review](docs/results/cac-round8-website-finalization-2026-10-24.md)
+for implemented fixes, screenshots, test results and remaining acceptance limits.
 
 ## Reproduce and verify
 

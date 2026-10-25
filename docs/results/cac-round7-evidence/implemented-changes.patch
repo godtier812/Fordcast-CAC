@@ -1,0 +1,1213 @@
+diff --git a/mobile/src/__tests__/round2-probes.test.ts b/mobile/src/__tests__/round2-probes.test.ts
+index 3aaa3e7..bc44c30 100644
+--- a/mobile/src/__tests__/round2-probes.test.ts
++++ b/mobile/src/__tests__/round2-probes.test.ts
+@@ -20,7 +20,7 @@ import {
+ } from '@/lib/guardian';
+ import * as webGuardian from '@/lib/guardian.web';
+ import { assessRouteCoverage } from '@/lib/routing';
+-import { getVoiceMuted, setVoiceMuted, speak } from '@/lib/voice';
++import { getVoiceMuted, prepareAudio, setVoiceMuted, speak } from '@/lib/voice';
+ import type { CrossingStatus } from '@/lib/monitor-context';
+ 
+ const base = (patch: Partial<CrossingStatus> = {}): CrossingStatus => ({
+@@ -203,7 +203,7 @@ describe('round 2 & round 3 adversarial audit', () => {
+     expect(fgHazards[0]?.source).toBe('nws');
+   });
+ 
+-  test('setVoiceMuted blocks forced automatic speech at the speech engine and restores when unmuted', () => {
++  test('setVoiceMuted blocks forced automatic speech at the speech engine and restores when unmuted', async () => {
+     const speakSpy = jest.spyOn(Speech, 'speak').mockImplementation(() => {});
+     try {
+       setVoiceMuted(true);
+@@ -214,6 +214,8 @@ describe('round 2 & round 3 adversarial audit', () => {
+       setVoiceMuted(false);
+       expect(getVoiceMuted()).toBe(false);
+       speak('Unmuted active alert phrase', 'en', { force: true });
++      await prepareAudio();
++      await Promise.resolve();
+       expect(speakSpy).toHaveBeenCalledTimes(1);
+     } finally {
+       setVoiceMuted(false);
+diff --git a/mobile/src/__tests__/round6-ios-voice-probes.test.ts b/mobile/src/__tests__/round6-ios-voice-probes.test.ts
+index eb58661..9a86c71 100644
+--- a/mobile/src/__tests__/round6-ios-voice-probes.test.ts
++++ b/mobile/src/__tests__/round6-ios-voice-probes.test.ts
+@@ -23,9 +23,13 @@ afterEach(() => {
+   jest.clearAllMocks();
+ });
+ 
+-test('an explicit native voice preview can play while automatic voice alerts remain muted', () => {
++test('an explicit native voice preview waits for setup and plays while automatic voice alerts remain muted', async () => {
+   setVoiceMuted(true);
+   speak('Preview only. Never drive into water.', 'en', { force: true, allowWhenMuted: true });
++  expect(Speech.speak).not.toHaveBeenCalled();
++  mockReady();
++  await prepareAudio();
++  await Promise.resolve();
+   expect(Speech.speak).toHaveBeenCalledTimes(1);
+ });
+ 
+@@ -40,3 +44,10 @@ test('native speech waits for the audio-session preparation promise before playb
+   }
+   expect(Speech.speak).toHaveBeenCalledTimes(1);
+ });
++
++test('stopping a pending native utterance prevents it from playing after setup', async () => {
++  speak('Simulation. Never drive into water.', 'es', { force: true });
++  stopSpeaking();
++  await Promise.resolve();
++  expect(Speech.speak).not.toHaveBeenCalled();
++});
+diff --git a/mobile/src/__tests__/round6-provider-probes.test.tsx b/mobile/src/__tests__/round6-provider-probes.test.tsx
+index d58da84..6405f57 100644
+--- a/mobile/src/__tests__/round6-provider-probes.test.tsx
++++ b/mobile/src/__tests__/round6-provider-probes.test.tsx
+@@ -155,6 +155,17 @@ test('starting a different normal trip removes the simulated closure from the pr
+   expect(monitorHolder.current?.testHazard).toBeNull();
+ });
+ 
++test('recorded preset geometry displays its limitation and cannot launch or share navigation', async () => {
++  mockPlan.mockResolvedValue({ ...plan('Recorded preset'), geometrySource: 'recorded', geometryCapturedAt: '2026-10-24T00:00:00Z' });
++  await mount();
++  await act(async () => { await monitorHolder.current!.planRoute(dest('Recorded preset')); });
++  const exports = tree.root.findAll(n => n.props.accessibilityRole === 'button' &&
++    [en['route.open_google'], en['route.share']].includes(n.props.accessibilityLabel));
++  expect(exports).toHaveLength(0);
++  const notices = tree.root.findAll(n => typeof n.props.children === 'string' && n.props.children.includes('Recorded geometry'));
++  expect(notices.length).toBeGreaterThan(0);
++});
++
+ test('a simulated closure cannot produce a real Google Maps handoff after the test detour completes, until endRouteTest is called', async () => {
+   mockPlan.mockResolvedValue(plan('A'));
+   await mount();
+@@ -175,10 +186,15 @@ test('a simulated closure cannot produce a real Google Maps handoff after the te
+   );
+   expect(handoffWhileTesting).toHaveLength(0);
+ 
+-  mockPlan.mockResolvedValue(plan('A', false));
+-  await act(async () => {
+-    await monitorHolder.current!.endRouteTest();
+-  });
++  let finishReset!: (value: RoutePlan) => void;
++  mockPlan.mockImplementation(() => new Promise<RoutePlan>(resolve => { finishReset = resolve; }));
++  let reset!: Promise<void>;
++  act(() => { reset = monitorHolder.current!.endRouteTest(); });
++  expect(monitorHolder.current?.routeBusy).toBe(true);
++  const exportsDuringReset = tree.root.findAll(n => n.props.accessibilityRole === 'button' &&
++    [en['route.open_google'], en['route.share']].includes(n.props.accessibilityLabel));
++  expect(exportsDuringReset).toHaveLength(0);
++  await act(async () => { finishReset(plan('A', false)); await reset; });
+   expect(monitorHolder.current?.testHazard).toBeNull();
+   const handoffAfterReset = tree.root.findAll(
+     (n) =>
+diff --git a/mobile/src/app/(tabs)/alerts.tsx b/mobile/src/app/(tabs)/alerts.tsx
+index d882096..3af22ea 100644
+--- a/mobile/src/app/(tabs)/alerts.tsx
++++ b/mobile/src/app/(tabs)/alerts.tsx
+@@ -183,10 +183,6 @@ export default function Alerts() {
+ 
+   const triggerPreview = (targetPersona?: VoicePersonaId) => {
+     if (targetPersona) setVoicePersona(targetPersona);
+-    if (!m.settings.voiceAlerts) {
+-      setVoiceMuted(false);
+-      m.updateSettings({ voiceAlerts: true });
+-    }
+     setPreviewPlayed(true);
+     speak(t('alerts.voice_test_phrase'), language, {
+       force: true,
+diff --git a/mobile/src/components/fc/Kit.tsx b/mobile/src/components/fc/Kit.tsx
+index f4d1c1c..1d482eb 100644
+--- a/mobile/src/components/fc/Kit.tsx
++++ b/mobile/src/components/fc/Kit.tsx
+@@ -128,7 +128,7 @@ export function Segmented<T extends string>({
+             onPress={() => onChange(o.value)}
+             style={{
+               flex: 1,
+-              minHeight: 38,
++              minHeight: 44,
+               borderRadius: 9,
+               alignItems: 'center',
+               justifyContent: 'center',
+@@ -176,9 +176,10 @@ export function Chip({
+         alignItems: 'center',
+         gap: 6,
+         paddingHorizontal: 13,
+-        minHeight: 34,
++        minHeight: 44,
+         justifyContent: 'center',
+-        borderRadius: 999,
++        borderRadius: 8,
++        maxWidth: '100%',
+         borderWidth: 1,
+         borderColor: active ? color : S.borderSubtle,
+         backgroundColor: active ? ACCENT_DIM : S.elevated1,
+@@ -191,6 +192,8 @@ export function Chip({
+           lineHeight: 17,
+           fontFamily: 'Inter_600SemiBold',
+           color: active ? S.textPrimary : S.textSecondary,
++          flexShrink: 1,
++          paddingVertical: 8,
+         }}
+       >
+         {label}
+@@ -223,7 +226,8 @@ export function ActionButton({
+       onPress={onPress}
+       style={({ pressed }) => [
+         {
+-          minHeight: compact ? 40 : 48,
++          minHeight: compact ? 44 : 48,
++          maxWidth: '100%',
+           paddingHorizontal: compact ? 14 : 18,
+           borderRadius: 12,
+           backgroundColor: bg,
+@@ -239,7 +243,7 @@ export function ActionButton({
+       ]}
+     >
+       {icon ? <FcIcon name={icon} size={compact ? 14 : 16} color={fg} /> : null}
+-      <AppText style={{ fontFamily: 'Inter_600SemiBold', fontSize: compact ? 14 : 15, lineHeight: 19, color: fg }}>
++      <AppText style={{ flexShrink: 1, paddingVertical: 8, fontFamily: 'Inter_600SemiBold', fontSize: compact ? 14 : 15, lineHeight: 19, color: fg }}>
+         {label}
+       </AppText>
+     </Pressable>
+@@ -252,7 +256,7 @@ export function Panel({ children, style }: PropsWithChildren<{ style?: StyleProp
+       style={[
+         {
+           backgroundColor: S.elevated1,
+-          borderRadius: 16,
++          borderRadius: 10,
+           borderWidth: 1,
+           borderColor: S.borderSubtle,
+           padding: 16,
+diff --git a/mobile/src/lib/routing.ts b/mobile/src/lib/routing.ts
+index 6067064..8aea738 100644
+--- a/mobile/src/lib/routing.ts
++++ b/mobile/src/lib/routing.ts
+@@ -3,6 +3,7 @@
+  * exclude specific points — exactly what's needed to route around a flooded crossing.
+  */
+ import { distanceKm, insideCoverage, type LatLon } from './geo';
++import recordedPresets from '../../assets/demo/commute_presets.json';
+ 
+ export type Route = { coords: LatLon[]; km: number; min: number };
+ export type HazardLevel = 'block' | 'caution';
+@@ -27,6 +28,9 @@ export type RoutePlan = {
+   remaining: RouteHazard[];
+   extraMin: number;
+   computedAt: number;
++  /** Recorded geometry is review-only and must never be exported for navigation. */
++  geometrySource?: 'live' | 'recorded';
++  geometryCapturedAt?: string;
+   /** True when the origin, destination, or route segments leave FordCast's Central Texas crossing inventory footprint. */
+   outsideCoverage?: boolean;
+   /** Fraction [0, 1] of route coordinates inside FordCast's supported Central Texas coverage footprint. */
+@@ -123,28 +127,38 @@ export async function fetchRoute(
+   exclude: LatLon[] = [],
+   signal?: AbortSignal,
+ ): Promise<Route | null> {
+-  const res = await fetch(VALHALLA, {
+-    method: 'POST',
+-    signal,
+-    headers: { 'Content-Type': 'application/json' },
+-    body: JSON.stringify({
+-      locations: points.map((p) => ({ lat: p.lat, lon: p.lon })),
+-      costing: 'auto',
+-      exclude_locations: exclude.map((p) => ({ lat: p.lat, lon: p.lon })),
+-      directions_options: { units: 'kilometers' },
+-    }),
+-  });
+-  if (res.status === 400) return null; // Valhalla: no route possible with these exclusions
+-  if (!res.ok) throw new Error(`Router ${res.status}`);
+-  const j = (await res.json()) as {
+-    trip?: { legs?: { shape: string }[]; summary?: { length: number; time: number } };
+-  };
+-  if (!j.trip?.legs?.length || !j.trip.summary) return null;
+-  return {
+-    coords: j.trip.legs.flatMap((l) => decodePolyline6(l.shape)),
+-    km: j.trip.summary.length,
+-    min: j.trip.summary.time / 60,
+-  };
++  const request = new AbortController();
++  const abort = () => request.abort();
++  if (signal?.aborted) request.abort();
++  signal?.addEventListener('abort', abort);
++  const deadline = setTimeout(abort, 5000);
++  try {
++    const res = await fetch(VALHALLA, {
++      method: 'POST',
++      signal: request.signal,
++      headers: { 'Content-Type': 'application/json' },
++      body: JSON.stringify({
++        locations: points.map((p) => ({ lat: p.lat, lon: p.lon })),
++        costing: 'auto',
++        exclude_locations: exclude.map((p) => ({ lat: p.lat, lon: p.lon })),
++        directions_options: { units: 'kilometers' },
++      }),
++    });
++    if (res.status === 400) return null; // Valhalla: no route possible with these exclusions
++    if (!res.ok) throw new Error(`Router ${res.status}`);
++    const j = (await res.json()) as {
++      trip?: { legs?: { shape: string }[]; summary?: { length: number; time: number } };
++    };
++    if (!j.trip?.legs?.length || !j.trip.summary) return null;
++    return {
++      coords: j.trip.legs.flatMap((l) => decodePolyline6(l.shape)),
++      km: j.trip.summary.length,
++      min: j.trip.summary.time / 60,
++    };
++  } finally {
++    clearTimeout(deadline);
++    signal?.removeEventListener('abort', abort);
++  }
+ }
+ 
+ /** Distance (m) from point p to segment a–b plus position t∈[0,1] along it; equirectangular is accurate at city scale. */
+@@ -162,7 +176,10 @@ function segDist(p: LatLon, a: LatLon, b: LatLon): { d: number; t: number } {
+   return { d: Math.sqrt(x * x + y * y) * 111_320, t };
+ }
+ 
+-export function distanceToRouteM(p: LatLon, coords: LatLon[]): { d: number; index: number; t: number } {
++export function distanceToRouteM(
++  p: LatLon,
++  coords: LatLon[],
++): { d: number; index: number; t: number } {
+   let best = { d: Infinity, index: 0, t: 0 };
+   for (let i = 0; i + 1 < coords.length; i++) {
+     const s = segDist(p, coords[i]!, coords[i + 1]!);
+@@ -241,6 +258,51 @@ export async function planSafeRoute(
+   hazards: RouteHazard[],
+   signal?: AbortSignal,
+   maxCautionDetourMin = 12,
++): Promise<RoutePlan | null> {
++  try {
++    const plan = await planNetworkRoute(
++      origin,
++      destination,
++      destinationName,
++      hazards,
++      signal,
++      maxCautionDetourMin,
++    );
++    if (plan) return { ...plan, geometrySource: 'live' };
++  } catch (error) {
++    if (signal?.aborted) throw error;
++  }
++  if (signal?.aborted) return null;
++  const same = (a: LatLon, b: LatLon) =>
++    Math.abs(a.lat - b.lat) < 0.000001 && Math.abs(a.lon - b.lon) < 0.000001;
++  const preset = recordedPresets.presets.find(
++    (p) => same(p.origin, origin) && same(p.destination, destination),
++  );
++  if (!preset) return null;
++  const route = { coords: preset.shapes.flatMap(decodePolyline6), km: preset.km, min: preset.min };
++  return {
++    origin,
++    destination,
++    destinationName,
++    route,
++    baseline: route,
++    avoided: [],
++    remaining: hazardsOnRoute(route.coords, hazards),
++    extraMin: 0,
++    computedAt: Date.now(),
++    geometrySource: 'recorded',
++    geometryCapturedAt: recordedPresets.capturedAt,
++    ...assessRouteCoverage(origin, destination, route.coords),
++  };
++}
++
++async function planNetworkRoute(
++  origin: LatLon,
++  destination: LatLon,
++  destinationName: string,
++  hazards: RouteHazard[],
++  signal: AbortSignal | undefined,
++  maxCautionDetourMin: number,
+ ): Promise<RoutePlan | null> {
+   const baseline = await fetchRoute([origin, destination], [], signal);
+   if (!baseline) return null;
+@@ -258,7 +320,8 @@ export async function planSafeRoute(
+       for (const h of onRoute) {
+         excluded.set(h.id, h);
+         excludePts.push(nearestPointOnRoute(h, route.coords));
+-        if (!excludePts.some((p) => p.lat === h.lat && p.lon === h.lon)) excludePts.push({ lat: h.lat, lon: h.lon });
++        if (!excludePts.some((p) => p.lat === h.lat && p.lon === h.lon))
++          excludePts.push({ lat: h.lat, lon: h.lon });
+       }
+       const next = await fetchRoute([origin, destination], excludePts, signal);
+       if (!next) break; // no way around these
+@@ -294,7 +357,9 @@ export async function planSafeRoute(
+  * Google Maps directions link that follows FordCast's route: up to 3 waypoints taken where
+  * the safer route strays farthest from the fastest one (Google's mobile limit is 3).
+  */
+-export function googleMapsUrl(plan: Pick<RoutePlan, 'origin' | 'destination' | 'route' | 'baseline'>): string {
++export function googleMapsUrl(
++  plan: Pick<RoutePlan, 'origin' | 'destination' | 'route' | 'baseline'>,
++): string {
+   const f = (p: LatLon) => `${p.lat.toFixed(6)},${p.lon.toFixed(6)}`;
+   const base = `https://www.google.com/maps/dir/?api=1&travelmode=driving&origin=${f(plan.origin)}&destination=${f(plan.destination)}`;
+   const coords = plan.route.coords;
+@@ -315,7 +380,11 @@ export function googleMapsUrl(plan: Pick<RoutePlan, 'origin' | 'destination' | '
+ export type Place = { name: string; detail: string; lat: number; lon: number };
+ 
+ /** Address / place search biased to Austin (Photon, OpenStreetMap data) with 10s bounded timeout. */
+-export async function searchPlaces(q: string, near: LatLon, signal?: AbortSignal): Promise<Place[]> {
++export async function searchPlaces(
++  q: string,
++  near: LatLon,
++  signal?: AbortSignal,
++): Promise<Place[]> {
+   if (q.trim().length < 3) return [];
+   const ctrl = new AbortController();
+   const timer = setTimeout(() => ctrl.abort(), 10_000);
+@@ -328,7 +397,13 @@ export async function searchPlaces(q: string, near: LatLon, signal?: AbortSignal
+     const j = (await res.json()) as {
+       features?: {
+         geometry: { coordinates: [number, number] };
+-        properties: { name?: string; street?: string; housenumber?: string; city?: string; state?: string };
++        properties: {
++          name?: string;
++          street?: string;
++          housenumber?: string;
++          city?: string;
++          state?: string;
++        };
+       }[];
+     };
+     return (j.features ?? []).map((f) => {
+diff --git a/mobile/src/lib/voice.ts b/mobile/src/lib/voice.ts
+index 3053b9e..84954fe 100644
+--- a/mobile/src/lib/voice.ts
++++ b/mobile/src/lib/voice.ts
+@@ -113,7 +113,8 @@ function playSoftChime(): void {
+   if (Platform.OS !== 'web' || typeof window === 'undefined') return;
+   try {
+     const AudioCtx =
+-      window.AudioContext || (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
++      window.AudioContext ||
++      (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
+     if (!AudioCtx) return;
+     const ctx = new AudioCtx();
+     const now = ctx.currentTime;
+@@ -159,7 +160,10 @@ export function cleanForSpeech(raw: string, language: 'en' | 'es'): string {
+     .replace(/\bPkwy\b/gi, 'Parkway')
+     .replace(/\bHwy\b/gi, 'Highway')
+     .replace(/\bnr\b/gi, language === 'es' ? 'cerca de' : 'near')
+-    .replace(/(\d+)\s*[–-]\s*(\d+)\s*min\b/gi, language === 'es' ? '$1 a $2 minutos' : '$1 to $2 minutes')
++    .replace(
++      /(\d+)\s*[–-]\s*(\d+)\s*min\b/gi,
++      language === 'es' ? '$1 a $2 minutos' : '$1 to $2 minutes',
++    )
+     .replace(/\b(\d+(?:\.\d+)?)\s*mi\b/gi, language === 'es' ? '$1 millas' : '$1 miles')
+     .replace(/\b(\d+)\s*min\b/gi, language === 'es' ? '$1 minutos' : '$1 minutes')
+     .replace(/[·—–]/g, ', ')
+@@ -175,11 +179,15 @@ function resolveClipKey(text: string, explicitKey?: string): string | null {
+   if (lower.includes('voice warnings are') || lower.includes('avisos de voz')) return 'voice_test';
+   if (lower.includes('only a test') || lower.includes('solo una prueba')) return 'test_alert';
+   if (lower === 'you have arrived.' || lower === 'ha llegado.') return 'arrived';
+-  if (lower.includes('test flooded crossing') || lower.includes('cruce inundado de prueba')) return 'sim_route';
++  if (lower.includes('test flooded crossing') || lower.includes('cruce inundado de prueba'))
++    return 'sim_route';
+   return null;
+ }
+ 
+-function pickBestWebSpeechVoice(language: 'en' | 'es', persona: VoicePersonaId): SpeechSynthesisVoice | null {
++function pickBestWebSpeechVoice(
++  language: 'en' | 'es',
++  persona: VoicePersonaId,
++): SpeechSynthesisVoice | null {
+   if (typeof window === 'undefined' || !('speechSynthesis' in window)) return null;
+   const voices = window.speechSynthesis.getVoices();
+   if (!voices.length) return null;
+@@ -348,19 +356,13 @@ export function speak(text: string, language: 'en' | 'es', opts?: SpeakOptions):
+     }
+   }
+ 
+-  const pendingPrep = audioPreparation;
+-  void prepareAudio();
+-  if (pendingPrep) {
+-    void pendingPrep
+-      .then(() => {
+-        fallbackSpeechSynthesis(cleaned, language, mySession, !!opts?.allowWhenMuted);
+-      })
+-      .catch(() => {
+-        if (mySession === speechSessionId) notifySpeaking(false);
+-      });
+-  } else {
+-    fallbackSpeechSynthesis(cleaned, language, mySession, !!opts?.allowWhenMuted);
+-  }
++  void prepareAudio()
++    .then(() => {
++      fallbackSpeechSynthesis(cleaned, language, mySession, !!opts?.allowWhenMuted);
++    })
++    .catch(() => {
++      if (mySession === speechSessionId) notifySpeaking(false);
++    });
+ }
+ 
+ export function stopSpeaking(): void {
+diff --git a/mobile/src/locales/en.json b/mobile/src/locales/en.json
+index ac570c8..250add0 100644
+--- a/mobile/src/locales/en.json
++++ b/mobile/src/locales/en.json
+@@ -65,7 +65,7 @@
+   "crossing.saved": "Saved crossing",
+   "crossing.remove": "Remove from saved",
+   "crossing.watch_opt_in": "Save Watch preference (local preview)",
+-  "crossing.watch_enabled": "Watch preference saved locally (preview only — live push not connected)",
++  "crossing.watch_enabled": "Watch preference saved locally (preview only · live push not connected)",
+   "crossing.why": "Why this status?",
+   "crossing.upstream_links": "Calibrated gauge relationships · research",
+   "crossing.travel_time": "Experimental gauge lag: {{tau_lo}}–{{tau_hi}} min · assumed corridor distance {{dist}} km",
+@@ -130,7 +130,7 @@
+   "drive.next_crossing": "Next",
+   "drive.prev_crossing": "Previous",
+   "drive.speed_sim": "Simulated speed: {{mph}} mph",
+-  "drive.lockout_active": "Moving fast — buttons locked.",
++  "drive.lockout_active": "Moving fast · buttons locked.",
+   "drive.passenger_override": "I'm a passenger",
+   "drive.spoken_banner": "Simulated voice preview",
+   "alerts.title": "Alerts",
+@@ -140,7 +140,7 @@
+   "alerts.browse": "Browse crossings",
+   "alerts.test_call": "Show test alert preview",
+   "alerts.test_title": "TEST ALERT (not a real flood)",
+-  "alerts.test": "TEST: Avoid {{crossing}} — simulated warning. Likely within {{lo}}–{{hi}} min. Preview only; no real flood or delivery.",
++  "alerts.test": "TEST: Avoid {{crossing}} · simulated warning. Likely within {{lo}}–{{hi}} min. Preview only; no real flood or delivery.",
+   "alerts.recent_title": "Alert preview log",
+   "settings.title": "Make it yours.",
+   "settings.language": "Language",
+@@ -204,14 +204,14 @@
+   "home.headline_alert_many": "{{count}} crossings near you need attention",
+   "home.headline_alert_body": "Tap a crossing to see why. Take another route if it says Avoid.",
+   "home.headline_quiet": "No rising water detected near you",
+-  "home.headline_quiet_body": "{{count}} watched crossings within {{radius}} mi. Sensors can miss local flash floods — always obey barricades.",
++  "home.headline_quiet_body": "{{count}} watched crossings within {{radius}} mi. Sensors can miss local flash floods · always obey barricades.",
+   "home.headline_none": "No FordCast-watched crossings within {{radius}} mi",
+   "home.headline_none_body": "The closest one FordCast watches is {{name}} ({{dist}}). You can widen your alert distance in Alerts.",
+   "home.headline_nodata": "Live sensor data unavailable",
+   "home.headline_nodata_body": "Treat every crossing as unknown. Check ATXfloods.com and follow barricades.",
+   "home.location_off": "Turn on location to see crossings near you",
+   "home.location_off_body": "Showing downtown Austin for now.",
+-  "home.location_outside": "You're outside the Austin area — showing downtown Austin.",
++  "home.location_outside": "You're outside the Austin area · showing downtown Austin.",
+   "home.location_demo": "Demo location: downtown Austin.",
+   "home.turn_on": "Turn on",
+   "home.filter_near": "Near me",
+@@ -225,7 +225,7 @@
+   "home.search": "Search road, creek, or crossing",
+   "home.empty": "No crossings match.",
+   "home.recenter": "My location",
+-  "home.drill_intro": "Replays a real past flood as if it's happening right now — same map, alerts, and voice warnings.",
++  "home.drill_intro": "Replays a real past flood as if it's happening right now · same map, alerts, and voice warnings.",
+   "home.drill_play": "Play",
+   "home.drill_pause": "Pause",
+   "home.drill_restart": "Restart",
+@@ -234,7 +234,7 @@
+   "home.show_more": "Show more",
+   "home.show_less": "Show less",
+   "home.tagline": "Low-water crossing alerts · Austin",
+-  "explain.no_rise": "The sensor upstream isn't rising. That does not mean the road is dry — heavy local rain can still flood it.",
++  "explain.no_rise": "The sensor upstream isn't rising. That does not mean the road is dry · heavy local rain can still flood it.",
+   "explain.watch": "Water is rising at the sensor upstream. Flooding here is possible. Be ready to take another route.",
+   "explain.avoid": "The upstream sensor passed its warning level. Flood water is likely to reach this crossing soon. Take another route.",
+   "explain.closed": "Water is at the road or officials closed it. Never drive into water.",
+@@ -270,16 +270,16 @@
+   "alert.test_body": "This is only a test. In a real alert you would hear which crossing to avoid.",
+   "alerts.setup": "Alert setup",
+   "alerts.location": "Location",
+-  "alerts.location_on": "On — alerts for crossings near you",
+-  "alerts.location_off": "Off — using downtown Austin",
+-  "alerts.location_denied": "Blocked — allow it in your phone's Settings",
++  "alerts.location_on": "On · alerts for crossings near you",
++  "alerts.location_off": "Off · using downtown Austin",
++  "alerts.location_denied": "Blocked · allow it in your phone's Settings",
+   "alerts.notifications": "Notifications",
+   "alerts.notif_on": "On",
+-  "alerts.notif_off": "Off — tap to allow",
+-  "alerts.notif_denied": "Blocked — allow it in Settings",
+-  "alerts.notif_unsupported": "Not available here — you'll still get in-app alerts",
++  "alerts.notif_off": "Off · tap to allow",
++  "alerts.notif_denied": "Blocked · allow it in Settings",
++  "alerts.notif_unsupported": "Not available here · you'll still get in-app alerts",
+   "alerts.voice": "Voice warnings",
+-  "alerts.voice_on": "On — alerts are read out loud",
++  "alerts.voice_on": "On · alerts are read out loud",
+   "alerts.voice_off": "Off",
+   "alerts.voice_hint": "Can't hear it? Turn up media volume. On iOS app builds, audio is configured to play in silent mode; web browsers follow tab and system mute.",
+   "alerts.test_voice": "Test voice",
+@@ -305,9 +305,9 @@
+   "storms.blurb.memorial-day-2015": "A holiday-weekend flood that swept through Hays and Travis counties. Barton and Onion Creeks rose fast.",
+   "storms.blurb.halloween-2015": "Two years later, more than 10 inches of rain hit parts of the area in hours. Many crossings flooded at once.",
+   "storms.blurb.oct-2018": "Heavy rain upstream in the Highland Lakes. A test of whether FordCast stays quiet when local creeks barely move.",
+-  "storms.blurb.july-2025": "A quick urban downpour. A test of fast rises that sensors may catch late — or not at all.",
++  "storms.blurb.july-2025": "A quick urban downpour. A test of fast rises that sensors may catch late · or not at all.",
+   "storms.track_title": "How well does it work?",
+-  "storms.track_body": "Across {{storms}} past storms, FordCast's upstream-sensor rule warned “Avoid” before the downstream river sensor hit flood stage in {{hits}} of {{total}} cases — a median of {{lead}} minutes early. It missed {{missed}} and gave {{fa}} false alarm. It hasn't been checked against real road flooding yet, so never rely on it alone.",
++  "storms.track_body": "Across {{storms}} past storms, FordCast's upstream-sensor rule warned “Avoid” before the downstream river sensor hit flood stage in {{hits}} of {{total}} cases · a median of {{lead}} minutes early. It missed {{missed}} and gave {{fa}} false alarm. It hasn't been checked against real road flooding yet, so never rely on it alone.",
+   "storms.track_note": "Scored fairly: each storm is tested using settings learned only from the other storms.",
+   "storms.alerts_seen": "{{count}} crossings reached Avoid",
+   "lab.title": "Science view",
+@@ -316,7 +316,7 @@
+   "drive.badge_live": "LIVE · ATXFLOODS + NWS + USGS",
+   "drive.badge_drill": "STORM DRILL",
+   "drive.badge_sim": "SIMULATION",
+-  "drive.tips": "Tip: turn your volume up. Mount your phone — never hold it while driving.",
++  "drive.tips": "Tip: turn your volume up. Mount your phone · never hold it while driving.",
+   "state.uncalibrated": "Sensor not calibrated yet",
+   "explain.uncalibrated": "There's a USGS sensor upstream, but FordCast hasn't learned yet how fast water travels from it to this crossing, so it won't guess. Watch for barricades and check ATXfloods.com.",
+   "home.legend_dot": "No status (no calibrated sensor)",
+@@ -366,15 +366,15 @@
+   "route.avoids_one": "Avoids 1 hazard (+{{min}} min)",
+   "route.avoids_many": "Avoids {{count}} hazards (+{{min}} min)",
+   "route.none_reported": "No hazards returned by available sources. Conditions can change.",
+-  "route.avoided_item": "Goes around {{name}} — {{reason}}",
+-  "route.caution_item": "On your route: {{name}} — {{reason}}",
++  "route.avoided_item": "Goes around {{name}} · {{reason}}",
++  "route.caution_item": "On your route: {{name}} · {{reason}}",
+   "route.no_way_title": "No way around {{name}}",
+   "route.no_way_body": "{{reason}}. Don't drive through. Wait for the water to go down or pick another destination.",
+   "route.reroute_title": "Rerouting around {{name}}",
+   "route.reroute_body": "{{reason}}. Your new route adds about {{min}} min.",
+   "route.sensors_down": "Live sensor data is unavailable, so this route was only checked against official closures and weather warnings.",
+   "route.atx_down": "Couldn't reach ATXfloods, so official closures weren't checked.",
+-  "route.night_tip": "It's dark. Floodwater is very hard to judge at night — if you see water on the road, turn around.",
++  "route.night_tip": "It's dark. Floodwater is very hard to judge at night · if you see water on the road, turn around.",
+   "route.open_google": "Go with Google Maps",
+   "route.clear": "Remove route",
+   "route.google_note": "Google Maps gets waypoints that follow this route, but may still pick a nearby road. FordCast keeps watching and alerts you if something changes.",
+@@ -384,7 +384,7 @@
+   "trip.sim_label": "SIMULATED DRIVE · STORM TIME 1 MIN PER SECOND",
+   "trip.status_driving": "Driving · {{dist}} to go",
+   "trip.status_rerouted": "Rerouted around {{name}} · +{{min}} min",
+-  "trip.status_caution": "Caution at {{name}} — detour too long, staying alert",
++  "trip.status_caution": "Caution at {{name}} · detour too long, staying alert",
+   "trip.status_arrived": "Arrived",
+   "trip.watching": "FordCast is watching {{name}} on this route.",
+   "trip.reroute_title": "Rerouting around {{name}}",
+@@ -400,12 +400,12 @@
+   "trip.stop": "Stop demo",
+   "trip.replay": "Replay",
+   "companion.title": "Use with Google Maps",
+-  "companion.body": "Keep navigating with Google Maps. Plan your trip in FordCast and tap “Go with Google Maps” — your route arrives with waypoints that go around flooded crossings.",
++  "companion.body": "Keep navigating with Google Maps. Plan your trip in FordCast and tap “Go with Google Maps” · your route arrives with waypoints that go around flooded crossings.",
+   "companion.guardian": "Guardian mode",
+-  "companion.guardian_on": "On — FordCast runs in the background and warns you about a mile before a flooded or closed crossing, even while you navigate with Google Maps.",
+-  "companion.guardian_off": "Off — turn on to get warnings while you use Google Maps, Waze or Apple Maps.",
++  "companion.guardian_on": "On · FordCast runs in the background and warns you about a mile before a flooded or closed crossing, even while you navigate with Google Maps.",
++  "companion.guardian_off": "Off · turn on to get warnings while you use Google Maps, Waze or Apple Maps.",
+   "companion.guardian_denied": "Needs “Allow all the time” location permission. Change it in your phone’s Settings.",
+-  "companion.expo_go": "Guardian mode needs the installed FordCast app — Expo Go can't track location in the background. Route handoff to Google Maps works here.",
++  "companion.expo_go": "Guardian mode needs the installed FordCast app · Expo Go can't track location in the background. Route handoff to Google Maps works here.",
+   "companion.extension": "On a computer, install the “FordCast for Google Maps” Chrome extension (extension folder in this project). It adds a FordCast panel to google.com/maps that flags closures and flooded crossings on your route and offers a route around them.",
+   "companion.plan": "Plan a route",
+   "safety.title": "Flood driving facts",
+@@ -416,7 +416,7 @@
+   "safety.f5": "Never drive around a barricade. Turn around, don’t drown.",
+   "safety.source": "Source: National Weather Service “Turn Around Don’t Drown”.",
+   "route.simulate": "Test: put a flooded crossing on my route",
+-  "route.simulate_note": "TEST hazard added ahead on your route — watch FordCast reroute. Remove the route to reset.",
++  "route.simulate_note": "TEST closure on this route. External navigation is disabled. End the test to recheck current evidence.",
+   "route.test_name": "Test flooded crossing",
+   "route.test_reason": "TEST – simulated flooding",
+   "home.tab_explore": "Crossings",
+@@ -453,8 +453,8 @@
+   "sensors.action_stage": "Caution level: {{ft}} ft",
+   "sensors.flood_stage": "Flood level: {{ft}} ft",
+   "sensors.tools_title": "Emergency & community links",
+-  "sensors.tool_311": "Austin 311 — Report water on road",
+-  "sensors.tool_atx": "ATXfloods — Official county closures",
++  "sensors.tool_311": "Austin 311 · Report water on road",
++  "sensors.tool_atx": "ATXfloods · Official county closures",
+   "sensors.tool_nws": "Weather Service flood warnings",
+   "storms.car_demo": "Storm reroute demo",
+   "storms.hotspots_title": "Frequent flood spots (1996–2026)",
+@@ -497,7 +497,7 @@
+   "onboarding.pledge.subtitle": "Check the crossings on your trip",
+   "onboarding.pledge.required_badge": "Before your first trip",
+   "onboarding.pledge.acknowledged_badge": "{{count}} of 3 acknowledged",
+-  "crossing.stale_reading_label": "Last available reading — not current",
++  "crossing.stale_reading_label": "Last available reading · not current",
+   "route.google_note_base": "Google Maps receives suggested waypoints and may choose a different road.",
+   "route.google_note_web": "Background crossing alerts are unavailable in web browsers. Recheck official conditions before leaving.",
+   "route.google_note_expo_go": "Background crossing alerts are unavailable in Expo Go. Recheck official conditions before leaving.",
+diff --git a/mobile/src/locales/es.json b/mobile/src/locales/es.json
+index eb23aeb..92a5264 100644
+--- a/mobile/src/locales/es.json
++++ b/mobile/src/locales/es.json
+@@ -130,7 +130,7 @@
+   "drive.next_crossing": "Siguiente",
+   "drive.prev_crossing": "Anterior",
+   "drive.speed_sim": "Velocidad simulada: {{mph}} mph",
+-  "drive.lockout_active": "En movimiento — botones bloqueados.",
++  "drive.lockout_active": "En movimiento · botones bloqueados.",
+   "drive.passenger_override": "Soy pasajero",
+   "drive.spoken_banner": "Vista previa de voz simulada",
+   "alerts.title": "Alertas",
+@@ -140,7 +140,7 @@
+   "alerts.browse": "Explorar cruces",
+   "alerts.test_call": "Mostrar vista previa de alerta de prueba",
+   "alerts.test_title": "ALERTA DE PRUEBA (no es una inundación real)",
+-  "alerts.test": "PRUEBA: Evite {{crossing}} — aviso simulado. Posiblemente dentro de {{lo}}–{{hi}} min. Solo vista previa; no es una inundación ni entrega real.",
++  "alerts.test": "PRUEBA: Evite {{crossing}} · aviso simulado. Posiblemente dentro de {{lo}}–{{hi}} min. Solo vista previa; no es una inundación ni entrega real.",
+   "alerts.recent_title": "Registro de alertas de prueba",
+   "settings.title": "A su manera.",
+   "settings.language": "Idioma",
+@@ -204,14 +204,14 @@
+   "home.headline_alert_many": "{{count}} cruces cerca de usted requieren atención",
+   "home.headline_alert_body": "Toque un cruce para ver por qué. Tome otra ruta si dice Evite.",
+   "home.headline_quiet": "No se detecta agua subiendo cerca de usted",
+-  "home.headline_quiet_body": "{{count}} cruces vigilados a menos de {{radius}} mi. Los sensores pueden no detectar crecidas locales — siempre respete las barricadas.",
++  "home.headline_quiet_body": "{{count}} cruces vigilados a menos de {{radius}} mi. Los sensores pueden no detectar crecidas locales · siempre respete las barricadas.",
+   "home.headline_none": "No hay cruces vigilados por FordCast a menos de {{radius}} mi",
+   "home.headline_none_body": "El más cercano que vigila FordCast es {{name}} ({{dist}}). Puede ampliar la distancia en Alertas.",
+   "home.headline_nodata": "Datos en vivo no disponibles",
+   "home.headline_nodata_body": "Trate cada cruce como desconocido. Consulte ATXfloods.com y siga las barricadas.",
+   "home.location_off": "Active la ubicación para ver cruces cerca de usted",
+   "home.location_off_body": "Mostrando el centro de Austin por ahora.",
+-  "home.location_outside": "Está fuera del área de Austin — mostrando el centro de Austin.",
++  "home.location_outside": "Está fuera del área de Austin · mostrando el centro de Austin.",
+   "home.location_demo": "Ubicación de prueba: centro de Austin.",
+   "home.turn_on": "Activar",
+   "home.filter_near": "Cerca",
+@@ -225,7 +225,7 @@
+   "home.search": "Buscar camino, arroyo o cruce",
+   "home.empty": "Ningún cruce coincide.",
+   "home.recenter": "Mi ubicación",
+-  "home.drill_intro": "Reproduce una inundación real como si estuviera pasando ahora — mismo mapa, alertas y avisos de voz.",
++  "home.drill_intro": "Reproduce una inundación real como si estuviera pasando ahora · mismo mapa, alertas y avisos de voz.",
+   "home.drill_play": "Reproducir",
+   "home.drill_pause": "Pausa",
+   "home.drill_restart": "Reiniciar",
+@@ -234,7 +234,7 @@
+   "home.show_more": "Ver más",
+   "home.show_less": "Ver menos",
+   "home.tagline": "Alertas de cruces bajos · Austin",
+-  "explain.no_rise": "El sensor río arriba no está subiendo. Eso no significa que el camino esté seco — la lluvia local aún puede inundarlo.",
++  "explain.no_rise": "El sensor río arriba no está subiendo. Eso no significa que el camino esté seco · la lluvia local aún puede inundarlo.",
+   "explain.watch": "El agua está subiendo en el sensor río arriba. Es posible que se inunde aquí. Esté listo para tomar otra ruta.",
+   "explain.avoid": "El sensor río arriba pasó su nivel de alerta. Es probable que el agua llegue pronto a este cruce. Tome otra ruta.",
+   "explain.closed": "Hay agua en el camino o las autoridades lo cerraron. Nunca maneje sobre el agua.",
+@@ -270,16 +270,16 @@
+   "alert.test_body": "Esto es solo una prueba. En una alerta real escucharía qué cruce evitar.",
+   "alerts.setup": "Configuración",
+   "alerts.location": "Ubicación",
+-  "alerts.location_on": "Activada — alertas de cruces cerca de usted",
+-  "alerts.location_off": "Desactivada — usando el centro de Austin",
+-  "alerts.location_denied": "Bloqueada — permítala en la Configuración del teléfono",
++  "alerts.location_on": "Activada · alertas de cruces cerca de usted",
++  "alerts.location_off": "Desactivada · usando el centro de Austin",
++  "alerts.location_denied": "Bloqueada · permítala en la Configuración del teléfono",
+   "alerts.notifications": "Notificaciones",
+   "alerts.notif_on": "Activadas",
+-  "alerts.notif_off": "Desactivadas — toque para permitir",
+-  "alerts.notif_denied": "Bloqueadas — permítalas en Configuración",
+-  "alerts.notif_unsupported": "No disponible aquí — aún verá alertas en la app",
++  "alerts.notif_off": "Desactivadas · toque para permitir",
++  "alerts.notif_denied": "Bloqueadas · permítalas en Configuración",
++  "alerts.notif_unsupported": "No disponible aquí · aún verá alertas en la app",
+   "alerts.voice": "Avisos de voz",
+-  "alerts.voice_on": "Activados — las alertas se leen en voz alta",
++  "alerts.voice_on": "Activados · las alertas se leen en voz alta",
+   "alerts.voice_off": "Desactivados",
+   "alerts.voice_hint": "¿No lo escucha? Suba el volumen multimedia. En la app de iOS el audio suena en modo silencio; en navegadores web depende del silencio de la pestaña.",
+   "alerts.test_voice": "Probar voz",
+@@ -305,9 +305,9 @@
+   "storms.blurb.memorial-day-2015": "Una inundación de fin de semana festivo en los condados de Hays y Travis. Barton y Onion Creek subieron rápido.",
+   "storms.blurb.halloween-2015": "Dos años después, más de 10 pulgadas de lluvia cayeron en horas. Muchos cruces se inundaron a la vez.",
+   "storms.blurb.oct-2018": "Lluvia fuerte río arriba en los Highland Lakes. Prueba de si FordCast se mantiene callado cuando los arroyos locales apenas suben.",
+-  "storms.blurb.july-2025": "Un aguacero urbano rápido. Prueba de crecidas rápidas que los sensores pueden detectar tarde — o no detectar.",
++  "storms.blurb.july-2025": "Un aguacero urbano rápido. Prueba de crecidas rápidas que los sensores pueden detectar tarde · o no detectar.",
+   "storms.track_title": "¿Qué tan bien funciona?",
+-  "storms.track_body": "En {{storms}} tormentas pasadas, la regla de FordCast avisó “Evite” antes de que el sensor río abajo llegara a nivel de inundación en {{hits}} de {{total}} casos — una mediana de {{lead}} minutos antes. No detectó {{missed}} y dio {{fa}} falsa alarma. Aún no se ha comparado con inundaciones reales del camino, así que nunca dependa solo de ella.",
++  "storms.track_body": "En {{storms}} tormentas pasadas, la regla de FordCast avisó “Evite” antes de que el sensor río abajo llegara a nivel de inundación en {{hits}} de {{total}} casos · una mediana de {{lead}} minutos antes. No detectó {{missed}} y dio {{fa}} falsa alarma. Aún no se ha comparado con inundaciones reales del camino, así que nunca dependa solo de ella.",
+   "storms.track_note": "Evaluado de forma justa: cada tormenta se prueba con ajustes aprendidos solo de las otras tormentas.",
+   "storms.alerts_seen": "{{count}} cruces llegaron a Evite",
+   "lab.title": "Vista científica",
+@@ -316,7 +316,7 @@
+   "drive.badge_live": "EN VIVO · ATXFLOODS + NWS + USGS",
+   "drive.badge_drill": "SIMULACRO",
+   "drive.badge_sim": "SIMULACIÓN",
+-  "drive.tips": "Consejo: suba el volumen. Fije su teléfono — nunca lo sostenga mientras maneja.",
++  "drive.tips": "Consejo: suba el volumen. Fije su teléfono · nunca lo sostenga mientras maneja.",
+   "state.uncalibrated": "Sensor aún sin calibrar",
+   "explain.uncalibrated": "Hay un sensor USGS río arriba, pero FordCast aún no ha aprendido qué tan rápido viaja el agua de ahí a este cruce, así que no adivina. Esté atento a las barricadas y consulte ATXfloods.com.",
+   "home.legend_dot": "Sin estado (sin sensor calibrado)",
+@@ -366,15 +366,15 @@
+   "route.avoids_one": "Evita 1 peligro (+{{min}} min)",
+   "route.avoids_many": "Evita {{count}} peligros (+{{min}} min)",
+   "route.none_reported": "Las fuentes disponibles no reportaron peligros. Las condiciones pueden cambiar.",
+-  "route.avoided_item": "Rodea {{name}} — {{reason}}",
+-  "route.caution_item": "En su ruta: {{name}} — {{reason}}",
++  "route.avoided_item": "Rodea {{name}} · {{reason}}",
++  "route.caution_item": "En su ruta: {{name}} · {{reason}}",
+   "route.no_way_title": "No hay forma de rodear {{name}}",
+   "route.no_way_body": "{{reason}}. No lo cruce. Espere a que baje el agua o elija otro destino.",
+   "route.reroute_title": "Desviando alrededor de {{name}}",
+   "route.reroute_body": "{{reason}}. Su nueva ruta agrega unos {{min}} min.",
+   "route.sensors_down": "Los datos de sensores no están disponibles; esta ruta solo se revisó con cierres oficiales y avisos del clima.",
+   "route.atx_down": "No se pudo conectar con ATXfloods; no se revisaron cierres oficiales.",
+-  "route.night_tip": "Está oscuro. Es muy difícil juzgar el agua de noche — si ve agua en el camino, dé la vuelta.",
++  "route.night_tip": "Está oscuro. Es muy difícil juzgar el agua de noche · si ve agua en el camino, dé la vuelta.",
+   "route.open_google": "Ir con Google Maps",
+   "route.clear": "Quitar ruta",
+   "route.google_note": "Google Maps recibe puntos que siguen esta ruta, pero puede elegir una calle cercana. FordCast sigue vigilando y le avisa si algo cambia.",
+@@ -384,7 +384,7 @@
+   "trip.sim_label": "MANEJO SIMULADO · TIEMPO DE TORMENTA 1 MIN POR SEGUNDO",
+   "trip.status_driving": "Manejando · faltan {{dist}}",
+   "trip.status_rerouted": "Desviado alrededor de {{name}} · +{{min}} min",
+-  "trip.status_caution": "Precaución en {{name}} — desvío muy largo, alerta",
++  "trip.status_caution": "Precaución en {{name}} · desvío muy largo, alerta",
+   "trip.status_arrived": "Llegó",
+   "trip.watching": "FordCast vigila {{name}} en esta ruta.",
+   "trip.reroute_title": "Desviando alrededor de {{name}}",
+@@ -400,12 +400,12 @@
+   "trip.stop": "Detener",
+   "trip.replay": "Repetir",
+   "companion.title": "Usar con Google Maps",
+-  "companion.body": "Siga navegando con Google Maps. Planee su viaje en FordCast y toque “Ir con Google Maps” — su ruta llega con puntos que rodean los cruces inundados.",
++  "companion.body": "Siga navegando con Google Maps. Planee su viaje en FordCast y toque “Ir con Google Maps” · su ruta llega con puntos que rodean los cruces inundados.",
+   "companion.guardian": "Modo guardián",
+-  "companion.guardian_on": "Activado — FordCast funciona en segundo plano y le avisa una milla antes de un cruce inundado o cerrado, aunque esté navegando con Google Maps.",
+-  "companion.guardian_off": "Desactivado — actívelo para recibir avisos mientras usa Google Maps, Waze o Apple Maps.",
++  "companion.guardian_on": "Activado · FordCast funciona en segundo plano y le avisa una milla antes de un cruce inundado o cerrado, aunque esté navegando con Google Maps.",
++  "companion.guardian_off": "Desactivado · actívelo para recibir avisos mientras usa Google Maps, Waze o Apple Maps.",
+   "companion.guardian_denied": "Necesita el permiso de ubicación “Permitir siempre”. Cámbielo en la Configuración del teléfono.",
+-  "companion.expo_go": "El modo guardián necesita la app FordCast instalada — Expo Go no puede usar la ubicación en segundo plano. Enviar la ruta a Google Maps sí funciona aquí.",
++  "companion.expo_go": "El modo guardián necesita la app FordCast instalada · Expo Go no puede usar la ubicación en segundo plano. Enviar la ruta a Google Maps sí funciona aquí.",
+   "companion.extension": "En una computadora, instale la extensión de Chrome “FordCast for Google Maps” (carpeta extension del proyecto). Agrega un panel de FordCast a google.com/maps que marca cierres y cruces inundados en su ruta y ofrece una ruta alternativa.",
+   "companion.plan": "Planear una ruta",
+   "safety.title": "Datos sobre manejar en inundaciones",
+@@ -416,7 +416,7 @@
+   "safety.f5": "Nunca rodee una barricada. Dé la vuelta, no se ahogue.",
+   "safety.source": "Fuente: Servicio Meteorológico Nacional, “Turn Around Don’t Drown”.",
+   "route.simulate": "Prueba: poner un cruce inundado en mi ruta",
+-  "route.simulate_note": "Peligro de PRUEBA agregado en su ruta — vea cómo FordCast lo desvía. Quite la ruta para reiniciar.",
++  "route.simulate_note": "Cierre de PRUEBA en esta ruta. Navegación externa desactivada. Finalice la prueba para revisar la evidencia actual.",
+   "route.test_name": "Cruce inundado de prueba",
+   "route.test_reason": "PRUEBA – inundación simulada",
+   "home.tab_explore": "Cruces",
+@@ -453,8 +453,8 @@
+   "sensors.action_stage": "Nivel de precaución: {{ft}} pies",
+   "sensors.flood_stage": "Nivel de inundación: {{ft}} pies",
+   "sensors.tools_title": "Enlaces de emergencia y comunidad",
+-  "sensors.tool_311": "Austin 311 — Reportar agua en el camino",
+-  "sensors.tool_atx": "ATXfloods — Cierres oficiales del condado",
++  "sensors.tool_311": "Austin 311 · Reportar agua en el camino",
++  "sensors.tool_atx": "ATXfloods · Cierres oficiales del condado",
+   "sensors.tool_nws": "Avisos de inundación del Servicio Meteorológico",
+   "storms.car_demo": "Demostración de desvío",
+   "storms.hotspots_title": "Cruces con inundaciones frecuentes (1996–2026)",
+@@ -497,7 +497,7 @@
+   "onboarding.pledge.subtitle": "Revisa los cruces de tu trayecto",
+   "onboarding.pledge.required_badge": "Antes de tu primer trayecto",
+   "onboarding.pledge.acknowledged_badge": "{{count}} de 3 confirmadas",
+-  "crossing.stale_reading_label": "Última lectura disponible — no es actual",
++  "crossing.stale_reading_label": "Última lectura disponible · no es actual",
+   "route.google_note_base": "Google Maps recibe puntos sugeridos y puede elegir un camino diferente.",
+   "route.google_note_web": "Las alertas de cruces en segundo plano no están disponibles en navegadores web. Vuelve a revisar las condiciones oficiales antes de salir.",
+   "route.google_note_expo_go": "Las alertas de cruces en segundo plano no están disponibles en Expo Go. Vuelve a revisar las condiciones oficiales antes de salir.",
+diff --git a/mobile/src/screens/CockpitScreen.tsx b/mobile/src/screens/CockpitScreen.tsx
+index 72df95a..4fb3fcd 100644
+--- a/mobile/src/screens/CockpitScreen.tsx
++++ b/mobile/src/screens/CockpitScreen.tsx
+@@ -339,7 +339,7 @@ export default function CockpitScreen({
+                 }}
+               >
+                 <AppText style={{ fontSize: 12, fontFamily: 'Inter_600SemiBold' }}>
+-                  {language === 'es' ? '🔊 Leer' : '🔊 Speak'}
++                  {language === 'es' ? 'Leer estado' : 'Read state'}
+                 </AppText>
+               </Pressable>
+               <Pressable
+@@ -364,7 +364,7 @@ export default function CockpitScreen({
+                     fontFamily: 'Inter_600SemiBold',
+                   }}
+                 >
+-                  {isSaved ? (language === 'es' ? '★ Guardado' : '★ Saved') : language === 'es' ? '☆ Guardar' : '☆ Save'}
++                  {isSaved ? (language === 'es' ? 'Guardado' : 'Saved') : language === 'es' ? 'Guardar' : 'Save'}
+                 </AppText>
+               </Pressable>
+               <Pressable
+@@ -697,8 +697,9 @@ export default function CockpitScreen({
+             {t('replay.reading', { index: stepIdx + 1, count: totalSteps, time: stamp(simT) })}
+           </AppText>
+           <AppText style={[TYPOGRAPHY.chartAxis, { color: SURFACES.dark.textSecondary, fontSize: 10 }]}>
+-            🛑 {summaryCounts.avoidCount} Avoid • ⚠️ {summaryCounts.watchCount} Watch • ?{' '}
+-            {summaryCounts.unknownCount} Unknown
++            {language === 'es'
++              ? `${summaryCounts.avoidCount} Evite · ${summaryCounts.watchCount} Precaución · ${summaryCounts.unknownCount} Sin datos`
++              : `${summaryCounts.avoidCount} Avoid · ${summaryCounts.watchCount} Watch · ${summaryCounts.unknownCount} Unknown`}
+           </AppText>
+         </View>
+       </View>
+@@ -1335,8 +1336,8 @@ export default function CockpitScreen({
+           >
+             <AppText style={[TYPOGRAPHY.chartAxis, { color: SURFACES.dark.textSecondary }]}>
+               {language === 'es'
+-                ? `30 con sensor • 111 sin sensor · [🛑 ${summaryCounts.avoidCount} Evite] [⚠️ ${summaryCounts.watchCount} Precaución]`
+-                : `30 Monitored • 111 Unmonitored · [🛑 ${summaryCounts.avoidCount} Avoid] [⚠️ ${summaryCounts.watchCount} Watch]`}
++                ? `30 candidatos de investigación · 111 sin sensor · ${summaryCounts.avoidCount} Evite · ${summaryCounts.watchCount} Precaución`
++                : `30 research candidates · 111 without sensors · ${summaryCounts.avoidCount} Avoid · ${summaryCounts.watchCount} Watch`}
+             </AppText>
+             <View style={{ flexDirection: 'row', gap: 6, flexWrap: 'wrap' }}>
+               {(
+diff --git a/mobile/src/screens/HomeScreen.tsx b/mobile/src/screens/HomeScreen.tsx
+index d6bc077..de86572 100644
+--- a/mobile/src/screens/HomeScreen.tsx
++++ b/mobile/src/screens/HomeScreen.tsx
+@@ -5,7 +5,7 @@
+  *   2. Route (Everyday Commute Flood Exposure Audit, 1-tap Austin destinations, saved Home/Work, live reroute test)
+  *   3. Creeks (19 live stream sensors + emergency 311/ATXfloods/NWS tools)
+  */
+-import { useEffect, useMemo, useRef, useState } from 'react';
++import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+ import {
+   Animated,
+   Pressable,
+@@ -14,7 +14,7 @@ import {
+   View,
+   useWindowDimensions,
+ } from 'react-native';
+-import { router } from 'expo-router';
++import { router, useFocusEffect } from 'expo-router';
+ import { SafeAreaView } from 'react-native-safe-area-context';
+ import { AppText, Dip } from '@/components/fordcast/UI';
+ import StateBadge from '@/components/StateBadge';
+@@ -451,7 +451,7 @@ function Headline({
+     color = LOCKED_STATE_HEX.no_rise;
+   }
+   return (
+-    <Panel style={{ borderColor: color, borderLeftWidth: 5, gap: 10 }}>
++    <Panel style={{ borderColor: color, gap: 10 }}>
+       {/* Primary above-the-fold actions first so mobile users never have to scroll to check a route or run the demo */}
+       {m.mode === 'live' && !m.routePlan ? (
+         <View style={{ flexDirection: 'row', gap: 8, flexWrap: 'wrap' }}>
+@@ -693,6 +693,9 @@ export default function HomeScreen() {
+   const [sheet, setSheet] = useState<'peek' | 'half' | 'full'>('peek');
+   const [directorOpen, setDirectorOpen] = useState(false);
+   const trip = useTripDemo();
++  const stopTripRef = useRef(trip.stop);
++  useEffect(() => { stopTripRef.current = trip.stop; }, [trip.stop]);
++  useFocusEffect(useCallback(() => () => stopTripRef.current(), []));
+ 
+   // Smooth spring animation for mobile bottom sheet height.
+   // 305px peek height keeps subtabs + Headline + primary action buttons + TripCard Stop controls visible above the fold.
+diff --git a/mobile/src/screens/StormsScreen.tsx b/mobile/src/screens/StormsScreen.tsx
+index 8cc3d4f..09ae771 100644
+--- a/mobile/src/screens/StormsScreen.tsx
++++ b/mobile/src/screens/StormsScreen.tsx
+@@ -9,9 +9,18 @@ import { ScrollView, View } from 'react-native';
+ import { SafeAreaView } from 'react-native-safe-area-context';
+ import { AppText } from '@/components/fordcast/UI';
+ import { FcIcon } from '@/components/fc/Icons';
+-import { ACCENT, ActionButton, Chip, cleanName, FloodPhysicsCard, NearbyRow, Panel, SectionLabel } from '@/components/fc/Kit';
++import {
++  ACCENT,
++  ActionButton,
++  Chip,
++  cleanName,
++  FloodPhysicsCard,
++  NearbyRow,
++  Panel,
++  SectionLabel,
++} from '@/components/fc/Kit';
+ import { tripFor } from '@/features/demo/useTripDemo';
+-import { floodHistory, replayIndex, replays, results } from '@/lib/data';
++import { replayIndex, replays, results } from '@/lib/data';
+ import { groupPhysicalCrossings } from '@/lib/danger';
+ import { useMonitor } from '@/lib/monitor-context';
+ import { usePreferences, type CopyKey } from '@/lib/preferences';
+@@ -40,16 +49,23 @@ export default function StormsScreen() {
+   }, [m.statuses]);
+ 
+   const activeEntry =
+-    replayIndex.storms.find((s) => s.id === selectedStormId) ?? replayIndex.storms[1] ?? replayIndex.storms[0]!;
++    replayIndex.storms.find((s) => s.id === selectedStormId) ??
++    replayIndex.storms[1] ??
++    replayIndex.storms[0]!;
+   const doc = replays[activeEntry.id]!;
+   const stormName = language === 'es' ? doc.storm.name_es : doc.storm.name_en;
+-  const stormDate = new Date(doc.storm.start).toLocaleDateString(language === 'es' ? 'es-US' : 'en-US', {
+-    month: 'long',
+-    day: 'numeric',
+-    year: 'numeric',
+-    timeZone: 'America/Chicago',
+-  });
+-  const avoidCount = new Set(doc.events.filter((e) => e.state === 'avoid').map((e) => e.crossing_id)).size;
++  const stormDate = new Date(doc.storm.start).toLocaleDateString(
++    language === 'es' ? 'es-US' : 'en-US',
++    {
++      month: 'long',
++      day: 'numeric',
++      year: 'numeric',
++      timeZone: 'America/Chicago',
++    },
++  );
++  const avoidCount = new Set(
++    doc.events.filter((e) => e.state === 'avoid').map((e) => e.crossing_id),
++  ).size;
+   const blurbKey = `storms.blurb.${activeEntry.id}` as CopyKey;
+   const demo = tripFor(activeEntry.id);
+ 
+@@ -65,14 +81,20 @@ export default function StormsScreen() {
+           alignSelf: 'center',
+         }}
+       >
+-        <AppText style={{ fontFamily: 'Inter_700Bold', fontSize: 28, lineHeight: 34 }}>{t('storms.title')}</AppText>
+-        <AppText style={{ fontSize: 15, lineHeight: 22, color: S.textSecondary }}>{t('storms.body')}</AppText>
++        <AppText style={{ fontFamily: 'Inter_700Bold', fontSize: 28, lineHeight: 34 }}>
++          {t('storms.title')}
++        </AppText>
++        <AppText style={{ fontSize: 15, lineHeight: 22, color: S.textSecondary }}>
++          {t('storms.body')}
++        </AppText>
+ 
+         {/* Honest Study Scorecard & Regional Context Side-by-Side */}
+         <Panel style={{ borderColor: ACCENT, gap: 12 }}>
+           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+             <FcIcon name="shield" size={18} color={ACCENT} />
+-            <AppText style={{ fontFamily: 'Inter_700Bold', fontSize: 17 }}>{t('storms.track_title')}</AppText>
++            <AppText style={{ fontFamily: 'Inter_700Bold', fontSize: 17 }}>
++              {t('storms.track_title')}
++            </AppText>
+           </View>
+           <AppText style={{ fontSize: 13.5, lineHeight: 20, color: S.textSecondary }}>
+             {t('storms.track_body', {
+@@ -84,28 +106,6 @@ export default function StormsScreen() {
+               fa: h.F,
+             })}
+           </AppText>
+-          <View style={{ flexDirection: 'row', gap: 8, flexWrap: 'wrap' }}>
+-            <StatCell
+-              value={`${h.H}/${h.H + h.M}`}
+-              label={language === 'es' ? 'Eventos detectados (8 omitidos)' : 'Detected events (8 missed)'}
+-              color={ACCENT}
+-            />
+-            <StatCell
+-              value={`${h.median_lead_min ?? '—'} min`}
+-              label={t('storms.stat_lead')}
+-              color={LOCKED_STATE_HEX.watch}
+-            />
+-            <StatCell
+-              value={`${h.F}`}
+-              label={language === 'es' ? 'Falsas alarmas (regla aguas arriba)' : 'False alarms (upstream rule)'}
+-              color={LOCKED_STATE_HEX.avoid}
+-            />
+-            <StatCell
+-              value={`${floodHistory.total_events_in_area}`}
+-              label={t('storms.stat_events')}
+-              color="#38BDF8"
+-            />
+-          </View>
+           <View
+             style={{
+               padding: 10,
+@@ -116,18 +116,39 @@ export default function StormsScreen() {
+               gap: 4,
+             }}
+           >
+-            <AppText style={{ fontSize: 11.5, fontFamily: 'Inter_700Bold', color: S.textSecondary, letterSpacing: 0.4 }}>
++            <AppText
++              style={{
++                fontSize: 11.5,
++                fontFamily: 'Inter_700Bold',
++                color: S.textSecondary,
++                letterSpacing: 0.4,
++              }}
++            >
+               {language === 'es'
+                 ? 'COMPARACIÓN CON LÍNEA BASE DE SENSOR MÁS CERCANO (LOSO)'
+                 : 'BASELINE COMPARISON: UPSTREAM RULE VS. NEAREST GAUGE (LOSO)'}
+             </AppText>
+-            <AppText style={{ fontSize: 12.5, lineHeight: 18, color: S.textSecondary, fontVariant: ['tabular-nums'] }}>
++            <AppText
++              style={{
++                fontSize: 16,
++                lineHeight: 23,
++                color: S.textPrimary,
++                fontVariant: ['tabular-nums'],
++              }}
++            >
++              {language === 'es'
++                ? `Aguas arriba: ${h.H}/${h.H + h.M} detectados · ${h.M} omitidos · ${h.F} falsa alarma\nSensor más cercano: ${nearBase.H}/${nearBase.H + nearBase.M} detectados · ${nearBase.M} omitidos · ${nearBase.F} falsas alarmas\nLa regla aguas arriba no superó la referencia.`
++                : `Upstream: ${h.H}/${h.H + h.M} detected · ${h.M} missed · ${h.F} false alarm\nNearest gauge: ${nearBase.H}/${nearBase.H + nearBase.M} detected · ${nearBase.M} missed · ${nearBase.F} false alarms\nThe upstream rule did not beat the baseline.`}
++            </AppText>
++            <AppText style={{ fontSize: 13, lineHeight: 19, color: S.textSecondary }}>
+               {language === 'es'
+-                ? `Regla aguas arriba: ${h.H}/${h.H + h.M} aciertos · ${h.median_lead_min ?? '—'} min anticipación mediana · ${h.F} falsa(s) alarma(s).\nLínea base (sensor más cercano): ${nearBase.H}/${nearBase.H + nearBase.M} aciertos · ${nearBase.median_lead_min ?? '—'} min anticipación mediana · ${nearBase.F} falsas alarmas.\nResultado: En este conjunto pequeño de 12 eventos proxy, el emparejamiento aguas arriba no superó al sensor más cercano.`
+-                : `Upstream rule: ${h.H}/${h.H + h.M} hits · ${h.median_lead_min ?? '—'} min median lead · ${h.F} false alarm.\nNearest-gauge baseline: ${nearBase.H}/${nearBase.H + nearBase.M} hits · ${nearBase.median_lead_min ?? '—'} min median lead · ${nearBase.F} false alarms.\nTakeaway: On this small 12-event proxy sample, upstream pairing did not outperform the nearest-gauge baseline.`}
++                ? `Anticipación mediana: ${h.median_lead_min} min hasta el nivel de referencia del sensor. No se validó la predicción de inundación en el camino.`
++                : `Median lead: ${h.median_lead_min} min before reference-gauge stage. Road-flood prediction remains unvalidated.`}
+             </AppText>
+           </View>
+-          <AppText style={{ fontSize: 12.5, lineHeight: 18, color: S.textMuted }}>{t('storms.track_note')}</AppText>
++          <AppText style={{ fontSize: 12.5, lineHeight: 18, color: S.textMuted }}>
++            {t('storms.track_note')}
++          </AppText>
+         </Panel>
+ 
+         {/* Compact Storm Selector + Focused Active Storm Card */}
+@@ -152,12 +173,22 @@ export default function StormsScreen() {
+           })}
+         </View>
+ 
+-        <Panel style={{ borderColor: ACCENT, borderLeftWidth: 4, gap: 12 }}>
+-          <View style={{ flexDirection: 'row', justifyContent: 'space-between', gap: 8, flexWrap: 'wrap' }}>
++        <Panel style={{ borderColor: ACCENT, gap: 12 }}>
++          <View
++            style={{
++              flexDirection: 'row',
++              justifyContent: 'space-between',
++              gap: 8,
++              flexWrap: 'wrap',
++            }}
++          >
+             <View style={{ flex: 1, minWidth: 200 }}>
+-              <AppText style={{ fontFamily: 'Inter_700Bold', fontSize: 19, lineHeight: 25 }}>{stormName}</AppText>
++              <AppText style={{ fontFamily: 'Inter_700Bold', fontSize: 19, lineHeight: 25 }}>
++                {stormName}
++              </AppText>
+               <AppText style={{ fontSize: 13, color: S.textMuted }}>
+-                {stormDate} · {language === 'es' ? 'Observaciones USGS archivadas' : 'Archived USGS observations'}
++                {stormDate} ·{' '}
++                {language === 'es' ? 'Observaciones USGS archivadas' : 'Archived USGS observations'}
+               </AppText>
+             </View>
+             <AppText
+@@ -175,7 +206,15 @@ export default function StormsScreen() {
+           {demo ? (
+             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+               <FcIcon name="car" size={15} color="#7DD3FC" />
+-              <AppText style={{ flex: 1, fontSize: 12.5, lineHeight: 18, color: '#7DD3FC', fontFamily: 'Inter_600SemiBold' }}>
++              <AppText
++                style={{
++                  flex: 1,
++                  fontSize: 12.5,
++                  lineHeight: 18,
++                  color: '#7DD3FC',
++                  fontFamily: 'Inter_600SemiBold',
++                }}
++              >
+                 {t('trip.body', { name: cleanName(demo.crossingName) })}
+               </AppText>
+             </View>
+@@ -211,7 +250,9 @@ export default function StormsScreen() {
+         </Panel>
+ 
+         <SectionLabel>{t('storms.hotspots_title')}</SectionLabel>
+-        <AppText style={{ fontSize: 13.5, lineHeight: 19, color: S.textSecondary }}>{t('storms.hotspots_body')}</AppText>
++        <AppText style={{ fontSize: 13.5, lineHeight: 19, color: S.textSecondary }}>
++          {t('storms.hotspots_body')}
++        </AppText>
+         <View style={{ gap: 8 }}>
+           {hotspots.map((g) => (
+             <NearbyRow
+@@ -228,25 +269,3 @@ export default function StormsScreen() {
+     </SafeAreaView>
+   );
+ }
+-
+-function StatCell({ value, label, color }: { value: string; label: string; color: string }) {
+-  return (
+-    <View
+-      style={{
+-        flex: 1,
+-        minWidth: 135,
+-        padding: 12,
+-        borderRadius: 12,
+-        backgroundColor: S.primary,
+-        borderWidth: 1,
+-        borderColor: S.borderSubtle,
+-        gap: 2,
+-      }}
+-    >
+-      <AppText style={{ fontFamily: 'Inter_700Bold', fontSize: 21, color, fontVariant: ['tabular-nums'] }}>
+-        {value}
+-      </AppText>
+-      <AppText style={{ fontSize: 12, lineHeight: 16, color: S.textSecondary }}>{label}</AppText>
+-    </View>
+-  );
+-}
+diff --git a/mobile/src/screens/home/RoutePanels.tsx b/mobile/src/screens/home/RoutePanels.tsx
+index 9e3ada7..7425264 100644
+--- a/mobile/src/screens/home/RoutePanels.tsx
++++ b/mobile/src/screens/home/RoutePanels.tsx
+@@ -561,7 +561,14 @@ function RouteCard({
+ 
+   return (
+     <View style={{ gap: 12 }}>
+-      <Panel style={{ borderColor: blocked.length ? LOCKED_STATE_HEX.avoid : ACCENT, borderLeftWidth: 5, gap: 12 }}>
++      <Panel style={{ borderColor: blocked.length ? LOCKED_STATE_HEX.avoid : ACCENT, gap: 12 }}>
++        {plan.geometrySource === 'recorded' ? (
++          <AppText accessibilityRole="alert" style={{ color: LOCKED_STATE_HEX.watch, fontSize: 14, lineHeight: 20 }}>
++            {es
++              ? `Geometría grabada · ${plan.geometryCapturedAt?.slice(0, 10)}. El servicio de rutas no respondió. Solo revisión; no se calculó un desvío actual. La disponibilidad de fuentes se muestra abajo.`
++              : `Recorded geometry · ${plan.geometryCapturedAt?.slice(0, 10)}. Routing service unavailable. Review only; no current detour was calculated. Source availability is shown below.`}
++          </AppText>
++        ) : null}
+         <View style={{ flexDirection: 'row', gap: 8, alignItems: 'flex-start' }}>
+           <View style={{ flex: 1 }}>
+             <AppText style={{ fontSize: 11.5, color: S.textMuted, fontFamily: 'Inter_600SemiBold', letterSpacing: 0.6 }}>
+@@ -836,7 +843,7 @@ function RouteCard({
+       {/* Navigation handoff follows the crossing evidence. */}
+       <Panel style={{ gap: 10 }}>
+         <View style={{ flexDirection: 'row', gap: 8, flexWrap: 'wrap' }}>
+-          {m.mode === 'live' && !m.testHazard && blocked.length === 0 ? (
++          {m.mode === 'live' && !m.testHazard && !m.routeBusy && !m.routeError && plan.geometrySource !== 'recorded' && blocked.length === 0 ? (
+             <ActionButton
+               icon="arrow-right"
+               label={t('route.open_google')}
+@@ -850,7 +857,7 @@ function RouteCard({
+               }}
+             />
+           ) : null}
+-          {m.mode === 'live' && !m.testHazard ? (
++          {m.mode === 'live' && !m.testHazard && !m.routeBusy && !m.routeError && plan.geometrySource !== 'recorded' ? (
+             <ActionButton
+               kind="secondary"
+               icon="share"
+@@ -901,7 +908,7 @@ function RouteCard({
+         <Pressable
+           accessibilityRole="button"
+           onPress={() => setShowTestingTools((v) => !v)}
+-          style={{ paddingTop: 2 }}
++          style={{ minHeight: 44, justifyContent: 'center' }}
+         >
+           <AppText style={{ fontSize: 12, color: S.textMuted, fontFamily: 'Inter_600SemiBold' }}>
+             {showTestingTools
+@@ -909,8 +916,8 @@ function RouteCard({
+                 ? 'Ocultar herramientas de prueba de desvío'
+                 : 'Hide reroute test tools'
+               : es
+-                ? 'Probar desvío con cierre simulado →'
+-                : 'Test rerouting with a simulated closure →'}
++                ? 'Probar desvío con cierre simulado'
++                : 'Test rerouting with a simulated closure'}
+           </AppText>
+         </Pressable>
+         {showTestingTools ? (
+@@ -983,11 +990,11 @@ export function TripCard({ trip }: { trip: ReturnType<typeof useTripDemo> }) {
+   const color =
+     r.phase === 'rerouted' || r.phase === 'arrived' ? '#7DD3FC' : r.phase === 'driving' ? S.textPrimary : LOCKED_STATE_HEX.watch;
+   return (
+-    <Panel style={{ borderColor: ACCENT, borderLeftWidth: 5, padding: 12, gap: 8 }}>
+-      <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', gap: 8 }}>
++    <Panel style={{ borderColor: ACCENT, padding: 12, gap: 8 }}>
++      <View style={{ flexDirection: 'column', alignItems: 'stretch', gap: 6 }}>
+         <AppText
+           style={{
+-            flex: 1,
++            flexShrink: 1,
+             fontSize: 11,
+             lineHeight: 15,
+             color: '#9B8AFB',
+@@ -997,7 +1004,7 @@ export function TripCard({ trip }: { trip: ReturnType<typeof useTripDemo> }) {
+         >
+           {t('trip.archived_sim_header', { storm: stormTitle })}
+         </AppText>
+-        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, flexShrink: 0 }}>
++        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
+           <Chip
+             icon="target"
+             label={trip.followCar ? t('trip.camera_following') : t('trip.camera_free')}

@@ -1,0 +1,6 @@
+
+C:\2025AppChallenge\mobile\src\screens\home\RoutePanels.tsx
+  88:11  warning  't' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+✖ 1 problem (0 errors, 1 warning)
+

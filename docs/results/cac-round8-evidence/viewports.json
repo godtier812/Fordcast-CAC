@@ -1,0 +1,290 @@
+[
+  {
+    "size": 320,
+    "lang": "es",
+    "screen": "map",
+    "h": 568,
+    "scrollHeight": 568,
+    "scrollWidth": 320,
+    "w": 320
+  },
+  {
+    "size": 320,
+    "lang": "es",
+    "screen": "storms",
+    "h": 568,
+    "scrollHeight": 568,
+    "scrollWidth": 320,
+    "w": 320
+  },
+  {
+    "size": 320,
+    "lang": "es",
+    "screen": "drive",
+    "h": 568,
+    "scrollHeight": 568,
+    "scrollWidth": 320,
+    "w": 320
+  },
+  {
+    "size": 320,
+    "lang": "es",
+    "screen": "alerts",
+    "h": 568,
+    "scrollHeight": 568,
+    "scrollWidth": 320,
+    "w": 320
+  },
+  {
+    "size": 320,
+    "lang": "en",
+    "screen": "map",
+    "h": 568,
+    "scrollHeight": 568,
+    "scrollWidth": 320,
+    "w": 320
+  },
+  {
+    "size": 320,
+    "lang": "en",
+    "screen": "storms",
+    "h": 568,
+    "scrollHeight": 568,
+    "scrollWidth": 320,
+    "w": 320
+  },
+  {
+    "size": 320,
+    "lang": "en",
+    "screen": "drive",
+    "h": 568,
+    "scrollHeight": 568,
+    "scrollWidth": 320,
+    "w": 320
+  },
+  {
+    "size": 320,
+    "lang": "en",
+    "screen": "alerts",
+    "h": 568,
+    "scrollHeight": 568,
+    "scrollWidth": 320,
+    "w": 320
+  },
+  {
+    "size": 375,
+    "lang": "es",
+    "screen": "map",
+    "h": 667,
+    "scrollHeight": 667,
+    "scrollWidth": 375,
+    "w": 375
+  },
+  {
+    "size": 375,
+    "lang": "es",
+    "screen": "storms",
+    "h": 667,
+    "scrollHeight": 667,
+    "scrollWidth": 375,
+    "w": 375
+  },
+  {
+    "size": 375,
+    "lang": "es",
+    "screen": "drive",
+    "h": 667,
+    "scrollHeight": 667,
+    "scrollWidth": 375,
+    "w": 375
+  },
+  {
+    "size": 375,
+    "lang": "es",
+    "screen": "alerts",
+    "h": 667,
+    "scrollHeight": 667,
+    "scrollWidth": 375,
+    "w": 375
+  },
+  {
+    "size": 375,
+    "lang": "en",
+    "screen": "map",
+    "h": 667,
+    "scrollHeight": 667,
+    "scrollWidth": 375,
+    "w": 375
+  },
+  {
+    "size": 375,
+    "lang": "en",
+    "screen": "storms",
+    "h": 667,
+    "scrollHeight": 667,
+    "scrollWidth": 375,
+    "w": 375
+  },
+  {
+    "size": 375,
+    "lang": "en",
+    "screen": "drive",
+    "h": 667,
+    "scrollHeight": 667,
+    "scrollWidth": 375,
+    "w": 375
+  },
+  {
+    "size": 375,
+    "lang": "en",
+    "screen": "alerts",
+    "h": 667,
+    "scrollHeight": 667,
+    "scrollWidth": 375,
+    "w": 375
+  },
+  {
+    "size": 393,
+    "lang": "es",
+    "screen": "map",
+    "h": 852,
+    "scrollHeight": 852,
+    "scrollWidth": 393,
+    "w": 393
+  },
+  {
+    "size": 393,
+    "lang": "es",
+    "screen": "storms",
+    "h": 852,
+    "scrollHeight": 852,
+    "scrollWidth": 393,
+    "w": 393
+  },
+  {
+    "size": 393,
+    "lang": "es",
+    "screen": "drive",
+    "h": 852,
+    "scrollHeight": 852,
+    "scrollWidth": 393,
+    "w": 393
+  },
+  {
+    "size": 393,
+    "lang": "es",
+    "screen": "alerts",
+    "h": 852,
+    "scrollHeight": 852,
+    "scrollWidth": 393,
+    "w": 393
+  },
+  {
+    "size": 393,
+    "lang": "en",
+    "screen": "map",
+    "h": 852,
+    "scrollHeight": 852,
+    "scrollWidth": 393,
+    "w": 393
+  },
+  {
+    "size": 393,
+    "lang": "en",
+    "screen": "storms",
+    "h": 852,
+    "scrollHeight": 852,
+    "scrollWidth": 393,
+    "w": 393
+  },
+  {
+    "size": 393,
+    "lang": "en",
+    "screen": "drive",
+    "h": 852,
+    "scrollHeight": 852,
+    "scrollWidth": 393,
+    "w": 393
+  },
+  {
+    "size": 393,
+    "lang": "en",
+    "screen": "alerts",
+    "h": 852,
+    "scrollHeight": 852,
+    "scrollWidth": 393,
+    "w": 393
+  },
+  {
+    "size": 1440,
+    "lang": "en",
+    "screen": "storms",
+    "h": 900,
+    "scrollHeight": 900,
+    "scrollWidth": 1440,
+    "w": 1440
+  },
+  {
+    "size": 1440,
+    "lang": "en",
+    "screen": "drive",
+    "h": 900,
+    "scrollHeight": 900,
+    "scrollWidth": 1440,
+    "w": 1440
+  },
+  {
+    "size": 1440,
+    "lang": "en",
+    "screen": "alerts",
+    "h": 900,
+    "scrollHeight": 900,
+    "scrollWidth": 1440,
+    "w": 1440
+  },
+  {
+    "size": 1440,
+    "lang": "es",
+    "screen": "alerts",
+    "h": 900,
+    "scrollHeight": 900,
+    "scrollWidth": 1440,
+    "w": 1440
+  },
+  {
+    "size": 1440,
+    "lang": "es",
+    "screen": "drive",
+    "h": 900,
+    "scrollHeight": 900,
+    "scrollWidth": 1440,
+    "w": 1440
+  },
+  {
+    "size": 1440,
+    "lang": "es",
+    "screen": "storms",
+    "h": 900,
+    "scrollHeight": 900,
+    "scrollWidth": 1440,
+    "w": 1440
+  },
+  {
+    "size": 1440,
+    "lang": "es",
+    "screen": "map",
+    "h": 900,
+    "scrollHeight": 900,
+    "scrollWidth": 1440,
+    "w": 1440
+  },
+  {
+    "size": 1440,
+    "lang": "en",
+    "screen": "map",
+    "h": 900,
+    "scrollHeight": 900,
+    "scrollWidth": 1440,
+    "w": 1440
+  }
+]

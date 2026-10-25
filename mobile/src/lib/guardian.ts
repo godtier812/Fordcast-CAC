@@ -264,7 +264,7 @@ if (!isExpoGoClient()) {
         const miles = (d * 0.621371).toFixed(1);
         const delivered = await sendLocalNotification(
           `Flood Alert: ${h.name} ahead`,
-          `${h.reason}, ${miles} mi from you. Turn around — find another route.`,
+          `${h.reason}, ${miles} mi from you. Turn around and find another route.`,
         );
         if (delivered) {
           sent[h.id] = now;

@@ -38,7 +38,8 @@ export default function Settings() {
           <AppText style={styles.muted}>{t(`settings.${key}_body`)}</AppText>
         </Card>
       ))}
-      <Eyebrow>{t('common.prototype')} · 0.1.0</Eyebrow>
+      <Button secondary title={language === 'es' ? 'Datos, privacidad y límites' : 'Data, privacy and limits'} onPress={() => router.push('/privacy')} />
+      <Eyebrow>{t('common.prototype')} · 1.0.0</Eyebrow>
       <Button secondary title={t('storms.science')} onPress={() => router.push('/lab')} />
       <Button secondary title={t('settings.intro')} onPress={resetPledge} />
       <Footer />

@@ -4,7 +4,7 @@ import { Pressable, StyleSheet, View, useWindowDimensions } from 'react-native';
 import Svg, { Circle, Path } from 'react-native-svg';
 import { usePreferences } from '@/lib/preferences';
 import { theme as c } from '@/lib/theme';
-import { AppText, Badge, Dip } from '@/components/fordcast/UI';
+import { AppText, Dip } from '@/components/fordcast/UI';
 
 function TabIcon({
   name,
@@ -72,8 +72,8 @@ export default function WebTabs() {
       { name: 'alerts', href: '/alerts', icon: 'alerts', label: t('nav.alerts') },
     ] as const;
     return (
-      <Tabs style={{ flex: 1, backgroundColor: c.bg }}>
-        <TabSlot />
+      <Tabs style={{ flex: 1, minHeight: 0, overflow: 'hidden', backgroundColor: c.bg }}>
+        <View style={{ flex: 1, minHeight: 0, overflow: 'hidden' }}><TabSlot style={{ flex: 1, minHeight: 0 }} /></View>
         <TabList style={s.bottomBar}>
           {items.map((it) => {
             const active = isActive(it.href);
@@ -90,7 +90,7 @@ export default function WebTabs() {
   }
 
   return (
-    <Tabs style={{ flex: 1, backgroundColor: c.bg }}>
+    <Tabs style={{ flex: 1, minHeight: 0, overflow: 'hidden', backgroundColor: c.bg }}>
       <TabList style={s.headerBar}>
         <Pressable
           accessibilityRole="button"
@@ -103,7 +103,6 @@ export default function WebTabs() {
               <AppText style={{ fontFamily: 'Inter_600SemiBold', fontSize: 18, lineHeight: 22 }}>
                 FordCast
               </AppText>
-              <Badge label="EXPERIMENTAL" color={c.watch} bg={c.watchDim} />
             </View>
             <AppText style={{ color: c.subtle, fontSize: 11, lineHeight: 15 }}>
               {t('home.tagline')}
@@ -165,7 +164,7 @@ export default function WebTabs() {
           </Pressable>
         </View>
       </TabList>
-      <TabSlot />
+      <View style={{ flex: 1, minHeight: 0, overflow: 'hidden' }}><TabSlot style={{ flex: 1, minHeight: 0 }} /></View>
     </Tabs>
   );
 }
@@ -209,7 +208,7 @@ const s = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 7,
-    minHeight: 38,
+    minHeight: 44,
     paddingVertical: 7,
     paddingHorizontal: 14,
     borderRadius: 10,
@@ -237,6 +236,8 @@ const s = StyleSheet.create({
     color: c.water,
   },
   utilBtn: {
+    minHeight: 44,
+    justifyContent: 'center',
     paddingVertical: 7,
     paddingHorizontal: 12,
     borderRadius: 10,

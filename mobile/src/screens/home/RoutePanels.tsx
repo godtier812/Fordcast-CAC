@@ -84,8 +84,8 @@ function isNight(): boolean {
   return h >= 19 || h < 7;
 }
 
-function OriginSelector({ compact = false }: { compact?: boolean }) {
-  const { t, language } = usePreferences();
+function OriginSelector({ compact = false, onSearchFocus }: { compact?: boolean; onSearchFocus?: () => void }) {
+  const { language } = usePreferences();
   const m = useMonitor();
   const [editingOrigin, setEditingOrigin] = useState(false);
   const [originQuery, setOriginQuery] = useState('');
@@ -119,8 +119,8 @@ function OriginSelector({ compact = false }: { compact?: boolean }) {
       : m.customOrigin
         ? m.customOrigin.name
         : es
-          ? 'Centro de Austin (predeterminado — GPS apagado)'
-          : 'Downtown Austin (default — GPS off)';
+          ? 'Centro de Austin · GPS apagado'
+          : 'Downtown Austin · GPS off';
 
   return (
     <View
@@ -133,28 +133,26 @@ function OriginSelector({ compact = false }: { compact?: boolean }) {
         gap: 8,
       }}
     >
-      <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 8 }}>
+      <View style={{ gap: 10 }}>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, flex: 1 }}>
           <FcIcon name="pin" size={14} color={ACCENT} />
           <View style={{ flex: 1 }}>
             <AppText style={{ fontSize: 11, color: S.textMuted, fontFamily: 'Inter_600SemiBold' }}>
               {es ? 'PUNTO DE PARTIDA' : 'STARTING POINT'}
             </AppText>
-            <AppText numberOfLines={1} style={{ fontSize: 13.5, fontFamily: 'Inter_600SemiBold', color: S.textPrimary }}>
+            <AppText style={{ fontSize: 13.5, fontFamily: 'Inter_600SemiBold', color: S.textPrimary }}>
               {originLabel}
             </AppText>
           </View>
         </View>
-        <View style={{ flexDirection: 'row', gap: 6 }}>
-          {m.locationSource !== 'gps' ? (
+        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 6 }}>
             <Chip
-              label={editingOrigin ? (es ? 'Cerrar' : 'Close') : es ? 'Cambiar inicio' : 'Change start'}
+              label={editingOrigin ? (es ? 'Listo' : 'Done') : es ? 'Cambiar inicio' : 'Change start'}
               active={editingOrigin}
               onPress={() => setEditingOrigin((v) => !v)}
             />
-          ) : null}
           {m.locationSource !== 'gps' ? (
-            <Chip label={t('home.turn_on')} icon="target" active={false} onPress={() => void m.requestLocation()} />
+            <Chip label={es ? 'Usar GPS' : 'Use GPS'} icon="target" active={false} onPress={() => void m.requestLocation()} />
           ) : null}
         </View>
       </View>
@@ -182,13 +180,14 @@ function OriginSelector({ compact = false }: { compact?: boolean }) {
             })}
           </View>
           <TextInput
+            onFocus={onSearchFocus}
             value={originQuery}
             onChangeText={setOriginQuery}
             placeholder={es ? 'O busca otra dirección de salida…' : 'Or search another starting address…'}
             placeholderTextColor={S.textMuted}
             accessibilityLabel={es ? 'Buscar punto de partida' : 'Search starting point'}
             style={{
-              minHeight: 38,
+              minHeight: 44,
               borderRadius: 10,
               borderWidth: 1,
               borderColor: S.borderSubtle,
@@ -228,7 +227,7 @@ function OriginSelector({ compact = false }: { compact?: boolean }) {
   );
 }
 
-export function RoutePlanner() {
+export function RoutePlanner({ onSearchFocus }: { onSearchFocus?: () => void } = {}) {
   const { t } = usePreferences();
   const m = useMonitor();
   const [q, setQ] = useState('');
@@ -277,7 +276,7 @@ export function RoutePlanner() {
   }, [q, m.location]);
 
   if (m.routePlan) {
-    return <RouteCard savedPlaces={savedPlaces} onSavePlace={saveCommutePlace} />;
+    return <RouteCard savedPlaces={savedPlaces} onSavePlace={saveCommutePlace} onSearchFocus={onSearchFocus} />;
   }
 
   return (
@@ -288,9 +287,10 @@ export function RoutePlanner() {
           <AppText style={{ fontFamily: 'Inter_700Bold', fontSize: 17 }}>{t('route.where_to')}</AppText>
         </View>
 
-        <OriginSelector />
+        <OriginSelector onSearchFocus={onSearchFocus} />
 
         <TextInput
+          onFocus={onSearchFocus}
           value={q}
           onChangeText={setQ}
           placeholder={t('route.search')}
@@ -307,9 +307,9 @@ export function RoutePlanner() {
             fontSize: 15,
           }}
         />
-        {m.routeBusy ? (
-          <AppText style={{ color: '#7DD3FC', fontFamily: 'Inter_600SemiBold' }}>{t('route.checking')}</AppText>
-        ) : null}
+        <View style={{ minHeight: 24 }} accessibilityLiveRegion="polite">
+          {m.routeBusy ? <AppText style={{ color: '#7DD3FC', fontFamily: 'Inter_600SemiBold' }}>{t('route.checking')}</AppText> : null}
+        </View>
         {m.routeError ? <AppText style={{ color: LOCKED_STATE_HEX.watch }}>{t('route.error')}</AppText> : null}
         {searchError ? <AppText style={{ color: LOCKED_STATE_HEX.watch }}>{t('route.search_error')}</AppText> : null}
         {results.map((r) => (
@@ -474,9 +474,11 @@ function TripEvidenceExplainer() {
 function RouteCard({
   savedPlaces,
   onSavePlace,
+  onSearchFocus,
 }: {
   savedPlaces: SavedPlaces;
   onSavePlace: (slot: 'home' | 'work', place: Place) => void;
+  onSearchFocus?: () => void;
 }) {
   const { t, language } = usePreferences();
   const m = useMonitor();
@@ -561,7 +563,14 @@ function RouteCard({
 
   return (
     <View style={{ gap: 12 }}>
-      <Panel style={{ borderColor: blocked.length ? LOCKED_STATE_HEX.avoid : ACCENT, borderLeftWidth: 5, gap: 12 }}>
+      <Panel style={{ borderColor: blocked.length ? LOCKED_STATE_HEX.avoid : ACCENT, gap: 12 }}>
+        {plan.geometrySource === 'recorded' ? (
+          <AppText accessibilityRole="alert" style={{ color: LOCKED_STATE_HEX.watch, fontSize: 14, lineHeight: 20 }}>
+            {es
+              ? `Geometría grabada · ${plan.geometryCapturedAt?.slice(0, 10)}. El servicio de rutas no respondió. Solo revisión; no se calculó un desvío actual. La disponibilidad de fuentes se muestra abajo.`
+              : `Recorded geometry · ${plan.geometryCapturedAt?.slice(0, 10)}. Routing service unavailable. Review only; no current detour was calculated. Source availability is shown below.`}
+          </AppText>
+        ) : null}
         <View style={{ flexDirection: 'row', gap: 8, alignItems: 'flex-start' }}>
           <View style={{ flex: 1 }}>
             <AppText style={{ fontSize: 11.5, color: S.textMuted, fontFamily: 'Inter_600SemiBold', letterSpacing: 0.6 }}>
@@ -577,7 +586,7 @@ function RouteCard({
           </Pressable>
         </View>
 
-        <OriginSelector compact />
+        <OriginSelector compact onSearchFocus={onSearchFocus} />
 
         <RouteAuditSummary
           groups={audit.groups}
@@ -836,7 +845,7 @@ function RouteCard({
       {/* Navigation handoff follows the crossing evidence. */}
       <Panel style={{ gap: 10 }}>
         <View style={{ flexDirection: 'row', gap: 8, flexWrap: 'wrap' }}>
-          {m.mode === 'live' && !m.testHazard && blocked.length === 0 ? (
+          {m.mode === 'live' && !m.testHazard && !m.routeBusy && !m.routeError && plan.geometrySource !== 'recorded' && blocked.length === 0 ? (
             <ActionButton
               icon="arrow-right"
               label={t('route.open_google')}
@@ -850,7 +859,7 @@ function RouteCard({
               }}
             />
           ) : null}
-          {m.mode === 'live' && !m.testHazard ? (
+          {m.mode === 'live' && !m.testHazard && !m.routeBusy && !m.routeError && plan.geometrySource !== 'recorded' ? (
             <ActionButton
               kind="secondary"
               icon="share"
@@ -901,7 +910,7 @@ function RouteCard({
         <Pressable
           accessibilityRole="button"
           onPress={() => setShowTestingTools((v) => !v)}
-          style={{ paddingTop: 2 }}
+          style={{ minHeight: 44, justifyContent: 'center' }}
         >
           <AppText style={{ fontSize: 12, color: S.textMuted, fontFamily: 'Inter_600SemiBold' }}>
             {showTestingTools
@@ -909,8 +918,8 @@ function RouteCard({
                 ? 'Ocultar herramientas de prueba de desvío'
                 : 'Hide reroute test tools'
               : es
-                ? 'Probar desvío con cierre simulado →'
-                : 'Test rerouting with a simulated closure →'}
+                ? 'Probar desvío con cierre simulado'
+                : 'Test rerouting with a simulated closure'}
           </AppText>
         </Pressable>
         {showTestingTools ? (
@@ -983,11 +992,11 @@ export function TripCard({ trip }: { trip: ReturnType<typeof useTripDemo> }) {
   const color =
     r.phase === 'rerouted' || r.phase === 'arrived' ? '#7DD3FC' : r.phase === 'driving' ? S.textPrimary : LOCKED_STATE_HEX.watch;
   return (
-    <Panel style={{ borderColor: ACCENT, borderLeftWidth: 5, padding: 12, gap: 8 }}>
-      <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', gap: 8 }}>
+    <Panel style={{ borderColor: ACCENT, padding: 12, gap: 8 }}>
+      <View style={{ flexDirection: 'column', alignItems: 'stretch', gap: 6 }}>
         <AppText
           style={{
-            flex: 1,
+            flexShrink: 1,
             fontSize: 11,
             lineHeight: 15,
             color: '#9B8AFB',
@@ -997,7 +1006,7 @@ export function TripCard({ trip }: { trip: ReturnType<typeof useTripDemo> }) {
         >
           {t('trip.archived_sim_header', { storm: stormTitle })}
         </AppText>
-        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, flexShrink: 0 }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
           <Chip
             icon="target"
             label={trip.followCar ? t('trip.camera_following') : t('trip.camera_free')}
@@ -1052,7 +1061,7 @@ export function SensorsAndToolsPanel({
         <AppText style={{ fontSize: 12, lineHeight: 17, color: S.textMuted }}>
           {es
             ? 'Nota: La altura del sensor se mide respecto al cero de referencia de la estación USGS, no es profundidad sobre la carretera. Valores negativos significan agua por debajo del cero del sensor.'
-            : 'Note: Gauge height is measured relative to the USGS station datum — not water depth on the road. Negative values simply mean water is below the sensor datum zero.'}
+            : 'Note: Gauge height is measured relative to the USGS station datum, not water depth on the road. Negative values simply mean water is below the sensor datum zero.'}
         </AppText>
       </Panel>
 

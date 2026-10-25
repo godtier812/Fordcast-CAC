@@ -1,4 +1,4 @@
-import { Pressable, View } from 'react-native';
+import { Pressable, ScrollView, View, useWindowDimensions } from 'react-native';
 import Svg, { Rect } from 'react-native-svg';
 import { AppText } from '@/components/fordcast/UI';
 import { StateGlyphSvg } from '@/components/StateBadge';
@@ -62,6 +62,8 @@ export default function DriverHudView({
   onPassengerOverride?: () => void;
 }) {
   const { t, language, setLanguage } = usePreferences();
+  const { width, height } = useWindowDimensions();
+  const compact = width < 420 || height < 740;
   const stateHex = LOCKED_STATE_HEX[state];
   const stateToken = STATE_TOKENS[state];
   const isZeroLowerBound = window != null && window[0] === 0;
@@ -71,25 +73,25 @@ export default function DriverHudView({
       testID="driver-hud-view"
       style={{
         flex: 1,
+        minHeight: 0,
         overflow: 'hidden',
         backgroundColor: '#070B12',
-        justifyContent: 'space-between',
-        paddingVertical: 14,
+        paddingVertical: compact ? 8 : 14,
       }}
     >
+      <ScrollView style={{ flex: 1, minHeight: 0 }} contentContainerStyle={{ flexGrow: 1, gap: 12, paddingBottom: 12 }}>
       {/* ZONE 1: Top Status & Corridor Bar (12% Height, paddingHorizontal: 20) */}
       <View
         style={{
-          minHeight: '12%',
-          paddingHorizontal: 20,
-          flexDirection: 'row',
-          alignItems: 'center',
+          paddingHorizontal: compact ? 14 : 20,
+          flexDirection: compact ? 'column' : 'row',
+          alignItems: compact ? 'stretch' : 'center',
           justifyContent: 'space-between',
           gap: 12,
         }}
       >
         <View style={{ flex: 1, gap: 2 }}>
-          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
             <View
               style={{
                 backgroundColor: '#131B2E',
@@ -135,7 +137,7 @@ export default function DriverHudView({
           </AppText>
         </View>
 
-        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, justifyContent: 'flex-end' }}>
           {onToggleSpeedSim && (
             <Pressable
               role="button"
@@ -196,23 +198,23 @@ export default function DriverHudView({
       {/* ZONE 2: Massive Triple-Redundancy Hero Card (48% Height) */}
       <View
         style={{
-          minHeight: '44%',
-          marginHorizontal: 20,
-          borderRadius: 20,
+          flexGrow: 1,
+          marginHorizontal: compact ? 14 : 20,
+          borderRadius: 10,
           borderWidth: 3,
           borderColor: stateHex,
           backgroundColor: '#0B101B',
-          paddingHorizontal: 20,
-          paddingVertical: 18,
+          paddingHorizontal: compact ? 12 : 20,
+          paddingVertical: compact ? 12 : 18,
           justifyContent: 'center',
           alignItems: 'center',
-          gap: 14,
+          gap: compact ? 8 : 14,
         }}
       >
         <View
           style={{
-            width: 96,
-            height: 96,
+            width: compact ? 60 : 96,
+            height: compact ? 60 : 96,
             borderRadius: 48,
             backgroundColor: stateToken.darkBg,
             borderWidth: 3,
@@ -221,7 +223,7 @@ export default function DriverHudView({
             alignItems: 'center',
           }}
         >
-          <StateGlyphSvg state={state} size={64} />
+          <StateGlyphSvg state={state} size={compact ? 40 : 64} />
         </View>
 
         <AppText
@@ -233,6 +235,7 @@ export default function DriverHudView({
             {
               color: '#F8FAFC',
               textAlign: 'center',
+              ...(compact ? { fontSize: 28, lineHeight: 34 } : {}),
             },
           ]}
         >
@@ -264,6 +267,8 @@ export default function DriverHudView({
                 style={{
                   paddingHorizontal: 12,
                   paddingVertical: 6,
+                  minHeight: 44,
+                  justifyContent: 'center',
                   borderRadius: 8,
                   backgroundColor: '#131B2E',
                   borderWidth: 1,
@@ -284,6 +289,8 @@ export default function DriverHudView({
                 style={{
                   paddingHorizontal: 12,
                   paddingVertical: 6,
+                  minHeight: 44,
+                  justifyContent: 'center',
                   borderRadius: 8,
                   backgroundColor: '#131B2E',
                   borderWidth: 1,
@@ -330,8 +337,7 @@ export default function DriverHudView({
       {/* ZONE 3: Glanceable Arrival Bucket / t('state.now') Alert (20% Height) */}
       <View
         style={{
-          minHeight: '18%',
-          marginHorizontal: 20,
+          marginHorizontal: compact ? 14 : 20,
           justifyContent: 'center',
         }}
       >
@@ -344,7 +350,7 @@ export default function DriverHudView({
             accessibilityLiveRegion="assertive"
             style={{
               minHeight: 72,
-              borderRadius: 16,
+              borderRadius: 10,
               backgroundColor: '#380D1A',
               borderWidth: 3,
               borderColor: '#FF5470',
@@ -383,7 +389,7 @@ export default function DriverHudView({
           <View
             style={{
               height: 64,
-              borderRadius: 16,
+              borderRadius: 10,
               backgroundColor: stateToken.darkBg,
               borderWidth: 2,
               borderColor: stateHex,
@@ -405,7 +411,7 @@ export default function DriverHudView({
           <View
             style={{
               height: 64,
-              borderRadius: 16,
+              borderRadius: 10,
               backgroundColor: '#131B2E',
               borderWidth: 1.5,
               borderColor: '#23304D',
@@ -425,15 +431,16 @@ export default function DriverHudView({
           </View>
         )}
       </View>
+      </ScrollView>
 
       {/* ZONE 4: Tactile Bottom Audio & Exit Deck (20% Height) */}
       <View
         style={{
-          minHeight: '18%',
-          paddingHorizontal: 20,
+          paddingHorizontal: compact ? 14 : 20,
           flexDirection: 'row',
           alignItems: 'center',
-          gap: 16,
+          gap: compact ? 8 : 16,
+          paddingTop: 8,
         }}
       >
         <Pressable
@@ -442,27 +449,29 @@ export default function DriverHudView({
           accessibilityLabel={t('drive.repeat')}
           onPress={onRepeatVoice}
           style={({ pressed }) => ({
-            flex: 1.2,
-            minHeight: 72,
-            borderRadius: 18,
+            flex: 1,
+            minWidth: 0,
+            minHeight: compact ? 56 : 72,
+            borderRadius: 8,
             backgroundColor: '#F8FAFC',
             flexDirection: 'row',
             justifyContent: 'center',
             alignItems: 'center',
             gap: 10,
-            paddingHorizontal: 14,
+            paddingHorizontal: compact ? 6 : 14,
             opacity: pressed ? 0.8 : 1,
           })}
         >
-          <WaveformSvg active={!muted} />
+          {!compact && <WaveformSvg active={!muted} />}
           <AppText
             style={{
               fontFamily: 'Inter_600SemiBold',
               fontWeight: '700',
-              fontSize: 16,
+              fontSize: compact ? 12 : 16,
               lineHeight: 20,
               color: '#070B12',
-              textTransform: 'uppercase',
+              flexShrink: 1,
+              textAlign: 'center',
             }}
           >
             {t('drive.repeat')}
@@ -475,9 +484,11 @@ export default function DriverHudView({
           accessibilityLabel={t(muted ? 'drive.unmute' : 'drive.mute')}
           onPress={onToggleMute}
           style={({ pressed }) => ({
-            minHeight: 72,
-            paddingHorizontal: 16,
-            borderRadius: 18,
+            flex: 1,
+            minWidth: 0,
+            minHeight: compact ? 56 : 72,
+            paddingHorizontal: compact ? 6 : 16,
+            borderRadius: 8,
             backgroundColor: '#131B2E',
             borderWidth: 1.5,
             borderColor: '#23304D',
@@ -490,10 +501,11 @@ export default function DriverHudView({
             style={{
               fontFamily: 'Inter_600SemiBold',
               fontWeight: '700',
-              fontSize: 14,
+              fontSize: compact ? 12 : 14,
               lineHeight: 18,
               color: '#F8FAFC',
-              textTransform: 'uppercase',
+              flexShrink: 1,
+              textAlign: 'center',
             }}
           >
             {t(muted ? 'drive.unmute' : 'drive.mute')}
@@ -507,14 +519,15 @@ export default function DriverHudView({
           onPress={onExitHud}
           style={({ pressed }) => ({
             flex: 1,
-            minHeight: 72,
-            borderRadius: 18,
+            minWidth: 0,
+            minHeight: compact ? 56 : 72,
+            borderRadius: 8,
             backgroundColor: '#1C2740',
             borderWidth: 2,
             borderColor: '#5294FF',
             justifyContent: 'center',
             alignItems: 'center',
-            paddingHorizontal: 14,
+            paddingHorizontal: compact ? 6 : 14,
             opacity: pressed ? 0.8 : 1,
           })}
         >
@@ -522,10 +535,11 @@ export default function DriverHudView({
             style={{
               fontFamily: 'Inter_600SemiBold',
               fontWeight: '700',
-              fontSize: 16,
+              fontSize: compact ? 12 : 16,
               lineHeight: 20,
               color: '#F8FAFC',
-              textTransform: 'uppercase',
+              flexShrink: 1,
+              textAlign: 'center',
             }}
           >
             {t('drive.stop_sim')}

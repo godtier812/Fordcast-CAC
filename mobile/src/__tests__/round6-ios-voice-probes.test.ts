@@ -23,9 +23,13 @@ afterEach(() => {
   jest.clearAllMocks();
 });
 
-test('an explicit native voice preview can play while automatic voice alerts remain muted', () => {
+test('an explicit native voice preview waits for setup and plays while automatic voice alerts remain muted', async () => {
   setVoiceMuted(true);
   speak('Preview only. Never drive into water.', 'en', { force: true, allowWhenMuted: true });
+  expect(Speech.speak).not.toHaveBeenCalled();
+  mockReady();
+  await prepareAudio();
+  await Promise.resolve();
   expect(Speech.speak).toHaveBeenCalledTimes(1);
 });
 
@@ -39,4 +43,11 @@ test('native speech waits for the audio-session preparation promise before playb
     await ready;
   }
   expect(Speech.speak).toHaveBeenCalledTimes(1);
+});
+
+test('stopping a pending native utterance prevents it from playing after setup', async () => {
+  speak('Simulation. Never drive into water.', 'es', { force: true });
+  stopSpeaking();
+  await Promise.resolve();
+  expect(Speech.speak).not.toHaveBeenCalled();
 });

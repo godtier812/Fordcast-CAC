@@ -1,0 +1,33 @@
+- button "FordCast Alertas de cruces bajos · Austin":
+  - generic: FordCast
+  - generic: Alertas de cruces bajos · Austin
+- link "Mapa":
+  - /url: /
+  - generic: Mapa
+- link "Tormentas":
+  - /url: /replay
+  - generic: Tormentas
+- link "Manejar":
+  - /url: /drive
+  - generic: Manejar
+- link "Alertas":
+  - /url: /alerts
+  - generic: Alertas
+- button "English":
+  - generic: EN · English
+- button "Ajustes":
+  - generic: Ajustes
+- generic: ● EN VIVO · ATXFLOODS + NWS + USGS · ROUTE
+- generic: a 6.1 mi · Onion Creek
+- generic: E. William Cannon
+- button "English":
+  - generic: ES | EN
+- generic: Sin crecida río arriba
+- generic: Aviso de FordCast. E. William Cannon. No se detecta crecida río arriba. ¡Dé la vuelta, no se ahogue!
+- generic: ¡Dé la vuelta, no se ahogue!
+- button "Repetir":
+  - generic: Repetir
+- button "Silenciar":
+  - generic: Silenciar
+- button "Detener":
+  - generic: Detener

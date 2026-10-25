@@ -147,7 +147,7 @@
   "settings.english": "English",
   "settings.spanish": "Español",
   "settings.about": "Sobre este prototipo",
-  "settings.about_body": "FordCast revisa trayectos del área de Austin con registros de cruces, reportes oficiales y lecturas disponibles de arroyos. Cuatro vínculos de registros en dos corredores de estudio respaldan un experimento separado con sensores. La predicción de inundaciones viales no está validada.",
+  "settings.about_body": "FordCast revisa trayectos del área de Austin con registros de cruces, reportes oficiales y lecturas disponibles de arroyos. Seis vínculos de registros en tres corredores de estudio respaldan un experimento separado con sensores. La predicción de inundaciones viales no está validada.",
   "settings.privacy": "Sus datos",
   "settings.privacy_body": "La ubicación se usa en este dispositivo para buscar cruces cercanos. Al planear una ruta, se envían las coordenadas de inicio, destino y puntos que se deben evitar al servicio de rutas; la búsqueda de direcciones envía la consulta y coordenadas cercanas al proveedor de búsqueda. Al iniciar Google Maps, se comparte la ruta con Google. Los cruces guardados y la configuración permanecen en este dispositivo.",
   "settings.review": "Textos bilingües EN/ES verificados sin palabras de falsa seguridad.",

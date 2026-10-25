@@ -7,37 +7,37 @@
 
 | Method | Level | Hits (H) | Misses (M) | False Alarms (F) | POD | FAR | CSI | Median Lead (min) |
 |---|---|---:|---:|---:|---:|---:|---:|---:|
-| **Upstream Rule (FordCast)** | `AVOID` | 4 | 8 | 1 | 0.333 | 0.2 | 0.308 | 65.0 |
-| **Nearest-Gauge Baseline** | `AVOID` | 4 | 8 | 0 | 0.333 | 0.0 | 0.333 | 65.0 |
-| **Upstream Rule (Watch)** | `WATCH` | 4 | 8 | 7 | 0.333 | 0.636 | 0.211 | 142.5 |
+| **Upstream Rule (FordCast)** | `AVOID` | 10 | 2 | 6 | 0.833 | 0.375 | 0.556 | 57.5 |
+| **Nearest-Gauge Baseline** | `AVOID` | 4 | 8 | 3 | 0.333 | 0.429 | 0.267 | 87.5 |
+| **Upstream Rule (Watch)** | `WATCH` | 12 | 0 | 26 | 1.0 | 0.684 | 0.316 | 109.5 |
 | **Reactive Closure (Reference)** | `CLOSED` | — | — | — | — | — | — | 0.0 |
 
 ## Per-Storm Breakdown (`upstream_rule` at `AVOID`)
 
 | Storm ID | Hits | Misses | False Alarms | POD | FAR | CSI | Median Lead (min) |
 |---|---:|---:|---:|---:|---:|---:|---:|
-| `halloween-2013` | 2 | 2 | 0 | 0.5 | 0.0 | 0.5 | 95.0 |
-| `memorial-day-2015` | 1 | 1 | 0 | 0.5 | 0.0 | 0.5 | 90.0 |
-| `halloween-2015` | 1 | 5 | 0 | 0.167 | 0.0 | 0.167 | 40.0 |
-| `oct-2018` | 0 | 0 | 1 | None | 1.0 | 0.0 | None |
+| `halloween-2013` | 4 | 0 | 3 | 1.0 | 0.429 | 0.571 | 90.0 |
+| `memorial-day-2015` | 2 | 0 | 0 | 1.0 | 0.0 | 1.0 | 80.0 |
+| `halloween-2015` | 4 | 2 | 3 | 0.667 | 0.429 | 0.444 | 9.0 |
+| `oct-2018` | 0 | 0 | 0 | None | None | None | None |
 | `july-2025` | 0 | 0 | 0 | None | None | None | None |
 
 ## Data-Arrival Delay Sensitivity (`upstream_rule` at `AVOID`)
 
 | Assumed Delivery Delay (min) | Median Lead Time (min) |
 |---:|---:|
-| 0 | 125.0 |
-| 15 | 110.0 |
-| 30 | 95.0 |
-| 60 | 65.0 |
+| 0 | 90.0 |
+| 15 | 75.0 |
+| 30 | 62.0 |
+| 60 | 57.5 |
 
 ## Deterministic Median-Lead Reference Example (`tools/select_hero.py`)
 
 - **Rule:** proxy-reference AVOID hit closest to the overall median lead; ties: catalog order, then crossing id
 - **Selected Storm:** `memorial-day-2015`
-- **Selected Crossing:** `tc-167`
-- **Lead Time:** `90.0 min` (overall median across storms: `65.0 min`)
-- **First Alert At:** `2015-05-24T11:10:00Z` → **Onset At:** `2015-05-24T12:40:00Z`
+- **Selected Crossing:** `atx-19`
+- **Lead Time:** `50.0 min` (overall median across storms: `57.5 min`)
+- **First Alert At:** `2015-05-24T14:25:00Z` → **Onset At:** `2015-05-24T15:15:00Z`
 
 ## Interpretation and scope
 

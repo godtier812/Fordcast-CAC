@@ -319,30 +319,6 @@
         "type": "LineString",
         "coordinates": [
           [
-            -97.7325,
-            30.18938
-          ],
-          [
-            -97.74557,
-            30.17911
-          ]
-        ]
-      },
-      "properties": {
-        "reach_id": "atx-19__USGS-08158970",
-        "crossing_id": "atx-19",
-        "gauge_id": "USGS-08158970",
-        "relation": "upstream",
-        "geometry_source": "schematic_corridor_connector",
-        "topology_verified": false
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "LineString",
-        "coordinates": [
-          [
             -97.86028,
             30.23521
           ],
@@ -415,30 +391,6 @@
         "type": "LineString",
         "coordinates": [
           [
-            -97.7325,
-            30.18938
-          ],
-          [
-            -97.74396,
-            30.17691
-          ]
-        ]
-      },
-      "properties": {
-        "reach_id": "atx-20__USGS-08158970",
-        "crossing_id": "atx-20",
-        "gauge_id": "USGS-08158970",
-        "relation": "upstream",
-        "geometry_source": "schematic_corridor_connector",
-        "topology_verified": false
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "LineString",
-        "coordinates": [
-          [
             -98.00779,
             30.08299
           ],
@@ -476,30 +428,6 @@
         "reach_id": "atx-21__USGS-08158860",
         "crossing_id": "atx-21",
         "gauge_id": "USGS-08158860",
-        "relation": "upstream",
-        "geometry_source": "schematic_corridor_connector",
-        "topology_verified": false
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "LineString",
-        "coordinates": [
-          [
-            -97.7325,
-            30.18938
-          ],
-          [
-            -97.73841,
-            30.16912
-          ]
-        ]
-      },
-      "properties": {
-        "reach_id": "atx-21__USGS-08158970",
-        "crossing_id": "atx-21",
-        "gauge_id": "USGS-08158970",
         "relation": "upstream",
         "geometry_source": "schematic_corridor_connector",
         "topology_verified": false
@@ -908,30 +836,6 @@
         "reach_id": "tc-157__USGS-08158920",
         "crossing_id": "tc-157",
         "gauge_id": "USGS-08158920",
-        "relation": "upstream",
-        "geometry_source": "schematic_corridor_connector",
-        "topology_verified": false
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "LineString",
-        "coordinates": [
-          [
-            -97.92556,
-            30.29632
-          ],
-          [
-            -97.8872,
-            30.27062
-          ]
-        ]
-      },
-      "properties": {
-        "reach_id": "tc-167__USGS-08155200",
-        "crossing_id": "tc-167",
-        "gauge_id": "USGS-08155200",
         "relation": "upstream",
         "geometry_source": "schematic_corridor_connector",
         "topology_verified": false

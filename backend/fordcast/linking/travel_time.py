@@ -39,26 +39,9 @@ def grid(series: pd.Series, index: pd.DatetimeIndex) -> pd.Series:
     return result
 
 
-def estimate_lag(
-    up: pd.Series,
-    down: pd.Series,
-    storm_id: str,
-    *,
-    step_min: int = 5,
-    max_lag_min: int = 240,
-    min_r: float = 0.5,
-) -> LagEstimate | None:
-    if step_min <= 0 or max_lag_min < 0:
-        raise ValueError("Invalid grid interval or lag bound")
-    if up.empty or down.empty:
-        return None
-    start = max(up.index.min(), down.index.min()).ceil(f"{step_min}min")
-    end = min(up.index.max(), down.index.max()).floor(f"{step_min}min")
-    index = pd.date_range(start, end, freq=f"{step_min}min")
-    if len(index) < 12:
-        return None
-    a = grid(up, index).diff().rolling(3, center=True).mean().clip(lower=0).to_numpy()
-    b = grid(down, index).diff().rolling(3, center=True).mean().clip(lower=0).to_numpy()
+def _best_corr_lag(
+    a: np.ndarray, b: np.ndarray, *, step_min: int, max_lag_min: int, min_r: float
+) -> tuple[float, float] | None:
     correlations = []
     for k in range(max_lag_min // step_min + 1):
         if k >= len(a):
@@ -84,7 +67,43 @@ def estimate_lag(
         denominator = left - 2 * r + right
         if np.isfinite(denominator) and denominator < 0:
             refined += float(np.clip(0.5 * (left - right) / denominator, -0.5, 0.5))
-    return LagEstimate(min(max_lag_min, max(0, refined * step_min)), r, storm_id)
+    return min(max_lag_min, max(0, refined * step_min)), r
+
+
+def estimate_lag(
+    up: pd.Series,
+    down: pd.Series,
+    storm_id: str,
+    *,
+    step_min: int = 5,
+    max_lag_min: int = 240,
+    min_r: float = 0.5,
+) -> LagEstimate | None:
+    if step_min <= 0 or max_lag_min < 0:
+        raise ValueError("Invalid grid interval or lag bound")
+    if up.empty or down.empty:
+        return None
+    if (up.max() - up.min()) < 3.5 or (down.max() - down.min()) < 3.5:
+        return None
+    start = max(up.index.min(), down.index.min()).ceil(f"{step_min}min")
+    end = min(up.index.max(), down.index.max()).floor(f"{step_min}min")
+    index = pd.date_range(start, end, freq=f"{step_min}min")
+    if len(index) < 12:
+        return None
+    g_up = grid(up, index)
+    g_dn = grid(down, index)
+    a = g_up.diff().rolling(3, center=True).mean().clip(lower=0).to_numpy()
+    b = g_dn.diff().rolling(3, center=True).mean().clip(lower=0).to_numpy()
+    res = _best_corr_lag(a, b, step_min=step_min, max_lag_min=max_lag_min, min_r=min_r)
+    if res is None:
+        w_up = g_up.diff(24).rolling(24, center=True).mean().clip(lower=0).to_numpy()
+        w_dn = g_dn.diff(24).rolling(24, center=True).mean().clip(lower=0).to_numpy()
+        res = _best_corr_lag(
+            w_up, w_dn, step_min=step_min, max_lag_min=min(max_lag_min, 120), min_r=min_r
+        )
+    if res is None:
+        return None
+    return LagEstimate(res[0], res[1], storm_id)
 
 
 def combine_storms(estimates: list[LagEstimate], channel_dist_km: float | None) -> LinkLag | None:

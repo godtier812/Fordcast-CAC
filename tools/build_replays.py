@@ -37,7 +37,6 @@ REFERENCE_CANDIDATES: dict[str, dict[str, Any]] = {
         "target_gauge_id": "USGS-08159000",
         "category": "minor",
         "upstream": [
-            ("USGS-08158970", 6.2),
             ("USGS-08158860", 18.4),
             ("USGS-08158700", 38.2),
         ],
@@ -48,7 +47,6 @@ REFERENCE_CANDIDATES: dict[str, dict[str, Any]] = {
         "target_gauge_id": "USGS-08159000",
         "category": "moderate",
         "upstream": [
-            ("USGS-08158970", 6.2),
             ("USGS-08158860", 18.4),
             ("USGS-08158700", 38.2),
         ],
@@ -59,7 +57,6 @@ REFERENCE_CANDIDATES: dict[str, dict[str, Any]] = {
         "target_gauge_id": "USGS-08159000",
         "category": "major",
         "upstream": [
-            ("USGS-08158970", 6.2),
             ("USGS-08158860", 18.4),
             ("USGS-08158700", 38.2),
         ],
@@ -83,14 +80,14 @@ REFERENCE_CANDIDATES: dict[str, dict[str, Any]] = {
         "road": "Joe Tanner Ln",
         "target_gauge_id": "USGS-08158930",
         "category": "minor",
-        "upstream": [("USGS-08158920", 8.2)],
+        "upstream": [("USGS-08158920", 3.6)],
     },
     "atx-16": {
         "creek": "Williamson Creek",
         "road": "Joe Tanner Ln",
         "target_gauge_id": "USGS-08158930",
         "category": "moderate",
-        "upstream": [("USGS-08158920", 8.2)],
+        "upstream": [("USGS-08158920", 3.6)],
     },
     "tc-133": {
         "creek": "Slaughter Creek",
@@ -104,7 +101,7 @@ REFERENCE_CANDIDATES: dict[str, dict[str, Any]] = {
         "road": "Henry Marx Ln",
         "target_gauge_id": "USGS-08155300",
         "category": "moderate",
-        "upstream": [("USGS-08155240", 8.4), ("USGS-08155200", 19.6)],
+        "upstream": [("USGS-08155240", 8.4)],
     },
     "atx-3": {
         "creek": "Walnut Creek",

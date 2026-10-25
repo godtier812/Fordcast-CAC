@@ -200,15 +200,15 @@ export default function DriverHudView({
         style={{
           flexGrow: 1,
           marginHorizontal: compact ? 14 : 20,
-          borderRadius: 10,
+          borderRadius: 16,
           borderWidth: 3,
           borderColor: stateHex,
           backgroundColor: '#0B101B',
-          paddingHorizontal: compact ? 12 : 20,
-          paddingVertical: compact ? 12 : 18,
+          paddingHorizontal: compact ? 16 : 22,
+          paddingVertical: compact ? 16 : 22,
           justifyContent: 'center',
           alignItems: 'center',
-          gap: compact ? 8 : 14,
+          gap: compact ? 10 : 16,
         }}
       >
         <View

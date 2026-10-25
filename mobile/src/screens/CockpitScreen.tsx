@@ -1311,12 +1311,12 @@ export default function CockpitScreen({
           borderRadius: 18,
           borderWidth: 1.5,
           borderColor: SURFACES.dark.borderSubtle,
-          padding: 12,
-          gap: 10,
+          padding: 16,
+          gap: 12,
         }}
       >
         {/* Sheet Grabber & Snap Point Selector (Collapsed 12% / Half 48% / Full 88% / All 141 Directory) */}
-        <View style={{ alignItems: 'center', gap: 8 }}>
+        <View style={{ alignItems: 'center', gap: 10 }}>
           <View
             style={{
               width: 42,
@@ -1332,15 +1332,15 @@ export default function CockpitScreen({
               justifyContent: 'space-between',
               width: '100%',
               flexWrap: 'wrap',
-              gap: 6,
+              gap: 8,
             }}
           >
-            <AppText style={[TYPOGRAPHY.chartAxis, { color: SURFACES.dark.textSecondary }]}>
+            <AppText style={[TYPOGRAPHY.chartAxis, { color: SURFACES.dark.textSecondary, fontSize: 12, lineHeight: 17 }]}>
               {language === 'es'
                 ? `30 candidatos de investigación · 111 sin sensor · ${summaryCounts.avoidCount} Evite · ${summaryCounts.watchCount} Precaución`
                 : `30 research candidates · 111 without sensors · ${summaryCounts.avoidCount} Avoid · ${summaryCounts.watchCount} Watch`}
             </AppText>
-            <View style={{ flexDirection: 'row', gap: 6, flexWrap: 'wrap' }}>
+            <View style={{ flexDirection: 'row', gap: 8, flexWrap: 'wrap' }}>
               {(
                 [
                   { id: 'collapsed', label: language === 'es' ? 'Resumen' : 'Summary' },
@@ -1355,9 +1355,9 @@ export default function CockpitScreen({
                   accessibilityRole="button"
                   onPress={() => setMobileSnap(sp.id)}
                   style={{
-                    paddingHorizontal: 8,
-                    paddingVertical: 4,
-                    borderRadius: 8,
+                    paddingHorizontal: 10,
+                    paddingVertical: 6,
+                    borderRadius: 10,
                     backgroundColor:
                       mobileSnap === sp.id ? SURFACES.dark.elevated2 : SURFACES.dark.elevated1,
                     borderWidth: 1,
@@ -1365,7 +1365,7 @@ export default function CockpitScreen({
                       mobileSnap === sp.id ? '#5294FF' : SURFACES.dark.borderSubtle,
                   }}
                 >
-                  <AppText style={{ fontSize: 10, fontFamily: 'Inter_600SemiBold', color: '#F8FAFC' }}>
+                  <AppText style={{ fontSize: 11.5, fontFamily: 'Inter_600SemiBold', color: '#F8FAFC' }}>
                     {sp.label}
                   </AppText>
                 </Pressable>

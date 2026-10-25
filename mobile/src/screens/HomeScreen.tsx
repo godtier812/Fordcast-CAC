@@ -446,10 +446,15 @@ function Headline({
     color = LOCKED_STATE_HEX.no_rise;
   }
   return (
-    <Panel style={{ borderColor: color, gap: 10 }}>
-      {/* Primary above-the-fold actions first so mobile users never have to scroll to check a route or run the demo */}
+    <Panel style={{ borderColor: color, gap: 12 }}>
+      <View style={{ gap: 4 }}>
+        <AppText style={{ fontFamily: 'Inter_700Bold', fontSize: 17, lineHeight: 23 }}>{title}</AppText>
+        {body ? <AppText style={{ fontSize: 13.5, lineHeight: 19, color: S.textSecondary }}>{body}</AppText> : null}
+      </View>
+
+      {/* Primary above-the-fold actions with clean spacing */}
       {m.mode === 'live' && !m.routePlan ? (
-        <View style={{ flexDirection: 'row', gap: 8, flexWrap: 'wrap' }}>
+        <View style={{ flexDirection: 'row', gap: 10, flexWrap: 'wrap' }}>
           <ActionButton compact icon="route" label={t('home.audit_commute')} onPress={onOpenRoute} />
           <ActionButton compact kind="secondary" icon="car" label={t('storms.car_demo')} onPress={onStartQuickDemo} />
           {m.locationSource !== 'gps' ? (
@@ -464,44 +469,41 @@ function Headline({
         </View>
       ) : null}
 
-      <AppText style={{ fontFamily: 'Inter_700Bold', fontSize: 16, lineHeight: 22 }}>{title}</AppText>
-      {body ? <AppText style={{ fontSize: 13, lineHeight: 18, color: S.textSecondary }}>{body}</AppText> : null}
-
-      {/* Honest Scope & Source Coverage Bar (4 Live Calibrated / 30 R&D Candidates / 19 USGS Gauges / 2,052 ATXFloods) */}
+      {/* Honest Scope & Source Coverage Bar */}
       <View
         style={{
           flexDirection: 'row',
-          gap: 6,
-          paddingVertical: 8,
-          paddingHorizontal: 10,
-          borderRadius: 11,
+          gap: 8,
+          paddingVertical: 10,
+          paddingHorizontal: 12,
+          borderRadius: 12,
           backgroundColor: S.primary,
           borderWidth: 1,
           borderColor: S.borderSubtle,
           justifyContent: 'space-between',
         }}
       >
-        <View style={{ alignItems: 'center', flex: 1 }}>
-          <AppText style={{ fontFamily: 'Inter_700Bold', fontSize: 13.5, color: '#9B8AFB', fontVariant: ['tabular-nums'] }}>
+        <View style={{ alignItems: 'center', flex: 1, gap: 2 }}>
+          <AppText style={{ fontFamily: 'Inter_700Bold', fontSize: 14.5, color: '#9B8AFB', fontVariant: ['tabular-nums'] }}>
             {CALIBRATED_IDS.size} / 30
           </AppText>
-          <AppText style={{ fontSize: 10, color: S.textMuted }}>
+          <AppText style={{ fontSize: 11, color: S.textMuted }}>
             {t('home.stat_calibrated')}
           </AppText>
         </View>
         <View style={{ width: 1, backgroundColor: S.borderSubtle }} />
-        <View style={{ alignItems: 'center', flex: 1 }}>
-          <AppText style={{ fontFamily: 'Inter_700Bold', fontSize: 13.5, color: '#38BDF8', fontVariant: ['tabular-nums'] }}>
+        <View style={{ alignItems: 'center', flex: 1, gap: 2 }}>
+          <AppText style={{ fontFamily: 'Inter_700Bold', fontSize: 14.5, color: '#38BDF8', fontVariant: ['tabular-nums'] }}>
             19
           </AppText>
-          <AppText style={{ fontSize: 10, color: S.textMuted }}>{t('home.stat_sensors')}</AppText>
+          <AppText style={{ fontSize: 11, color: S.textMuted }}>{t('home.stat_sensors')}</AppText>
         </View>
         <View style={{ width: 1, backgroundColor: S.borderSubtle }} />
-        <View style={{ alignItems: 'center', flex: 1 }}>
-          <AppText style={{ fontFamily: 'Inter_700Bold', fontSize: 13.5, color: ACCENT, fontVariant: ['tabular-nums'] }}>
+        <View style={{ alignItems: 'center', flex: 1, gap: 2 }}>
+          <AppText style={{ fontFamily: 'Inter_700Bold', fontSize: 14.5, color: ACCENT, fontVariant: ['tabular-nums'] }}>
             {m.statuses.length.toLocaleString()}
           </AppText>
-          <AppText style={{ fontSize: 10, color: S.textMuted }}>{t('home.stat_crossings')}</AppText>
+          <AppText style={{ fontSize: 11, color: S.textMuted }}>{t('home.stat_crossings')}</AppText>
         </View>
       </View>
     </Panel>
@@ -654,7 +656,7 @@ function CrossingList({ onPick, selectedId, onSearchFocus }: { onPick: (id: stri
       {rows.length === 0 ? (
         <AppText style={{ color: S.textSecondary, paddingVertical: 8 }}>{t('home.empty')}</AppText>
       ) : null}
-      <View style={{ gap: 8 }}>
+      <View style={{ gap: 10 }}>
         {rows.slice(0, limit).map((s) => (
           <NearbyRow key={s.id} status={s} selected={s.id === selectedId} onPress={() => onPick(s.id)} />
         ))}
@@ -701,9 +703,9 @@ export default function HomeScreen() {
   useFocusEffect(useCallback(() => () => stopTripRef.current(), []));
 
   // Smooth spring animation for mobile bottom sheet height.
-  // 305px peek height keeps subtabs + Headline + primary action buttons + TripCard Stop controls visible above the fold.
-  const peekH = Math.min(305, Math.round(mapFrameHeight * 0.5));
-  const halfH = Math.round(mapFrameHeight * 0.54);
+  // 330px peek height keeps subtabs + Headline + primary action buttons + TripCard Stop controls visible with clean breathing room.
+  const peekH = Math.min(330, Math.round(mapFrameHeight * 0.52));
+  const halfH = Math.round(mapFrameHeight * 0.58);
   const fullH = Math.round(mapFrameHeight * 0.88);
   const targetH = sheet === 'peek' ? peekH : sheet === 'half' ? halfH : fullH;
   const [animH] = useState(() => new Animated.Value(peekH));

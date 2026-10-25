@@ -275,12 +275,23 @@ export default function CrossingDetail() {
                 <Sparkline rows={rows} watchFt={link.watch_stage_ft} triggerFt={link.trigger_stage_ft} />
               </>
             ) : null}
-            <AppText style={{ fontSize: 13.5, lineHeight: 19, color: S.textSecondary }}>
-              {t('detail.sensor_levels', { watch: link.watch_stage_ft.toFixed(1), trigger: link.trigger_stage_ft.toFixed(1) })}
-            </AppText>
-            <AppText style={{ fontSize: 13.5, lineHeight: 19, color: S.textSecondary }}>
-              {t('detail.sensor_travel', { lo: link.tau_lo_min, hi: link.tau_hi_min })}
-            </AppText>
+            <View
+              style={{
+                padding: 12,
+                borderRadius: 12,
+                backgroundColor: S.primary,
+                borderWidth: 1,
+                borderColor: S.borderSubtle,
+                gap: 6,
+              }}
+            >
+              <AppText style={{ fontSize: 13.5, lineHeight: 19, color: S.textSecondary }}>
+                {t('detail.sensor_levels', { watch: link.watch_stage_ft.toFixed(1), trigger: link.trigger_stage_ft.toFixed(1) })}
+              </AppText>
+              <AppText style={{ fontSize: 13.5, lineHeight: 19, color: S.textSecondary }}>
+                {t('detail.sensor_travel', { lo: link.tau_lo_min, hi: link.tau_hi_min })}
+              </AppText>
+            </View>
           </Panel>
         </>
       ) : null}

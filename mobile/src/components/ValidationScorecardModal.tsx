@@ -305,7 +305,9 @@ export default function ValidationScorecardModal({
           {copy.caveat2}
         </AppText>
         <AppText style={[TYPOGRAPHY.bodyCompact, { fontSize: 12, lineHeight: 17, color: SURFACES.dark.textSecondary }]}>
-          {copy.caveat3}
+          {language === 'es'
+            ? `3. Comparador Geodésico (WGS84): Regla aguas arriba POD ${fmtPct(upAvoid.pod)} (mediana ${upAvoid.median_lead_min ?? '—'} min, CSI ${fmtDec(upAvoid.csi)}) frente al sensor más cercano POD ${fmtPct(ngAvoid.pod)} (mediana ${ngAvoid.median_lead_min ?? '—'} min, CSI ${fmtDec(ngAvoid.csi)}).`
+            : `3. Geodesic Comparator (WGS84): Upstream rule achieves POD ${fmtPct(upAvoid.pod)} (${upAvoid.median_lead_min ?? '—'} min median lead, CSI ${fmtDec(upAvoid.csi)}) vs. nearest-gauge comparator POD ${fmtPct(ngAvoid.pod)} (${ngAvoid.median_lead_min ?? '—'} min median lead, CSI ${fmtDec(ngAvoid.csi)}).`}
         </AppText>
       </View>
     </View>

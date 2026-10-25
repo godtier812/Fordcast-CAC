@@ -88,15 +88,15 @@ export default function StormsScreen() {
           {t('storms.body')}
         </AppText>
 
-        {/* Honest Study Scorecard & Regional Context Side-by-Side */}
-        <Panel style={{ borderColor: ACCENT, gap: 12 }}>
+        {/* Honest Study Scorecard & Baseline Comparison */}
+        <Panel style={{ borderColor: ACCENT, gap: 14 }}>
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
             <FcIcon name="shield" size={18} color={ACCENT} />
             <AppText style={{ fontFamily: 'Inter_700Bold', fontSize: 17 }}>
               {t('storms.track_title')}
             </AppText>
           </View>
-          <AppText style={{ fontSize: 13.5, lineHeight: 20, color: S.textSecondary }}>
+          <AppText style={{ fontSize: 14, lineHeight: 20, color: S.textSecondary }}>
             {t('storms.track_body', {
               storms: results.headline.n_storms,
               hits: h.H,
@@ -106,19 +106,62 @@ export default function StormsScreen() {
               fa: h.F,
             })}
           </AppText>
+
+          {/* Glanceable 3-Stat Study Summary Strip */}
           <View
             style={{
-              padding: 10,
-              borderRadius: 10,
+              flexDirection: 'row',
+              gap: 8,
+              paddingVertical: 12,
+              paddingHorizontal: 12,
+              borderRadius: 14,
               backgroundColor: S.primary,
               borderWidth: 1,
               borderColor: S.borderSubtle,
-              gap: 4,
+              justifyContent: 'space-between',
+            }}
+          >
+            <View style={{ alignItems: 'center', flex: 1, gap: 2 }}>
+              <AppText style={{ fontFamily: 'Inter_700Bold', fontSize: 18, color: LOCKED_STATE_HEX.no_rise, fontVariant: ['tabular-nums'] }}>
+                {h.H} / {h.H + h.M}
+              </AppText>
+              <AppText style={{ fontSize: 11, color: S.textMuted }}>
+                {language === 'es' ? 'Casos detectados' : 'Cases detected'}
+              </AppText>
+            </View>
+            <View style={{ width: 1, backgroundColor: S.borderSubtle }} />
+            <View style={{ alignItems: 'center', flex: 1, gap: 2 }}>
+              <AppText style={{ fontFamily: 'Inter_700Bold', fontSize: 18, color: '#38BDF8', fontVariant: ['tabular-nums'] }}>
+                {h.median_lead_min ?? '—'}m
+              </AppText>
+              <AppText style={{ fontSize: 11, color: S.textMuted }}>
+                {language === 'es' ? 'Mediana de aviso' : 'Median lead'}
+              </AppText>
+            </View>
+            <View style={{ width: 1, backgroundColor: S.borderSubtle }} />
+            <View style={{ alignItems: 'center', flex: 1, gap: 2 }}>
+              <AppText style={{ fontFamily: 'Inter_700Bold', fontSize: 18, color: LOCKED_STATE_HEX.watch, fontVariant: ['tabular-nums'] }}>
+                {h.F}
+              </AppText>
+              <AppText style={{ fontSize: 11, color: S.textMuted }}>
+                {language === 'es' ? 'Falsas alarmas' : 'False alarms'}
+              </AppText>
+            </View>
+          </View>
+
+          <View
+            style={{
+              padding: 12,
+              borderRadius: 12,
+              backgroundColor: S.primary,
+              borderWidth: 1,
+              borderColor: S.borderSubtle,
+              gap: 6,
             }}
           >
             <AppText
               style={{
-                fontSize: 11.5,
+                fontSize: 11,
                 fontFamily: 'Inter_700Bold',
                 color: S.textSecondary,
                 letterSpacing: 0.4,
@@ -130,17 +173,25 @@ export default function StormsScreen() {
             </AppText>
             <AppText
               style={{
-                fontSize: 16,
-                lineHeight: 23,
+                fontSize: 14.5,
+                lineHeight: 22,
                 color: S.textPrimary,
                 fontVariant: ['tabular-nums'],
               }}
             >
               {language === 'es'
-                ? `Aguas arriba: ${h.H}/${h.H + h.M} detectados · ${h.M} omitidos · ${h.F} falsa alarma\nSensor más cercano: ${nearBase.H}/${nearBase.H + nearBase.M} detectados · ${nearBase.M} omitidos · ${nearBase.F} falsas alarmas\nLa regla aguas arriba no superó la referencia.`
-                : `Upstream: ${h.H}/${h.H + h.M} detected · ${h.M} missed · ${h.F} false alarm\nNearest gauge: ${nearBase.H}/${nearBase.H + nearBase.M} detected · ${nearBase.M} missed · ${nearBase.F} false alarms\nThe upstream rule did not beat the baseline.`}
+                ? `Aguas arriba: ${h.H}/${h.H + h.M} detectados · ${h.M} omitidos · ${h.F} falsas alarmas\nSensor más cercano: ${nearBase.H}/${nearBase.H + nearBase.M} detectados · ${nearBase.M} omitidos · ${nearBase.F} falsas alarmas\n${
+                    (h.csi ?? 0) > (nearBase.csi ?? 0)
+                      ? 'La regla de red aguas arriba superó la referencia del sensor más cercano en esta muestra proxy.'
+                      : 'La regla aguas arriba no superó la referencia.'
+                  }`
+                : `Upstream: ${h.H}/${h.H + h.M} detected · ${h.M} missed · ${h.F} false alarms\nNearest gauge: ${nearBase.H}/${nearBase.H + nearBase.M} detected · ${nearBase.M} missed · ${nearBase.F} false alarms\n${
+                    (h.csi ?? 0) > (nearBase.csi ?? 0)
+                      ? 'The upstream river-network rule outperformed the nearest-gauge baseline in this proxy sample.'
+                      : 'The upstream rule did not beat the baseline.'
+                  }`}
             </AppText>
-            <AppText style={{ fontSize: 13, lineHeight: 19, color: S.textSecondary }}>
+            <AppText style={{ fontSize: 12.5, lineHeight: 18, color: S.textSecondary }}>
               {language === 'es'
                 ? `Anticipación mediana: ${h.median_lead_min} min hasta el nivel de referencia del sensor. No se validó la predicción de inundación en el camino.`
                 : `Median lead: ${h.median_lead_min} min before reference-gauge stage. Road-flood prediction remains unvalidated.`}

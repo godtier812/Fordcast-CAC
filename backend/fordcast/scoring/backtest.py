@@ -143,7 +143,14 @@ def learn_fold_links(
                 lag_p75 = round(max(lag_min, combined.lag_p75_min), 1)
                 n_storms = combined.n_storms
                 xcorr_r = round(combined.xcorr_r, 3)
-                lag_review = combined.needs_review
+                single_storm_valid = (
+                    set(combined.notes) == {"Fewer than two independent storm estimates"}
+                    and combined.xcorr_r >= 0.5
+                    and combined.lag_min <= 150.0
+                    and combined.celerity_ms is not None
+                    and 0.5 <= combined.celerity_ms <= 6.0
+                )
+                lag_review = False if single_storm_valid else combined.needs_review
             else:
                 lag_min = lag_p25 = lag_p75 = None
                 n_storms = len(lag_ests)
@@ -157,10 +164,30 @@ def learn_fold_links(
                 for o in onsets_by_storm.get(sid, ())
                 if o.crossing_id == cid
             ]
+            borrowed_donor_refs: list[float] = []
+            if not train_onsets_for_c and tgt_gid:
+                train_onsets_for_c = [
+                    o
+                    for sid in train_storm_ids
+                    for o in onsets_by_storm.get(sid, ())
+                    if crossings_by_id.get(o.crossing_id) is not None
+                    and crossings_by_id[o.crossing_id].target_gauge is not None
+                    and crossings_by_id[o.crossing_id].target_gauge.id == tgt_gid
+                ]
+                borrowed_donor_refs = [
+                    float(crossings_by_id[o.crossing_id].reference_stage_ft)
+                    for o in train_onsets_for_c
+                    if crossings_by_id.get(o.crossing_id) is not None
+                    and crossings_by_id[o.crossing_id].reference_stage_ft is not None
+                ]
             g_series_train = {
                 sid: series_by_storm_gauge[sid][gid]
                 for sid in train_storm_ids
                 if gid in series_by_storm_gauge.get(sid, {})
+                and (
+                    not tgt_gid
+                    or len(series_by_storm_gauge.get(sid, {}).get(tgt_gid, ())) >= 200
+                )
             }
             trig = learn_trigger(
                 g_series_train,
@@ -168,6 +195,33 @@ def learn_fold_links(
                 delay_min=float(delay_m),
                 nws_action_stage_ft=nws_action_by_gauge.get(gid),
             )
+            if (
+                not trig.needs_review
+                and borrowed_donor_refs
+                and crossing.reference_stage_ft is not None
+                and crossing.reference_stage_ft > max(borrowed_donor_refs)
+            ):
+                scale = float(crossing.reference_stage_ft) / max(borrowed_donor_refs)
+                scaled_h = round(trig.trigger_stage_ft * scale, 2)
+                scaled_w = round(trig.baseline_stage_ft + 0.44 * (scaled_h - trig.baseline_stage_ft), 2)
+                from dataclasses import replace as _dc_replace
+                trig = _dc_replace(trig, trigger_stage_ft=scaled_h, watch_stage_ft=min(round(scaled_h - 0.2, 2), scaled_w))
+            if trig.needs_review and tgt_gid:
+                shared_onsets = [
+                    o
+                    for sid in train_storm_ids
+                    for o in onsets_by_storm.get(sid, ())
+                    if crossings_by_id.get(o.crossing_id) is not None
+                    and crossings_by_id[o.crossing_id].target_gauge is not None
+                    and crossings_by_id[o.crossing_id].target_gauge.id == tgt_gid
+                ]
+                if len(shared_onsets) > len(train_onsets_for_c):
+                    trig = learn_trigger(
+                        g_series_train,
+                        shared_onsets,
+                        delay_min=float(delay_m),
+                        nws_action_stage_ft=nws_action_by_gauge.get(gid),
+                    )
             params_src = (
                 "learned_proxy" if crossing.reference_stage_ft is not None else trig.params_source
             )

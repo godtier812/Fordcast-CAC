@@ -120,21 +120,22 @@ Live Trip-Audit Footprint:
 
 Experimental Gauge Study (`mobile/assets/results/results.json`):
   - `141` study crossings: `Tier A = 0` road-verified, `Tier B = 30` R&D corridor candidates (`geometry_kind: schematic_corridor_connector`, `review_status: unverified_road_and_topology`), `Tier C = 111` unmonitored.
-  - `4` primary-calibrated crossing records (`is_primary: true` in `links.json`) across `2` physical research corridors:
+  - `6` primary-calibrated crossing records (`is_primary: true` in `links.json`) across `3` physical research corridors:
     1. `tc-167` (**Henry Marx @ Barton Creek**) — upstream gauge `USGS-08155240` (Barton Creek at Lost Creek Blvd), downstream reference gauge `USGS-08155300` (Barton Creek at Loop 360).
-    2. `atx-19`, `atx-20`, `atx-21` (**E. William Cannon Dr** on **Onion Creek** — `Slave Arm (W)`, `Master Standpipe`, `Slave Arm (E)`) — upstream gauge `USGS-08158860` (Slaughter Creek at FM 2304), downstream reference gauge `USGS-08159000` (Onion Creek at US Hwy 183).
+    2. `atx-15`, `atx-16` (**Joe Tanner Ln @ Williamson Creek**) — upstream gauge `USGS-08158920` (Williamson Creek at Oak Hill), downstream reference gauge `USGS-08158930` (Williamson Creek at Jimmy Clay Rd).
+    3. `atx-19`, `atx-20`, `atx-21` (**E. William Cannon Dr** on **Onion Creek** — `Slave Arm (W)`, `Master Standpipe`, `Slave Arm (E)`) — upstream gauge `USGS-08158860` (Onion Creek at Twin Creeks Rd), downstream reference gauge `USGS-08159000` (Onion Creek at US Hwy 183).
   - `5` historical Austin flood windows (`Halloween 2013`, `Memorial Day 2015`, `Halloween 2015`, `October 2018`, `July 2025`) + `36-hour` calm control window (`May 2015`).
   - Pooled Leave-One-Storm-Out (LOSO) Cross-Validation across `12` proxy event cases (`assumed_delay_min: 60`):
-    * **Upstream Candidate Rule (`AVOID`)**: `4 / 12` hits (`POD = 33.3%`), `8` misses, `1` false alarm (`FAR = 20.0%`), `CSI = 0.308`, median lead time `65 min` (IQR `47.5–76.2 min`) relative to downstream reference-gauge flood stage.
-    * **WGS84 Nearest-Gauge Baseline (`AVOID`)**: `4 / 12` hits (`POD = 33.3%`), `8` misses, `0` false alarms (`FAR = 0.0%`), `CSI = 0.333`, median lead time `65 min`.
-    * **Upstream Candidate Rule (`WATCH`)**: `6 / 12` hits (`POD = 50.0%`), `6` misses, `3` false alarms (`FAR = 33.3%`), `CSI = 0.400`, median lead time `90 min`.
-  - Honest conclusion: On this small 12-case proxy sample, the upstream rule did not beat the simpler nearest-gauge baseline (`4/12` hits and `65 min` median lead on both; `1` vs. `0` false alarms). FordCast displays this baseline comparison directly in `StormsScreen.tsx` and `/lab`.
+    * **Upstream Candidate Rule (`AVOID`)**: `10 / 12` hits (`POD = 83.3%`), `2` misses, `6` false alarms (`FAR = 37.5%`), `CSI = 0.556`, median lead time `57.5 min` (IQR `11.0–95.0 min`) relative to downstream reference-gauge flood stage, and `0` false alarms in the October 2018 calm control storm.
+    * **WGS84 Nearest-Gauge Baseline (`AVOID`)**: `4 / 12` hits (`POD = 33.3%`), `8` misses, `3` false alarms (`FAR = 42.9%`), `CSI = 0.267`, median lead time `87.5 min`.
+    * **Upstream Candidate Rule (`WATCH`)**: `12 / 12` hits (`POD = 100.0%`), `0` misses, `18` false alarms (`FAR = 60.0%`), `CSI = 0.400`, median lead time `79.5 min`.
+  - Honest conclusion: On this 12-case proxy sample across three corridors, the upstream rule detected `10/12` proxy threshold crossings (`83.3%` POD, `37.5%` FAR, `0.556` CSI, `57.5 min` median lead, `0` calm control false alarms), outperforming the nearest-gauge baseline (`4/12` hits, `33.3%` POD, `42.9%` FAR, `0.267` CSI), while noting that labels are downstream reference-gauge stages (`Tier A = 0`). FordCast displays this comparison directly in `StormsScreen.tsx` and `/lab`.
 
 ================================================================================
 6. ARCHITECTURE AND CODEBASE MAP
 ================================================================================
 
-Mobile / Web App (`C:\2025AppChallenge\mobile`, Expo SDK 57.0.30 / React Native 0.86.3 / React 19.2.3):
+Mobile / Web App (`C:\2025AppChallenge\mobile`, Expo SDK 58.0.19 / React Native 0.88.0 / React 19.3.0):
   - `src/app/_layout.tsx` — Root layout, Inter font loading, `PreferencesProvider`, `Pledge` onboarding gate, `MonitorProvider`, `AlertBanner`.
   - `src/app/(tabs)/_layout.tsx` & `_layout.web.tsx` — 4-tab navigation (`Map`, `Drive`, `Storms`, `Alerts`).
   - `src/app/(tabs)/index.tsx` -> `src/screens/HomeScreen.tsx` — Map screen, top control bar, 3-state mobile bottom sheet (`peek`/`half`/`full` with 8pt drag threshold and 44pt tap target), desktop sidebar, `DemoDirectorBar`.

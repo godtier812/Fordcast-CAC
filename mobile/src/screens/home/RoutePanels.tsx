@@ -417,22 +417,36 @@ function RouteAuditSummary({
   return (
     <View
       style={{
-        gap: 6,
+        padding: 14,
+        borderRadius: 14,
+        backgroundColor: S.primary,
+        borderWidth: 1,
+        borderColor: S.borderSubtle,
+        gap: 10,
       }}
     >
-      <AppText style={{ fontSize: 12.5, lineHeight: 18, color: S.textPrimary, fontFamily: 'Inter_600SemiBold' }}>
-        {t('route.summary_official_row', { status: officialStatus })}
-      </AppText>
-      <AppText style={{ fontSize: 12.5, lineHeight: 18, color: S.textPrimary, fontFamily: 'Inter_600SemiBold' }}>
-        {evidence.linked === 0 ? t('route.summary_no_sensors') : t('route.summary_creek_row', { fresh: evidence.fresh, linked: evidence.linked })}
-      </AppText>
-      <AppText style={{ fontSize: 12.5, lineHeight: 18, color: S.textPrimary, fontFamily: 'Inter_600SemiBold' }}>
-        {t('route.summary_history_row', { events: distinctEvents })}
-      </AppText>
+      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+        <FcIcon name="shield" size={16} color={evidence.closed > 0 ? LOCKED_STATE_HEX.avoid : ACCENT} />
+        <AppText style={{ flex: 1, fontSize: 13.5, lineHeight: 19, color: S.textPrimary, fontFamily: 'Inter_600SemiBold' }}>
+          {t('route.summary_official_row', { status: officialStatus })}
+        </AppText>
+      </View>
+      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+        <FcIcon name="gauge" size={16} color={evidence.linked > 0 ? '#38BDF8' : S.textMuted} />
+        <AppText style={{ flex: 1, fontSize: 13.5, lineHeight: 19, color: S.textPrimary, fontFamily: 'Inter_600SemiBold' }}>
+          {evidence.linked === 0 ? t('route.summary_no_sensors') : t('route.summary_creek_row', { fresh: evidence.fresh, linked: evidence.linked })}
+        </AppText>
+      </View>
+      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+        <FcIcon name="creeks" size={16} color={distinctEvents > 0 ? LOCKED_STATE_HEX.watch : S.textSecondary} />
+        <AppText style={{ flex: 1, fontSize: 13.5, lineHeight: 19, color: S.textPrimary, fontFamily: 'Inter_600SemiBold' }}>
+          {t('route.summary_history_row', { events: distinctEvents })}
+        </AppText>
+      </View>
       {groups.some((g) => g.records.some((r) => r.history == null)) ? (
         <AppText style={{ fontSize: 12, lineHeight: 17, color: S.textSecondary }}>{t('route.summary_history_gap')}</AppText>
       ) : null}
-      <AppText style={{ fontSize: 11.5, lineHeight: 16, color: unmonitoredCount > 0 ? LOCKED_STATE_HEX.watch : S.textMuted }}>
+      <AppText style={{ fontSize: 12, lineHeight: 17, color: unmonitoredCount > 0 ? LOCKED_STATE_HEX.watch : S.textMuted }}>
         {t('route.summary_unknown_note')}
       </AppText>
     </View>
@@ -804,27 +818,27 @@ function RouteCard({
               style={({ pressed }) => ({
                 flexDirection: 'row',
                 alignItems: 'center',
-                gap: 10,
-                padding: 10,
-                borderRadius: 12,
+                gap: 12,
+                padding: 13,
+                borderRadius: 14,
                 backgroundColor: pressed ? S.elevated2 : S.primary,
                 borderWidth: 1,
                 borderColor: S.borderSubtle,
               })}
             >
-              <FcIcon name="creeks" size={15} color={c.monitored ? ACCENT : S.textMuted} />
-              <View style={{ flex: 1, gap: 1 }}>
-                <AppText style={{ fontFamily: 'Inter_600SemiBold', fontSize: 13.5 }}>
+              <FcIcon name="creeks" size={16} color={c.monitored ? ACCENT : S.textMuted} />
+              <View style={{ flex: 1, gap: 3 }}>
+                <AppText style={{ fontFamily: 'Inter_600SemiBold', fontSize: 14.5, lineHeight: 20 }}>
                   {g.cleanName}
                 </AppText>
-                <AppText style={{ fontSize: 12, lineHeight: 18, color: S.textSecondary }}>
+                <AppText style={{ fontSize: 12.5, lineHeight: 18, color: S.textSecondary }}>
                   {c.creek ? `${cleanName(c.creek)} · ` : ''}
                   {statusLabel(t, c)}
                   {g.recordCount > 1 ? ` · ${t('route.record_count', { count: g.recordCount })}` : ''}
                   {c.history && c.history.reports > 0 ? ` · ${t('route.history_count', { count: c.history.reports })}` : ''}
                 </AppText>
               </View>
-              <FcIcon name="chevron-right" size={15} color={S.textMuted} />
+              <FcIcon name="chevron-right" size={16} color={S.textMuted} />
             </Pressable>
           );
         })}
@@ -1108,20 +1122,20 @@ export function SensorsAndToolsPanel({
               style={({ pressed }) => ({
                 flexDirection: 'row',
                 alignItems: 'center',
-                gap: 12,
-                padding: 12,
-                borderRadius: 14,
+                gap: 14,
+                padding: 14,
+                borderRadius: 16,
                 borderWidth: isSelected ? 2 : 1,
                 borderColor: isSelected ? ACCENT : aboveFlood || rising ? accent : S.borderSubtle,
                 backgroundColor: S.elevated1,
-                opacity: pressed ? 0.82 : 1,
+                opacity: pressed ? 0.85 : 1,
               })}
             >
               <View
                 style={{
-                  width: 34,
-                  height: 34,
-                  borderRadius: 10,
+                  width: 38,
+                  height: 38,
+                  borderRadius: 12,
                   backgroundColor: '#13283F',
                   borderWidth: 1.5,
                   borderColor: accent,
@@ -1129,28 +1143,28 @@ export function SensorsAndToolsPanel({
                   justifyContent: 'center',
                 }}
               >
-                <FcIcon name="gauge" size={14} color={accent} />
+                <FcIcon name="gauge" size={15} color={accent} />
               </View>
-              <View style={{ flex: 1, gap: 2 }}>
-                <AppText numberOfLines={2} style={{ fontFamily: 'Inter_600SemiBold', fontSize: 14, lineHeight: 19 }}>
+              <View style={{ flex: 1, gap: 3 }}>
+                <AppText numberOfLines={2} style={{ fontFamily: 'Inter_600SemiBold', fontSize: 14.5, lineHeight: 20 }}>
                   {cleanName(p.name)}
                 </AppText>
-                <AppText numberOfLines={1} style={{ fontSize: 12, color: S.textSecondary }}>
+                <AppText numberOfLines={1} style={{ fontSize: 12.5, color: S.textSecondary }}>
                   {cleanName(p.creek)} · {p.id}
                 </AppText>
                 {floodFt != null && vettedCats ? (
-                  <AppText style={{ fontSize: 11.5, color: S.textMuted, fontVariant: ['tabular-nums'] }}>
+                  <AppText style={{ fontSize: 12, color: S.textMuted, fontVariant: ['tabular-nums'] }}>
                     {es
                       ? `Etapa de inundación fluvial NWPS (${vettedCats.nwsLid}): ${floodFt.toFixed(1)} ft`
                       : `Published river flood stage (NWPS ${vettedCats.nwsLid}): ${floodFt.toFixed(1)} ft`}
                   </AppText>
                 ) : null}
               </View>
-              <View style={{ alignItems: 'flex-end', gap: 2 }}>
+              <View style={{ alignItems: 'flex-end', gap: 3 }}>
                 <AppText
                   style={{
                     fontFamily: 'Inter_700Bold',
-                    fontSize: 15.5,
+                    fontSize: 16.5,
                     color: last && !isStale ? S.textPrimary : S.textMuted,
                     fontVariant: ['tabular-nums'],
                   }}
@@ -1160,7 +1174,7 @@ export function SensorsAndToolsPanel({
                 {change != null ? (
                   <AppText
                     style={{
-                      fontSize: 11.5,
+                      fontSize: 12,
                       color: rising ? LOCKED_STATE_HEX.watch : S.textSecondary,
                       fontFamily: 'Inter_600SemiBold',
                       fontVariant: ['tabular-nums'],
@@ -1170,7 +1184,7 @@ export function SensorsAndToolsPanel({
                     {change.toFixed(2)} ft / 30m
                   </AppText>
                 ) : null}
-                <AppText style={{ fontSize: 11, color: isStale ? LOCKED_STATE_HEX.watch : S.textMuted }}>
+                <AppText style={{ fontSize: 11.5, color: isStale ? LOCKED_STATE_HEX.watch : S.textMuted }}>
                   {last
                     ? drill
                       ? es

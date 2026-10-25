@@ -147,7 +147,7 @@
   "settings.english": "English",
   "settings.spanish": "Español",
   "settings.about": "About this prototype",
-  "settings.about_body": "FordCast checks Austin-area trips against crossing records, official reports and available creek readings. Four record links across two research corridors support a separate experimental gauge study. Road-flood prediction is unverified.",
+  "settings.about_body": "FordCast checks Austin-area trips against crossing records, official reports and available creek readings. Six record links across three research corridors support a separate experimental gauge study. Road-flood prediction is unverified.",
   "settings.privacy": "Your data",
   "settings.privacy_body": "Nearby crossing checks use your location on this device. Route planning sends start, destination and avoidance coordinates to the routing service; address search sends your query and nearby coordinates to the search provider. Launching Google Maps shares the route with Google. Saved crossings and settings stay on this device.",
   "settings.review": "Bilingual EN/ES strings verified for placeholder and safety-lexicon parity.",

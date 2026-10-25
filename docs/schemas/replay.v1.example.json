@@ -51,13 +51,13 @@
     "rain": null
   },
   "pipeline": {
-    "git_sha": "69c90c2",
+    "git_sha": "38b8432",
     "model_version": "rule-loso-halloween-2013",
     "data_sha256": "09303369428e661dc20fc4dc522f1bb7ba0f435e500be543144c794ac38a132b",
     "latency_sha256": "544d87a5b0586876d1dcdd9c2f63f01eecb665bfc36648ed58c2b235dbca64ec",
-    "results_sha256": "072006ad677432a5b27d85604aea40b4dd6642c76a81e464d26485c72e6beb0c",
-    "generated_at": "2026-10-18T05:33:27.268616Z",
-    "source_sha256": "e5a6aa42c16fbe093449eb183b181d2bea111d16d1124ded7b1f811bb65f3fe3"
+    "results_sha256": "6b2ae97015c66a062b26e23c99b4d5b0efc77b7d15d496d2193299639a13a93f",
+    "generated_at": "2026-10-25T07:03:05.056049Z",
+    "source_sha256": "7726bc8d3f1694c80ec9be83d13b514568c2f130fc2205c37c671e8a0ed0b1d4"
   },
   "gauges": [
     {
@@ -381,8 +381,8 @@
       ],
       "avail_delay_s": 3600,
       "outages": [],
-      "trigger_ft": 17.29,
-      "watch_ft": 11.81,
+      "trigger_ft": null,
+      "watch_ft": null,
       "nws_categories": {
         "action": 12.0,
         "minor": 12.0,
@@ -546,8 +546,8 @@
       ],
       "avail_delay_s": 3600,
       "outages": [],
-      "trigger_ft": 6.7,
-      "watch_ft": 5.21,
+      "trigger_ft": 6.27,
+      "watch_ft": 4.42,
       "nws_categories": null
     },
     {
@@ -2486,8 +2486,8 @@
       ],
       "avail_delay_s": 3600,
       "outages": [],
-      "trigger_ft": null,
-      "watch_ft": null,
+      "trigger_ft": 3.89,
+      "watch_ft": 2.04,
       "nws_categories": null
     },
     {
@@ -2646,8 +2646,8 @@
       ],
       "avail_delay_s": 3600,
       "outages": [],
-      "trigger_ft": null,
-      "watch_ft": null,
+      "trigger_ft": 6.85,
+      "watch_ft": 5.24,
       "nws_categories": {
         "action": 6.0,
         "minor": 6.0,
@@ -3231,7 +3231,7 @@
       "lon": -97.85787,
       "lat": 30.23466,
       "tier": "B",
-      "initial_state": "unknown",
+      "initial_state": "no_rise",
       "overtop_stage_ft": null,
       "reference_stage_ft": 13.0,
       "target_gauge_id": "USGS-08158930"
@@ -3243,7 +3243,7 @@
       "lon": -97.85768,
       "lat": 30.2338,
       "tier": "B",
-      "initial_state": "unknown",
+      "initial_state": "no_rise",
       "overtop_stage_ft": null,
       "reference_stage_ft": 14.0,
       "target_gauge_id": "USGS-08158930"
@@ -3279,7 +3279,7 @@
       "lon": -97.74557,
       "lat": 30.17911,
       "tier": "B",
-      "initial_state": "unknown",
+      "initial_state": "no_rise",
       "overtop_stage_ft": null,
       "reference_stage_ft": 17.0,
       "target_gauge_id": "USGS-08159000"
@@ -3303,7 +3303,7 @@
       "lon": -97.74396,
       "lat": 30.17691,
       "tier": "B",
-      "initial_state": "unknown",
+      "initial_state": "no_rise",
       "overtop_stage_ft": null,
       "reference_stage_ft": 23.0,
       "target_gauge_id": "USGS-08159000"
@@ -3315,7 +3315,7 @@
       "lon": -97.73841,
       "lat": 30.16912,
       "tier": "B",
-      "initial_state": "unknown",
+      "initial_state": "no_rise",
       "overtop_stage_ft": null,
       "reference_stage_ft": 27.0,
       "target_gauge_id": "USGS-08159000"
@@ -3515,17 +3515,142 @@
   ],
   "links": [
     {
+      "crossing_id": "atx-15",
+      "gauge_id": "USGS-08158920",
+      "relation": "upstream",
+      "is_primary": true,
+      "tau_min": 24,
+      "tau_p25": 24,
+      "tau_p75": 24,
+      "tau_lo_min": 5,
+      "tau_hi_min": 45,
+      "trigger_ft": 6.85,
+      "watch_ft": 5.24,
+      "channel_dist_km": 3.6,
+      "geometry_source": "schematic_corridor_connector",
+      "flowline": [
+        [
+          -97.86028,
+          30.23521
+        ],
+        [
+          -97.85787,
+          30.23466
+        ]
+      ]
+    },
+    {
+      "crossing_id": "atx-16",
+      "gauge_id": "USGS-08158920",
+      "relation": "upstream",
+      "is_primary": true,
+      "tau_min": 24,
+      "tau_p25": 24,
+      "tau_p75": 24,
+      "tau_lo_min": 5,
+      "tau_hi_min": 45,
+      "trigger_ft": 6.85,
+      "watch_ft": 5.24,
+      "channel_dist_km": 3.6,
+      "geometry_source": "schematic_corridor_connector",
+      "flowline": [
+        [
+          -97.86028,
+          30.23521
+        ],
+        [
+          -97.85768,
+          30.2338
+        ]
+      ]
+    },
+    {
+      "crossing_id": "atx-19",
+      "gauge_id": "USGS-08158860",
+      "relation": "upstream",
+      "is_primary": true,
+      "tau_min": 93,
+      "tau_p25": 80,
+      "tau_p75": 106,
+      "tau_lo_min": 75,
+      "tau_hi_min": 120,
+      "trigger_ft": 3.89,
+      "watch_ft": 2.04,
+      "channel_dist_km": 18.4,
+      "geometry_source": "schematic_corridor_connector",
+      "flowline": [
+        [
+          -97.83223,
+          30.16216
+        ],
+        [
+          -97.74557,
+          30.17911
+        ]
+      ]
+    },
+    {
+      "crossing_id": "atx-20",
+      "gauge_id": "USGS-08158860",
+      "relation": "upstream",
+      "is_primary": true,
+      "tau_min": 93,
+      "tau_p25": 80,
+      "tau_p75": 106,
+      "tau_lo_min": 75,
+      "tau_hi_min": 120,
+      "trigger_ft": 4.99,
+      "watch_ft": 2.52,
+      "channel_dist_km": 18.4,
+      "geometry_source": "schematic_corridor_connector",
+      "flowline": [
+        [
+          -97.83223,
+          30.16216
+        ],
+        [
+          -97.74396,
+          30.17691
+        ]
+      ]
+    },
+    {
+      "crossing_id": "atx-21",
+      "gauge_id": "USGS-08158860",
+      "relation": "upstream",
+      "is_primary": true,
+      "tau_min": 93,
+      "tau_p25": 80,
+      "tau_p75": 106,
+      "tau_lo_min": 75,
+      "tau_hi_min": 120,
+      "trigger_ft": 6.39,
+      "watch_ft": 3.14,
+      "channel_dist_km": 18.4,
+      "geometry_source": "schematic_corridor_connector",
+      "flowline": [
+        [
+          -97.83223,
+          30.16216
+        ],
+        [
+          -97.73841,
+          30.16912
+        ]
+      ]
+    },
+    {
       "crossing_id": "tc-167",
       "gauge_id": "USGS-08155240",
       "relation": "upstream",
       "is_primary": true,
-      "tau_min": 71,
-      "tau_p25": 67,
-      "tau_p75": 77,
+      "tau_min": 67,
+      "tau_p25": 64,
+      "tau_p75": 69,
       "tau_lo_min": 60,
-      "tau_hi_min": 90,
-      "trigger_ft": 6.7,
-      "watch_ft": 5.21,
+      "tau_hi_min": 75,
+      "trigger_ft": 6.27,
+      "watch_ft": 4.42,
       "channel_dist_km": 8.4,
       "geometry_source": "schematic_corridor_connector",
       "flowline": [
@@ -3538,36 +3663,225 @@
           30.27062
         ]
       ]
-    },
-    {
-      "crossing_id": "tc-167",
-      "gauge_id": "USGS-08155200",
-      "relation": "upstream",
-      "is_primary": false,
-      "tau_min": 240,
-      "tau_p25": 240,
-      "tau_p75": 240,
-      "tau_lo_min": 240,
-      "tau_hi_min": 255,
-      "trigger_ft": 17.29,
-      "watch_ft": 11.81,
-      "channel_dist_km": 19.6,
-      "geometry_source": "schematic_corridor_connector",
-      "flowline": [
-        [
-          -97.92556,
-          30.29632
-        ],
-        [
-          -97.8872,
-          30.27062
-        ]
-      ]
     }
   ],
   "events": [
     {
-      "t": "2013-10-31T06:40:00Z",
+      "t": "2013-10-31T04:40:00Z",
+      "crossing_id": "atx-15",
+      "state": "watch",
+      "window": null,
+      "reasons": [
+        {
+          "code": "UPSTREAM_RISING",
+          "gauge_id": "USGS-08158920",
+          "rise_ft_30m": 0.2,
+          "value_ft": 5.3,
+          "watch_ft": 5.24,
+          "obs_at": "2013-10-31T03:40:00+00:00"
+        }
+      ],
+      "p": null,
+      "held": false
+    },
+    {
+      "t": "2013-10-31T04:40:00Z",
+      "crossing_id": "atx-16",
+      "state": "watch",
+      "window": null,
+      "reasons": [
+        {
+          "code": "UPSTREAM_RISING",
+          "gauge_id": "USGS-08158920",
+          "rise_ft_30m": 0.2,
+          "value_ft": 5.3,
+          "watch_ft": 5.24,
+          "obs_at": "2013-10-31T03:40:00+00:00"
+        }
+      ],
+      "p": null,
+      "held": false
+    },
+    {
+      "t": "2013-10-31T04:55:00Z",
+      "crossing_id": "atx-15",
+      "state": "watch",
+      "window": null,
+      "reasons": [
+        {
+          "code": "HOLDING",
+          "since": "2013-10-31T04:40:00+00:00",
+          "held_state": "watch"
+        }
+      ],
+      "p": null,
+      "held": true
+    },
+    {
+      "t": "2013-10-31T04:55:00Z",
+      "crossing_id": "atx-16",
+      "state": "watch",
+      "window": null,
+      "reasons": [
+        {
+          "code": "HOLDING",
+          "since": "2013-10-31T04:40:00+00:00",
+          "held_state": "watch"
+        }
+      ],
+      "p": null,
+      "held": true
+    },
+    {
+      "t": "2013-10-31T05:00:00Z",
+      "crossing_id": "atx-15",
+      "state": "watch",
+      "window": null,
+      "reasons": [
+        {
+          "code": "UPSTREAM_RISING",
+          "gauge_id": "USGS-08158920",
+          "rise_ft_30m": 0.2,
+          "value_ft": 5.4,
+          "watch_ft": 5.24,
+          "obs_at": "2013-10-31T04:00:00+00:00"
+        }
+      ],
+      "p": null,
+      "held": false
+    },
+    {
+      "t": "2013-10-31T05:00:00Z",
+      "crossing_id": "atx-16",
+      "state": "watch",
+      "window": null,
+      "reasons": [
+        {
+          "code": "UPSTREAM_RISING",
+          "gauge_id": "USGS-08158920",
+          "rise_ft_30m": 0.2,
+          "value_ft": 5.4,
+          "watch_ft": 5.24,
+          "obs_at": "2013-10-31T04:00:00+00:00"
+        }
+      ],
+      "p": null,
+      "held": false
+    },
+    {
+      "t": "2013-10-31T05:05:00Z",
+      "crossing_id": "atx-15",
+      "state": "watch",
+      "window": null,
+      "reasons": [
+        {
+          "code": "HOLDING",
+          "since": "2013-10-31T04:40:00+00:00",
+          "held_state": "watch"
+        }
+      ],
+      "p": null,
+      "held": true
+    },
+    {
+      "t": "2013-10-31T05:05:00Z",
+      "crossing_id": "atx-16",
+      "state": "watch",
+      "window": null,
+      "reasons": [
+        {
+          "code": "HOLDING",
+          "since": "2013-10-31T04:40:00+00:00",
+          "held_state": "watch"
+        }
+      ],
+      "p": null,
+      "held": true
+    },
+    {
+      "t": "2013-10-31T05:25:00Z",
+      "crossing_id": "atx-15",
+      "state": "watch",
+      "window": null,
+      "reasons": [
+        {
+          "code": "UPSTREAM_RISING",
+          "gauge_id": "USGS-08158920",
+          "rise_ft_30m": 0.3,
+          "value_ft": 5.7,
+          "watch_ft": 5.24,
+          "obs_at": "2013-10-31T04:25:00+00:00"
+        }
+      ],
+      "p": null,
+      "held": false
+    },
+    {
+      "t": "2013-10-31T05:25:00Z",
+      "crossing_id": "atx-16",
+      "state": "watch",
+      "window": null,
+      "reasons": [
+        {
+          "code": "UPSTREAM_RISING",
+          "gauge_id": "USGS-08158920",
+          "rise_ft_30m": 0.3,
+          "value_ft": 5.7,
+          "watch_ft": 5.24,
+          "obs_at": "2013-10-31T04:25:00+00:00"
+        }
+      ],
+      "p": null,
+      "held": false
+    },
+    {
+      "t": "2013-10-31T05:50:00Z",
+      "crossing_id": "atx-15",
+      "state": "avoid",
+      "window": [
+        0,
+        15
+      ],
+      "reasons": [
+        {
+          "code": "UPSTREAM_ABOVE_TRIGGER",
+          "gauge_id": "USGS-08158920",
+          "value_ft": 7.0,
+          "rise_ft_30m": 1.4,
+          "tau_lo_min": 5,
+          "tau_hi_min": 45,
+          "trigger_ft": 6.85,
+          "obs_at": "2013-10-31T04:50:00+00:00"
+        }
+      ],
+      "p": null,
+      "held": false
+    },
+    {
+      "t": "2013-10-31T05:50:00Z",
+      "crossing_id": "atx-16",
+      "state": "avoid",
+      "window": [
+        0,
+        15
+      ],
+      "reasons": [
+        {
+          "code": "UPSTREAM_ABOVE_TRIGGER",
+          "gauge_id": "USGS-08158920",
+          "value_ft": 7.0,
+          "rise_ft_30m": 1.4,
+          "tau_lo_min": 5,
+          "tau_hi_min": 45,
+          "trigger_ft": 6.85,
+          "obs_at": "2013-10-31T04:50:00+00:00"
+        }
+      ],
+      "p": null,
+      "held": false
+    },
+    {
+      "t": "2013-10-31T06:15:00Z",
       "crossing_id": "tc-167",
       "state": "watch",
       "window": null,
@@ -3575,10 +3889,110 @@
         {
           "code": "UPSTREAM_RISING",
           "gauge_id": "USGS-08155240",
-          "rise_ft_30m": 1.7,
-          "value_ft": 5.9,
-          "watch_ft": 5.21,
+          "rise_ft_30m": 0.9,
+          "value_ft": 4.5,
+          "watch_ft": 4.42,
+          "obs_at": "2013-10-31T05:15:00+00:00"
+        }
+      ],
+      "p": null,
+      "held": false
+    },
+    {
+      "t": "2013-10-31T06:25:00Z",
+      "crossing_id": "atx-19",
+      "state": "watch",
+      "window": null,
+      "reasons": [
+        {
+          "code": "UPSTREAM_RISING",
+          "gauge_id": "USGS-08158860",
+          "rise_ft_30m": 1.2,
+          "value_ft": 2.1,
+          "watch_ft": 2.04,
+          "obs_at": "2013-10-31T05:25:00+00:00"
+        }
+      ],
+      "p": null,
+      "held": false
+    },
+    {
+      "t": "2013-10-31T06:35:00Z",
+      "crossing_id": "atx-20",
+      "state": "watch",
+      "window": null,
+      "reasons": [
+        {
+          "code": "UPSTREAM_RISING",
+          "gauge_id": "USGS-08158860",
+          "rise_ft_30m": 1.4,
+          "value_ft": 3.0,
+          "watch_ft": 2.52,
+          "obs_at": "2013-10-31T05:35:00+00:00"
+        }
+      ],
+      "p": null,
+      "held": false
+    },
+    {
+      "t": "2013-10-31T06:40:00Z",
+      "crossing_id": "atx-21",
+      "state": "watch",
+      "window": null,
+      "reasons": [
+        {
+          "code": "UPSTREAM_RISING",
+          "gauge_id": "USGS-08158860",
+          "rise_ft_30m": 2.0,
+          "value_ft": 3.6,
+          "watch_ft": 3.14,
           "obs_at": "2013-10-31T05:40:00+00:00"
+        }
+      ],
+      "p": null,
+      "held": false
+    },
+    {
+      "t": "2013-10-31T06:45:00Z",
+      "crossing_id": "atx-19",
+      "state": "avoid",
+      "window": [
+        15,
+        60
+      ],
+      "reasons": [
+        {
+          "code": "UPSTREAM_ABOVE_TRIGGER",
+          "gauge_id": "USGS-08158860",
+          "value_ft": 4.1,
+          "rise_ft_30m": 2.6,
+          "tau_lo_min": 75,
+          "tau_hi_min": 120,
+          "trigger_ft": 3.89,
+          "obs_at": "2013-10-31T05:45:00+00:00"
+        }
+      ],
+      "p": null,
+      "held": false
+    },
+    {
+      "t": "2013-10-31T06:50:00Z",
+      "crossing_id": "atx-19",
+      "state": "avoid",
+      "window": [
+        0,
+        30
+      ],
+      "reasons": [
+        {
+          "code": "UPSTREAM_ABOVE_TRIGGER",
+          "gauge_id": "USGS-08158860",
+          "value_ft": 4.6,
+          "rise_ft_30m": 2.8,
+          "tau_lo_min": 75,
+          "tau_hi_min": 120,
+          "trigger_ft": 3.89,
+          "obs_at": "2013-10-31T05:50:00+00:00"
         }
       ],
       "p": null,
@@ -3599,9 +4013,200 @@
           "value_ft": 7.2,
           "rise_ft_30m": 2.7,
           "tau_lo_min": 60,
-          "tau_hi_min": 90,
-          "trigger_ft": 6.7,
+          "tau_hi_min": 75,
+          "trigger_ft": 6.27,
           "obs_at": "2013-10-31T05:50:00+00:00"
+        }
+      ],
+      "p": null,
+      "held": false
+    },
+    {
+      "t": "2013-10-31T07:00:00Z",
+      "crossing_id": "atx-20",
+      "state": "avoid",
+      "window": [
+        15,
+        60
+      ],
+      "reasons": [
+        {
+          "code": "UPSTREAM_ABOVE_TRIGGER",
+          "gauge_id": "USGS-08158860",
+          "value_ft": 5.1,
+          "rise_ft_30m": 2.7,
+          "tau_lo_min": 75,
+          "tau_hi_min": 120,
+          "trigger_ft": 4.99,
+          "obs_at": "2013-10-31T06:00:00+00:00"
+        }
+      ],
+      "p": null,
+      "held": false
+    },
+    {
+      "t": "2013-10-31T07:05:00Z",
+      "crossing_id": "atx-20",
+      "state": "avoid",
+      "window": [
+        0,
+        30
+      ],
+      "reasons": [
+        {
+          "code": "UPSTREAM_ABOVE_TRIGGER",
+          "gauge_id": "USGS-08158860",
+          "value_ft": 5.8,
+          "rise_ft_30m": 2.8,
+          "tau_lo_min": 75,
+          "tau_hi_min": 120,
+          "trigger_ft": 4.99,
+          "obs_at": "2013-10-31T06:05:00+00:00"
+        }
+      ],
+      "p": null,
+      "held": false
+    },
+    {
+      "t": "2013-10-31T07:15:00Z",
+      "crossing_id": "atx-19",
+      "state": "avoid",
+      "window": [
+        0,
+        15
+      ],
+      "reasons": [
+        {
+          "code": "UPSTREAM_ABOVE_TRIGGER",
+          "gauge_id": "USGS-08158860",
+          "value_ft": 6.6,
+          "rise_ft_30m": 2.5,
+          "tau_lo_min": 75,
+          "tau_hi_min": 120,
+          "trigger_ft": 3.89,
+          "obs_at": "2013-10-31T06:15:00+00:00"
+        }
+      ],
+      "p": null,
+      "held": false
+    },
+    {
+      "t": "2013-10-31T07:15:00Z",
+      "crossing_id": "atx-21",
+      "state": "avoid",
+      "window": [
+        15,
+        60
+      ],
+      "reasons": [
+        {
+          "code": "UPSTREAM_ABOVE_TRIGGER",
+          "gauge_id": "USGS-08158860",
+          "value_ft": 6.6,
+          "rise_ft_30m": 2.5,
+          "tau_lo_min": 75,
+          "tau_hi_min": 120,
+          "trigger_ft": 6.39,
+          "obs_at": "2013-10-31T06:15:00+00:00"
+        }
+      ],
+      "p": null,
+      "held": false
+    },
+    {
+      "t": "2013-10-31T07:20:00Z",
+      "crossing_id": "atx-21",
+      "state": "avoid",
+      "window": [
+        0,
+        30
+      ],
+      "reasons": [
+        {
+          "code": "UPSTREAM_ABOVE_TRIGGER",
+          "gauge_id": "USGS-08158860",
+          "value_ft": 6.8,
+          "rise_ft_30m": 2.2,
+          "tau_lo_min": 75,
+          "tau_hi_min": 120,
+          "trigger_ft": 6.39,
+          "obs_at": "2013-10-31T06:20:00+00:00"
+        }
+      ],
+      "p": null,
+      "held": false
+    },
+    {
+      "t": "2013-10-31T07:30:00Z",
+      "crossing_id": "atx-15",
+      "state": "avoid",
+      "window": null,
+      "reasons": [
+        {
+          "code": "HOLDING",
+          "since": "2013-10-31T05:50:00+00:00",
+          "held_state": "avoid"
+        }
+      ],
+      "p": null,
+      "held": true
+    },
+    {
+      "t": "2013-10-31T07:30:00Z",
+      "crossing_id": "atx-16",
+      "state": "avoid",
+      "window": null,
+      "reasons": [
+        {
+          "code": "HOLDING",
+          "since": "2013-10-31T05:50:00+00:00",
+          "held_state": "avoid"
+        }
+      ],
+      "p": null,
+      "held": true
+    },
+    {
+      "t": "2013-10-31T07:30:00Z",
+      "crossing_id": "atx-20",
+      "state": "avoid",
+      "window": [
+        0,
+        15
+      ],
+      "reasons": [
+        {
+          "code": "UPSTREAM_ABOVE_TRIGGER",
+          "gauge_id": "USGS-08158860",
+          "value_ft": 6.9,
+          "rise_ft_30m": 1.8,
+          "tau_lo_min": 75,
+          "tau_hi_min": 120,
+          "trigger_ft": 4.99,
+          "obs_at": "2013-10-31T06:30:00+00:00"
+        }
+      ],
+      "p": null,
+      "held": false
+    },
+    {
+      "t": "2013-10-31T07:45:00Z",
+      "crossing_id": "atx-21",
+      "state": "avoid",
+      "window": [
+        0,
+        15
+      ],
+      "reasons": [
+        {
+          "code": "UPSTREAM_ABOVE_TRIGGER",
+          "gauge_id": "USGS-08158860",
+          "value_ft": 7.6,
+          "rise_ft_30m": 1.0,
+          "tau_lo_min": 75,
+          "tau_hi_min": 120,
+          "trigger_ft": 6.39,
+          "obs_at": "2013-10-31T06:45:00+00:00"
         }
       ],
       "p": null,
@@ -3617,14 +4222,82 @@
           "code": "HOLDING",
           "since": "2013-10-31T06:50:00+00:00",
           "held_state": "avoid"
-        },
+        }
+      ],
+      "p": null,
+      "held": true
+    },
+    {
+      "t": "2013-10-31T08:55:00Z",
+      "crossing_id": "atx-15",
+      "state": "avoid",
+      "window": [
+        0,
+        15
+      ],
+      "reasons": [
         {
-          "code": "UPSTREAM_RISING",
-          "gauge_id": "USGS-08155200",
-          "rise_ft_30m": 2.0,
-          "value_ft": 12.0,
-          "watch_ft": 11.81,
-          "obs_at": "2013-10-31T06:45:00+00:00"
+          "code": "UPSTREAM_ABOVE_TRIGGER",
+          "gauge_id": "USGS-08158920",
+          "value_ft": 8.4,
+          "rise_ft_30m": 0.2,
+          "tau_lo_min": 5,
+          "tau_hi_min": 45,
+          "trigger_ft": 6.85,
+          "obs_at": "2013-10-31T07:55:00+00:00"
+        }
+      ],
+      "p": null,
+      "held": false
+    },
+    {
+      "t": "2013-10-31T08:55:00Z",
+      "crossing_id": "atx-16",
+      "state": "avoid",
+      "window": [
+        0,
+        15
+      ],
+      "reasons": [
+        {
+          "code": "UPSTREAM_ABOVE_TRIGGER",
+          "gauge_id": "USGS-08158920",
+          "value_ft": 8.4,
+          "rise_ft_30m": 0.2,
+          "tau_lo_min": 5,
+          "tau_hi_min": 45,
+          "trigger_ft": 6.85,
+          "obs_at": "2013-10-31T07:55:00+00:00"
+        }
+      ],
+      "p": null,
+      "held": false
+    },
+    {
+      "t": "2013-10-31T09:00:00Z",
+      "crossing_id": "atx-15",
+      "state": "avoid",
+      "window": null,
+      "reasons": [
+        {
+          "code": "HOLDING",
+          "since": "2013-10-31T05:50:00+00:00",
+          "held_state": "avoid"
+        }
+      ],
+      "p": null,
+      "held": true
+    },
+    {
+      "t": "2013-10-31T09:00:00Z",
+      "crossing_id": "atx-16",
+      "state": "avoid",
+      "window": null,
+      "reasons": [
+        {
+          "code": "HOLDING",
+          "since": "2013-10-31T05:50:00+00:00",
+          "held_state": "avoid"
         }
       ],
       "p": null,
@@ -3645,16 +4318,8 @@
           "value_ft": 8.2,
           "rise_ft_30m": 0.3,
           "tau_lo_min": 60,
-          "tau_hi_min": 90,
-          "trigger_ft": 6.7,
-          "obs_at": "2013-10-31T08:25:00+00:00"
-        },
-        {
-          "code": "UPSTREAM_RISING",
-          "gauge_id": "USGS-08155200",
-          "rise_ft_30m": 0.4,
-          "value_ft": 14.0,
-          "watch_ft": 11.81,
+          "tau_hi_min": 75,
+          "trigger_ft": 6.27,
           "obs_at": "2013-10-31T08:25:00+00:00"
         }
       ],
@@ -3671,14 +4336,6 @@
           "code": "HOLDING",
           "since": "2013-10-31T06:50:00+00:00",
           "held_state": "avoid"
-        },
-        {
-          "code": "UPSTREAM_RISING",
-          "gauge_id": "USGS-08155200",
-          "rise_ft_30m": 0.7,
-          "value_ft": 14.7,
-          "watch_ft": 11.81,
-          "obs_at": "2013-10-31T08:55:00+00:00"
         }
       ],
       "p": null,
@@ -3699,21 +4356,134 @@
           "value_ft": 8.4,
           "rise_ft_30m": 0.3,
           "tau_lo_min": 60,
-          "tau_hi_min": 90,
-          "trigger_ft": 6.7,
-          "obs_at": "2013-10-31T09:00:00+00:00"
-        },
-        {
-          "code": "UPSTREAM_RISING",
-          "gauge_id": "USGS-08155200",
-          "rise_ft_30m": 0.7,
-          "value_ft": 14.8,
-          "watch_ft": 11.81,
+          "tau_hi_min": 75,
+          "trigger_ft": 6.27,
           "obs_at": "2013-10-31T09:00:00+00:00"
         }
       ],
       "p": null,
       "held": false
+    },
+    {
+      "t": "2013-10-31T10:05:00Z",
+      "crossing_id": "atx-15",
+      "state": "avoid",
+      "window": [
+        0,
+        15
+      ],
+      "reasons": [
+        {
+          "code": "UPSTREAM_ABOVE_TRIGGER",
+          "gauge_id": "USGS-08158920",
+          "value_ft": 8.4,
+          "rise_ft_30m": 0.2,
+          "tau_lo_min": 5,
+          "tau_hi_min": 45,
+          "trigger_ft": 6.85,
+          "obs_at": "2013-10-31T09:05:00+00:00"
+        }
+      ],
+      "p": null,
+      "held": false
+    },
+    {
+      "t": "2013-10-31T10:05:00Z",
+      "crossing_id": "atx-16",
+      "state": "avoid",
+      "window": [
+        0,
+        15
+      ],
+      "reasons": [
+        {
+          "code": "UPSTREAM_ABOVE_TRIGGER",
+          "gauge_id": "USGS-08158920",
+          "value_ft": 8.4,
+          "rise_ft_30m": 0.2,
+          "tau_lo_min": 5,
+          "tau_hi_min": 45,
+          "trigger_ft": 6.85,
+          "obs_at": "2013-10-31T09:05:00+00:00"
+        }
+      ],
+      "p": null,
+      "held": false
+    },
+    {
+      "t": "2013-10-31T10:15:00Z",
+      "crossing_id": "atx-19",
+      "state": "avoid",
+      "window": null,
+      "reasons": [
+        {
+          "code": "HOLDING",
+          "since": "2013-10-31T06:45:00+00:00",
+          "held_state": "avoid"
+        }
+      ],
+      "p": null,
+      "held": true
+    },
+    {
+      "t": "2013-10-31T10:15:00Z",
+      "crossing_id": "atx-20",
+      "state": "avoid",
+      "window": null,
+      "reasons": [
+        {
+          "code": "HOLDING",
+          "since": "2013-10-31T07:00:00+00:00",
+          "held_state": "avoid"
+        }
+      ],
+      "p": null,
+      "held": true
+    },
+    {
+      "t": "2013-10-31T10:15:00Z",
+      "crossing_id": "atx-21",
+      "state": "avoid",
+      "window": null,
+      "reasons": [
+        {
+          "code": "HOLDING",
+          "since": "2013-10-31T07:15:00+00:00",
+          "held_state": "avoid"
+        }
+      ],
+      "p": null,
+      "held": true
+    },
+    {
+      "t": "2013-10-31T11:00:00Z",
+      "crossing_id": "atx-15",
+      "state": "avoid",
+      "window": null,
+      "reasons": [
+        {
+          "code": "HOLDING",
+          "since": "2013-10-31T05:50:00+00:00",
+          "held_state": "avoid"
+        }
+      ],
+      "p": null,
+      "held": true
+    },
+    {
+      "t": "2013-10-31T11:00:00Z",
+      "crossing_id": "atx-16",
+      "state": "avoid",
+      "window": null,
+      "reasons": [
+        {
+          "code": "HOLDING",
+          "since": "2013-10-31T05:50:00+00:00",
+          "held_state": "avoid"
+        }
+      ],
+      "p": null,
+      "held": true
     },
     {
       "t": "2013-10-31T11:55:00Z",
@@ -3745,8 +4515,8 @@
           "value_ft": 10.3,
           "rise_ft_30m": 0.2,
           "tau_lo_min": 60,
-          "tau_hi_min": 90,
-          "trigger_ft": 6.7,
+          "tau_hi_min": 75,
+          "trigger_ft": 6.27,
           "obs_at": "2013-10-31T11:00:00+00:00"
         }
       ],
@@ -3783,8 +4553,8 @@
           "value_ft": 10.4,
           "rise_ft_30m": 0.1,
           "tau_lo_min": 60,
-          "tau_hi_min": 90,
-          "trigger_ft": 6.7,
+          "tau_hi_min": 75,
+          "trigger_ft": 6.27,
           "obs_at": "2013-10-31T11:35:00+00:00"
         }
       ],
@@ -3821,13 +4591,43 @@
           "value_ft": 10.5,
           "rise_ft_30m": 0.1,
           "tau_lo_min": 60,
-          "tau_hi_min": 90,
-          "trigger_ft": 6.7,
+          "tau_hi_min": 75,
+          "trigger_ft": 6.27,
           "obs_at": "2013-10-31T12:10:00+00:00"
         }
       ],
       "p": null,
       "held": false
+    },
+    {
+      "t": "2013-10-31T14:10:00Z",
+      "crossing_id": "atx-15",
+      "state": "watch",
+      "window": null,
+      "reasons": [
+        {
+          "code": "HOLDING",
+          "since": "2013-10-31T14:10:00+00:00",
+          "held_state": "watch"
+        }
+      ],
+      "p": null,
+      "held": true
+    },
+    {
+      "t": "2013-10-31T14:10:00Z",
+      "crossing_id": "atx-16",
+      "state": "watch",
+      "window": null,
+      "reasons": [
+        {
+          "code": "HOLDING",
+          "since": "2013-10-31T14:10:00+00:00",
+          "held_state": "watch"
+        }
+      ],
+      "p": null,
+      "held": true
     },
     {
       "t": "2013-10-31T14:10:00Z",
@@ -3859,8 +4659,8 @@
           "value_ft": 10.9,
           "rise_ft_30m": 0.2,
           "tau_lo_min": 60,
-          "tau_hi_min": 90,
-          "trigger_ft": 6.7,
+          "tau_hi_min": 75,
+          "trigger_ft": 6.27,
           "obs_at": "2013-10-31T13:15:00+00:00"
         }
       ],
@@ -3883,15 +4683,104 @@
       "held": true
     },
     {
-      "t": "2013-10-31T20:25:00Z",
-      "crossing_id": "tc-167",
+      "t": "2013-10-31T15:10:00Z",
+      "crossing_id": "atx-15",
+      "state": "no_rise",
+      "window": null,
+      "reasons": [],
+      "p": null,
+      "held": false
+    },
+    {
+      "t": "2013-10-31T15:10:00Z",
+      "crossing_id": "atx-16",
+      "state": "no_rise",
+      "window": null,
+      "reasons": [],
+      "p": null,
+      "held": false
+    },
+    {
+      "t": "2013-10-31T15:40:00Z",
+      "crossing_id": "atx-21",
       "state": "watch",
       "window": null,
       "reasons": [
         {
           "code": "HOLDING",
-          "since": "2013-10-31T20:25:00+00:00",
+          "since": "2013-10-31T15:40:00+00:00",
           "held_state": "watch"
+        }
+      ],
+      "p": null,
+      "held": true
+    },
+    {
+      "t": "2013-10-31T16:40:00Z",
+      "crossing_id": "atx-21",
+      "state": "no_rise",
+      "window": null,
+      "reasons": [],
+      "p": null,
+      "held": false
+    },
+    {
+      "t": "2013-10-31T17:40:00Z",
+      "crossing_id": "atx-20",
+      "state": "watch",
+      "window": null,
+      "reasons": [
+        {
+          "code": "HOLDING",
+          "since": "2013-10-31T17:40:00+00:00",
+          "held_state": "watch"
+        }
+      ],
+      "p": null,
+      "held": true
+    },
+    {
+      "t": "2013-10-31T18:40:00Z",
+      "crossing_id": "atx-20",
+      "state": "no_rise",
+      "window": null,
+      "reasons": [],
+      "p": null,
+      "held": false
+    },
+    {
+      "t": "2013-10-31T19:45:00Z",
+      "crossing_id": "tc-167",
+      "state": "avoid",
+      "window": [
+        0,
+        15
+      ],
+      "reasons": [
+        {
+          "code": "UPSTREAM_ABOVE_TRIGGER",
+          "gauge_id": "USGS-08155240",
+          "value_ft": 6.3,
+          "rise_ft_30m": -0.2,
+          "tau_lo_min": 60,
+          "tau_hi_min": 75,
+          "trigger_ft": 6.27,
+          "obs_at": "2013-10-31T18:45:00+00:00"
+        }
+      ],
+      "p": null,
+      "held": false
+    },
+    {
+      "t": "2013-10-31T19:50:00Z",
+      "crossing_id": "tc-167",
+      "state": "avoid",
+      "window": null,
+      "reasons": [
+        {
+          "code": "HOLDING",
+          "since": "2013-10-31T06:50:00+00:00",
+          "held_state": "avoid"
         }
       ],
       "p": null,
@@ -3900,19 +4789,79 @@
     {
       "t": "2013-10-31T21:25:00Z",
       "crossing_id": "tc-167",
+      "state": "watch",
+      "window": null,
+      "reasons": [
+        {
+          "code": "HOLDING",
+          "since": "2013-10-31T21:25:00+00:00",
+          "held_state": "watch"
+        }
+      ],
+      "p": null,
+      "held": true
+    },
+    {
+      "t": "2013-10-31T22:25:00Z",
+      "crossing_id": "tc-167",
       "state": "no_rise",
       "window": null,
       "reasons": [],
       "p": null,
       "held": false
+    },
+    {
+      "t": "2013-10-31T23:35:00Z",
+      "crossing_id": "atx-19",
+      "state": "watch",
+      "window": null,
+      "reasons": [
+        {
+          "code": "HOLDING",
+          "since": "2013-10-31T23:35:00+00:00",
+          "held_state": "watch"
+        }
+      ],
+      "p": null,
+      "held": true
     }
   ],
   "pulses": [
     {
+      "crossing_id": "atx-15",
+      "gauge_id": "USGS-08158920",
+      "t_trigger": "2013-10-31T05:50:00Z",
+      "tau_min": 24
+    },
+    {
+      "crossing_id": "atx-16",
+      "gauge_id": "USGS-08158920",
+      "t_trigger": "2013-10-31T05:50:00Z",
+      "tau_min": 24
+    },
+    {
+      "crossing_id": "atx-19",
+      "gauge_id": "USGS-08158860",
+      "t_trigger": "2013-10-31T06:45:00Z",
+      "tau_min": 93
+    },
+    {
       "crossing_id": "tc-167",
       "gauge_id": "USGS-08155240",
       "t_trigger": "2013-10-31T06:50:00Z",
-      "tau_min": 71
+      "tau_min": 67
+    },
+    {
+      "crossing_id": "atx-20",
+      "gauge_id": "USGS-08158860",
+      "t_trigger": "2013-10-31T07:00:00Z",
+      "tau_min": 93
+    },
+    {
+      "crossing_id": "atx-21",
+      "gauge_id": "USGS-08158860",
+      "t_trigger": "2013-10-31T07:15:00Z",
+      "tau_min": 93
     }
   ],
   "truth": [
@@ -3948,48 +4897,48 @@
   "metrics": {
     "method": "upstream_rule",
     "level": "avoid",
-    "pod": 0.5,
-    "far": 0.0,
-    "csi": 0.5,
-    "median_lead_min": 95.0,
+    "pod": 1.0,
+    "far": 0.429,
+    "csi": 0.571,
+    "median_lead_min": 90.0,
     "n_events": 4,
     "comparators": {
       "nearest_gauge": {
         "pod": 0.5,
-        "far": 0.0,
-        "csi": 0.5,
+        "far": 0.333,
+        "csi": 0.4,
         "median_lead_min": 95.0,
         "n_events": 4
       },
       "watch_level": {
-        "pod": 0.5,
-        "far": 0.0,
-        "csi": 0.5,
-        "median_lead_min": 100.0,
+        "pod": 1.0,
+        "far": 0.429,
+        "csi": 0.571,
+        "median_lead_min": 160.0,
         "n_events": 4
       }
     }
   },
   "hero": {
-    "crossing_id": "tc-167",
-    "lead_min": 10.0,
+    "crossing_id": "atx-15",
+    "lead_min": 80.0,
     "level": "avoid",
-    "onset": "2013-10-31T07:00:00Z",
-    "first_alert_at": "2013-10-31T06:50:00Z",
+    "onset": "2013-10-31T07:10:00Z",
+    "first_alert_at": "2013-10-31T05:50:00Z",
     "censored": false
   },
   "storyboard": [
     {
-      "t": "2013-10-31T06:40:00Z",
+      "t": "2013-10-31T04:40:00Z",
       "kind": "first_watch",
-      "en": "Reference-gauge experiment: rising stage at Barton Ck at Lost Ck Blvd nr Austin, TX",
-      "es": "Experimento de referencia: nivel en aumento en Barton Ck at Lost Ck Blvd nr Austin, TX"
+      "en": "Reference-gauge experiment: rising stage at Williamson Ck at Oak Hill, TX",
+      "es": "Experimento de referencia: nivel en aumento en Williamson Ck at Oak Hill, TX"
     },
     {
-      "t": "2013-10-31T06:50:00Z",
+      "t": "2013-10-31T05:50:00Z",
       "kind": "first_avoid",
-      "en": "Reference-gauge experiment: Barton Ck at Lost Ck Blvd nr Austin, TX rose 2.7 ft in 30 min. Estimated gauge-to-gauge lag: 60–90 min. Road arrival is unverified.",
-      "es": "Experimento de referencia: Barton Ck at Lost Ck Blvd nr Austin, TX subió 2.7 pies en 30 min. Retraso estimado entre estaciones: 60–90 min. No se ha verificado la llegada al camino."
+      "en": "Reference-gauge experiment: Williamson Ck at Oak Hill, TX rose 1.4 ft in 30 min. Estimated gauge-to-gauge lag: 5–45 min. Road arrival is unverified.",
+      "es": "Experimento de referencia: Williamson Ck at Oak Hill, TX subió 1.4 pies en 30 min. Retraso estimado entre estaciones: 5–45 min. No se ha verificado la llegada al camino."
     },
     {
       "t": "2013-10-31T11:15:00Z",

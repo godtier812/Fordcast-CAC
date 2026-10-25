@@ -256,11 +256,11 @@ export function Panel({ children, style }: PropsWithChildren<{ style?: StyleProp
       style={[
         {
           backgroundColor: S.elevated1,
-          borderRadius: 10,
+          borderRadius: 16,
           borderWidth: 1,
           borderColor: S.borderSubtle,
           padding: 16,
-          gap: 10,
+          gap: 12,
         },
         style,
       ]}
@@ -330,24 +330,24 @@ export const NearbyRow = memo(function NearbyRow({
       style={({ pressed }) => ({
         flexDirection: 'row',
         alignItems: 'center',
-        gap: 12,
-        paddingVertical: 12,
-        paddingHorizontal: 12,
-        borderRadius: 14,
+        gap: 14,
+        paddingVertical: 14,
+        paddingHorizontal: 14,
+        borderRadius: 16,
         borderWidth: selected ? 2 : 1,
         borderColor: selected ? ACCENT : ds && ds !== 'no_rise' ? color : S.borderSubtle,
         backgroundColor: ds === 'avoid' || ds === 'closed' ? STATE_TOKENS.avoid.darkBg : S.elevated1,
-        opacity: pressed ? 0.8 : 1,
+        opacity: pressed ? 0.85 : 1,
       })}
     >
       {ds ? (
-        <StateGlyphSvg state={ds} size={30} />
+        <StateGlyphSvg state={ds} size={32} />
       ) : (
         <View
           style={{
-            width: 30,
-            height: 30,
-            borderRadius: 15,
+            width: 32,
+            height: 32,
+            borderRadius: 16,
             borderWidth: 1.5,
             borderStyle: 'dashed',
             borderColor: S.textMuted,
@@ -358,34 +358,36 @@ export const NearbyRow = memo(function NearbyRow({
           <AppText style={{ fontSize: 12, color: S.textMuted }}>—</AppText>
         </View>
       )}
-      <View style={{ flex: 1, gap: 2 }}>
+      <View style={{ flex: 1, gap: 4 }}>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
           {isSaved ? <FcIcon name="star" size={14} color={ACCENT} /> : null}
-          <AppText numberOfLines={2} style={{ flex: 1, fontFamily: 'Inter_600SemiBold', fontSize: 15, lineHeight: 20 }}>
+          <AppText numberOfLines={2} style={{ flex: 1, fontFamily: 'Inter_600SemiBold', fontSize: 15.5, lineHeight: 21 }}>
             {displayName}
           </AppText>
         </View>
-        <AppText numberOfLines={1} style={{ fontSize: 12.5, lineHeight: 17, color: S.textSecondary }}>
+        <AppText numberOfLines={1} style={{ fontSize: 13, lineHeight: 18, color: S.textSecondary }}>
           {status.creek ? `${cleanName(status.creek)} · ` : ''}
           {formatMiles(status.distanceKm)}
         </AppText>
-        <AppText
-          numberOfLines={2}
-          style={{
-            fontSize: 13,
-            lineHeight: 17,
-            fontFamily: 'Inter_600SemiBold',
-            color: ds ? color : S.textMuted,
-          }}
-        >
-          {label}
-          {status.monitored && status.window ? ` · ${t('state.range', { lo: status.window[0], hi: status.window[1] })}` : ''}
-        </AppText>
-        {status.history?.tier === 'high' && !status.danger ? (
-          <AppText style={{ fontSize: 11.5, lineHeight: 15, color: S.textMuted }}>
-            {t('chip.history', { reports: status.history.reports, deaths: status.history.deaths })}
+        <View style={{ flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap', gap: 8, paddingTop: 1 }}>
+          <AppText
+            numberOfLines={1}
+            style={{
+              fontSize: 13,
+              lineHeight: 18,
+              fontFamily: 'Inter_600SemiBold',
+              color: ds ? color : S.textMuted,
+            }}
+          >
+            {label}
+            {status.monitored && status.window ? ` · ${status.window[0]}–${status.window[1]} min` : ''}
           </AppText>
-        ) : null}
+          {status.history?.tier === 'high' && !status.danger ? (
+            <AppText style={{ fontSize: 12, lineHeight: 16, color: S.textMuted }}>
+              · {t('chip.history', { reports: status.history.reports, deaths: status.history.deaths })}
+            </AppText>
+          ) : null}
+        </View>
       </View>
       <FcIcon name="chevron-right" size={18} color={S.textMuted} />
     </Pressable>
@@ -404,8 +406,8 @@ export function BigStatus({ status }: { status: CrossingStatus }) {
         borderWidth: 2,
         borderColor: ds ? LOCKED_STATE_HEX[state] : S.borderSubtle,
         backgroundColor: ds ? STATE_TOKENS[state].darkBg : S.elevated1,
-        padding: 16,
-        gap: 10,
+        padding: 18,
+        gap: 12,
       }}
     >
       <StateBadge state={state} size={24} unmonitored={!ds} labelOverride={statusLabel(t, status)} />
@@ -419,7 +421,7 @@ export function BigStatus({ status }: { status: CrossingStatus }) {
       ) : null}
       <AppText style={{ fontSize: 15, lineHeight: 22, color: S.textPrimary }}>{t(key)}</AppText>
       {status.danger && status.reasons.length > 1 ? (
-        <AppText style={{ fontSize: 13, lineHeight: 18, color: S.textSecondary }}>
+        <AppText style={{ fontSize: 13.5, lineHeight: 19, color: S.textSecondary }}>
           {t('detail.also')} {status.reasons.slice(1).map((r) => t(REASON_KEY[r])).join(' · ')}
         </AppText>
       ) : null}
